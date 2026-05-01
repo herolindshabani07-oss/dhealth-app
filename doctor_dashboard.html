@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>D Health — Doctor Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --primary:#1565C0;--primary-d:#0D2E6E;--accent:#2DC8A0;
+  --orange:#F97316;--red:#EF4444;--green:#22C55E;--purple:#8B6FE8;
+  --bg:#F4F7FB;--white:#fff;--text:#1A2340;--tm:#7B8BAD;--border:rgba(0,0,0,0.07);
+  --font:'DM Sans',system-ui,sans-serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;}
+/* ── LAYOUT ── */
+.layout{display:flex;min-height:100vh;}
+/* SIDEBAR */
+.sidebar{width:240px;background:linear-gradient(160deg,#0A1628,#0D2E6E,#1565C0);flex-shrink:0;display:flex;flex-direction:column;padding:0;}
+.sb-logo{padding:24px 20px;border-bottom:0.5px solid rgba(255,255,255,0.1);}
+.sb-logo-icon{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px;}
+.sb-logo-name{font-size:16px;font-weight:700;color:#fff;}
+.sb-logo-role{font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;}
+.sb-nav{padding:16px 12px;flex:1;}
+.sb-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;cursor:pointer;color:rgba(255,255,255,0.7);font-size:13px;font-weight:500;margin-bottom:4px;transition:all 0.2s;}
+.sb-nav-item:hover{background:rgba(255,255,255,0.1);color:#fff;}
+.sb-nav-item.active{background:rgba(255,255,255,0.18);color:#fff;font-weight:700;}
+.sb-nav-icon{font-size:18px;width:24px;text-align:center;}
+.sb-footer{padding:16px;border-top:0.5px solid rgba(255,255,255,0.1);}
+.sb-doctor{display:flex;align-items:center;gap:10px;}
+.sb-dav{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.sb-dname{font-size:12px;font-weight:700;color:#fff;}
+.sb-demail{font-size:10px;color:rgba(255,255,255,0.6);margin-top:1px;}
+/* MAIN */
+.main{flex:1;overflow-y:auto;}
+.topbar{background:var(--white);border-bottom:0.5px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-title{font-size:18px;font-weight:700;color:var(--text);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-badge{background:rgba(239,68,68,0.1);color:var(--red);font-size:11px;font-weight:700;padding:4px 10px;border-radius:10px;}
+.search-inp{border:1.5px solid var(--border);border-radius:12px;padding:8px 14px 8px 36px;font-size:13px;color:var(--text);background:var(--bg);font-family:var(--font);outline:none;width:220px;}
+.search-wrap{position:relative;}
+.search-wrap::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;}
+.content{padding:24px 28px;}
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--white);border-radius:18px;padding:18px;border:0.5px solid var(--border);}
+.stat-icon{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;}
+.stat-val{font-size:28px;font-weight:700;color:var(--text);}
+.stat-lbl{font-size:12px;color:var(--tm);margin-top:3px;}
+.stat-trend{font-size:11px;font-weight:600;margin-top:6px;}
+.trend-up{color:var(--red);}
+.trend-dn{color:var(--green);}
+/* PATIENTS TABLE */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-title{font-size:15px;font-weight:700;color:var(--text);}
+.btn-add{padding:8px 16px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px;}
+.patients-table{background:var(--white);border-radius:18px;border:0.5px solid var(--border);overflow:hidden;}
+.pt-hdr{display:grid;grid-template-columns:2fr 1fr 1.2fr 1.2fr 1fr 1fr 80px;gap:0;padding:11px 18px;background:var(--bg);border-bottom:0.5px solid var(--border);}
+.pt-col{font-size:10px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:0.5px;}
+.pt-row{display:grid;grid-template-columns:2fr 1fr 1.2fr 1.2fr 1fr 1fr 80px;gap:0;padding:14px 18px;border-bottom:0.5px solid var(--border);align-items:center;cursor:pointer;transition:background 0.15s;}
+.pt-row:last-child{border-bottom:none;}
+.pt-row:hover{background:rgba(59,125,216,0.03);}
+.pt-name{font-size:13px;font-weight:700;color:var(--text);}
+.pt-email{font-size:11px;color:var(--tm);margin-top:1px;}
+.pt-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;margin-right:10px;}
+.pt-name-cell{display:flex;align-items:center;}
+.badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;}
+.badge-ok{background:rgba(34,197,94,0.12);color:#15803D;}
+.badge-warn{background:rgba(249,115,22,0.12);color:#C2410C;}
+.badge-danger{background:rgba(239,68,68,0.12);color:#DC2626;}
+.badge-free{background:rgba(123,139,173,0.12);color:var(--tm);}
+.badge-premium{background:rgba(59,125,216,0.12);color:var(--primary);}
+.badge-clinic{background:rgba(139,111,232,0.12);color:var(--purple);}
+.pt-bp{font-size:13px;font-weight:600;}
+.pt-bp.ok{color:var(--green);}
+.pt-bp.warn{color:var(--orange);}
+.pt-bp.danger{color:var(--red);}
+.btn-view{padding:5px 12px;border-radius:9px;border:1.5px solid var(--border);background:transparent;font-size:11px;font-weight:700;color:var(--primary);cursor:pointer;font-family:var(--font);}
+.btn-view:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
+/* ALERTS */
+.alerts-box{background:var(--white);border-radius:18px;border:0.5px solid var(--border);padding:16px 18px;margin-bottom:24px;}
+.alert-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);}
+.alert-item:last-child{border-bottom:none;}
+.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.alert-dot.danger{background:var(--red);}
+.alert-dot.warn{background:var(--orange);}
+.alert-title{font-size:12px;font-weight:700;color:var(--text);}
+.alert-sub{font-size:11px;color:var(--tm);margin-top:2px;}
+.alert-time{font-size:10px;color:var(--tm);margin-left:auto;flex-shrink:0;}
+/* PATIENT MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,15,35,0.55);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:24px;width:680px;max-height:85vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.2);}
+.modal-hdr{padding:20px 24px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:10;}
+.modal-title{font-size:16px;font-weight:700;color:var(--text);}
+.modal-close{width:32px;height:32px;border-radius:10px;border:none;background:var(--bg);cursor:pointer;font-size:18px;color:var(--tm);}
+.modal-body{padding:20px 24px;}
+.modal-section{margin-bottom:20px;}
+.modal-sec-title{font-size:11px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+.vitals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.vcard{background:var(--bg);border-radius:14px;padding:12px 14px;}
+.vcard-val{font-size:20px;font-weight:700;color:var(--text);}
+.vcard-lbl{font-size:10px;color:var(--tm);margin-top:2px;}
+.tags-wrap{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;}
+.tag-d{background:rgba(239,68,68,0.1);color:#DC2626;}
+.tag-t{background:rgba(139,111,232,0.1);color:var(--purple);}
+.tag-a{background:rgba(249,115,22,0.1);color:#C2410C;}
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:linear-gradient(160deg,#0A1628,#0D2E6E,#1565C0);display:flex;align-items:center;justify-content:center;z-index:9999;}
+.login-card{background:var(--white);border-radius:24px;padding:32px;width:380px;box-shadow:0 24px 80px rgba(0,0,0,0.3);}
+.login-logo{text-align:center;margin-bottom:24px;}
+.login-logo-ico{width:60px;height:60px;border-radius:20px;background:linear-gradient(135deg,#0D2E6E,#1565C0);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;}
+.login-title{font-size:20px;font-weight:700;color:var(--text);text-align:center;}
+.login-sub{font-size:12px;color:var(--tm);text-align:center;margin-top:4px;}
+.login-field{margin-bottom:14px;}
+.login-label{font-size:11px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;}
+.login-input{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--text);font-family:var(--font);outline:none;transition:border-color 0.2s;}
+.login-input:focus{border-color:var(--primary);}
+.login-btn{width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#1565C0,#8B6FE8);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:6px;}
+.login-err{font-size:12px;color:var(--red);text-align:center;margin-top:8px;min-height:18px;}
+.login-err.show{display:block;}
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--tm);font-size:13px;gap:10px;}
+.spin{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(--tm);}
+.empty-ico{font-size:40px;margin-bottom:12px;}
+.empty-txt{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.empty-sub{font-size:12px;color:var(--tm);}
+
+/* ══ CHAT PANEL ══ */
+.chat-layout{display:flex;height:calc(100vh - 130px);gap:0;background:var(--white);border-radius:18px;border:0.5px solid var(--border);overflow:hidden;}
+.chat-patients{width:260px;border-right:0.5px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.chat-patients-hdr{padding:14px 16px;border-bottom:0.5px solid var(--border);font-size:13px;font-weight:700;color:var(--text);}
+.chat-patient-item{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:background 0.15s;border-bottom:0.5px solid var(--border);}
+.chat-patient-item:hover{background:var(--bg);}
+.chat-patient-item.active{background:rgba(21,101,192,0.06);}
+.chat-p-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0;}
+.chat-p-name{font-size:13px;font-weight:600;color:var(--text);}
+.chat-p-last{font-size:11px;color:var(--tm);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;}
+.chat-p-badge{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:auto;flex-shrink:0;}
+/* Chat window */
+.chat-window{flex:1;display:flex;flex-direction:column;}
+.chat-win-hdr{padding:14px 18px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.chat-win-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;}
+.chat-win-name{font-size:14px;font-weight:700;color:var(--text);}
+.chat-win-status{font-size:11px;color:var(--accent);margin-top:1px;}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--bg);}
+.chat-msg{max-width:70%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.5;}
+.chat-msg.doctor{background:var(--primary);color:#fff;border-radius:16px 16px 4px 16px;align-self:flex-end;}
+.chat-msg.patient{background:var(--white);color:var(--text);border-radius:16px 16px 16px 4px;align-self:flex-start;border:0.5px solid var(--border);}
+.chat-msg-time{font-size:10px;opacity:0.65;margin-top:4px;}
+.chat-input-bar{padding:12px 16px;border-top:0.5px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0;}
+.chat-inp{flex:1;border:1.5px solid var(--border);border-radius:22px;padding:10px 16px;font-size:13px;font-family:var(--font);outline:none;color:var(--text);background:var(--bg);}
+.chat-inp:focus{border-color:var(--primary);}
+.chat-send-btn{width:40px;height:40px;border-radius:50%;border:none;background:var(--primary);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--tm);gap:10px;}
+.chat-empty-ico{font-size:40px;}
+/* ══ PATIENT DETAIL MODAL (full) ══ */
+.pd-overlay{position:fixed;inset:0;background:rgba(10,15,35,0.55);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.pd-overlay.open{display:flex;}
+.pd-modal{background:var(--white);border-radius:24px;width:780px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.2);}
+.pd-hdr{padding:20px 24px;background:linear-gradient(135deg,#0D2E6E,#1565C0);border-radius:24px 24px 0 0;display:flex;align-items:center;gap:14px;}
+.pd-av-big{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0;}
+.pd-hdr-info{flex:1;}
+.pd-hdr-name{font-size:18px;font-weight:700;color:#fff;}
+.pd-hdr-sub{font-size:12px;color:rgba(255,255,255,0.7);margin-top:2px;}
+.pd-close{width:36px;height:36px;border-radius:12px;border:none;background:rgba(255,255,255,0.15);color:#fff;cursor:pointer;font-size:18px;}
+.pd-body{padding:20px 24px;}
+.pd-section{margin-bottom:20px;}
+.pd-sec-title{font-size:11px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:0.5px solid var(--border);}
+.pd-vitals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.pd-vcard{background:var(--bg);border-radius:14px;padding:12px 14px;text-align:center;}
+.pd-vcard-val{font-size:22px;font-weight:700;color:var(--text);}
+.pd-vcard-lbl{font-size:10px;color:var(--tm);margin-top:2px;}
+.pd-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.pd-tag{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;}
+.pd-tag-d{background:rgba(239,68,68,0.1);color:#DC2626;}
+.pd-tag-t{background:rgba(139,111,232,0.1);color:var(--purple);}
+.pd-tag-a{background:rgba(249,115,22,0.1);color:#C2410C;}
+.pd-readings-table{width:100%;border-collapse:collapse;font-size:12px;}
+.pd-readings-table th{padding:8px;text-align:left;color:var(--tm);font-weight:600;background:var(--bg);}
+.pd-readings-table td{padding:8px;border-top:0.5px solid var(--border);}
+.pd-actions{display:flex;gap:10px;margin-top:16px;}
+.pd-action-btn{flex:1;padding:11px;border-radius:13px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-ico">🏥</div>
+      <div class="login-title">D Health Clinic</div>
+      <div class="login-sub">Doctor Dashboard — Secure Access</div>
+    </div>
+    <div class="login-field">
+      <label class="login-label">Email</label>
+      <input class="login-input" id="loginEmail" type="email" placeholder="doctor@dhealth.app" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <div class="login-field">
+      <label class="login-label">Password</label>
+      <div style="position:relative;">
+        <input class="login-input" id="loginPass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" style="width:100%;padding-right:44px;"/>
+        <button onclick="togglePassVis()" type="button" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:transparent;cursor:pointer;font-size:16px;color:#7B8BAD;" id="passToggleBtn">👁</button>
+      </div>
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">Sign In as Doctor</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="layout" id="dashboard" style="display:none;">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">🏥</div>
+      <div class="sb-logo-name">D Health Clinic</div>
+      <div class="sb-logo-role">Doctor Dashboard</div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-nav-item active" onclick="showView('patients')"><span class="sb-nav-icon">👥</span> Patients</div>
+      <div class="sb-nav-item" onclick="showView('alerts')"><span class="sb-nav-icon">🚨</span> Alerts <span style="margin-left:auto;background:rgba(239,68,68,0.3);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;" id="alertCount">0</span></div>
+      <div class="sb-nav-item" onclick="showView('reports')"><span class="sb-nav-icon">📄</span> Reports</div>
+      <div class="sb-nav-item" onclick="showView('stats')"><span class="sb-nav-icon">📊</span> Statistics</div>
+      <div class="sb-nav-item" onclick="showView('chat')"><span class="sb-nav-icon">💬</span> Chat <span style="margin-left:auto;background:rgba(45,200,160,0.3);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;" id="chatBadge">0</span></div>
+      <div class="sb-nav-item" onclick="showView('appointments')"><span class="sb-nav-icon">📅</span> Appointments <span style="margin-left:auto;background:rgba(139,111,232,0.3);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;" id="aptCount">0</span></div>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-doctor">
+        <div class="sb-dav">👨‍⚕️</div>
+        <div>
+          <div class="sb-dname" id="doctorName">Dr. Shabani</div>
+          <div class="sb-demail" id="doctorEmail">doctor@dhealth.app</div>
+        </div>
+      </div>
+      <button onclick="doLogout()" style="width:100%;margin-top:12px;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;font-family:var(--font);">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="viewTitle">👥 My Patients</div>
+      <div class="topbar-right">
+        <div class="search-wrap">
+          <input class="search-inp" id="searchInp" placeholder="Search patient..." oninput="filterPatients(this.value)"/>
+        </div>
+        <div class="topbar-badge" id="criticalBadge" style="display:none;">🔴 Critical alerts</div>
+        <button onclick="loadPatients()" style="padding:8px 14px;border-radius:11px;border:1px solid var(--border);background:var(--white);font-size:12px;cursor:pointer;font-family:var(--font);">↻ Refresh</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- STATS -->
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(59,125,216,0.1);">👥</div>
+          <div class="stat-val" id="statTotal">—</div>
+          <div class="stat-lbl">Total Patients</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(239,68,68,0.1);">🔴</div>
+          <div class="stat-val" id="statCritical">—</div>
+          <div class="stat-lbl">Critical (BP>160)</div>
+          <div class="stat-trend trend-up" id="statCriticalTrend"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(249,115,22,0.1);">⚠️</div>
+          <div class="stat-val" id="statWarning">—</div>
+          <div class="stat-lbl">Warning (BP 140-160)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(34,197,94,0.1);">✅</div>
+          <div class="stat-val" id="statNormal">—</div>
+          <div class="stat-lbl">Normal Status</div>
+        </div>
+      </div>
+
+      <!-- ALERTS -->
+      <div id="alertsSection" style="display:none;">
+        <div class="section-hdr">
+          <div class="section-title">🚨 Active Alerts</div>
+        </div>
+        <div class="alerts-box" id="alertsList">
+          <div class="loading"><div class="spin"></div> Loading alerts...</div>
+        </div>
+      </div>
+
+      <!-- PATIENTS TABLE -->
+      <div id="patientsSection">
+        <div class="section-hdr">
+          <div class="section-title">Patient List</div>
+          <button class="btn-add" onclick="invitePatient()">+ Invite Patient</button>
+        </div>
+        <div class="patients-table">
+          <div class="pt-hdr">
+            <div class="pt-col">Patient</div>
+            <div class="pt-col">Plan</div>
+            <div class="pt-col">Blood Pressure</div>
+            <div class="pt-col">Glucose</div>
+            <div class="pt-col">Status</div>
+            <div class="pt-col">Last Active</div>
+            <div class="pt-col"></div>
+          </div>
+          <div id="patientsList">
+            <div class="loading"><div class="spin"></div> Loading patients...</div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- CHAT SECTION -->
+      <div id="chatSection" style="display:none;">
+        <div class="chat-layout">
+          <!-- Patient List -->
+          <div class="chat-patients">
+            <div class="chat-patients-hdr">💬 Patients</div>
+            <div style="overflow-y:auto;flex:1;" id="chatPatientList">
+              <div class="loading"><div class="spin"></div> Loading...</div>
+            </div>
+          </div>
+          <!-- Chat Window -->
+          <div class="chat-window" id="chatWindow">
+            <div class="chat-empty">
+              <div class="chat-empty-ico">💬</div>
+              <div style="font-size:14px;font-weight:600;color:var(--text);">Select a patient</div>
+              <div style="font-size:12px;">Choose a patient to start chatting</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- APPOINTMENTS -->
+      <div id="appointmentsSection" style="display:none;">
+        <div class="section-hdr">
+          <div class="section-title">📅 Appointment Requests</div>
+          <button onclick="loadAppointments()" style="padding:8px 14px;border-radius:11px;border:1px solid var(--border);background:var(--white);font-size:12px;cursor:pointer;font-family:var(--font);">↻ Refresh</button>
+        </div>
+        <div class="patients-table" id="aptList">
+          <div class="loading"><div class="spin"></div> Loading...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PATIENT DETAIL MODAL -->
+<div class="pd-overlay" id="pdOverlay" onclick="closePD(event)">
+  <div class="pd-modal" id="pdModal">
+    <div class="pd-hdr">
+      <div class="pd-av-big" id="pdAvatar" style="background:#3B7DD8;">?</div>
+      <div class="pd-hdr-info">
+        <div class="pd-hdr-name" id="pdName">Patient</div>
+        <div class="pd-hdr-sub" id="pdSub">Loading...</div>
+      </div>
+      <button class="pd-close" onclick="document.getElementById('pdOverlay').classList.remove('open')">✕</button>
+    </div>
+    <div class="pd-body" id="pdBody">
+      <div class="loading"><div class="spin"></div> Loading profile...</div>
+    </div>
+  </div>
+</div>
+
+<!-- PATIENT MODAL -->
+<div class="modal-overlay" id="patientModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="modalTitle">Patient Profile</div>
+      <button class="modal-close" onclick="document.getElementById('patientModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div class="loading"><div class="spin"></div> Loading...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPA_URL = 'https://ppcvzvvlnaxiljjmdihk.supabase.co';
+const SUPA_KEY = 'sb_publishable_40PYN8Nab3rBE6SLSLfXvA_kJCqjvK2';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+var allPatients = [];
+var currentDoctor = null;
+
+/* ── LOGIN ── */
+function togglePassVis(){
+  var inp = document.getElementById('loginPass');
+  var btn = document.getElementById('passToggleBtn');
+  if(inp.type === 'password'){ inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
+async function doLogin() {
+  var email = document.getElementById('loginEmail').value.trim();
+  var pass  = document.getElementById('loginPass').value;
+  var err   = document.getElementById('loginErr');
+  var btn   = document.getElementById('loginBtn');
+  err.textContent = '';
+
+  if(!email){ err.textContent = '⚠️ Please enter your email.'; return; }
+  if(!pass){ err.textContent = '⚠️ Please enter your password.'; return; }
+  if(pass.length < 6){ err.textContent = '⚠️ Password must be at least 6 characters.'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+
+  var {data, error} = await sb.auth.signInWithPassword({email, password: pass});
+
+  if(error){
+    btn.disabled = false;
+    btn.textContent = 'Sign In as Doctor';
+    if(error.message.includes('Invalid login')){
+      err.textContent = '❌ Wrong email or password. Please try again.';
+    } else if(error.message.includes('Email not confirmed')){
+      err.textContent = '📧 Please confirm your email first.';
+    } else {
+      err.textContent = '❌ ' + error.message;
+    }
+    return;
+  }
+
+  if(!data.user){
+    btn.disabled = false;
+    btn.textContent = 'Sign In as Doctor';
+    err.textContent = '❌ Login failed. Please try again.';
+    return;
+  }
+
+  /* Check role */
+  var {data: profile, error: profErr} = await sb.from('profiles').select('*').eq('id', data.user.id).single();
+
+  if(profErr || !profile){
+    btn.disabled = false;
+    btn.textContent = 'Sign In as Doctor';
+    err.textContent = '❌ Profile not found. Contact support.';
+    await sb.auth.signOut();
+    return;
+  }
+
+  if(profile.role !== 'doctor' && profile.role !== 'admin'){
+    btn.disabled = false;
+    btn.textContent = 'Sign In as Doctor';
+    err.textContent = '🔒 Access denied — Doctor account required.';
+    await sb.auth.signOut();
+    return;
+  }
+
+  currentDoctor = profile;
+  document.getElementById('doctorName').textContent = profile.full_name || 'Dr. Shabani';
+  document.getElementById('doctorEmail').textContent = email;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'flex';
+  btn.disabled = false;
+  btn.textContent = 'Sign In as Doctor';
+  loadPatients();
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  currentDoctor = null;
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+}
+
+/* ── LOAD PATIENTS ── */
+async function loadPatients() {
+  var list = document.getElementById('patientsList');
+  list.innerHTML = '<div class="loading"><div class="spin"></div> Loading patients...</div>';
+  var query = sb.from('profiles').select(`
+    id, full_name, email, plan, role, created_at,
+    vitals(heart_rate, systolic_bp, diastolic_bp, glucose, spo2, recorded_at),
+    medical_profiles(diagnoses, therapy)
+  `).eq('role','patient').order('created_at', {ascending:false});
+  /* If doctor (not admin), filter by doctor_patients */
+  if(currentDoctor && currentDoctor.role === 'doctor') {
+    var {data: dp} = await sb.from('doctor_patients').select('patient_id').eq('doctor_id', currentDoctor.id);
+    if(dp && dp.length > 0) {
+      var ids = dp.map(function(d){return d.patient_id;});
+      query = query.in('id', ids);
+    }
+  }
+  var {data, error} = await query;
+  if(error) { list.innerHTML = '<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-txt">Error loading patients</div><div class="empty-sub">'+error.message+'</div></div>'; return; }
+  if(!data || data.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-ico">👥</div><div class="empty-txt">No patients yet</div><div class="empty-sub">Patients will appear here after they register</div></div>';
+    updateStats([]);
+    return;
+  }
+  allPatients = data;
+  renderPatients(data);
+  updateStats(data);
+  renderAlerts(data);
+}
+
+function getLatestVital(vitals) {
+  if(!vitals || vitals.length === 0) return null;
+  return vitals.sort(function(a,b){ return new Date(b.recorded_at)-new Date(a.recorded_at); })[0];
+}
+
+function getBPStatus(sys, dia) {
+  if(!sys) return {label:'No data', cls:'', color:''};
+  if(sys >= 160 || dia >= 100) return {label:'Critical', cls:'badge-danger', bpCls:'danger'};
+  if(sys >= 140 || dia >= 90)  return {label:'High', cls:'badge-warn', bpCls:'warn'};
+  if(sys >= 130 || dia >= 85)  return {label:'Stage 1', cls:'badge-warn', bpCls:'warn'};
+  return {label:'Normal', cls:'badge-ok', bpCls:'ok'};
+}
+
+function renderPatients(patients) {
+  var list = document.getElementById('patientsList');
+  if(!patients || patients.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-ico">🔍</div><div class="empty-txt">No results</div></div>';
+    return;
+  }
+  var colors = ['#FF6B8A','#F5A623','#2DC8A0','#8B6FE8','#3B7DD8','#F97316'];
+  list.innerHTML = patients.map(function(p, i) {
+    var v = getLatestVital(p.vitals);
+    var bp = v ? getBPStatus(v.systolic_bp, v.diastolic_bp) : {label:'No data', cls:'', bpCls:''};
+    var bpTxt = v ? (v.systolic_bp + '/' + v.diastolic_bp) : '—';
+    var gluTxt = v ? (v.glucose + ' mmol') : '—';
+    var lastActive = v ? new Date(v.recorded_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : 'Never';
+    var plan = p.plan || 'free';
+    var planCls = 'badge-'+plan;
+    var color = colors[i % colors.length];
+    var initials = (p.full_name||'?').split(' ').map(function(n){return n[0];}).join('').slice(0,2).toUpperCase();
+    return '<div class="pt-row" onclick="openPatient(\''+p.id+'\')">'
+      + '<div class="pt-name-cell"><div class="pt-avatar" style="background:'+color+';">'+initials+'</div><div><div class="pt-name">'+(p.full_name||'Unknown')+'</div><div class="pt-email">'+(p.email||'')+'</div></div></div>'
+      + '<div><span class="badge '+planCls+'">'+plan.charAt(0).toUpperCase()+plan.slice(1)+'</span></div>'
+      + '<div class="pt-bp '+bp.bpCls+'">'+bpTxt+'</div>'
+      + '<div style="font-size:13px;font-weight:600;">'+gluTxt+'</div>'
+      + '<div><span class="badge '+bp.cls+'">'+bp.label+'</span></div>'
+      + '<div style="font-size:12px;color:var(--tm);">'+lastActive+'</div>'
+      + '<div><button class="btn-view" onclick="event.stopPropagation();openPatient(\''+p.id+'\')">View →</button></div>'
+      + '</div>';
+  }).join('');
+}
+
+function updateStats(patients) {
+  var total = patients.length;
+  var critical=0, warning=0, normal=0;
+  patients.forEach(function(p) {
+    var v = getLatestVital(p.vitals);
+    if(!v) return;
+    var sys = v.systolic_bp;
+    if(sys >= 160) critical++;
+    else if(sys >= 140) warning++;
+    else normal++;
+  });
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statCritical').textContent = critical;
+  document.getElementById('statWarning').textContent = warning;
+  document.getElementById('statNormal').textContent = normal;
+  document.getElementById('alertCount').textContent = critical + warning;
+  if(critical > 0) document.getElementById('criticalBadge').style.display = 'block';
+}
+
+function renderAlerts(patients) {
+  var alerts = [];
+  patients.forEach(function(p) {
+    var v = getLatestVital(p.vitals);
+    if(!v) return;
+    var sys = v.systolic_bp;
+    if(sys >= 160) alerts.push({level:'danger', name:p.full_name, msg:'Critical BP: '+v.systolic_bp+'/'+v.diastolic_bp+' mmHg — Immediate attention needed', time: new Date(v.recorded_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})});
+    else if(sys >= 140) alerts.push({level:'warn', name:p.full_name, msg:'High BP: '+v.systolic_bp+'/'+v.diastolic_bp+' mmHg — Monitor closely', time: new Date(v.recorded_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})});
+  });
+  var list = document.getElementById('alertsList');
+  if(alerts.length === 0) { list.innerHTML = '<div class="empty"><div class="empty-ico">✅</div><div class="empty-txt">No active alerts</div><div class="empty-sub">All patients within normal range</div></div>'; return; }
+  list.innerHTML = alerts.map(function(a) {
+    return '<div class="alert-item"><div class="alert-dot '+a.level+'"></div><div><div class="alert-title">'+a.name+'</div><div class="alert-sub">'+a.msg+'</div></div><div class="alert-time">'+a.time+'</div></div>';
+  }).join('');
+}
+
+/* ── OPEN PATIENT ── */
+async function openPatient(id) {
+  document.getElementById('patientModal').classList.add('open');
+  document.getElementById('modalBody').innerHTML = '<div class="loading"><div class="spin"></div> Loading...</div>';
+  var {data: p} = await sb.from('profiles').select('*').eq('id', id).single();
+  var {data: mp} = await sb.from('medical_profiles').select('*').eq('patient_id', id).single();
+  var {data: vitals} = await sb.from('vitals').select('*').eq('patient_id', id).order('recorded_at',{ascending:false}).limit(7);
+  var latest = vitals && vitals.length > 0 ? vitals[0] : null;
+  document.getElementById('modalTitle').textContent = p.full_name || 'Patient';
+  var diags = mp && mp.diagnoses ? (Array.isArray(mp.diagnoses) ? mp.diagnoses : []) : [];
+  var therapy = mp && mp.therapy ? (Array.isArray(mp.therapy) ? mp.therapy : []) : [];
+  var allergies = mp && mp.allergies ? (Array.isArray(mp.allergies) ? mp.allergies : []) : [];
+  document.getElementById('modalBody').innerHTML =
+    '<div class="modal-section"><div class="modal-sec-title">Current Vitals</div><div class="vitals-grid">'
+    + vcard(latest ? latest.systolic_bp+'/'+latest.diastolic_bp : '—', 'Blood Pressure mmHg')
+    + vcard(latest ? latest.heart_rate : '—', 'Heart Rate bpm')
+    + vcard(latest ? latest.glucose : '—', 'Glucose mmol/L')
+    + vcard(latest ? latest.spo2 : '—', 'SpO2 %')
+    + vcard(latest ? latest.temperature : '—', 'Temperature °C')
+    + vcard(p.plan||'free', 'Subscription')
+    + '</div></div>'
+    + (diags.length ? '<div class="modal-section"><div class="modal-sec-title">Diagnoses</div><div class="tags-wrap">'+diags.map(function(d){return '<span class="tag tag-d">'+d+'</span>';}).join('')+'</div></div>' : '')
+    + (therapy.length ? '<div class="modal-section"><div class="modal-sec-title">Therapy</div><div class="tags-wrap">'+therapy.map(function(t){return '<span class="tag tag-t">'+t+'</span>';}).join('')+'</div></div>' : '')
+    + (allergies.length ? '<div class="modal-section"><div class="modal-sec-title">Allergies</div><div class="tags-wrap">'+allergies.map(function(a){return '<span class="tag tag-a">'+a+'</span>';}).join('')+'</div></div>' : '')
+    + '<div class="modal-section"><div class="modal-sec-title">Last 7 Readings</div><div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;">'
+    + '<tr style="background:var(--bg);"><th style="padding:8px;text-align:left;color:var(--tm);font-weight:600;">Date</th><th style="padding:8px;color:var(--tm);font-weight:600;">BP</th><th style="padding:8px;color:var(--tm);font-weight:600;">HR</th><th style="padding:8px;color:var(--tm);font-weight:600;">Glucose</th><th style="padding:8px;color:var(--tm);font-weight:600;">SpO2</th></tr>'
+    + (vitals||[]).map(function(v){
+        return '<tr style="border-bottom:0.5px solid var(--border);">'
+          + '<td style="padding:8px;color:var(--tm);">'+new Date(v.recorded_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'</td>'
+          + '<td style="padding:8px;font-weight:600;color:'+(v.systolic_bp>=140?'var(--red)':v.systolic_bp>=130?'var(--orange)':'var(--green)')+'">'+v.systolic_bp+'/'+v.diastolic_bp+'</td>'
+          + '<td style="padding:8px;">'+v.heart_rate+'</td>'
+          + '<td style="padding:8px;">'+v.glucose+'</td>'
+          + '<td style="padding:8px;">'+v.spo2+'%</td>'
+          + '</tr>';
+      }).join('')
+    + '</table></div></div>';
+}
+
+function vcard(val, lbl) {
+  return '<div class="vcard"><div class="vcard-val">'+(val||'—')+'</div><div class="vcard-lbl">'+lbl+'</div></div>';
+}
+
+function closeModal(e) {
+  if(e.target === document.getElementById('patientModal'))
+    document.getElementById('patientModal').classList.remove('open');
+}
+
+function filterPatients(q) {
+  var filtered = allPatients.filter(function(p){
+    return (p.full_name||'').toLowerCase().includes(q.toLowerCase())
+        || (p.email||'').toLowerCase().includes(q.toLowerCase());
+  });
+  renderPatients(filtered);
+}
+
+function showView(view) {
+  document.querySelectorAll('.sb-nav-item').forEach(function(el){el.classList.remove('active');});
+  event.currentTarget.classList.add('active');
+  document.getElementById('patientsSection').style.display = view==='patients' ? 'block' : 'none';
+  document.getElementById('alertsSection').style.display = view==='alerts' ? 'block' : 'none';
+  var titles = {patients:'👥 My Patients', alerts:'🚨 Active Alerts', reports:'📄 Reports', stats:'📊 Statistics', appointments:'📅 Appointment Requests'};
+  document.getElementById('appointmentsSection').style.display = view==='appointments' ? 'block' : 'none';
+  if(view==='appointments') loadAppointments();
+  document.getElementById('viewTitle').textContent = titles[view]||'';
+}
+
+function invitePatient() {
+  var email = prompt('Enter patient email to invite:');
+  if(email) alert('Invitation sent to ' + email + '\n\nPatient needs to register at the app with this email.');
+}
+
+/* Auto-check session */
+(async function(){
+  var {data: {session}} = await sb.auth.getSession();
+  if(session && session.user) {
+    var {data: profile} = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+    if(profile && (profile.role === 'doctor' || profile.role === 'admin')) {
+      currentDoctor = profile;
+      document.getElementById('doctorName').textContent = profile.full_name || 'Dr. Shabani';
+      document.getElementById('doctorEmail').textContent = session.user.email;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'flex';
+      loadPatients();
+    }
+  }
+})();
+
+
+/* ── APPOINTMENTS ── */
+async function loadAppointments(){
+  var list = document.getElementById('aptList');
+  if(list) list.innerHTML = '<div class="loading"><div class="spin"></div> Loading...</div>';
+  var {data, error} = await sb.from('appointments').select('*').order('created_at',{ascending:false});
+  var count = data ? data.filter(function(a){return a.status==='pending';}).length : 0;
+  var el = document.getElementById('aptCount');
+  if(el) el.textContent = count;
+  if(!data || data.length===0){
+    if(list) list.innerHTML = '<div class="empty"><div class="empty-ico">📅</div><div class="empty-txt">No appointment requests yet</div></div>';
+    return;
+  }
+  var statusColors = {pending:'#F97316', confirmed:'#22C55E', rejected:'#EF4444'};
+  var statusLabels = {pending:'⏳ Pending', confirmed:'✅ Confirmed', rejected:'❌ Rejected'};
+  if(list) list.innerHTML = data.map(function(a){
+    var sc = statusColors[a.status]||'#7B8BAD';
+    var sl = statusLabels[a.status]||a.status;
+    var dt = new Date(a.appointment_date+'T'+a.appointment_time);
+    var dateStr = dt.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    return '<div class="pt-row" style="grid-template-columns:1.5fr 1fr 1fr 1fr 1fr 120px;">'
+      +'<div><div class="pt-name">'+(a.patient_name||'Unknown')+'</div><div class="pt-email">'+(a.patient_email||'')+'</div></div>'
+      +'<div style="font-size:13px;font-weight:600;">'+dateStr+'</div>'
+      +'<div style="font-size:13px;font-weight:600;">'+a.appointment_time+'</div>'
+      +'<div style="font-size:12px;color:var(--tm);">'+(a.reason||'—')+'</div>'
+      +'<div><span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:8px;background:'+sc+'22;color:'+sc+';">'+sl+'</span></div>'
+      +(a.status==='pending'
+        ?'<div style="display:flex;gap:6px;"><button onclick="aptAction(\''+a.id+'\',\'confirmed\')" style="flex:1;padding:5px;border-radius:8px;border:none;background:#22C55E;color:#fff;font-size:11px;font-weight:700;cursor:pointer;">✓ Prano</button><button onclick="aptAction(\''+a.id+'\',\'rejected\')" style="flex:1;padding:5px;border-radius:8px;border:none;background:#EF4444;color:#fff;font-size:11px;font-weight:700;cursor:pointer;">✗ Refuzo</button></div>'
+        :'<div style="font-size:11px;color:var(--tm);">'+sl+'</div>')
+      +'</div>';
+  }).join('');
+}
+
+async function aptAction(id, status){
+  await sb.from('appointments').update({status:status}).eq('id',id);
+  loadAppointments();
+  alert(status==='confirmed' ? '✅ Takimi u konfirmua! Pacienti do të njoftohet.' : '❌ Takimi u refuzua.');
+}
+
+
+
+/* ════ REAL-TIME CHAT ════ */
+var activeChatPatient = null;
+var chatChannel = null;
+var chatMessages = [];
+var colors = ['#FF6B8A','#F5A623','#2DC8A0','#8B6FE8','#3B7DD8','#F97316'];
+
+async function loadChatPatients(){
+  var list = document.getElementById('chatPatientList');
+  if(list) list.innerHTML = '<div class="loading"><div class="spin"></div> Loading...</div>';
+
+  var {data:patients} = await sb.from('profiles').select('id,full_name,email').eq('role','patient').order('created_at',{ascending:false});
+  if(!patients || patients.length===0){
+    if(list) list.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;color:var(--tm);">No patients yet</div>';
+    return;
+  }
+
+  /* Get last message for each patient */
+  var {data:msgs} = await sb.from('messages').select('*').order('sent_at',{ascending:false});
+
+  if(list) list.innerHTML = patients.map(function(p, i){
+    var initials = (p.full_name||'?').split(' ').map(function(n){return n[0];}).join('').slice(0,2).toUpperCase();
+    var color = colors[i % colors.length];
+    var lastMsg = msgs ? msgs.find(function(m){ return m.sender_id===p.id || m.receiver_id===p.id; }) : null;
+    var lastTxt = lastMsg ? lastMsg.content.substring(0,30)+'...' : 'No messages yet';
+    var unread = msgs ? msgs.filter(function(m){ return m.sender_id===p.id && !m.is_read; }).length : 0;
+    return '<div class="chat-patient-item" id="cpi-'+p.id+'" onclick="openChat(\''+p.id+'\',\''+p.full_name+'\',\''+color+'\',\''+initials+'\',\''+p.email+'\')">'
+      +'<div class="chat-p-av" style="background:'+color+';">'+initials+'</div>'
+      +'<div style="flex:1;min-width:0;">'
+        +'<div class="chat-p-name">'+(p.full_name||'Unknown')+'</div>'
+        +'<div class="chat-p-last">'+lastTxt+'</div>'
+      +'</div>'
+      +(unread>0 ? '<div class="chat-p-badge">'+unread+'</div>' : '')
+      +'</div>';
+  }).join('');
+
+  /* Update chat badge */
+  var totalUnread = msgs ? msgs.filter(function(m){ return !m.is_read && m.receiver_id===currentDoctor?.id; }).length : 0;
+  var cb = document.getElementById('chatBadge');
+  if(cb) cb.textContent = totalUnread;
+}
+
+async function openChat(patientId, patientName, color, initials, email){
+  activeChatPatient = {id:patientId, name:patientName, color:color, initials:initials, email:email};
+
+  /* Mark active */
+  document.querySelectorAll('.chat-patient-item').forEach(function(el){ el.classList.remove('active'); });
+  var cpi = document.getElementById('cpi-'+patientId);
+  if(cpi) cpi.classList.add('active');
+
+  /* Build chat window */
+  var win = document.getElementById('chatWindow');
+  if(!win) return;
+  win.innerHTML = '<div class="chat-win-hdr">'
+    +'<div class="chat-win-av" style="background:'+color+';">'+initials+'</div>'
+    +'<div><div class="chat-win-name">'+patientName+'</div><div class="chat-win-status">● Online</div></div>'
+    +'<button onclick="openPatientDetail(\''+patientId+'\')" style="margin-left:auto;padding:8px 14px;border-radius:11px;border:1.5px solid var(--border);background:var(--white);font-size:12px;font-weight:700;color:var(--primary);cursor:pointer;font-family:var(--font);">👁 View Profile</button>'
+    +'</div>'
+    +'<div class="chat-msgs" id="chatMsgs"><div class="loading"><div class="spin"></div> Loading messages...</div></div>'
+    +'<div class="chat-input-bar">'
+      +'<input class="chat-inp" id="chatInp" placeholder="Write a message to '+patientName+'..." onkeydown="if(event.key===\'Enter\')sendChatMsg()"/>'
+      +'<button class="chat-send-btn" onclick="sendChatMsg()">'
+        +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      +'</button>'
+    +'</div>';
+
+  await loadMessages(patientId);
+  subscribeToMessages(patientId);
+}
+
+async function loadMessages(patientId){
+  var msgEl = document.getElementById('chatMsgs');
+  if(!msgEl) return;
+  var {data:msgs} = await sb.from('messages')
+    .select('*')
+    .or('sender_id.eq.'+patientId+',receiver_id.eq.'+patientId)
+    .order('sent_at', {ascending:true});
+
+  renderMessages(msgs||[]);
+
+  /* Mark as read */
+  await sb.from('messages').update({is_read:true}).eq('sender_id',patientId).eq('is_read',false);
+}
+
+function renderMessages(msgs){
+  var msgEl = document.getElementById('chatMsgs');
+  if(!msgEl) return;
+  if(!msgs || msgs.length===0){
+    msgEl.innerHTML = '<div style="text-align:center;padding:30px;color:var(--tm);font-size:13px;">No messages yet. Start the conversation! 👋</div>';
+    return;
+  }
+  msgEl.innerHTML = msgs.map(function(m){
+    var isDoctor = currentDoctor && m.sender_id === currentDoctor.id;
+    var time = new Date(m.sent_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    return '<div style="display:flex;flex-direction:column;align-items:'+(isDoctor?'flex-end':'flex-start')+'">'
+      +'<div class="chat-msg '+(isDoctor?'doctor':'patient')+'">'+m.content
+        +'<div class="chat-msg-time">'+time+'</div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+  /* Scroll to bottom */
+  msgEl.scrollTop = msgEl.scrollHeight;
+}
+
+function subscribeToMessages(patientId){
+  /* Unsubscribe from previous */
+  if(chatChannel){ sb.removeChannel(chatChannel); chatChannel=null; }
+
+  chatChannel = sb.channel('doctor-chat-'+patientId)
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'messages',
+      filter: 'sender_id=eq.'+patientId
+    }, function(payload){
+      var m = payload.new;
+      if(activeChatPatient && activeChatPatient.id === patientId){
+        /* Add message to UI immediately */
+        var msgsEl = document.getElementById('chatMsgs');
+        if(msgsEl){
+          var time = new Date(m.sent_at||Date.now()).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+          var div = document.createElement('div');
+          div.className = 'msg patient';
+          div.innerHTML = '<div class="msg-bub">'+m.content+'<span class="msg-time">'+time+'</span></div>';
+          msgsEl.appendChild(div);
+          msgsEl.scrollTop = 99999;
+        }
+        /* Update unread count */
+        loadChatPatients();
+      }
+    })
+    .subscribe(function(status){
+      console.log('Chat subscription status:', status);
+    });
+}
+
+async function sendChatMsg(){
+  var inp = document.getElementById('chatInp');
+  if(!inp || !inp.value.trim() || !activeChatPatient || !currentDoctor) return;
+  var content = inp.value.trim();
+  inp.value = '';
+
+  /* Add to UI immediately */
+  var msgsEl = document.getElementById('chatMsgs');
+  if(msgsEl){
+    var time = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    var div = document.createElement('div');
+    div.className = 'msg doctor';
+    div.innerHTML = '<div class="msg-bub">'+content+'<span class="msg-time">'+time+'</span></div>';
+    msgsEl.appendChild(div);
+    msgsEl.scrollTop = 99999;
+  }
+
+  /* Save to Supabase */
+  var {error} = await sb.from('messages').insert({
+    sender_id: currentDoctor.id,
+    receiver_id: activeChatPatient.id,
+    content: content,
+    is_read: false
+  });
+  if(error) console.error('Send error:', error);
+}
+
+/* ════ PATIENT DETAIL ════ */
+async function openPatientDetail(patientId){
+  document.getElementById('pdOverlay').classList.add('open');
+  document.getElementById('pdBody').innerHTML = '<div class="loading"><div class="spin"></div> Loading profile...</div>';
+
+  /* Load all data */
+  var [{data:p},{data:mp},{data:vitals},{data:reports}] = await Promise.all([
+    sb.from('profiles').select('*').eq('id',patientId).single(),
+    sb.from('medical_profiles').select('*').eq('patient_id',patientId).single(),
+    sb.from('vitals').select('*').eq('patient_id',patientId).order('recorded_at',{ascending:false}).limit(7),
+    sb.from('reports').select('*').eq('patient_id',patientId).order('generated_at',{ascending:false}).limit(3)
+  ]);
+
+  /* Header */
+  var initials = (p.full_name||'?').split(' ').map(function(n){return n[0];}).join('').slice(0,2).toUpperCase();
+  var color = colors[Math.floor(Math.random()*colors.length)];
+  document.getElementById('pdAvatar').textContent = initials;
+  document.getElementById('pdAvatar').style.background = color;
+  document.getElementById('pdName').textContent = p.full_name||'Unknown';
+  document.getElementById('pdSub').textContent = (p.email||'') + ' · ' + (p.plan||'free').toUpperCase() + ' Plan';
+
+  var latest = vitals && vitals.length>0 ? vitals[0] : null;
+  var diags = mp && Array.isArray(mp.diagnoses) ? mp.diagnoses : [];
+  var therapy = mp && Array.isArray(mp.therapy) ? mp.therapy : [];
+  var allergies = mp && Array.isArray(mp.allergies) ? mp.allergies : [];
+
+  var bpColor = latest ? (latest.systolic_bp>=160?'var(--red)':latest.systolic_bp>=130?'var(--orange)':'var(--green)') : 'var(--tm)';
+
+  document.getElementById('pdBody').innerHTML =
+    /* Vitals */
+    '<div class="pd-section"><div class="pd-sec-title">📊 Current Vitals</div>'
+    +'<div class="pd-vitals-grid">'
+    +pdVcard((latest?latest.systolic_bp+'/'+latest.diastolic_bp:'—'), 'Blood Pressure', bpColor)
+    +pdVcard((latest?latest.heart_rate:'—'), 'Heart Rate bpm', 'var(--primary)')
+    +pdVcard((latest?latest.glucose:'—'), 'Glucose mmol/L', 'var(--accent)')
+    +pdVcard((latest?latest.spo2:'—'), 'SpO2 %', '#8B6FE8')
+    +pdVcard((latest?latest.temperature:'—'), 'Temperature °C', 'var(--orange)')
+    +pdVcard((p.plan||'free').toUpperCase(), 'Plan', 'var(--primary)')
+    +'</div></div>'
+
+    /* Diagnoses */
+    +(diags.length ? '<div class="pd-section"><div class="pd-sec-title">🏥 Diagnoses</div><div class="pd-tags">'+diags.map(function(d){return '<span class="pd-tag pd-tag-d">'+d+'</span>';}).join('')+'</div></div>' : '')
+
+    /* Therapy */
+    +(therapy.length ? '<div class="pd-section"><div class="pd-sec-title">💊 Therapy</div><div class="pd-tags">'+therapy.map(function(t){return '<span class="pd-tag pd-tag-t">'+t+'</span>';}).join('')+'</div></div>' : '')
+
+    /* Allergies */
+    +(allergies.length ? '<div class="pd-section"><div class="pd-sec-title">⚠️ Allergies</div><div class="pd-tags">'+allergies.map(function(a){return '<span class="pd-tag pd-tag-a">'+a+'</span>';}).join('')+'</div></div>' : '')
+
+    /* Vitals history */
+    +'<div class="pd-section"><div class="pd-sec-title">📈 Last 7 Readings</div>'
+    +'<table class="pd-readings-table"><thead><tr><th>Date</th><th>BP</th><th>HR</th><th>Glucose</th><th>SpO2</th></tr></thead><tbody>'
+    +(vitals||[]).map(function(v){
+      var sc = v.systolic_bp>=160?'var(--red)':v.systolic_bp>=130?'var(--orange)':'var(--green)';
+      return '<tr><td>'+new Date(v.recorded_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'</td>'
+        +'<td style="font-weight:700;color:'+sc+'">'+v.systolic_bp+'/'+v.diastolic_bp+'</td>'
+        +'<td>'+v.heart_rate+'</td><td>'+v.glucose+'</td><td>'+v.spo2+'%</td></tr>';
+    }).join('')
+    +'</tbody></table></div>'
+
+    /* Reports */
+    +(reports && reports.length ? '<div class="pd-section"><div class="pd-sec-title">📄 Recent AI Reports</div>'
+    +reports.map(function(r){
+      return '<div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:8px;">'
+        +'<div style="font-size:11px;font-weight:700;color:var(--tm);margin-bottom:4px;">Week '+r.week_number+' · Score: '+(r.health_score||'—')+'/100</div>'
+        +'<div style="font-size:12px;color:var(--text);line-height:1.5;">'+(r.report_text||'').substring(0,200)+'...</div>'
+        +'</div>';
+    }).join('')+'</div>' : '')
+
+    /* Actions */
+    +'<div class="pd-actions">'
+    +'<button class="pd-action-btn" style="background:var(--primary);color:#fff;" onclick="document.getElementById(\'pdOverlay\').classList.remove(\'open\');showView(\'chat\');openChat(\''+patientId+'\',\''+p.full_name+'\',\''+color+'\',\''+initials+'\',\''+p.email+'\')">💬 Send Message</button>'
+    +'<button class="pd-action-btn" style="background:var(--bg);color:var(--text);border:1px solid var(--border);" onclick="document.getElementById(\'pdOverlay\').classList.remove(\'open\')">Close</button>'
+    +'</div>';
+}
+
+function pdVcard(val, lbl, color){
+  return '<div class="pd-vcard"><div class="pd-vcard-val" style="color:'+(color||'var(--text)')+';">'+(val||'—')+'</div><div class="pd-vcard-lbl">'+lbl+'</div></div>';
+}
+
+function closePD(e){
+  if(e.target===document.getElementById('pdOverlay')) document.getElementById('pdOverlay').classList.remove('open');
+}
+
+/* Update showView to include chat */
+var _origShowView = showView;
+showView = function(view){
+  document.querySelectorAll('.sb-nav-item').forEach(function(el){el.classList.remove('active');});
+  event.currentTarget.classList.add('active');
+  document.getElementById('patientsSection').style.display = view==='patients' ? 'block' : 'none';
+  document.getElementById('alertsSection').style.display = view==='alerts' ? 'block' : 'none';
+  document.getElementById('chatSection').style.display = view==='chat' ? 'block' : 'none';
+  document.getElementById('appointmentsSection').style.display = view==='appointments' ? 'block' : 'none';
+  var titles = {patients:'👥 My Patients', alerts:'🚨 Active Alerts', reports:'📄 Reports', stats:'📊 Statistics', appointments:'📅 Appointments', chat:'💬 Patient Chat'};
+  document.getElementById('viewTitle').textContent = titles[view]||'';
+  if(view==='appointments') loadAppointments();
+  if(view==='chat') loadChatPatients();
+};
+
+</script>
+</body>
+</html>
