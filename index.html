@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="sq">
 <head>
@@ -1281,10 +1280,10 @@ select option{background:#0A1628;color:#F1F5FF;}
               <div class="av-drop-av">👩‍⚕️</div>
               <div><div class="av-drop-name">User</div><div class="av-drop-plan">Free Plan</div></div>
             </div>
-            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more')"><div class="av-drop-ico" style="background:var(--bg);">👤</div><div class="av-drop-lbl">My Profile</div></div>
+            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(initSettings,100)"><div class="av-drop-ico" style="background:var(--bg);">👤</div><div class="av-drop-lbl">My Profile</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();switchScreen('subscription')"><div class="av-drop-ico" style="background:var(--ambl);">⭐</div><div class="av-drop-lbl">Subscription</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();switchScreen('notifications');initNotifications()"><div class="av-drop-ico" style="background:var(--pul);">🔔</div><div class="av-drop-lbl">Notifications</div></div>
-            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('settings');initSettings()"><div class="av-drop-ico" style="background:var(--bg);">⚙️</div><div class="av-drop-lbl">Settings</div></div>
+            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');initSettings()"><div class="av-drop-ico" style="background:var(--bg);">⚙️</div><div class="av-drop-lbl">Settings</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();gatedAction('private')"><div class="av-drop-ico" style="background:#EBF3FF;">🔒</div><div class="av-drop-lbl">Dr. Shabani</div></div>
             <div class="av-drop-item red" onclick="closeAvDrop();doSignOut()"><div class="av-drop-ico" style="background:#FEF2F2;">🚪</div><div class="av-drop-lbl">Sign Out</div></div>
           </div>
@@ -1861,15 +1860,13 @@ select option{background:#0A1628;color:#F1F5FF;}
 <!-- ══════════ MORE ══════════ -->
 <div class="screen" id="screen-more">
   <div class="sb"><span>9:41</span></div>
-  <div style="display:flex;align-items:center;padding:10px 16px 6px;gap:10px;">
-    <button onclick="switchScreen('home')" style="width:32px;height:32px;border-radius:10px;border:none;background:var(--bg);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">‹</button>
-    <div style="font-size:16px;font-weight:700;color:#F1F5FF;">My Profile</div>
+
+  <!-- HEADER -->
+  <div style="display:flex;align-items:center;padding:12px 16px 0;gap:10px;">
+    <button onclick="goBack()" style="width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.12);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#F1F5FF;">‹</button>
+    <div style="font-size:18px;font-weight:700;color:#F1F5FF;flex:1;">My Profile</div>
   </div>
-  <div class="more-hdr" style="display:flex;align-items:center;gap:10px;padding:8px 16px 18px;">
-    <button onclick="goBack()" style="width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.15):none;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#F1F5FF;flex-shrink:0;">‹</button>
-    <div class="more-title" style="flex:1;">My Profile</div>
-    <div style="width:34px;"></div>
-  </div>
+
   <div class="sa">
     <!-- PROFILE CARD -->
     <div class="profile-c">
@@ -1878,111 +1875,784 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div class="profile-name" id="moreProfileName">Herolind Shabani</div>
         <div class="profile-email" id="moreProfileEmail"></div>
       </div>
-      <button class="edit-btn" onclick="switchScreen('settings');initSettings();setTimeout(function(){setShowEdit();},300);">Edit</button>
     </div>
 
-    <!-- CURRENT PLAN BANNER -->
-    <div id="planBanner" style="margin:0 14px 12px;border-radius:18px;padding:14px 16px;background:linear-gradient(135deg,#F4F7FB,#EBF3FF);border:1px solid rgba(59,125,216,0.15);display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="switchScreen('subscription')">
-      <div id="planIcon" style="width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--bg);flex-shrink:0;">🆓</div>
+    <!-- PLAN BANNER -->
+    <div id="planBanner" style="margin:0 14px 12px;border-radius:18px;padding:14px 16px;background:linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.04));border:0.5px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:12px;">
+      <div id="planIcon" style="width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,255,255,0.1);">⭐</div>
       <div style="flex:1;">
         <div id="planName" style="font-size:13px;font-weight:700;color:#F1F5FF;">Free Plan</div>
-        <div id="planDesc" style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Upgrade to unlock AI features</div>
+        <div id="planDesc" style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Upgrade for full AI access</div>
       </div>
-      <div style="background:linear-gradient(135deg,#F97316,#F5A623);color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:10px;">Upgrade →</div>
+      <button onclick="switchScreen('subscription')" style="background:linear-gradient(135deg,#F97316,#F5A623);color:#fff;font-size:11px;font-weight:700;padding:7px 12px;border-radius:10px;border:none;cursor:pointer;font-family:var(--font);">Upgrade</button>
     </div>
+
+    
 
     <!-- ACCOUNT -->
-    <div class="msec"><div class="msec-title">Account</div><div class="mcd">
-      <div class="mit" onclick="switchScreen('subscription')"><div class="mico" style="background:var(--ambl);">⭐</div><div class="mitx"><div class="mitl">Subscription</div><div class="mits" id="subStatusText">Free — Upgrade available</div></div><span class="marr">›</span></div>
-      <div class="mit" onclick="switchScreen('settings');initSettings();"><div class="mico" style="background:var(--bg);">&#9881;</div><div class="mitx"><div class="mitl">Settings</div><div class="mits">Account, privacy &amp; preferences</div></div><span class="marr">&#8250;</span></div>
-    </div></div>
-
-    <!-- SIGN OUT -->
-    <div style="padding:0 14px 16px;">
-      <button onclick="doSignOut()" style="width:100%;padding:13px;background:rgba(255,255,255,0.07);backdrop-filter:blur(8px);border-radius:14px;border:1px solid rgba(220,38,38,0.3);background:rgba(220,38,38,0.05);color:#DC2626;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">🚪 Sign Out</button>
+    <div class="set-sec">
+      <div class="set-sec-title">Account</div>
+      <div class="set-card">
+        <div class="set-row" onclick="setShowEdit()">
+          <div class="set-row-ico" style="background:#EBF3FF;">&#128100;</div>
+          <div class="set-row-info"><div class="set-row-title">Personal Information</div><div class="set-row-sub">Name, email, date of birth</div></div>
+          <span class="set-row-arr">&#8250;</span>
+        </div>
+        <div class="set-row" onclick="setShowEdit();setTimeout(function(){switchSetTab('pwd');},50);">
+          <div class="set-row-ico" style="background:#F0EEFF;">&#128274;</div>
+          <div class="set-row-info"><div class="set-row-title">Password &amp; Security</div><div class="set-row-sub">Change password, 2FA</div></div>
+          <span class="set-row-arr">&#8250;</span>
+        </div>
+        <div class="set-row" onclick="switchScreen('subscription')">
+          <div class="set-row-ico" style="background:#FFF8EC;">&#11088;</div>
+          <div class="set-row-info"><div class="set-row-title">Subscription Plan</div><div class="set-row-sub" id="setPlanSub">Free Plan — Upgrade available</div></div>
+          <span class="set-row-arr">&#8250;</span>
+        </div>
+        <div class="set-row" onclick="openPaymentModal()">
+          <div class="set-row-ico" style="background:#E1F9F3;">&#128179;</div>
+          <div class="set-row-info"><div class="set-row-title">Payment Method</div><div class="set-row-sub">Add or change payment</div></div>
+          <span class="set-row-arr">&#8250;</span>
+        </div>
+      </div>
     </div>
 
-    <div style="height:16px;"></div>
-  </div>
-  <div class="bn">
-    <button class="ni" onclick="switchScreen('home')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Home</span></button>
-    <button class="ni" onclick="switchScreen('chat')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Chat</span></button>
-    <button class="ni active" onclick="switchScreen('calendar')"><svg class="nic" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="3" stroke="#3B7DD8" stroke-width="2"/><path d="M3 9H21" stroke="#3B7DD8" stroke-width="2"/><path d="M8 2V6M16 2V6" stroke="#3B7DD8" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="14" r="1" fill="#3B7DD8"/><circle cx="12" cy="14" r="1" fill="#3B7DD8"/><circle cx="16" cy="14" r="1" fill="#3B7DD8"/></svg><span class="nl" style="color:#60A5FA">Calendar</span></button>
-    <div class="nvw" onclick="switchScreen('vitals')"><button class="nvb"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M2 12H4L7 6L10 18L13 10L15 14H17L20 8L22 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="nvl">Vitals</span></div>
-    <button class="ni" onclick="switchScreen('diagnostic')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M19 3H5C3.9 3 3 3.9 3 5V15C3 16.1 3.9 17 5 17H8L12 21L16 17H19C20.1 17 21 16.1 21 15V5C21 3.9 20.1 3 19 3Z" stroke="#7B8BAD" stroke-width="2" fill="none"/><circle cx="8.5" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="12" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="15.5" cy="10" r="1.1" fill="#7B8BAD"/></svg><span class="nl">Diagnosis</span></button>
-  </div>
-
-  <!-- LANGUAGE MODAL -->
-  <div id="langModal" style="display:none;position:absolute;inset:0;background:rgba(10,15,35,0.55);z-index:700;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);" onclick="closeLangModal(event)">
-    <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:24px 24px 44px 44px;width:100%;padding:20px;animation:slideUp 0.3s cubic-bezier(0.4,0,0.2,1);">
-      <div style="width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 16px;"></div>
-      <div style="font-size:16px;font-weight:700;color:#F1F5FF;margin-bottom:4px;">🌐 Language</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;">Choose your preferred app language</div>
-      <!-- LANGUAGE OPTIONS -->
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <div id="lang-en" onclick="selectLang('en')" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:16px;cursor:pointer;border:2px solid var(--primary);background:var(--pl);transition:all 0.2s;">
-          <div style="font-size:26px;">🇬🇧</div>
-          <div style="flex:1;">
-            <div style="font-size:14px;font-weight:700;color:#F1F5FF;">English</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.5);">English (United Kingdom)</div>
-          </div>
-          <div id="check-en" style="width:20px;height:20px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;">
-            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
+    <!-- APPEARANCE -->
+    <div class="set-sec">
+      <div class="set-sec-title">Appearance &amp; Language</div>
+      <div class="set-card">
+        <div class="set-row" style="cursor:default;">
+          <div class="set-row-ico" style="background:#1A1A2E;">&#127769;</div>
+          <div class="set-row-info"><div class="set-row-title">Dark Mode</div><div class="set-row-sub" id="setDarkSub">Currently off</div></div>
+          <button class="set-tgl off" id="setDarkTgl" onclick="setToggleDark(this)"><div class="set-tgl-thumb"></div></button>
         </div>
-        <div id="lang-sq" onclick="selectLang('sq')" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:16px;cursor:pointer;border:1.5px solid var(--border);background:transparent;transition:all 0.2s;">
-          <div style="font-size:26px;">🇦🇱</div>
-          <div style="flex:1;">
-            <div style="font-size:14px;font-weight:700;color:#F1F5FF;">Shqip</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.5);">Albanian · Gjuha shqipe</div>
-          </div>
-          <div id="check-sq" style="width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;display:none;"></div>
+        <div class="set-row" onclick="openLangModal()">
+          <div class="set-row-ico" style="background:#EBF3FF;">&#127757;</div>
+          <div class="set-row-info"><div class="set-row-title">Language</div><div class="set-row-sub" id="setLangSub">English &#127468;&#127463;</div></div>
+          <span class="set-row-arr">&#8250;</span>
         </div>
-        <div id="lang-mk" onclick="selectLang('mk')" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:16px;cursor:pointer;border:1.5px solid var(--border);background:transparent;transition:all 0.2s;">
-          <div style="font-size:26px;">🇲🇰</div>
-          <div style="flex:1;">
-            <div style="font-size:14px;font-weight:700;color:#F1F5FF;">Македонски</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.5);">Macedonian · Macedonian</div>
-          </div>
-          <div id="check-mk" style="width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;display:none;"></div>
+        <div class="set-row" onclick="showToast('&#127788; Units: metric/imperial coming soon')">
+          <div class="set-row-ico" style="background:#F0EEFF;">&#128208;</div>
+          <div class="set-row-info"><div class="set-row-title">Measurement Units</div><div class="set-row-sub">Metric (mmol, kg, °C)</div></div>
+          <span class="set-row-arr">&#8250;</span>
         </div>
       </div>
-      <button onclick="closeLangModal(null)" style="width:100%;padding:12px;border-radius:14px;border:0.5px solid rgba(255,255,255,0.12);background:transparent;font-size:13px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font);margin-top:14px;">Close</button>
     </div>
+
+    <!-- NOTIFICATIONS & PRIVACY -->
+    <div class="set-sec">
+      <div class="set-sec-title">Notifications &amp; Privacy</div>
+      <div class="set-card">
+        <div class="set-row" onclick="switchScreen('notifications');initNotifications();">
+          <div class="set-row-ico" style="background:var(--pl);">&#128276;</div>
+          <div class="set-row-info"><div class="set-row-title">Notifications</div><div class="set-row-sub">Alarms, alerts &amp; reminders</div></div>
+          <span class="set-row-arr">&#8250;</span>
+        </div>
+        <div class="set-row" style="cursor:default;">
+          <div class="set-row-ico" style="background:#E1F9F3;">&#128100;</div>
+          <div class="set-row-info"><div class="set-row-title">Share Health Data</div><div class="set-row-sub">With your doctor or clinic</div></div>
+          <button class="set-tgl off" onclick="setToggle(this,'data sharing')"><div class="set-tgl-thumb"></div></button>
+        </div>
+        <div class="set-row" style="cursor:default;">
+          <div class="set-row-ico" style="background:#FFF8EC;">&#128202;</div>
+          <div class="set-row-info"><div class="set-row-title">Analytics &amp; Improvement</div><div class="set-row-sub">Help improve Health BOT</div></div>
+          <button class="set-tgl on" onclick="setToggle(this,'analytics')"><div class="set-tgl-thumb"></div></button>
+        </div>
+        <div class="set-row" onclick="showToast('&#128196; GDPR export sent to your email')">
+          <div class="set-row-ico" style="background:#FEF2F2;">&#128229;</div>
+          <div class="set-row-info"><div class="set-row-title">Export My Data</div><div class="set-row-sub">GDPR · Download all your data</div></div>
+          <span class="set-row-arr">&#8250;</span>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SUPPORT -->
+    <div class="set-sec">
+      <div class="set-sec-title">Support &amp; About</div>
+      <div class="set-card">
+        <div class="set-row" onclick="showToast('&#128172; Support chat coming soon')">
+          <div class="set-row-ico" style="background:#EBF3FF;">&#10067;</div>
+          <div class="set-row-info"><div class="set-row-title">Help &amp; Support</div><div class="set-row-sub">FAQ, contact support</div></div>
+          <span class="set-row-arr">&#8250;</span>
+        </div>
+        <div class="set-row" onclick="showToast('&#128196; Terms of Service')">
+          <div class="set-row-ico" style="background:rgba(255,255,255,0.05);">&#128196;</div>
+          <div class="set-row-info"><div class="set-row-title">Terms of Service</div><div class="set-row-sub">Legal information</div></div>
+          <span class="set-row-arr">&#8250;</span>
+        </div>
+        <div class="set-row" onclick="showToast('&#128274; Privacy Policy')">
+          <div class="set-row-ico" style="background:rgba(255,255,255,0.05);">&#128274;</div>
+          <div class="set-row-info"><div class="set-row-title">Privacy Policy</div><div class="set-row-sub">GDPR compliant · Your data is safe</div></div>
+          <span class="set-row-arr">&#8250;</span>
+        </div>
+        <div class="set-row" onclick="showToast('&#11088; Rate Health BOT — Thank you!')">
+          <div class="set-row-ico" style="background:#FFF8EC;">&#11088;</div>
+          <div class="set-row-info"><div class="set-row-title">Rate Health BOT</div><div class="set-row-sub">Love the app? Leave a review</div></div>
+          <span class="set-row-arr">&#8250;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div class="set-sec">
+      <div class="set-sec-title">Danger Zone</div>
+    </div>
+    <div class="set-danger">
+      <div class="set-danger-row" onclick="doSignOut()">
+        <div class="set-danger-ico">&#128682;</div>
+        <div><div class="set-danger-title">Sign Out</div><div class="set-danger-sub">You will need to log in again</div></div>
+      </div>
+      <div class="set-danger-row" onclick="showToast('&#128465; Account deletion — contact support')">
+        <div class="set-danger-ico">&#128465;</div>
+        <div><div class="set-danger-title">Delete Account</div><div class="set-danger-sub">Permanently delete all your data</div></div>
+      </div>
+    </div>
+
+    <div class="set-version">
+      Health BOT v2.0.1<br>
+      Powered by Claude AI &middot; Anthropic<br>
+      &#169; 2026 Health BOT. All rights reserved.
+    </div>
+
   </div>
 
-  <!-- PAYWALL MODAL -->
-  <div id="paywallModal" style="display:none;position:absolute;inset:0;background:rgba(10,15,35,0.6);z-index:600;align-items:flex-end;justify-content:center;border-radius:44px;backdrop-filter:blur(4px);" onclick="closePaywall(event)">
-    <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:24px 24px 44px 44px;width:100%;padding:20px;animation:slideUp 0.3s cubic-bezier(0.4,0,0.2,1);">
-      <div style="width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 16px;"></div>
-      <div style="text-align:center;margin-bottom:16px;">
-        <div style="font-size:36px;margin-bottom:8px;" id="pw-icon">🔒</div>
-        <div style="font-size:17px;font-weight:700;color:#F1F5FF;margin-bottom:5px;" id="pw-title">Premium Feature</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5;" id="pw-desc">This feature requires a Premium or Clinic subscription.</div>
-      </div>
-      <!-- MINI PLAN CARDS -->
-      <div style="display:flex;gap:8px;margin-bottom:14px;">
-        <!-- PREMIUM -->
-        <div style="flex:1;background:linear-gradient(135deg,#EBF3FF,#F0EEFF);border-radius:16px;padding:12px;border:1.5px solid rgba(59,125,216,0.25);">
-          <div style="font-size:16px;margin-bottom:4px;">⭐</div>
-          <div style="font-size:12px;font-weight:700;color:#60A5FA;margin-bottom:2px;">Premium</div>
-          <div style="font-size:18px;font-weight:700;color:#F1F5FF;">€2.99<span style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:400;">/mo</span></div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:4px;line-height:1.5;">Health BOT Verdict<br>Vitals History 30d<br>Raport mujor AI<br>Dr. Shabani 2x/muaj</div>
+
+
+<!-- EDIT PROFILE MODAL -->
+<div id="setEditModal" style="display:none;position:absolute;inset:0;background:rgba(10,15,35,0.55);z-index:800;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);" onclick="setCloseEdit(event)">
+  <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:24px 24px 44px 44px;width:100%;max-height:90%;display:flex;flex-direction:column;animation:slideUp 0.3s ease;">
+    <div style="padding:12px 18px;border-bottom:0.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:15px;font-weight:700;color:#F1F5FF;">✏️ Edit Profile</div>
+      <button onclick="setCloseEdit(null)" style="width:28px;height:28px;border-radius:9px;border:none;background:var(--bg);font-size:14px;cursor:pointer;color:rgba(255,255,255,0.5);">✕</button>
+    </div>
+    <!-- Tabs -->
+    <div style="display:flex;padding:10px 14px;gap:6px;flex-shrink:0;border-bottom:0.5px solid var(--border);">
+      <button id="setTab-info" onclick="switchSetTab('info')" style="flex:1;padding:8px;border-radius:10px;border:none;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">👤 Personal Info</button>
+      <button id="setTab-pwd" onclick="switchSetTab('pwd')" style="flex:1;padding:8px;border-radius:10px;border:none;background:var(--bg);color:rgba(255,255,255,0.5);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">🔒 Password</button>
+      <button id="setTab-health" onclick="switchSetTab('health')" style="flex:1;padding:8px;border-radius:10px;border:none;background:var(--bg);color:rgba(255,255,255,0.5);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">🏥 Health Info</button>
+    </div>
+    <!-- Body -->
+    <div style="flex:1;overflow-y:auto;padding:16px;">
+
+      <!-- PERSONAL INFO -->
+      <div id="setPane-info">
+        <div style="margin-bottom:11px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Full Name</div>
+          <input id="setEditName" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
-        <!-- CLINIC -->
-        <div style="flex:1;background:linear-gradient(135deg,#0D3B8E,#1E5FBA);border-radius:16px;padding:12px;position:relative;overflow:hidden;">
-          <div style="position:absolute;top:6px;right:6px;background:rgba(255,255,255,0.2);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;">BEST</div>
-          <div style="font-size:16px;margin-bottom:4px;">🏥</div>
-          <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);margin-bottom:2px;">Clinic</div>
-          <div style="font-size:18px;font-weight:700;color:#fff;">€9.99<span style="font-size:10px;color:rgba(255,255,255,0.7);font-weight:400;">/mo</span></div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.75);margin-top:4px;line-height:1.5;">Health BOT i plotë<br>Dr. Shabani pa limit<br>ECG analizë AI<br>Raport javor + PDF</div>
+        <div style="margin-bottom:11px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Email</div>
+          <input id="setEditEmail" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="elena@dhealth.app" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
+        <div style="margin-bottom:11px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Date of Birth</div>
+          <input type="date" id="setEditDob" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="1985-06-14"/>
+        </div>
+        <div style="margin-bottom:11px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Phone</div>
+          <input id="setEditPhone" type="tel" placeholder="+383 44 123 456" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+        </div>
+        <div style="margin-bottom:16px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Gender</div>
+          <select id="setEditGender" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;">
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="other">Other / Prefer not to say</option>
+          </select>
+        </div>
+        <button onclick="savePersonalInfo()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">💾 Save Personal Info</button>
       </div>
-      <button style="width:100%;padding:14px;border-radius:16px;border:none;background:linear-gradient(135deg,#F97316,#F5A623);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:8px;" onclick="goToSubscription()">See All Plans →</button>
-      <button style="width:100%;padding:10px;border-radius:14px;border:0.5px solid rgba(255,255,255,0.12);background:transparent;font-size:13px;font-weight:500;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font);" onclick="closePaywall(null)">Maybe later</button>
+
+      <!-- PASSWORD -->
+      <div id="setPane-pwd" style="display:none;">
+        <div style="background:rgba(249,115,22,0.08);border-radius:12px;padding:11px 13px;margin-bottom:14px;font-size:12px;color:var(--orange);line-height:1.5;">⚠️ You will be logged out after changing your password.</div>
+        <div style="margin-bottom:11px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Current Password</div>
+          <input id="setOldPwd" type="password" placeholder="Enter current password" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+        </div>
+        <div style="margin-bottom:11px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">New Password</div>
+          <input id="setNewPwd" type="password" placeholder="Min 8 characters" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+        </div>
+        <div style="margin-bottom:16px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Confirm New Password</div>
+          <input id="setConfPwd" type="password" placeholder="Repeat new password" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+        </div>
+        <button onclick="savePassword()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#DC2626,#F97316);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">🔒 Change Password</button>
+      </div>
+
+      <!-- HEALTH INFO -->
+      <div id="setPane-health" style="display:none;">
+        <div style="margin-bottom:11px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Height (cm)</div>
+          <input id="setHeight" type="number" placeholder="170" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+        </div>
+        <div style="margin-bottom:11px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Weight (kg)</div>
+          <input id="setWeight" type="number" placeholder="70" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+        </div>
+        <div style="margin-bottom:11px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Blood Type</div>
+          <select id="setBloodType" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;">
+            <option value="">Select blood type</option>
+            <option value="A+">A+</option><option value="A-">A-</option>
+            <option value="B+">B+</option><option value="B-">B-</option>
+            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+            <option value="O+">O+</option><option value="O-">O-</option>
+          </select>
+        </div>
+        <div style="margin-bottom:16px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Emergency Contact</div>
+          <input id="setEmergency" type="tel" placeholder="Name & phone number" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+        </div>
+        <button onclick="saveHealthInfo()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">💾 Save Health Info</button>
+      </div>
+
+      <!-- INTEGRATIONS -->
+      <div id="setPane-integ" style="display:none;">
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:14px;line-height:1.6;">Connect health apps to sync vitals automatically.</div>
+        <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#E8F5E9;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💚</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Google Fit</div><div id="spGfit" style="font-size:11px;color:rgba(255,255,255,0.5);">Not connected</div></div><button id="spGfitBtn" onclick="toggleInteg('gfit')" style="padding:7px 14px;border-radius:10px;border:none;background:#34A853;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
+        <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#FFF0F3;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">❤️</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Apple Health</div><div id="spApple" style="font-size:11px;color:rgba(255,255,255,0.5);">iOS only</div></div><button id="spAppleBtn" onclick="toggleInteg('apple')" style="padding:7px 14px;border-radius:10px;border:none;background:#FF2D55;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
+        <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#E3F2FD;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">⌚</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Fitbit</div><div id="spFitbit" style="font-size:11px;color:rgba(255,255,255,0.5);">Not connected</div></div><button id="spFitbitBtn" onclick="connectFitbit()" style="padding:7px 14px;border-radius:10px;border:none;background:#00B0B9;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
+        <div style="background:var(--al);border-radius:14px;padding:13px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:rgba(45,200,160,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📝</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Manual Input</div><div style="font-size:11px;color:var(--accent);">Always active ✓</div></div><div style="padding:7px 14px;border-radius:10px;background:rgba(45,200,160,0.2);font-size:11px;font-weight:700;color:var(--accent);">Active</div></div>
+      </div>
+
     </div>
   </div>
 </div>
+</div>
+
+<!-- ══════════ PRIVATE ══════════ -->
+<div class="screen" id="screen-private" style="background:linear-gradient(180deg,#0A1628 0%,#0D2144 40%,#0A1628 100%);">
+  <div class="dr-status-bar">
+    <span class="dr-status-time">9:41</span>
+    <div class="dr-enc-badge">&#128274; End-to-End Encrypted</div>
+  </div>
+  <div class="dr-hdr">
+    <div class="dr-hdr-row">
+      <button class="dr-bk" onclick="switchScreen('more')">&#8249;</button>
+      <div class="dr-av-wrap">
+        <div class="dr-av">&#128104;&#8205;&#9877;&#65039;</div>
+        <div class="dr-ondot"></div>
+      </div>
+      <div class="dr-info">
+        <div class="dr-name2">Dr. Herolind Shabani</div>
+        <div class="dr-title2">Mjek i Pergjithshem &middot; General Practitioner</div>
+        <div class="dr-online2">&#9679; Available now &middot; Clinic Plan</div>
+      </div>
+      <div class="dr-acts">
+        <button class="dr-abt" onclick="showToast('Call feature coming soon')">&#128222;</button>
+        <button class="dr-abt" onclick="showToast('Dr. Shabani &middot; Klinika Shabani, Prishtine')">&#8942;</button>
+      </div>
+    </div>
+    <div class="dr-pstrip">
+      <div class="dr-pchip" onclick="drSendChip('What is my BP status?')"><span>&#129654;</span><span class="dr-pchip-lbl">BP 128/84</span></div>
+      <div class="dr-pchip" onclick="drSendChip('HbA1c: 5.7% - Pre-diabetic range')"><span>&#127846;</span><span class="dr-pchip-lbl">HbA1c 5.7%</span></div>
+      <div class="dr-pchip" onclick="drSendChip('Diagnoses: HTA Stage 1, Pre-diabetes, Elevated Cholesterol')"><span>&#127973;</span><span class="dr-pchip-lbl">Diagnoses</span></div>
+      <div class="dr-pchip" onclick="drSendChip('Therapy: Amlodipine 5mg, Metformin 500mg, Vitamin D3')"><span>&#128138;</span><span class="dr-pchip-lbl">Therapy</span></div>
+      <div class="dr-pchip" onclick="drSendChip('Review my lab results')"><span>&#129516;</span><span class="dr-pchip-lbl">Labs</span></div>
+    </div>
+  </div>
+  <div class="dr-enc-notice">
+    <span>&#128737;&#65039;</span>
+    <span>Messages are <strong>end-to-end encrypted</strong> &mdash; visible only to you and Dr. Shabani</span>
+  </div>
+  <div class="sa" id="drScroll">
+    <div class="dr-msgs" id="drMsgs">
+      <div class="dr-row"><div class="dr-bbl sys2">Consultation started &mdash; April 9, 2026 &middot; 9:30 AM</div></div>
+      <div class="dr-row">
+        <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
+        <div><div class="dr-bbl doc">Hello! I am Dr. Herolind Shabani. How can I help you today? &#128298;<br><br>Kam pare raportin tuaj javor. Presioni 128/84 ka qene qendrueshme gjate javes.</div>
+        <div class="dr-tm doc">9:30 AM &middot; Delivered</div></div>
+      </div>
+      <div class="dr-row me">
+        <div><div class="dr-bbl me2">Doktor, miredita! Doja te pyesja per Amlodipinen. A duhet te rris dozen?</div>
+        <div class="dr-tm">9:32 AM &#10003;&#10003;</div></div>
+      </div>
+      <div class="dr-row me">
+        <div><div class="dr-fbbl">
+          <div class="dr-fic">&#128196;</div>
+          <div><div class="dr-fnm">Weekly_Report_Apr9.pdf</div><div class="dr-fsz">Health BOT &middot; 1.2 MB</div></div>
+        </div><div class="dr-tm">9:33 AM &#10003;&#10003;</div></div>
+      </div>
+      <div class="dr-row">
+        <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
+        <div><div class="dr-bbl doc">Faleminderit per raportin! &#128203;<br><br>&#128308; <strong>BP 128/84</strong> &mdash; Stage 1, ne kufi<br>&#128994; <strong>Glucose 5.4</strong> &mdash; brenda normes<br>&#128309; <strong>HbA1c 5.7%</strong> &mdash; pre-diabet<br><br>Vazhdoni <strong>Amlodipine 5mg</strong> per momentin. Rishikim pas 2 javesh.</div>
+        <div class="dr-tm doc">9:35 AM &middot; Read</div></div>
+      </div>
+      <div class="dr-row">
+        <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
+        <div>
+          <div class="dr-appt">
+            <div class="dr-appt-title">&#128197; Next Appointment</div>
+            <div class="dr-appt-row"><span class="dr-appt-lbl">Date:</span><span class="dr-appt-val">April 23, 2026</span></div>
+            <div class="dr-appt-row"><span class="dr-appt-lbl">Time:</span><span class="dr-appt-val">10:00 AM</span></div>
+            <div class="dr-appt-row"><span class="dr-appt-lbl">Type:</span><span class="dr-appt-val">Follow-up</span></div>
+            <div class="dr-appt-row"><span class="dr-appt-lbl">Where:</span><span class="dr-appt-val">Klinika Shabani, Prishtine</span></div>
+            <button class="dr-appt-btn" onclick="showToast('Appointment confirmed!')">&#10003; Confirm Appointment</button>
+          </div>
+          <div class="dr-tm doc" style="margin-top:5px;">9:36 AM</div>
+        </div>
+      </div>
+    </div>
+    <div class="dr-upld" id="drUpld">
+      <div class="dr-upld-row">
+        <span style="font-size:14px;">&#128196;</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.8);flex:1;" id="drUpNm">Uploading...</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.5);" id="drUpPct">0%</span>
+      </div>
+      <div class="dr-upbar"><div class="dr-upfill" id="drUpFill" style="width:0%;"></div></div>
+    </div>
+    <div class="dr-typing2" id="drTyping">
+      <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
+      <div class="dr-tbbl"><div class="dr-td"></div><div class="dr-td"></div><div class="dr-td"></div></div>
+    </div>
+    <div style="height:8px;"></div>
+  </div>
+  <div class="dr-quick2" id="drQuick">
+    <button class="dr-qr2" onclick="drQR(this)">&#128202; Send latest vitals</button>
+    <button class="dr-qr2" onclick="drQR(this)">&#128138; Medication question</button>
+    <button class="dr-qr2" onclick="drQR(this)">&#128197; Request appointment</button>
+    <button class="dr-qr2" onclick="drQR(this)">&#128196; Send report</button>
+  </div>
+  <div class="dr-ibar">
+    <button class="dr-abt2" onclick="drAttach('file')">&#128206;</button>
+    <button class="dr-abt2" onclick="drAttach('photo')">&#128247;</button>
+    <input class="dr-inp" id="drInp" placeholder="Message Dr. Shabani..." onkeydown="if(event.key==='Enter')drSend()"/>
+    <button class="dr-snd" onclick="drSend()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+</div>
+
+
+
+
+<!-- GLOBAL ERROR TOAST -->
+<div class="err-toast" id="errToast">
+  <div class="err-toast-ico" id="errToastIco">&#9888;&#65039;</div>
+  <div class="err-toast-body">
+    <div class="err-toast-title" id="errToastTitle">Something went wrong</div>
+    <div class="err-toast-msg" id="errToastMsg">Please try again.</div>
+  </div>
+  <div class="err-toast-close" onclick="closeErrToast()">&#10005;</div>
+</div>
+
+<!-- NETWORK ERROR BAR -->
+<div class="net-err-bar" id="netErrBar">
+  <div class="net-err-dot"></div>
+  <span>No internet connection &mdash; Some features may be unavailable</span>
+</div>
+
+<!-- GLOBAL LOADER -->
+<div id="globalLoader">
+  <div class="gl-logo">&#127973;</div>
+  <div style="font-size:16px;font-weight:700;color:#F1F5FF;">Health BOT</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;">Loading your health data...</div>
+  <div class="gl-dots">
+    <div class="gl-dot"></div>
+    <div class="gl-dot"></div>
+    <div class="gl-dot"></div>
+  </div>
+</div>
+
+
+<!-- PROFILE BOTTOM SHEET MODAL -->
+<div class="prof-overlay" id="profOverlay" onclick="closeProfModal(event)">
+  <div class="prof-sheet">
+    <div class="prof-sheet-hdr">
+      <div class="prof-sheet-title">📋 Medical Profile</div>
+      <button onclick="closeProfModal()" style="width:30px;height:30px;border-radius:10px;border:none;background:var(--bg);font-size:16px;cursor:pointer;">✕</button>
+    </div>
+    <div class="prof-sheet-body">
+      <!-- DIAGNOSES -->
+      <div class="pf-sec-title">🏥 Diagnoses</div>
+      <div class="tag-wrap2" id="prof-diag-tags">
+        <span class="tag2 d">HTA Stage 1 <span class="tx" onclick="rmTag('prof-diag-tags',this)">×</span></span>
+        <span class="tag2 d">Pre-diabetes <span class="tx" onclick="rmTag('prof-diag-tags',this)">×</span></span>
+        <span class="tag2 d">Elevated Cholesterol <span class="tx" onclick="rmTag('prof-diag-tags',this)">×</span></span>
+      </div>
+      <div class="tadd-row">
+        <input class="ti" id="prof-diag-inp" placeholder="Add diagnosis..." onkeydown="if(event.key==='Enter')addTag('prof-diag-tags','prof-diag-inp','d')"/>
+        <button class="tb" style="background:var(--heart);" onclick="addTag('prof-diag-tags','prof-diag-inp','d')">+ Add</button>
+      </div>
+
+      <div class="divr"></div>
+      <!-- THERAPY -->
+      <div class="pf-sec-title">💊 Current Therapy</div>
+      <div class="tag-wrap2" id="prof-therapy-tags">
+        <span class="tag2 t">Amlodipine 5mg · Morning <span class="tx" onclick="rmTag('prof-therapy-tags',this)">×</span></span>
+        <span class="tag2 t">Metformin 500mg · Lunch <span class="tx" onclick="rmTag('prof-therapy-tags',this)">×</span></span>
+        <span class="tag2 t">Vitamin D3 · Evening <span class="tx" onclick="rmTag('prof-therapy-tags',this)">×</span></span>
+        <span class="tag2 t">Omega-3 1g · Evening <span class="tx" onclick="rmTag('prof-therapy-tags',this)">×</span></span>
+      </div>
+      <div class="tadd-row">
+        <input class="ti" id="prof-therapy-inp" placeholder="Add medication..." onkeydown="if(event.key==='Enter')addTag('prof-therapy-tags','prof-therapy-inp','t')"/>
+        <button class="tb" style="background:var(--purple);" onclick="addTag('prof-therapy-tags','prof-therapy-inp','t')">+ Add</button>
+      </div>
+
+      <div class="divr"></div>
+      <!-- ALLERGIES -->
+      <div class="pf-sec-title">⚠️ Allergies</div>
+      <div class="tag-wrap2" id="prof-allergy-tags">
+        <span class="tag2 a">Penicillin <span class="tx" onclick="rmTag('prof-allergy-tags',this)">×</span></span>
+        <span class="tag2 a">NSAIDs (mild) <span class="tx" onclick="rmTag('prof-allergy-tags',this)">×</span></span>
+      </div>
+      <div class="tadd-row">
+        <input class="ti" id="prof-allergy-inp" placeholder="Add allergy..." onkeydown="if(event.key==='Enter')addTag('prof-allergy-tags','prof-allergy-inp','a')"/>
+        <button class="tb" style="background:var(--heart);" onclick="addTag('prof-allergy-tags','prof-allergy-inp','a')">+ Add</button>
+      </div>
+
+      <div class="divr"></div>
+      <!-- LAB VALUES -->
+      <div class="pf-sec-title">🧬 Lab Values</div>
+      <div class="tag-wrap2" id="prof-lab-tags">
+        <span class="tag2 l">HbA1c: 5.9% <span class="tx" onclick="rmTag('prof-lab-tags',this)">×</span></span>
+        <span class="tag2 l">LDL: 3.8 mmol/L <span class="tx" onclick="rmTag('prof-lab-tags',this)">×</span></span>
+        
+      </div>
+      <div class="tadd-row">
+        <input class="ti" id="prof-lab-inp" placeholder="e.g. HbA1c: 5.9%..." onkeydown="if(event.key==='Enter')addTag('prof-lab-tags','prof-lab-inp','l')"/>
+        <button class="tb" style="background:var(--teal);" onclick="addTag('prof-lab-tags','prof-lab-inp','l')">+ Add</button>
+      </div>
+
+      <div class="divr"></div>
+      <!-- DOCUMENTS -->
+      <div class="pf-sec-title">📄 Documents</div>
+      <div class="fl-list" id="prof-fl-list">
+        <div class="fl-item"><span style="font-size:16px;">📋</span><span class="fl-nm">Blood_Panel_March2026.pdf</span><span class="fl-sz">2.1MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
+        <div class="fl-item"><span style="font-size:16px;">🫀</span><span class="fl-nm">ECG_Feb2026.pdf</span><span class="fl-sz">0.9MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
+      </div>
+      <label for="prof-file-input" class="upload-z" style="display:block;cursor:pointer;">
+        <div style="font-size:22px;margin-bottom:5px;">📎</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);">Upload lab results, ECG, reports</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">PDF, JPG, PNG · Max 10MB</div>
+        <input type="file" id="prof-file-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handleProfFileUpload(event)"/>
+      </label>
+
+      <div class="divr"></div>
+      <!-- NOTES -->
+      <div class="pf-sec-title">📝 Notes</div>
+      <textarea class="pf-ta" id="prof-notes">Family history of hypertension. Non-smoker. Light exercise 2x/week.</textarea>
+      <button class="pf-ai-btn" id="profAiBtn" onclick="analyzeProfModal()">Diagnostics</button>
+      <div class="errbanner" id="prof-ai-err">⚠️ Connection error. Try again.</div>
+      <div class="ai-resp" id="prof-ai-resp" style="display:none;">
+        <div class="ar-hdr"><div class="ar-av">🤖</div><div style="font-size:12px;font-weight:700;color:#fff;">Claude AI — Profile Assessment</div></div>
+        <div class="ar-txt" id="prof-ai-text"></div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN DIAGNOSTIC ══ -->
+<div class="screen" id="screen-diagnostic">
+  <div class="sb" style="background:linear-gradient(160deg,#0D1B4B,#1565C0);color:rgba(255,255,255,0.85);"><span>9:41</span></div>
+  <div class="diag-screen-hdr">
+    <!-- Top row -->
+    <div class="diag-top-row">
+      <div class="diag-av-s">🏥</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:700;color:#fff;" id="ds-name">--</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.65);">Diagnostics · Vitals · Therapy · Reports</div>
+      </div>
+    </div>
+    <!-- Vitals grid -->
+    <div class="diag-vgrid">
+      <div class="diag-vcard"><div class="diag-vcard-ico">❤️</div><div class="diag-vcard-v" id="ds-hr">-- bpm</div><div class="diag-vcard-l">HR</div></div>
+      <div class="diag-vcard"><div class="diag-vcard-ico">🩸</div><div class="diag-vcard-v" id="ds-bp" style="color:#FCD34D;">128/84</div><div class="diag-vcard-l">BP</div></div>
+      <div class="diag-vcard"><div class="diag-vcard-ico">🍬</div><div class="diag-vcard-v" id="ds-glu" style="color:#5EEAD4;">5.4</div><div class="diag-vcard-l">Glucose</div></div>
+      <div class="diag-vcard"><div class="diag-vcard-ico">🫧</div><div class="diag-vcard-v" id="ds-spo2">--%</div><div class="diag-vcard-l">SpO2</div></div>
+    </div>
+    <!-- Score + Therapy -->
+    <div class="diag-score-row">
+      <div class="diag-score-box">
+        <div style="font-size:20px;">📊</div>
+        <div><div style="font-size:9px;color:rgba(255,255,255,0.6);">HEALTH SCORE</div><div id="diagHeaderScore" style="font-size:15px;font-weight:700;color:#FCD34D;">--/100</div></div>
+      </div>
+      <div class="diag-score-box">
+        <div style="font-size:20px;">💊</div>
+        <div><div style="font-size:9px;color:rgba(255,255,255,0.6);">THERAPY</div><div id="diagHeaderTherapy" style="font-size:15px;font-weight:700;color:#fff;">0 active</div></div>
+      </div>
+    </div>
+    <!-- Tabs -->
+    <div class="diag-tabs-row">
+      <button class="diag-tab-s active" id="dst-verdict" onclick="switchDiagS('verdict')">📊 Verdict</button>
+      <button class="diag-tab-s" id="dst-profile" onclick="switchDiagS('profile')">📋 Profile</button>
+      <button class="diag-tab-s" id="dst-report" onclick="switchDiagS('report')">📄 Report</button>
+      <button class="diag-tab-s" id="dst-connect" onclick="switchDiagS('connect')">🔗 Connect</button>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="diag-body-s">
+    <!-- VERDICT -->
+    <div class="diag-section-s active" id="dss-verdict">
+      <!-- Engine Output -->
+      <div id="engine-verdict-container">
+        <!-- Score circle default -->
+        <div style="text-align:center;padding:16px 0 12px;">
+          <div id="eng-score-circle" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#F97316,#FBBF24);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 8px 20px rgba(249,115,22,0.35);">
+            <div id="eng-score-num" style="font-size:28px;font-weight:700;color:#fff;">--</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.8);">/100</div>
+          </div>
+          <div id="eng-status-txt" style="font-size:14px;font-weight:700;color:#F1F5FF;">Press Re-Analyze to start</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px;">Correlation Engine — All data sources</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;" id="ds-date">--</div>
+        </div>
+        <!-- Alarms -->
+        <div id="eng-alarms" style="margin-bottom:10px;"></div>
+        <!-- Vitals summary -->
+        <div id="eng-vitals-summary" style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;"></div>
+        <!-- Correlations -->
+        <div id="eng-correlations" style="margin-bottom:10px;"></div>
+        <!-- Recommendations -->
+        <div id="eng-recommendations" style="background:linear-gradient(135deg,#1A0A2E,#2D1B69);border-radius:14px;padding:13px;margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">🤖 AI Recommendations</div>
+          <div id="eng-rec-content" style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.7;">Press Re-Analyze to generate personalized recommendations</div>
+        </div>
+        <!-- Doctor summary -->
+        <div id="eng-doctor-summary" style="display:none;background:var(--pl);border-radius:12px;padding:11px 13px;margin-bottom:10px;">
+          <div style="font-size:10px;font-weight:700;color:#60A5FA;margin-bottom:4px;">👨‍⚕️ For Dr. Shabani</div>
+          <div id="eng-doc-txt" style="font-size:11px;color:#F1F5FF;line-height:1.5;"></div>
+        </div>
+      </div>
+      <button onclick="runCorrelationEngine()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;" id="ds-analyze-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="white"/></svg>
+        Re-Analyze
+      </button>
+
+      <!-- DEEP PROFILE ANALYSIS -->
+      <button onclick="runDeepProfileAnalysis()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#0D3B8E,#7C3AED);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;" id="deepAnalyzeBtn">
+        🔬 Deep Profile Analysis
+      </button>
+
+      <!-- Deep Analysis Result -->
+      <div id="deepAnalysisResult" style="display:none;margin-top:12px;">
+        <!-- Overall Verdict -->
+        <div style="background:linear-gradient(135deg,#0D3B8E,#1E5FBA);border-radius:16px;padding:14px;margin-bottom:10px;">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🔬 Deep Health Analysis</div>
+          <div id="deepOverallVerdict" style="font-size:12px;color:#fff;line-height:1.7;"></div>
+        </div>
+        <!-- Diagnoses Analysis -->
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,0.12);">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🏥 Diagnoses Deep Dive</div>
+          <div id="deepDiagnosesText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
+        </div>
+        <!-- Therapy Analysis -->
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,0.12);">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">💊 Therapy Effectiveness</div>
+          <div id="deepTherapyText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
+        </div>
+        <!-- Lab Analysis -->
+        <div id="deepLabSection" style="display:none;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,0.12);">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🧪 Lab Values Analysis</div>
+          <div id="deepLabText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
+        </div>
+        <!-- Long-term Risks -->
+        <div style="background:linear-gradient(135deg,#FEF2F2,#FFF8EC);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(220,38,38,0.15);">
+          <div style="font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">⚠️ Long-term Risk Assessment</div>
+          <div id="deepRisksText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
+        </div>
+        <!-- Action Plan -->
+        <div style="background:linear-gradient(135deg,rgba(45,200,160,0.1),rgba(59,125,216,0.1));border-radius:14px;padding:13px;margin-bottom:10px;border:1px solid rgba(45,200,160,0.2);">
+          <div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🎯 Action Plan</div>
+          <div id="deepActionPlan" style="font-size:12px;color:#F1F5FF;line-height:1.8;"></div>
+        </div>
+        <!-- For Doctor -->
+        <div style="background:var(--pl);border-radius:12px;padding:11px 13px;margin-bottom:10px;">
+          <div style="font-size:10px;font-weight:700;color:#60A5FA;margin-bottom:4px;">👨‍⚕️ Clinical Summary for Dr. Shabani</div>
+          <div id="deepDoctorSummary" style="font-size:11px;color:#F1F5FF;line-height:1.5;"></div>
+        </div>
+      </div>
+
+      <div style="height:16px;"></div>
+    </div>
+
+
+    <!-- PROFILE -->
+    <div class="diag-section-s" id="dss-profile">
+      <div style="padding:14px;">
+        <!-- DIAGNOSES -->
+        <div class="pf-sec-title">🏥 Diagnoses</div>
+        <div class="tag-wrap2" id="ds-diag-tags">
+          <span class="tag2 d">HTA Stage 1 <span class="tx" onclick="rmTag('ds-diag-tags',this)">×</span></span>
+          <span class="tag2 d">Pre-diabetes <span class="tx" onclick="rmTag('ds-diag-tags',this)">×</span></span>
+          <span class="tag2 d">Elevated Cholesterol <span class="tx" onclick="rmTag('ds-diag-tags',this)">×</span></span>
+        </div>
+        <div class="tadd-row">
+          <input class="ti" id="ds-diag-inp" placeholder="Add diagnosis..." onkeydown="if(event.key==='Enter')addTag('ds-diag-tags','ds-diag-inp','d')"/>
+          <button class="tb" style="background:var(--heart);" onclick="addTag('ds-diag-tags','ds-diag-inp','d')">+ Add</button>
+        </div>
+        <div class="divr"></div>
+        <!-- THERAPY -->
+        <div class="pf-sec-title">💊 Current Therapy</div>
+        <div class="tag-wrap2" id="ds-therapy-tags">
+          <span class="tag2 t">Amlodipine 5mg · Morning <span class="tx" onclick="rmTag('ds-therapy-tags',this)">×</span></span>
+          <span class="tag2 t">Metformin 500mg · Lunch <span class="tx" onclick="rmTag('ds-therapy-tags',this)">×</span></span>
+          <span class="tag2 t">Vitamin D3 · Evening <span class="tx" onclick="rmTag('ds-therapy-tags',this)">×</span></span>
+          <span class="tag2 t">Omega-3 1g · Evening <span class="tx" onclick="rmTag('ds-therapy-tags',this)">×</span></span>
+        </div>
+        <div class="tadd-row">
+          <input class="ti" id="ds-therapy-inp" placeholder="Add medication..." onkeydown="if(event.key==='Enter')addTag('ds-therapy-tags','ds-therapy-inp','t')"/>
+          <button class="tb" style="background:var(--purple);" onclick="addTag('ds-therapy-tags','ds-therapy-inp','t')">+ Add</button>
+        </div>
+        <div class="divr"></div>
+        <!-- ALLERGIES -->
+        <div class="pf-sec-title">⚠️ Allergies</div>
+        <div class="tag-wrap2" id="ds-allergy-tags">
+          <span class="tag2 a">Penicillin <span class="tx" onclick="rmTag('ds-allergy-tags',this)">×</span></span>
+          <span class="tag2 a">NSAIDs (mild) <span class="tx" onclick="rmTag('ds-allergy-tags',this)">×</span></span>
+        </div>
+        <div class="tadd-row">
+          <input class="ti" id="ds-allergy-inp" placeholder="Add allergy..." onkeydown="if(event.key==='Enter')addTag('ds-allergy-tags','ds-allergy-inp','a')"/>
+          <button class="tb" style="background:var(--heart);" onclick="addTag('ds-allergy-tags','ds-allergy-inp','a')">+ Add</button>
+        </div>
+        <div class="divr"></div>
+        <!-- LAB VALUES -->
+        <div class="pf-sec-title">🧬 Lab Values</div>
+        <div class="tag-wrap2" id="ds-lab-tags">
+          <span class="tag2 l">HbA1c: 5.9% <span class="tx" onclick="rmTag('ds-lab-tags',this)">×</span></span>
+          <span class="tag2 l">LDL: 3.8 mmol/L <span class="tx" onclick="rmTag('ds-lab-tags',this)">×</span></span>
+          
+        </div>
+        <div class="tadd-row">
+          <input class="ti" id="ds-lab-inp" placeholder="e.g. HbA1c: 5.9%..." onkeydown="if(event.key==='Enter')addTag('ds-lab-tags','ds-lab-inp','l')"/>
+          <button class="tb" style="background:var(--teal);" onclick="addTag('ds-lab-tags','ds-lab-inp','l')">+ Add</button>
+        </div>
+        <div class="divr"></div>
+        <!-- DOCUMENTS -->
+        <div class="pf-sec-title">📄 Documents</div>
+        <div class="fl-list" id="ds-fl-list">
+          <div class="fl-item"><span style="font-size:16px;">📋</span><span class="fl-nm">Blood_Panel_March2026.pdf</span><span class="fl-sz">2.1MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
+          <div class="fl-item"><span style="font-size:16px;">🫀</span><span class="fl-nm">ECG_Feb2026.pdf</span><span class="fl-sz">0.9MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
+        </div>
+        <label for="ds-file-input" class="upload-z" style="display:block;cursor:pointer;">
+          <div style="font-size:22px;margin-bottom:5px;">📎</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);">Upload lab results, ECG, reports</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">PDF, JPG, PNG · Max 10MB</div>
+          <input type="file" id="ds-file-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handleDsFileUpload(event)"/>
+        </label>
+        <div class="divr"></div>
+        <!-- ECG ANALYSIS -->
+        <div class="pf-sec-title">🫀 ECG Analysis</div>
+        <div style="border:1px solid rgba(255,107,138,0.25);border-radius:14px;overflow:hidden;position:relative;margin-bottom:8px;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF6B8A,#8B6FE8);"></div>
+          <div style="padding:12px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px;">Upload ECG nga smartwatch ose ring — Claude AI analizon dhe krahason me historikun</div>
+            <label for="ecgFileInputProfile" style="width:100%;padding:10px;border-radius:12px;background:linear-gradient(135deg,#FF6B8A,#8B6FE8);color:#fff;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15M17 8L12 3L7 8M12 3V15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Upload & Analyze ECG
+              <input type="file" id="ecgFileInputProfile" accept="image/*,.pdf" style="display:none;" onchange="handleECGUpload(event)"/>
+            </label>
+            <div id="ecgHistoryProfile" style="margin-top:8px;"></div>
+          </div>
+        </div>
+        <div class="divr"></div>
+        <!-- NOTES -->
+        <div class="pf-sec-title">📝 Notes</div>
+        <textarea class="pf-ta" id="ds-notes">Family history of hypertension. Non-smoker. Light exercise 2x/week.</textarea>
+        <button class="pf-ai-btn" onclick="analyzeDsProfile()">Diagnostics</button>
+        <div class="ai-resp" id="ds-prof-resp" style="display:none;">
+          <div class="ar-hdr"><div class="ar-av">🤖</div><div style="font-size:12px;font-weight:700;color:#fff;">Claude AI — Profile Assessment</div></div>
+          <div class="ar-txt" id="ds-prof-text"></div>
+        </div>
+        <div style="height:16px;"></div>
+      </div>
+    </div>
+    <!-- REPORT -->
+    <div class="diag-section-s" id="dss-report">
+      <div class="rpt-wrap">
+        <div class="rpt-hdr2">
+          <div class="rpt-tag2">📄 --, 2026</div>
+          <div class="rpt-title2">Weekly Health Report</div>
+          <div class="rpt-per">D Health · Claude AI</div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">📅 Daily Readings</div>
+        <div class="wt">
+          <div class="wt-row hdr"><div class="wt-cell">Day</div><div class="wt-cell">BP mmHg</div><div class="wt-cell">Glucose</div><div class="wt-cell">HR bpm</div></div>
+          <div class="wt-row"><div class="wt-cell wt-day">Mon</div><div class="wt-cell wt-bp">130/86</div><div class="wt-cell wt-glu">5.6</div><div class="wt-cell wt-hr2">80</div></div>
+          <div class="wt-row"><div class="wt-cell wt-day">Tue</div><div class="wt-cell wt-bp">127/83</div><div class="wt-cell wt-glu">5.3</div><div class="wt-cell wt-hr2">76</div></div>
+          <div class="wt-row"><div class="wt-cell wt-day">Wed</div><div class="wt-cell wt-bp">132/88</div><div class="wt-cell wt-glu">5.8</div><div class="wt-cell wt-hr2">82</div></div>
+          <div class="wt-row"><div class="wt-cell wt-day">Thu</div><div class="wt-cell wt-bp">126/82</div><div class="wt-cell wt-glu">5.1</div><div class="wt-cell wt-hr2">75</div></div>
+          <div class="wt-row"><div class="wt-cell wt-day">Fri</div><div class="wt-cell wt-bp">129/85</div><div class="wt-cell wt-glu">5.5</div><div class="wt-cell wt-hr2">79</div></div>
+          <div class="wt-row"><div class="wt-cell wt-day">Sat</div><div class="wt-cell wt-bp">133/87</div><div class="wt-cell wt-glu">5.7</div><div class="wt-cell wt-hr2">83</div></div>
+          <div class="wt-row tod" style="display:none"><div class="wt-cell wt-day">Sun★</div><div class="wt-cell wt-bp">128/84</div><div class="wt-cell wt-glu">5.4</div><div class="wt-cell wt-hr2">--</div></div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">📈 BP Trend</div>
+        <div class="ch-wrap"><canvas id="ds-chart"></canvas></div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">💊 Therapy Adherence</div>
+        <div class="adh-list">
+          <div class="adh-item"><span style="font-size:16px;">🔵</span><div class="adh-info"><div class="adh-name">Amlodipine 5mg</div><div class="adh-time">Every morning</div></div><div class="adh-bar"><div class="adh-fill" style="width:100%;background:var(--accent);"></div></div><div class="adh-pct" style="color:var(--accent);">100%</div></div>
+          <div class="adh-item"><span style="font-size:16px;">🟣</span><div class="adh-info"><div class="adh-name">Metformin 500mg</div><div class="adh-time">Every lunch</div></div><div class="adh-bar"><div class="adh-fill" style="width:86%;background:var(--primary);"></div></div><div class="adh-pct" style="color:#60A5FA;">86%</div></div>
+          <div class="adh-item"><span style="font-size:16px;">🟡</span><div class="adh-info"><div class="adh-name">Vitamin D3</div><div class="adh-time">Every evening</div></div><div class="adh-bar"><div class="adh-fill" style="width:71%;background:var(--amber);"></div></div><div class="adh-pct" style="color:var(--amber);">71%</div></div>
+        </div>
+        <button class="gen-btn2" id="dsGenBtn" onclick="generateDiagReport()">🤖 Generate health report</button>
+        <div class="ai-rpt-card" id="dsAiRptCard" style="display:none;">
+          <div class="arc-hdr"><div class="arc-av">🤖</div><div><div style="font-size:12px;font-weight:700;color:#fff;">Claude AI — Weekly Medical Report</div><div style="font-size:10px;color:rgba(255,255,255,0.6);" id="dsRptTime"></div></div></div>
+          <div class="arc-txt" id="dsRptText"><div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+        </div>
+        <button class="pdf-btn2" onclick="exportPDF()">📄 Export as PDF</button>
+        <button class="share-btn2" onclick="shareReport()">📤 Send to Dr. Shabani</button>
+        <div style="height:16px;"></div>
+      </div>
+    </div>
+
+    <!-- CONNECT -->
+    <div class="diag-section-s" id="dss-connect">
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;background:var(--pl);border-radius:12px;padding:11px 13px;margin-bottom:12px;">🔗 Connect your health apps to automatically sync vitals.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">💚</div><div style="font-size:12px;font-weight:700;">Google Fit</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Steps, HR, Sleep</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">❤️</div><div style="font-size:12px;font-weight:700;">Apple Health</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Full health data</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">⌚</div><div style="font-size:12px;font-weight:700;">Fitbit</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Activity & Sleep</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
+        <div style="background:var(--al);border-radius:14px;padding:13px;border:0.5px solid rgba(45,200,160,0.4);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">📝</div><div style="font-size:12px;font-weight:700;">Manual</div><div style="font-size:10px;color:var(--accent);margin:3px 0 8px;">Connected ✓</div><button style="padding:6px 14px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-size:11px;font-weight:700;font-family:var(--font);">Active</button></div>
+      </div>
+      <div style="height:16px;"></div>
+    </div>
+  </div>
+
+  <!-- Nav -->
+
+    <!-- SIGN OUT -->
+    <div style="padding:8px 14px 24px;">
+      <button onclick="doSignOut()" style="width:100%;padding:13px;background:rgba(239,68,68,0.12);border:0.5px solid rgba(239,68,68,0.3);border-radius:14px;color:#F87171;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">🚪 Sign Out</button>
+    </div>
+  </div>
+
+  <div class="bn">
+    <button class="ni" onclick="switchScreen('home')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Home</span></button>
+    <button class="ni" onclick="switchScreen('chat')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Chat</span></button>
+    <div class="nvw" onclick="switchScreen('vitals')"><button class="nvb"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M2 12H4L7 6L10 18L13 10L15 14H17L20 8L22 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="nvl">Vitals</span></div>
+    <button class="ni" onclick="switchScreen('calendar')"><svg class="nic" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="3" stroke="#7B8BAD" stroke-width="2"/><path d="M3 9H21" stroke="#7B8BAD" stroke-width="2"/><path d="M8 2V6M16 2V6" stroke="#7B8BAD" stroke-width="2" stroke-linecap="round"/></svg><span class="nl">Calendar</span></button>
+    <button class="ni" onclick="switchScreen('diagnostic')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M19 3H5C3.9 3 3 3.9 3 5V15C3 16.1 3.9 17 5 17H8L12 21L16 17H19C20.1 17 21 16.1 21 15V5C21 3.9 20.1 3 19 3Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Diagnosis</span></button>
+  </div>
+
+  <!-- LANGUAGE MODAL -->
+  <div id="langModal" style="display:none;position:absolute;inset:0;background:rgba(10,15,35,0.55);z-index:9000;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);" onclick="closeLangModal(event)">
+    <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:0.5px solid rgba(255,255,255,0.15);border-radius:24px 24px 44px 44px;padding:20px 18px 36px;width:100%;">
+      <div style="width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 16px;"></div>
+      <div style="font-size:16px;font-weight:700;color:#F1F5FF;margin-bottom:4px;">🌐 Language</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;">Choose your preferred language</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div id="lang-en" onclick="selectLang('en')" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:rgba(255,255,255,0.06);cursor:pointer;">
+          <div style="font-size:26px;">🇬🇧</div>
+          <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#F1F5FF;">English</div><div style="font-size:11px;color:rgba(255,255,255,0.5);">English (United Kingdom)</div></div>
+          <div id="check-en" style="width:20px;height:20px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
+        </div>
+        <div id="lang-sq" onclick="selectLang('sq')" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:rgba(255,255,255,0.06);cursor:pointer;">
+          <div style="font-size:26px;">🇦🇱</div>
+          <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#F1F5FF;">Shqip</div><div style="font-size:11px;color:rgba(255,255,255,0.5);">Albanian · Gjuha shqipe</div></div>
+          <div id="check-sq" style="width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;"></div>
+        </div>
+        <div id="lang-mk" onclick="selectLang('mk')" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:rgba(255,255,255,0.06);cursor:pointer;">
+          <div style="font-size:26px;">🇲🇰</div>
+          <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#F1F5FF;">Македонски</div><div style="font-size:11px;color:rgba(255,255,255,0.5);">Macedonian</div></div>
+          <div id="check-mk" style="width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;"></div>
+        </div>
+      </div>
+      <button onclick="closeLangModal(null)" style="width:100%;padding:12px;border-radius:14px;border:0.5px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:16px;">Close</button>
+    </div>
+  </div>
+
 
 <!-- ══════════ SUBSCRIPTION SCREEN ══════════ -->
 <div class="screen" id="screen-subscription">
@@ -2349,263 +3019,6 @@ select option{background:#0A1628;color:#F1F5FF;}
 </div>
 
 <!-- SETTINGS SCREEN -->
-<div class="screen" id="screen-settings">
-  <div style="display:flex;align-items:center;padding:10px 16px 6px;gap:10px;">
-    <button onclick="switchScreen('more')" style="width:32px;height:32px;border-radius:10px;border:none;background:var(--bg);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">‹</button>
-    <div style="font-size:16px;font-weight:700;color:#F1F5FF;">Settings</div>
-  </div>
-  <div class="set-hdr">
-    <button class="set-back" onclick="switchScreen('more')">&#8249;</button>
-    <div class="set-hdr-inner">
-      <div class="set-hdr-title">&#9881; Settings</div>
-      <div class="set-hdr-sub">Account, privacy &amp; preferences</div>
-    </div>
-    <!-- PROFILE CARD IN HEADER -->
-    <div class="set-profile-card" onclick="setShowEdit()">
-      <div class="set-av">&#128105;</div>
-      <div style="flex:1;">
-        <div class="set-pname">Your Name</div>
-        <div class="set-pemail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fe9b929b909fbe969b9f928a969c918ad09f8e8e">[email&#160;protected]</a></div>
-      </div>
-      <button class="set-pedit">Edit &#9998;</button>
-    </div>
-  </div>
-
-  <div class="sa">
-
-    <!-- ACCOUNT -->
-    <div class="set-sec">
-      <div class="set-sec-title">Account</div>
-      <div class="set-card">
-        <div class="set-row" onclick="setShowEdit()">
-          <div class="set-row-ico" style="background:#EBF3FF;">&#128100;</div>
-          <div class="set-row-info"><div class="set-row-title">Personal Information</div><div class="set-row-sub">Name, email, date of birth</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-        <div class="set-row" onclick="setShowEdit();setTimeout(function(){switchSetTab('pwd');},50);">
-          <div class="set-row-ico" style="background:#F0EEFF;">&#128274;</div>
-          <div class="set-row-info"><div class="set-row-title">Password &amp; Security</div><div class="set-row-sub">Change password, 2FA</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-        <div class="set-row" onclick="switchScreen('subscription')">
-          <div class="set-row-ico" style="background:#FFF8EC;">&#11088;</div>
-          <div class="set-row-info"><div class="set-row-title">Subscription Plan</div><div class="set-row-sub" id="setPlanSub">Free Plan — Upgrade available</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-        <div class="set-row" onclick="openPaymentModal()">
-          <div class="set-row-ico" style="background:#E1F9F3;">&#128179;</div>
-          <div class="set-row-info"><div class="set-row-title">Payment Method</div><div class="set-row-sub">Add or change payment</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- APPEARANCE -->
-    <div class="set-sec">
-      <div class="set-sec-title">Appearance &amp; Language</div>
-      <div class="set-card">
-        <div class="set-row" style="cursor:default;">
-          <div class="set-row-ico" style="background:#1A1A2E;">&#127769;</div>
-          <div class="set-row-info"><div class="set-row-title">Dark Mode</div><div class="set-row-sub" id="setDarkSub">Currently off</div></div>
-          <button class="set-tgl off" id="setDarkTgl" onclick="setToggleDark(this)"><div class="set-tgl-thumb"></div></button>
-        </div>
-        <div class="set-row" onclick="openLangModal()">
-          <div class="set-row-ico" style="background:#EBF3FF;">&#127757;</div>
-          <div class="set-row-info"><div class="set-row-title">Language</div><div class="set-row-sub" id="setLangSub">English &#127468;&#127463;</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-        <div class="set-row" onclick="showToast('&#127788; Units: metric/imperial coming soon')">
-          <div class="set-row-ico" style="background:#F0EEFF;">&#128208;</div>
-          <div class="set-row-info"><div class="set-row-title">Measurement Units</div><div class="set-row-sub">Metric (mmol, kg, °C)</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- NOTIFICATIONS & PRIVACY -->
-    <div class="set-sec">
-      <div class="set-sec-title">Notifications &amp; Privacy</div>
-      <div class="set-card">
-        <div class="set-row" onclick="switchScreen('notifications');initNotifications();">
-          <div class="set-row-ico" style="background:var(--pl);">&#128276;</div>
-          <div class="set-row-info"><div class="set-row-title">Notifications</div><div class="set-row-sub">Alarms, alerts &amp; reminders</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-        <div class="set-row" style="cursor:default;">
-          <div class="set-row-ico" style="background:#E1F9F3;">&#128100;</div>
-          <div class="set-row-info"><div class="set-row-title">Share Health Data</div><div class="set-row-sub">With your doctor or clinic</div></div>
-          <button class="set-tgl off" onclick="setToggle(this,'data sharing')"><div class="set-tgl-thumb"></div></button>
-        </div>
-        <div class="set-row" style="cursor:default;">
-          <div class="set-row-ico" style="background:#FFF8EC;">&#128202;</div>
-          <div class="set-row-info"><div class="set-row-title">Analytics &amp; Improvement</div><div class="set-row-sub">Help improve Health BOT</div></div>
-          <button class="set-tgl on" onclick="setToggle(this,'analytics')"><div class="set-tgl-thumb"></div></button>
-        </div>
-        <div class="set-row" onclick="showToast('&#128196; GDPR export sent to your email')">
-          <div class="set-row-ico" style="background:#FEF2F2;">&#128229;</div>
-          <div class="set-row-info"><div class="set-row-title">Export My Data</div><div class="set-row-sub">GDPR · Download all your data</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- SUPPORT -->
-    <div class="set-sec">
-      <div class="set-sec-title">Support &amp; About</div>
-      <div class="set-card">
-        <div class="set-row" onclick="showToast('&#128172; Support chat coming soon')">
-          <div class="set-row-ico" style="background:#EBF3FF;">&#10067;</div>
-          <div class="set-row-info"><div class="set-row-title">Help &amp; Support</div><div class="set-row-sub">FAQ, contact support</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-        <div class="set-row" onclick="showToast('&#128196; Terms of Service')">
-          <div class="set-row-ico" style="background:rgba(255,255,255,0.05);">&#128196;</div>
-          <div class="set-row-info"><div class="set-row-title">Terms of Service</div><div class="set-row-sub">Legal information</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-        <div class="set-row" onclick="showToast('&#128274; Privacy Policy')">
-          <div class="set-row-ico" style="background:rgba(255,255,255,0.05);">&#128274;</div>
-          <div class="set-row-info"><div class="set-row-title">Privacy Policy</div><div class="set-row-sub">GDPR compliant · Your data is safe</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-        <div class="set-row" onclick="showToast('&#11088; Rate Health BOT — Thank you!')">
-          <div class="set-row-ico" style="background:#FFF8EC;">&#11088;</div>
-          <div class="set-row-info"><div class="set-row-title">Rate Health BOT</div><div class="set-row-sub">Love the app? Leave a review</div></div>
-          <span class="set-row-arr">&#8250;</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- DANGER ZONE -->
-    <div class="set-sec">
-      <div class="set-sec-title">Danger Zone</div>
-    </div>
-    <div class="set-danger">
-      <div class="set-danger-row" onclick="doSignOut()">
-        <div class="set-danger-ico">&#128682;</div>
-        <div><div class="set-danger-title">Sign Out</div><div class="set-danger-sub">You will need to log in again</div></div>
-      </div>
-      <div class="set-danger-row" onclick="showToast('&#128465; Account deletion — contact support')">
-        <div class="set-danger-ico">&#128465;</div>
-        <div><div class="set-danger-title">Delete Account</div><div class="set-danger-sub">Permanently delete all your data</div></div>
-      </div>
-    </div>
-
-    <div class="set-version">
-      Health BOT v2.0.1<br>
-      Powered by Claude AI &middot; Anthropic<br>
-      &#169; 2026 Health BOT. All rights reserved.
-    </div>
-
-  </div>
-
-
-
-<!-- EDIT PROFILE MODAL -->
-<div id="setEditModal" style="display:none;position:absolute;inset:0;background:rgba(10,15,35,0.55);z-index:800;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);" onclick="setCloseEdit(event)">
-  <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:24px 24px 44px 44px;width:100%;max-height:90%;display:flex;flex-direction:column;animation:slideUp 0.3s ease;">
-    <div style="padding:12px 18px;border-bottom:0.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;">
-      <div style="font-size:15px;font-weight:700;color:#F1F5FF;">✏️ Edit Profile</div>
-      <button onclick="setCloseEdit(null)" style="width:28px;height:28px;border-radius:9px;border:none;background:var(--bg);font-size:14px;cursor:pointer;color:rgba(255,255,255,0.5);">✕</button>
-    </div>
-    <!-- Tabs -->
-    <div style="display:flex;padding:10px 14px;gap:6px;flex-shrink:0;border-bottom:0.5px solid var(--border);">
-      <button id="setTab-info" onclick="switchSetTab('info')" style="flex:1;padding:8px;border-radius:10px;border:none;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">👤 Personal Info</button>
-      <button id="setTab-pwd" onclick="switchSetTab('pwd')" style="flex:1;padding:8px;border-radius:10px;border:none;background:var(--bg);color:rgba(255,255,255,0.5);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">🔒 Password</button>
-      <button id="setTab-health" onclick="switchSetTab('health')" style="flex:1;padding:8px;border-radius:10px;border:none;background:var(--bg);color:rgba(255,255,255,0.5);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">🏥 Health Info</button>
-    </div>
-    <!-- Body -->
-    <div style="flex:1;overflow-y:auto;padding:16px;">
-
-      <!-- PERSONAL INFO -->
-      <div id="setPane-info">
-        <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Full Name</div>
-          <input id="setEditName" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-        </div>
-        <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Email</div>
-          <input id="setEditEmail" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="elena@dhealth.app" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-        </div>
-        <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Date of Birth</div>
-          <input type="date" id="setEditDob" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="1985-06-14"/>
-        </div>
-        <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Phone</div>
-          <input id="setEditPhone" type="tel" placeholder="+383 44 123 456" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-        </div>
-        <div style="margin-bottom:16px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Gender</div>
-          <select id="setEditGender" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;">
-            <option value="female">Female</option>
-            <option value="male">Male</option>
-            <option value="other">Other / Prefer not to say</option>
-          </select>
-        </div>
-        <button onclick="savePersonalInfo()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">💾 Save Personal Info</button>
-      </div>
-
-      <!-- PASSWORD -->
-      <div id="setPane-pwd" style="display:none;">
-        <div style="background:rgba(249,115,22,0.08);border-radius:12px;padding:11px 13px;margin-bottom:14px;font-size:12px;color:var(--orange);line-height:1.5;">⚠️ You will be logged out after changing your password.</div>
-        <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Current Password</div>
-          <input id="setOldPwd" type="password" placeholder="Enter current password" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-        </div>
-        <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">New Password</div>
-          <input id="setNewPwd" type="password" placeholder="Min 8 characters" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-        </div>
-        <div style="margin-bottom:16px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Confirm New Password</div>
-          <input id="setConfPwd" type="password" placeholder="Repeat new password" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-        </div>
-        <button onclick="savePassword()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#DC2626,#F97316);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">🔒 Change Password</button>
-      </div>
-
-      <!-- HEALTH INFO -->
-      <div id="setPane-health" style="display:none;">
-        <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Height (cm)</div>
-          <input id="setHeight" type="number" placeholder="170" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-        </div>
-        <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Weight (kg)</div>
-          <input id="setWeight" type="number" placeholder="70" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-        </div>
-        <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Blood Type</div>
-          <select id="setBloodType" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;">
-            <option value="">Select blood type</option>
-            <option value="A+">A+</option><option value="A-">A-</option>
-            <option value="B+">B+</option><option value="B-">B-</option>
-            <option value="AB+">AB+</option><option value="AB-">AB-</option>
-            <option value="O+">O+</option><option value="O-">O-</option>
-          </select>
-        </div>
-        <div style="margin-bottom:16px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Emergency Contact</div>
-          <input id="setEmergency" type="tel" placeholder="Name & phone number" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-        </div>
-        <button onclick="saveHealthInfo()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">💾 Save Health Info</button>
-      </div>
-
-      <!-- INTEGRATIONS -->
-      <div id="setPane-integ" style="display:none;">
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:14px;line-height:1.6;">Connect health apps to sync vitals automatically.</div>
-        <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#E8F5E9;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💚</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Google Fit</div><div id="spGfit" style="font-size:11px;color:rgba(255,255,255,0.5);">Not connected</div></div><button id="spGfitBtn" onclick="toggleInteg('gfit')" style="padding:7px 14px;border-radius:10px;border:none;background:#34A853;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#FFF0F3;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">❤️</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Apple Health</div><div id="spApple" style="font-size:11px;color:rgba(255,255,255,0.5);">iOS only</div></div><button id="spAppleBtn" onclick="toggleInteg('apple')" style="padding:7px 14px;border-radius:10px;border:none;background:#FF2D55;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#E3F2FD;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">⌚</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Fitbit</div><div id="spFitbit" style="font-size:11px;color:rgba(255,255,255,0.5);">Not connected</div></div><button id="spFitbitBtn" onclick="connectFitbit()" style="padding:7px 14px;border-radius:10px;border:none;background:#00B0B9;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:var(--al);border-radius:14px;padding:13px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:rgba(45,200,160,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📝</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Manual Input</div><div style="font-size:11px;color:var(--accent);">Always active ✓</div></div><div style="padding:7px 14px;border-radius:10px;background:rgba(45,200,160,0.2);font-size:11px;font-weight:700;color:var(--accent);">Active</div></div>
-      </div>
-
-    </div>
-  </div>
-</div>
-</div>
-
 <!-- ══════════ PRIVATE ══════════ -->
 <div class="screen" id="screen-private" style="background:linear-gradient(180deg,#0A1628 0%,#0D2144 40%,#0A1628 100%);">
   <div class="dr-status-bar">
@@ -3420,7 +3833,7 @@ function drDocReply(msg){
   } else if(m.includes('report')||m.includes('raport')){
     r='Raporti u mor! Faleminderit. Do e analizoj dhe p\u00ebrgatis rekomandime t\u00eb detajuara p\u00ebr vizit\u00ebn e ardhshme.';
   } else if(m.includes('vital')){
-    r='T\u00eb dh\u00ebnat vitale: HR 78bpm, BP 128/84, Glucose 5.4mmol, SpO2 97%. Parametra t\u00eb mir\u00eb! Vazhdoni monitorimin.';
+    r='Të dhënat vitale: HR '+(vitalsState.hr||'--')+'bpm, BP '+(vitalsState.sys||'--')+'/'+(vitalsState.dia||'--')+', Glucose '+(vitalsState.glu||'--')+'mmol, SpO2 '+(vitalsState.spo2||'--')+'%. '+((vitalsState.sys>0)?'Parametra nën kontroll.':'Shto vitalet tuaja.');
   } else {
     var reps=['Faleminderit p\u00ebr mesazhin! D\u00ebshironi ndonj\u00eb informacion shtets\u00eb?','Mir\u00eb! Do merrem me k\u00ebt\u00eb \u00e7\u00ebshtje. A ka ndonj\u00eb shq\u00ebtes\u00eb tjet\u00ebr?','Kam par\u00eb profilin tuaj. Gjithcka duket n\u00eb rregull. A keni simptoma t\u00eb reja?'];
     r=reps[Math.floor(Math.random()*reps.length)];
@@ -3597,7 +4010,7 @@ async function runVerdictAI(){
   err.classList.remove('vis');resp.style.display='block';
   text.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
   try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:BASE_SYS+getProfile(),messages:[{role:'user',content:'Provide a comprehensive health verdict including: HEALTH SCORE /100, status assessment, detailed analysis of each vital sign and diagnosis, therapy effectiveness review, and 5 priority recommendations.'}]})});
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:BASE_SYS+getProfile(),messages:[{role:'user',content:(vitalsState.sys>0 ? 'Provide a comprehensive health verdict including: HEALTH SCORE /100, status assessment, detailed analysis of each vital sign and diagnosis, therapy effectiveness review, and 5 priority recommendations.' : 'Patient has not recorded vitals yet. Provide: 1) Welcome message, 2) What vitals to track and why, 3) General health advice based on their diagnoses and therapy, 4) Encourage them to start tracking. Keep it warm and motivating.')}]})});
     var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);if(d.error)throw new Error();
     var tx=d.content&&d.content[0]&&d.content[0].text;if(!tx)throw new Error();
     text.innerHTML=fmt(tx);
@@ -3661,7 +4074,7 @@ function initReport(){
   if(!canvas)return;
   if(bpChartInst){try{bpChartInst.destroy();}catch(e){}bpChartInst=null;}
   reportInited=true;
-  bpChartInst=new Chart(canvas,{type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{data:[130,127,132,126,129,133,128],borderColor:'#F97316',backgroundColor:'rgba(249,115,22,0.1)',fill:true,tension:0.4,borderWidth:2.5,pointBackgroundColor:'#F97316',pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:true,grid:{display:false},ticks:{font:{size:9},color:'#B0BCCF'}},y:{display:false}},elements:{line:{tension:0.4}}}}); }
+  bpChartInst=new Chart(canvas,{type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{data:(function(){var h=JSON.parse(localStorage.getItem("vitals_daily_history")||"[]");return h.slice(0,7).map(function(v){return v.sys||null;}).reverse();})(),borderColor:'#F97316',backgroundColor:'rgba(249,115,22,0.1)',fill:true,tension:0.4,borderWidth:2.5,pointBackgroundColor:'#F97316',pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:true,grid:{display:false},ticks:{font:{size:9},color:'#B0BCCF'}},y:{display:false}},elements:{line:{tension:0.4}}}}); }
 async function generateReport(){
   var btn=document.getElementById('genBtn');
   var card=document.getElementById('aiRptCard');
@@ -3672,9 +4085,9 @@ async function generateReport(){
   text.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
   var now=new Date();
   timeEl.textContent='Generated '+now.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' at '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  var RSYS=BASE_SYS+getProfile()+'\n\nUse actual patient data from profile and vitals.';
+  var RSYS=BASE_SYS+getProfile()+'\n\nCurrent vitals: BP '+vitalsState.sys+'/'+vitalsState.dia+', HR '+vitalsState.hr+', Glucose '+vitalsState.glu+', SpO2 '+vitalsState.spo2+'%. Use only real patient data. Do not invent data.';
   try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:RSYS,messages:[{role:'user',content:'Generate a professional weekly medical report for -- (April 3-9). Analyze BP trends, glucose, therapy adherence, and provide a medical narrative with recommendations.'}]})});
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:RSYS,messages:[{role:'user',content:(function(){var h=JSON.parse(localStorage.getItem('vitals_daily_history')||'[]');var meals=JSON.parse(localStorage.getItem('dh_meals')||'[]');var weekData=h.length>0?'\n\nVITALS HISTORY ('+h.length+' readings):\n'+h.slice(0,7).map(function(v){return (v.date||'')+ ' BP:'+(v.sys||'--')+'/'+(v.dia||'--')+' HR:'+(v.hr||'--')+' Glu:'+(v.glu||'--');}).join('\n'):'\n\nNO VITALS RECORDED YET.';var mealData=meals.length>0?'\nMeals logged: '+meals.slice(0,5).map(function(m){return m.name+'('+m.cal+'kcal)';}).join(', '):'';return 'Generate a professional weekly medical report based on this patient data.'+weekData+mealData+' If no vitals, provide general health monitoring guidance and encourage the patient to start tracking.';}())}]})});
     var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);if(d.error)throw new Error();
     var tx=d.content&&d.content[0]&&d.content[0].text;if(!tx)throw new Error();
     text.innerHTML=fmt(tx);
@@ -6731,11 +7144,19 @@ function closeConnectModal(e){
 }
 
 function doConnectApp(type){
+  document.getElementById('connectModal').style.display = 'none';
+  if(type === 'gfit'){
+    connectGoogleFit(); return;
+  }
+  if(type === 'fitbit'){
+    connectFitbit(); return;
+  }
+  if(type === 'apple'){
+    connectAppleHealth(); return;
+  }
   localStorage.setItem('connect_'+type, '1');
   showToast('✅ '+connectApps[type].name+' connected!');
-  /* Update Home card */
   updateConnectCards();
-  document.getElementById('connectModal').style.display = 'none';
 }
 
 function disconnectApp(type){
@@ -7082,13 +7503,13 @@ async function initUserData(userId, userName, userEmail){
 function signInWithGoogle(){
   if(typeof google !== 'undefined' && google.accounts){
     google.accounts.id.initialize({
-      client_id: '395744662733-0s1pb9qf3hvi9k1jutcr57pi3b5o8hpm.apps.googleusercontent.com',
+      client_id: '695949615023-sbc9lhr6dp7iik90qe9m1g7372ecgkfv.apps.googleusercontent.com',
       callback: handleGoogleSignIn
     });
     google.accounts.id.prompt();
   } else {
     /* Fallback OAuth redirect */
-    var clientId = '395744662733-0s1pb9qf3hvi9k1jutcr57pi3b5o8hpm.apps.googleusercontent.com';
+    var clientId = '695949615023-sbc9lhr6dp7iik90qe9m1g7372ecgkfv.apps.googleusercontent.com';
     var redirect  = encodeURIComponent(window.location.href.split('?')[0]);
     var scope     = encodeURIComponent('openid email profile');
     var nonce     = Math.random().toString(36).substring(2);
@@ -7819,7 +8240,7 @@ function showDHealthRingInfo(){
 
 /* ════ GOOGLE FIT OAUTH 2.0 ════ */
 var GFIT_CONFIG = {
-  clientId: '395744662733-0s1pb9qf3hvi9k1jutcr57pi3b5o8hpm.apps.googleusercontent.com',
+  clientId: '695949615023-sbc9lhr6dp7iik90qe9m1g7372ecgkfv.apps.googleusercontent.com',
   redirectUri: window.location.origin + window.location.pathname,
   scopes: [
     'https://www.googleapis.com/auth/fitness.activity.read',
