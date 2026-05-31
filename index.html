@@ -5442,19 +5442,32 @@ function resendConf(email){
   var sb=getSupa();
   if(sb) sb.auth.resend({type:'signup',email:email}).then(function(){showToast('📧 Email u ridërgua!');});
 }
-function ldoForgot() {
-  var em=document.getElementById('fgtem').value.trim();
+async function ldoForgot() {
+  var em = document.getElementById('fgtem').value.trim();
   document.getElementById('lfgt-ok').classList.remove('lon');
   document.getElementById('fgtem').classList.remove('lerr','lok');
   document.getElementById('fgtem-e').classList.remove('lon');
-  if(!em||!lisEmail(em)){document.getElementById('fgtem').classList.add('lerr');document.getElementById('fgtem-e').classList.add('lon');return;}
-  lsetBtn('lbtn-fgt',true);
-  setTimeout(function(){
-    lsetBtn('lbtn-fgt',false,'Send Reset Link');
+  if(!em||!lisEmail(em)){
+    document.getElementById('fgtem').classList.add('lerr');
+    document.getElementById('fgtem-e').classList.add('lon');
+    return;
+  }
+  lsetBtn('lbtn-fgt', true);
+  try {
+    var sb = getSupa();
+    var {error} = await sb.auth.resetPasswordForEmail(em, {
+      redirectTo: 'https://relaxed-pegasus-1e887c.netlify.app'
+    });
+    if(error) throw error;
+    lsetBtn('lbtn-fgt', false, 'Send Reset Link');
     document.getElementById('lfgt-ok').classList.add('lon');
     document.getElementById('fgtem').classList.add('lok');
-    document.getElementById('fgtem').value='';
-  },1200);
+    document.getElementById('fgtem').value = '';
+    showToast('✅ Reset link sent! Check your email.');
+  } catch(e) {
+    lsetBtn('lbtn-fgt', false, 'Send Reset Link');
+    showToast('❌ Error: ' + (e.message||'Could not send reset email'));
+  }
 }
 function lsocialLogin() {
   document.getElementById('lsuccnm').textContent=name||'Welcome!';
@@ -5463,8 +5476,12 @@ function lsocialLogin() {
 }
 function doSignOut() {
   if(!confirm('Are you sure you want to sign out?')) return;
+  var sb = getSupa();
+  if(sb) sb.auth.signOut();
   LST.currentUser = null;
   LST.rem = false;
+  localStorage.removeItem('gfit_token');
+  localStorage.removeItem('gfit_expiry');
   document.getElementById('login-overlay').style.display = 'flex';
   switchScreen('home');
   showToast('✅ Signed out successfully');
@@ -7501,26 +7518,17 @@ async function initUserData(userId, userName, userEmail){
 
 /* ════ GOOGLE SIGN-IN ════ */
 function signInWithGoogle(){
-  if(typeof google !== 'undefined' && google.accounts){
-    google.accounts.id.initialize({
-      client_id: '695949615023-sbc9lhr6dp7iik90qe9m1g7372ecgkfv.apps.googleusercontent.com',
-      callback: handleGoogleSignIn
-    });
-    google.accounts.id.prompt();
-  } else {
-    /* Fallback OAuth redirect */
-    var clientId = '695949615023-sbc9lhr6dp7iik90qe9m1g7372ecgkfv.apps.googleusercontent.com';
-    var redirect  = encodeURIComponent(window.location.href.split('?')[0]);
-    var scope     = encodeURIComponent('openid email profile');
-    var nonce     = Math.random().toString(36).substring(2);
-    var url = 'https://accounts.google.com/o/oauth2/v2/auth'
-      + '?client_id=' + clientId
-      + '&redirect_uri=' + redirect
-      + '&response_type=token id_token'
-      + '&scope=' + scope
-      + '&nonce=' + nonce;
-    window.location.href = url;
-  }
+  var sb = getSupa();
+  if(!sb){ showToast('⚠️ Connection error'); return; }
+  sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin + window.location.pathname,
+      scopes: 'openid email profile'
+    }
+  }).then(function(res){
+    if(res.error) showToast('❌ ' + res.error.message);
+  });
 }
 
 async function handleGoogleSignIn(response){
@@ -8714,18 +8722,43 @@ function markUserHasData(){
 /* Clear demo data on page load if user just registered */
 window.addEventListener('load', function(){
   setTimeout(function(){
-    /* Check if user is logged in via Supabase */
     var sb = getSupa();
     if(!sb) return;
-    sb.auth.getSession().then(function(res){
-      if(res && res.data && res.data.session){
-        /* User is logged in - check if new */
-        if(isNewUser()){
-          clearAllDemoData();
+
+    /* Handle OAuth redirect from Google */
+    sb.auth.onAuthStateChange(function(event, session){
+      if(event === 'SIGNED_IN' && session){
+        var user = session.user;
+        var name = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || user.email.split('@')[0];
+        var email = user.email;
+        LST.currentUser = { id: user.id, name: name, email: email };
+        /* Hide login overlay */
+        var overlay = document.getElementById('login-overlay');
+        if(overlay) overlay.style.display = 'none';
+        /* Show welcome/device sync screen */
+        var lsucc = document.getElementById('lsucc');
+        if(lsucc){
+          document.getElementById('lsuccnm').textContent = name;
+          document.getElementById('lsuccpl').textContent = 'Free Plan - Active';
+          lshow('lsucc');
         }
+        initUserData(user.id, name, email);
+        showToast('✅ Welcome, ' + name + '!');
+      }
+      if(event === 'SIGNED_OUT'){
+        LST.currentUser = null;
+        var overlay = document.getElementById('login-overlay');
+        if(overlay) overlay.style.display = 'flex';
       }
     });
-  }, 1500);
+
+    /* Check existing session */
+    sb.auth.getSession().then(function(res){
+      if(res && res.data && res.data.session){
+        if(isNewUser()) clearAllDemoData();
+      }
+    });
+  }, 500);
 });
 
 /* When user enters first vital - mark as having data */
