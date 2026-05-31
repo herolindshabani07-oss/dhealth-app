@@ -998,17 +998,17 @@ select option{background:#0A1628;color:#F1F5FF;}
 
 /* ══ SCREEN DIAGNOSTIC ══ */
 .diag-screen-hdr{background:linear-gradient(160deg,#0D1B4B,#1565C0,#8B6FE8);padding:0 16px 0;flex-shrink:0;}
-.diag-top-row{display:flex;align-items:center;gap:10px;padding:12px 0 10px;}
-.diag-av-s{width:38px;height:38px;border-radius:13px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:18px;border:1.5px solid rgba(255,255,255,0.3);}
-.diag-vgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:0 0 10px;}
-.diag-vcard{background:rgba(255,255,255,0.12);border-radius:10px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;gap:2px;border:0.5px solid rgba(255,255,255,0.15);}
-.diag-vcard-ico{font-size:14px;}
+.diag-top-row{display:flex;align-items:center;gap:10px;padding:6px 0 4px;}
+.diag-av-s{width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:16px;border:1.5px solid rgba(255,255,255,0.3);}
+.diag-vgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:0 0 6px;}
+.diag-vcard{background:rgba(255,255,255,0.12);border-radius:9px;padding:5px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;border:0.5px solid rgba(255,255,255,0.15);}
+.diag-vcard-ico{font-size:12px;}
 .diag-vcard-v{font-size:11px;font-weight:700;color:#fff;}
 .diag-vcard-l{font-size:8px;color:rgba(255,255,255,0.55);}
-.diag-score-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 0 10px;}
-.diag-score-box{background:rgba(255,255,255,0.12);border-radius:10px;padding:8px 12px;border:0.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:8px;}
-.diag-tabs-row{display:flex;background:rgba(255,255,255,0.08);border-radius:12px 12px 0 0;padding:3px;}
-.diag-tab-s{flex:1;padding:7px 4px;border-radius:9px;border:none;background:transparent;font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:var(--font);}
+.diag-score-row{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:0 0 6px;}
+.diag-score-box{background:rgba(255,255,255,0.12);border-radius:9px;padding:6px 10px;border:0.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:7px;}
+.diag-tabs-row{display:flex;background:rgba(255,255,255,0.08);border-radius:10px 10px 0 0;padding:3px;}
+.diag-tab-s{flex:1;padding:6px 4px;border-radius:8px;border:none;background:transparent;font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:var(--font);}
 .diag-tab-s.active{background:rgba(255,255,255,0.2);color:#fff;font-weight:700;}
 .diag-body-s{flex:1;overflow-y:auto;background:var(--bg);}
 .diag-section-s{display:none;padding:14px;}
@@ -2379,7 +2379,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       <button class="diag-tab-s active" id="dst-verdict" onclick="switchDiagS('verdict')">📊 Verdict</button>
       <button class="diag-tab-s" id="dst-profile" onclick="switchDiagS('profile')">📋 Profile</button>
       <button class="diag-tab-s" id="dst-report" onclick="switchDiagS('report')">📄 Report</button>
-      <button class="diag-tab-s" id="dst-connect" onclick="switchDiagS('connect')">🔗 Connect</button>
+      <button class="diag-tab-s" id="dst-therapy" onclick="switchDiagS('therapy')">💊 Therapy</button>
     </div>
   </div>
 
@@ -2598,15 +2598,37 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div>
 
     <!-- CONNECT -->
-    <div class="diag-section-s" id="dss-connect">
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;background:var(--pl);border-radius:12px;padding:11px 13px;margin-bottom:12px;">🔗 Connect your health apps to automatically sync vitals.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">💚</div><div style="font-size:12px;font-weight:700;">Google Fit</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Steps, HR, Sleep</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">❤️</div><div style="font-size:12px;font-weight:700;">Apple Health</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Full health data</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">⌚</div><div style="font-size:12px;font-weight:700;">Fitbit</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Activity & Sleep</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:var(--al);border-radius:14px;padding:13px;border:0.5px solid rgba(45,200,160,0.4);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">📝</div><div style="font-size:12px;font-weight:700;">Manual</div><div style="font-size:10px;color:var(--accent);margin:3px 0 8px;">Connected ✓</div><button style="padding:6px 14px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-size:11px;font-weight:700;font-family:var(--font);">Active</button></div>
+    <div class="diag-section-s" id="dss-therapy">
+      <div style="padding:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#F1F5FF;">💊 Active Therapy</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Current medications and treatment plan</div>
+          </div>
+          <div id="therapy-count" style="background:rgba(139,111,232,0.2);border:0.5px solid rgba(139,111,232,0.4);border-radius:10px;padding:4px 10px;font-size:11px;font-weight:700;color:#C4B5FD;">0 active</div>
+        </div>
+        <div id="therapy-list-view" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+        <div style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:13px;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">+ Add Medication</div>
+          <input class="ti" id="therapy-med-inp" placeholder="e.g. Amlodipine 5mg" style="width:100%;margin-bottom:8px;" onkeydown="if(event.key===&apos;Enter&apos;)addTherapyMed()"/>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+            <select id="therapy-time-sel" style="padding:8px;border-radius:10px;border:0.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.07);color:#F1F5FF;font-size:12px;font-family:var(--font);">
+              <option value="Morning">🌅 Morning</option>
+              <option value="Lunch">☀️ Lunch</option>
+              <option value="Evening">🌙 Evening</option>
+              <option value="Night">⭐ Night</option>
+              <option value="As needed">⚡ As needed</option>
+            </select>
+            <button onclick="addTherapyMed()" style="padding:8px;border-radius:10px;border:none;background:linear-gradient(135deg,#8B6FE8,#A78BFA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+ Add</button>
+          </div>
+        </div>
+        <button onclick="analyzeTherapy()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:10px;">🤖 AI Therapy Analysis</button>
+        <div id="therapy-ai-resp" style="display:none;background:rgba(255,255,255,0.05);border:0.5px solid rgba(139,111,232,0.3);border-radius:14px;padding:13px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);display:flex;align-items:center;justify-content:center;font-size:13px;">🤖</div><div style="font-size:12px;font-weight:700;color:#F1F5FF;">AI Therapy Assessment</div></div>
+          <div id="therapy-ai-text" style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;"></div>
+        </div>
+        <div style="height:16px;"></div>
       </div>
-      <div style="height:16px;"></div>
     </div>
   </div>
 
@@ -3276,7 +3298,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       <button class="diag-tab-s active" id="dst-verdict" onclick="switchDiagS('verdict')">📊 Verdict</button>
       <button class="diag-tab-s" id="dst-profile" onclick="switchDiagS('profile')">📋 Profile</button>
       <button class="diag-tab-s" id="dst-report" onclick="switchDiagS('report')">📄 Report</button>
-      <button class="diag-tab-s" id="dst-connect" onclick="switchDiagS('connect')">🔗 Connect</button>
+      <button class="diag-tab-s" id="dst-therapy" onclick="switchDiagS('therapy')">💊 Therapy</button>
     </div>
   </div>
 
@@ -3495,15 +3517,37 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div>
 
     <!-- CONNECT -->
-    <div class="diag-section-s" id="dss-connect">
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;background:var(--pl);border-radius:12px;padding:11px 13px;margin-bottom:12px;">🔗 Connect your health apps to automatically sync vitals.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">💚</div><div style="font-size:12px;font-weight:700;">Google Fit</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Steps, HR, Sleep</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">❤️</div><div style="font-size:12px;font-weight:700;">Apple Health</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Full health data</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">⌚</div><div style="font-size:12px;font-weight:700;">Fitbit</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Activity & Sleep</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:var(--al);border-radius:14px;padding:13px;border:0.5px solid rgba(45,200,160,0.4);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">📝</div><div style="font-size:12px;font-weight:700;">Manual</div><div style="font-size:10px;color:var(--accent);margin:3px 0 8px;">Connected ✓</div><button style="padding:6px 14px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-size:11px;font-weight:700;font-family:var(--font);">Active</button></div>
+    <div class="diag-section-s" id="dss-therapy">
+      <div style="padding:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#F1F5FF;">💊 Active Therapy</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Current medications and treatment plan</div>
+          </div>
+          <div id="therapy-count" style="background:rgba(139,111,232,0.2);border:0.5px solid rgba(139,111,232,0.4);border-radius:10px;padding:4px 10px;font-size:11px;font-weight:700;color:#C4B5FD;">0 active</div>
+        </div>
+        <div id="therapy-list-view" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+        <div style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:13px;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">+ Add Medication</div>
+          <input class="ti" id="therapy-med-inp" placeholder="e.g. Amlodipine 5mg" style="width:100%;margin-bottom:8px;" onkeydown="if(event.key===&apos;Enter&apos;)addTherapyMed()"/>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+            <select id="therapy-time-sel" style="padding:8px;border-radius:10px;border:0.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.07);color:#F1F5FF;font-size:12px;font-family:var(--font);">
+              <option value="Morning">🌅 Morning</option>
+              <option value="Lunch">☀️ Lunch</option>
+              <option value="Evening">🌙 Evening</option>
+              <option value="Night">⭐ Night</option>
+              <option value="As needed">⚡ As needed</option>
+            </select>
+            <button onclick="addTherapyMed()" style="padding:8px;border-radius:10px;border:none;background:linear-gradient(135deg,#8B6FE8,#A78BFA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+ Add</button>
+          </div>
+        </div>
+        <button onclick="analyzeTherapy()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:10px;">🤖 AI Therapy Analysis</button>
+        <div id="therapy-ai-resp" style="display:none;background:rgba(255,255,255,0.05);border:0.5px solid rgba(139,111,232,0.3);border-radius:14px;padding:13px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);display:flex;align-items:center;justify-content:center;font-size:13px;">🤖</div><div style="font-size:12px;font-weight:700;color:#F1F5FF;">AI Therapy Assessment</div></div>
+          <div id="therapy-ai-text" style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;"></div>
+        </div>
+        <div style="height:16px;"></div>
       </div>
-      <div style="height:16px;"></div>
     </div>
   </div>
 
@@ -3980,6 +4024,173 @@ function getProfile(){
     '• Temperature: '+vitalsState.temp+'°C\n'+
     'NOTES: '+notes;
 }
+
+/* ════════════════════════════════════════════════════════════
+   DIAGSYNC — Algoritmi qendror i sinkronizimit të Diagnostic
+   Lidh: Vitals ↔ Profile ↔ Verdict ↔ Therapy ↔ Report
+════════════════════════════════════════════════════════════ */
+var DiagSync = {
+
+  /* Burimi i vetëm i të dhënave */
+  getData: function(){
+    var getTagValues = function(ids){
+      var seen = {}, result = [];
+      ids.forEach(function(id){
+        var el = document.getElementById(id);
+        if(!el) return;
+        Array.from(el.querySelectorAll('.tag2')).forEach(function(t){
+          var v = t.textContent.replace('×','').trim();
+          if(v && !seen[v]){ seen[v]=1; result.push(v); }
+        });
+      });
+      return result;
+    };
+    return {
+      /* Profili mjekësor */
+      diagnoses: getTagValues(['diag-tags','prof-diag-tags','ds-diag-tags']),
+      therapy:   getTagValues(['therapy-tags','prof-therapy-tags','ds-therapy-tags']),
+      allergies: getTagValues(['allergy-tags','prof-allergy-tags','ds-allergy-tags']),
+      labs:      getTagValues(['lab-tags','prof-lab-tags','ds-lab-tags']),
+      notes:     (document.getElementById('ds-notes')||document.getElementById('prof-notes')||{}).value||'',
+      /* Vitals aktualë */
+      vitals: {
+        hr:    vitalsState.hr   || 0,
+        sys:   vitalsState.sys  || 0,
+        dia:   vitalsState.dia  || 0,
+        spo2:  vitalsState.spo2 || 0,
+        glu:   vitalsState.glu  || 0,
+        temp:  vitalsState.temp || 0,
+        hrv:   vitalsState.hrv  || 0,
+        steps: vitalsState.steps|| 0
+      },
+      /* Nutrition sot */
+      meals: JSON.parse(localStorage.getItem('dh_meals')||'[]').filter(function(m){
+        return m.date === new Date().toISOString().split('T')[0];
+      }),
+      /* Score i fundit */
+      lastScore: JSON.parse(localStorage.getItem('dh_last_score')||'{}'),
+      /* User */
+      name: (LST&&LST.currentUser&&LST.currentUser.name)||'Patient'
+    };
+  },
+
+  /* Update UI i Verdict tab nga të dhënat */
+  updateVerdictUI: function(d){
+    /* ds-name */
+    var nm = document.getElementById('ds-name');
+    if(nm) nm.textContent = d.name;
+    /* ds-bp */
+    var bp = document.getElementById('ds-bp');
+    if(bp) bp.textContent = d.vitals.sys>0 ? d.vitals.sys+'/'+d.vitals.dia : '--/--';
+    /* ds-hr */
+    var hr = document.getElementById('ds-hr');
+    if(hr) hr.textContent = d.vitals.hr>0 ? d.vitals.hr+' bpm' : '-- bpm';
+    /* ds-glu */
+    var glu = document.getElementById('ds-glu');
+    if(glu) glu.textContent = d.vitals.glu>0 ? d.vitals.glu+' mmol' : '-- mmol';
+    /* ds-spo2 */
+    var spo = document.getElementById('ds-spo2');
+    if(spo) spo.textContent = d.vitals.spo2>0 ? d.vitals.spo2+'%' : '--%';
+    /* ds-date */
+    var dt = document.getElementById('ds-date');
+    if(dt) dt.textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    /* Header */
+    DiagSync.updateHeader(d);
+  },
+
+  /* Update header badge */
+  updateHeader: function(d){
+    var thEl = document.getElementById('diagHeaderTherapy');
+    if(thEl) thEl.textContent = d.therapy.length + ' active';
+    var stored = JSON.parse(localStorage.getItem('dh_last_score')||'{}');
+    var score = stored.score || '--';
+    var scEl = document.getElementById('diagHeaderScore');
+    if(scEl){
+      scEl.textContent = score+'/100';
+      scEl.style.color = score==='--'?'#FCD34D':(score>=75?'#34D399':score>=50?'#F97316':'#F87171');
+    }
+  },
+
+  /* Sync Profile tab → Therapy tab */
+  syncProfileToTherapy: function(){
+    setTimeout(function(){
+      if(document.getElementById('dss-therapy') &&
+         document.getElementById('dss-therapy').classList.contains('active')){
+        renderTherapyList();
+      }
+    }, 100);
+  },
+
+  /* Sync Vitals → Verdict header stats */
+  syncVitalsToVerdict: function(){
+    var d = DiagSync.getData();
+    DiagSync.updateVerdictUI(d);
+  },
+
+  /* Sync kur hapet Diagnostic screen */
+  onScreenOpen: function(){
+    var d = DiagSync.getData();
+    DiagSync.updateVerdictUI(d);
+    DiagSync.updateHeader(d);
+    /* Nëse Therapy tab aktiv — render listën */
+    if(document.getElementById('dss-therapy') &&
+       document.getElementById('dss-therapy').classList.contains('active')){
+      renderTherapyList();
+    }
+  },
+
+  /* Sync kur ndryshon ndonjë tag (diagnozë/terapi) */
+  onTagChange: function(){
+    var d = DiagSync.getData();
+    DiagSync.updateHeader(d);
+    DiagSync.syncProfileToTherapy();
+  },
+
+  /* Sync rezultatin e AI Verdict → Report tab */
+  onVerdictComplete: function(scoreData){
+    /* Ruaj score */
+    localStorage.setItem('dh_last_score', JSON.stringify(scoreData));
+    /* Update header */
+    DiagSync.updateHeader(DiagSync.getData());
+    /* Update Report chart me vitals të vërteta */
+    if(document.getElementById('dss-report') &&
+       document.getElementById('dss-report').classList.contains('active')){
+      setTimeout(loadDiagScreenChart, 200);
+    }
+  }
+};
+
+/* Hook DiagSync në switchScreen */
+var _origSwitchScreen = switchScreen;
+switchScreen = function(n){
+  _origSwitchScreen(n);
+  if(n === 'diagnostic'){
+    setTimeout(DiagSync.onScreenOpen, 150);
+  }
+};
+
+/* Hook DiagSync në addTag/rmTag */
+var _origAddTag = addTag;
+addTag = function(listId, inpId, cls){
+  _origAddTag(listId, inpId, cls);
+  setTimeout(DiagSync.onTagChange, 100);
+};
+var _origRmTag = rmTag;
+rmTag = function(listId, el){
+  _origRmTag(listId, el);
+  setTimeout(DiagSync.onTagChange, 100);
+};
+
+/* Hook DiagSync në updateAllVitalsUI */
+var _origUpdateAllVitalsUI = typeof updateAllVitalsUI === 'function' ? updateAllVitalsUI : null;
+if(_origUpdateAllVitalsUI){
+  updateAllVitalsUI = function(){
+    _origUpdateAllVitalsUI();
+    setTimeout(DiagSync.syncVitalsToVerdict, 100);
+  };
+}
+
+
 var BASE_SYS='You are Health BOT, an advanced medical AI with full access to the patient\'s medical profile.\n\n'+
   'INSTRUCTIONS:\n- Respond in the SAME language the user writes in (Albanian or English)\n- Reference actual values and diagnoses — be specific\n- Be empathetic, warm, and professional\n- Use **bold** for key values\n- For serious concerns, recommend Dr. Shabani\n- Keep responses focused (3-4 paragraphs max)\n\n';
 
@@ -4014,6 +4225,12 @@ async function runVerdictAI(){
     var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);if(d.error)throw new Error();
     var tx=d.content&&d.content[0]&&d.content[0].text;if(!tx)throw new Error();
     text.innerHTML=fmt(tx);
+    /* DiagSync — sinkronizo pas Verdict */
+    try{
+      var scoreMatch = tx.match(/(\d{1,3})\s*\/\s*100/);
+      var score = scoreMatch ? parseInt(scoreMatch[1]) : null;
+      if(score) DiagSync.onVerdictComplete({score:score, timestamp:Date.now()});
+    }catch(e){}
   }catch(e){resp.style.display='none';err.classList.add('vis');}
   btn.disabled=false;btn.innerHTML='🔄 Re-Analyze';
 }
@@ -6801,14 +7018,116 @@ async function analyzeProfModal(){
 
 /* ══ SCREEN DIAGNOSTIC ══ */
 function switchDiagS(tab){
-  ['verdict','profile','report','connect'].forEach(function(t){
+  ['verdict','profile','report','therapy'].forEach(function(t){
     var sec = document.getElementById('dss-'+t);
     var btn = document.getElementById('dst-'+t);
     if(sec) sec.classList.toggle('active', t===tab);
     if(btn) btn.classList.toggle('active', t===tab);
   });
-  if(tab==='report') setTimeout(loadDiagScreenChart, 100);
+  if(tab==='report')  setTimeout(loadDiagScreenChart, 100);
+  if(tab==='therapy') setTimeout(renderTherapyList, 100);
 }
+
+/* ════ THERAPY TAB FUNCTIONS ════ */
+function renderTherapyList(){
+  var list = document.getElementById('therapy-list-view');
+  var countEl = document.getElementById('therapy-count');
+  if(!list) return;
+
+  /* Merr terapitë nga ds-therapy-tags */
+  var tags = document.querySelectorAll('#ds-therapy-tags .tag2');
+  var meds = Array.from(tags).map(function(t){
+    return t.textContent.replace('×','').trim();
+  }).filter(Boolean);
+
+  list.innerHTML = '';
+
+  if(meds.length === 0){
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:12px;">No medications added yet.<br>Add them in the Profile tab.</div>';
+    if(countEl) countEl.textContent = '0 active';
+    return;
+  }
+
+  if(countEl) countEl.textContent = meds.length + ' active';
+
+  var timeColors = {
+    'Morning':  {bg:'rgba(251,191,36,0.15)',  border:'rgba(251,191,36,0.3)',  color:'#FCD34D', icon:'🌅'},
+    'Lunch':    {bg:'rgba(96,165,250,0.15)',   border:'rgba(96,165,250,0.3)',  color:'#93C5FD', icon:'☀️'},
+    'Evening':  {bg:'rgba(167,139,250,0.15)',  border:'rgba(167,139,250,0.3)',color:'#C4B5FD', icon:'🌙'},
+    'Night':    {bg:'rgba(99,102,241,0.15)',   border:'rgba(99,102,241,0.3)', color:'#A5B4FC', icon:'⭐'},
+    'As needed':{bg:'rgba(45,200,160,0.15)',   border:'rgba(45,200,160,0.3)', color:'#4ADE80', icon:'⚡'}
+  };
+
+  meds.forEach(function(med, i){
+    /* Detekto kohën nga emri */
+    var timeKey = 'Morning';
+    Object.keys(timeColors).forEach(function(k){
+      if(med.toLowerCase().includes(k.toLowerCase())) timeKey = k;
+    });
+    var tc = timeColors[timeKey];
+
+    var item = document.createElement('div');
+    item.style.cssText = 'background:'+tc.bg+';border:0.5px solid '+tc.border+';border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:11px;';
+    item.innerHTML = '<div style="width:38px;height:38px;border-radius:12px;background:'+tc.bg+';border:0.5px solid '+tc.border+';display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💊</div>'
+      +'<div style="flex:1;">'
+      +'<div style="font-size:13px;font-weight:600;color:#F1F5FF;margin-bottom:2px;">'+med.split('·')[0].trim()+'</div>'
+      +'<div style="font-size:11px;color:rgba(255,255,255,0.5);">'+tc.icon+' '+(med.includes('·') ? med.split('·').slice(1).join('·').trim() : timeKey)+'</div>'
+      +'</div>'
+      +'<div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:'+tc.bg+';color:'+tc.color+';border:0.5px solid '+tc.border+';">Active ✓</div>';
+    list.appendChild(item);
+  });
+}
+
+function addTherapyMed(){
+  var inp = document.getElementById('therapy-med-inp');
+  var sel = document.getElementById('therapy-time-sel');
+  if(!inp || !inp.value.trim()) return;
+  var val = inp.value.trim() + ' · ' + (sel ? sel.value : 'Morning');
+  /* Shto te ds-therapy-tags */
+  addTag('ds-therapy-tags','therapy-med-inp','t');
+  /* Pastro input manualisht nëse addTag nuk e bëri */
+  inp.value = '';
+  setTimeout(renderTherapyList, 100);
+}
+
+async function analyzeTherapy(){
+  var btn = event.target;
+  var respEl = document.getElementById('therapy-ai-resp');
+  var textEl = document.getElementById('therapy-ai-text');
+  if(!respEl || !textEl) return;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Analyzing...';
+  respEl.style.display = 'block';
+  textEl.innerHTML = '<div style="display:flex;gap:4px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+
+  /* Merr terapitë dhe diagnozat */
+  var therapy = Array.from(document.querySelectorAll('#ds-therapy-tags .tag2')).map(function(t){ return t.textContent.replace('×','').trim(); }).filter(Boolean);
+  var diags   = Array.from(document.querySelectorAll('#ds-diag-tags .tag2')).map(function(t){ return t.textContent.replace('×','').trim(); }).filter(Boolean);
+
+  try {
+    var r = await fetch('/.netlify/functions/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens:600,
+        system:'You are D Health AI Doctor. Analyze the patient therapy and provide: 1) Drug interactions check, 2) Timing optimization, 3) Side effects to watch, 4) Lifestyle recommendations. Be concise and specific.',
+        messages:[{role:'user',content:'Patient diagnoses: '+(diags.join(', ')||'None')+'\nCurrent therapy: '+(therapy.join(', ')||'None')+'\n\nProvide a brief therapy analysis in 3-4 key points.'}]
+      })
+    });
+    var d = await r.json();
+    var tx = d.content && d.content[0] && d.content[0].text;
+    if(tx) textEl.innerHTML = tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    else throw new Error();
+  } catch(e) {
+    textEl.innerHTML = '<span style="color:rgba(255,255,255,0.5);">⚠️ Analysis unavailable. Check connection.</span>';
+  }
+  btn.disabled = false;
+  btn.textContent = '🤖 AI Therapy Analysis';
+}
+
+
 
 var dsChartInst = null;
 function loadDiagScreenChart(){
