@@ -999,16 +999,16 @@ select option{background:#0A1628;color:#F1F5FF;}
 /* ══ SCREEN DIAGNOSTIC ══ */
 .diag-screen-hdr{background:linear-gradient(160deg,#0D1B4B,#1565C0,#8B6FE8);padding:0 16px 0;flex-shrink:0;}
 .diag-top-row{display:flex;align-items:center;gap:10px;padding:6px 0 4px;}
-.diag-av-s{width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:16px;border:1.5px solid rgba(255,255,255,0.3);}
+.diag-av-s{width:38px;height:38px;border-radius:13px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:18px;border:1.5px solid rgba(255,255,255,0.3);}
 .diag-vgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:0 0 6px;}
-.diag-vcard{background:rgba(255,255,255,0.12);border-radius:9px;padding:5px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;border:0.5px solid rgba(255,255,255,0.15);}
-.diag-vcard-ico{font-size:12px;}
+.diag-vcard{background:rgba(255,255,255,0.12);border-radius:10px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;gap:2px;border:0.5px solid rgba(255,255,255,0.15);}
+.diag-vcard-ico{font-size:14px;}
 .diag-vcard-v{font-size:11px;font-weight:700;color:#fff;}
 .diag-vcard-l{font-size:8px;color:rgba(255,255,255,0.55);}
 .diag-score-row{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:0 0 6px;}
-.diag-score-box{background:rgba(255,255,255,0.12);border-radius:9px;padding:6px 10px;border:0.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:7px;}
-.diag-tabs-row{display:flex;background:rgba(255,255,255,0.08);border-radius:10px 10px 0 0;padding:3px;}
-.diag-tab-s{flex:1;padding:6px 4px;border-radius:8px;border:none;background:transparent;font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:var(--font);}
+.diag-score-box{background:rgba(255,255,255,0.12);border-radius:10px;padding:8px 12px;border:0.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:8px;}
+.diag-tabs-row{display:flex;background:rgba(255,255,255,0.08);border-radius:12px 12px 0 0;padding:3px;}
+.diag-tab-s{flex:1;padding:7px 4px;border-radius:9px;border:none;background:transparent;font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:var(--font);}
 .diag-tab-s.active{background:rgba(255,255,255,0.2);color:#fff;font-weight:700;}
 .diag-body-s{flex:1;overflow-y:auto;background:var(--bg);}
 .diag-section-s{display:none;padding:14px;}
@@ -2123,560 +2123,6 @@ select option{background:#0A1628;color:#F1F5FF;}
 </div>
 
 <!-- ══════════ PRIVATE ══════════ -->
-<div class="screen" id="screen-private" style="background:linear-gradient(180deg,#0A1628 0%,#0D2144 40%,#0A1628 100%);">
-  <div class="dr-status-bar">
-    <span class="dr-status-time">9:41</span>
-    <div class="dr-enc-badge">&#128274; End-to-End Encrypted</div>
-  </div>
-  <div class="dr-hdr">
-    <div class="dr-hdr-row">
-      <button class="dr-bk" onclick="switchScreen('more')">&#8249;</button>
-      <div class="dr-av-wrap">
-        <div class="dr-av">&#128104;&#8205;&#9877;&#65039;</div>
-        <div class="dr-ondot"></div>
-      </div>
-      <div class="dr-info">
-        <div class="dr-name2">Dr. Herolind Shabani</div>
-        <div class="dr-title2">Mjek i Pergjithshem &middot; General Practitioner</div>
-        <div class="dr-online2">&#9679; Available now &middot; Clinic Plan</div>
-      </div>
-      <div class="dr-acts">
-        <button class="dr-abt" onclick="showToast('Call feature coming soon')">&#128222;</button>
-        <button class="dr-abt" onclick="showToast('Dr. Shabani &middot; Klinika Shabani, Prishtine')">&#8942;</button>
-      </div>
-    </div>
-    <div class="dr-pstrip">
-      <div class="dr-pchip" onclick="drSendChip('What is my BP status?')"><span>&#129654;</span><span class="dr-pchip-lbl">BP 128/84</span></div>
-      <div class="dr-pchip" onclick="drSendChip('HbA1c: 5.7% - Pre-diabetic range')"><span>&#127846;</span><span class="dr-pchip-lbl">HbA1c 5.7%</span></div>
-      <div class="dr-pchip" onclick="drSendChip('Diagnoses: HTA Stage 1, Pre-diabetes, Elevated Cholesterol')"><span>&#127973;</span><span class="dr-pchip-lbl">Diagnoses</span></div>
-      <div class="dr-pchip" onclick="drSendChip('Therapy: Amlodipine 5mg, Metformin 500mg, Vitamin D3')"><span>&#128138;</span><span class="dr-pchip-lbl">Therapy</span></div>
-      <div class="dr-pchip" onclick="drSendChip('Review my lab results')"><span>&#129516;</span><span class="dr-pchip-lbl">Labs</span></div>
-    </div>
-  </div>
-  <div class="dr-enc-notice">
-    <span>&#128737;&#65039;</span>
-    <span>Messages are <strong>end-to-end encrypted</strong> &mdash; visible only to you and Dr. Shabani</span>
-  </div>
-  <div class="sa" id="drScroll">
-    <div class="dr-msgs" id="drMsgs">
-      <div class="dr-row"><div class="dr-bbl sys2">Consultation started &mdash; April 9, 2026 &middot; 9:30 AM</div></div>
-      <div class="dr-row">
-        <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
-        <div><div class="dr-bbl doc">Hello! I am Dr. Herolind Shabani. How can I help you today? &#128298;<br><br>Kam pare raportin tuaj javor. Presioni 128/84 ka qene qendrueshme gjate javes.</div>
-        <div class="dr-tm doc">9:30 AM &middot; Delivered</div></div>
-      </div>
-      <div class="dr-row me">
-        <div><div class="dr-bbl me2">Doktor, miredita! Doja te pyesja per Amlodipinen. A duhet te rris dozen?</div>
-        <div class="dr-tm">9:32 AM &#10003;&#10003;</div></div>
-      </div>
-      <div class="dr-row me">
-        <div><div class="dr-fbbl">
-          <div class="dr-fic">&#128196;</div>
-          <div><div class="dr-fnm">Weekly_Report_Apr9.pdf</div><div class="dr-fsz">Health BOT &middot; 1.2 MB</div></div>
-        </div><div class="dr-tm">9:33 AM &#10003;&#10003;</div></div>
-      </div>
-      <div class="dr-row">
-        <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
-        <div><div class="dr-bbl doc">Faleminderit per raportin! &#128203;<br><br>&#128308; <strong>BP 128/84</strong> &mdash; Stage 1, ne kufi<br>&#128994; <strong>Glucose 5.4</strong> &mdash; brenda normes<br>&#128309; <strong>HbA1c 5.7%</strong> &mdash; pre-diabet<br><br>Vazhdoni <strong>Amlodipine 5mg</strong> per momentin. Rishikim pas 2 javesh.</div>
-        <div class="dr-tm doc">9:35 AM &middot; Read</div></div>
-      </div>
-      <div class="dr-row">
-        <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
-        <div>
-          <div class="dr-appt">
-            <div class="dr-appt-title">&#128197; Next Appointment</div>
-            <div class="dr-appt-row"><span class="dr-appt-lbl">Date:</span><span class="dr-appt-val">April 23, 2026</span></div>
-            <div class="dr-appt-row"><span class="dr-appt-lbl">Time:</span><span class="dr-appt-val">10:00 AM</span></div>
-            <div class="dr-appt-row"><span class="dr-appt-lbl">Type:</span><span class="dr-appt-val">Follow-up</span></div>
-            <div class="dr-appt-row"><span class="dr-appt-lbl">Where:</span><span class="dr-appt-val">Klinika Shabani, Prishtine</span></div>
-            <button class="dr-appt-btn" onclick="showToast('Appointment confirmed!')">&#10003; Confirm Appointment</button>
-          </div>
-          <div class="dr-tm doc" style="margin-top:5px;">9:36 AM</div>
-        </div>
-      </div>
-    </div>
-    <div class="dr-upld" id="drUpld">
-      <div class="dr-upld-row">
-        <span style="font-size:14px;">&#128196;</span>
-        <span style="font-size:12px;color:rgba(255,255,255,0.8);flex:1;" id="drUpNm">Uploading...</span>
-        <span style="font-size:11px;color:rgba(255,255,255,0.5);" id="drUpPct">0%</span>
-      </div>
-      <div class="dr-upbar"><div class="dr-upfill" id="drUpFill" style="width:0%;"></div></div>
-    </div>
-    <div class="dr-typing2" id="drTyping">
-      <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
-      <div class="dr-tbbl"><div class="dr-td"></div><div class="dr-td"></div><div class="dr-td"></div></div>
-    </div>
-    <div style="height:8px;"></div>
-  </div>
-  <div class="dr-quick2" id="drQuick">
-    <button class="dr-qr2" onclick="drQR(this)">&#128202; Send latest vitals</button>
-    <button class="dr-qr2" onclick="drQR(this)">&#128138; Medication question</button>
-    <button class="dr-qr2" onclick="drQR(this)">&#128197; Request appointment</button>
-    <button class="dr-qr2" onclick="drQR(this)">&#128196; Send report</button>
-  </div>
-  <div class="dr-ibar">
-    <button class="dr-abt2" onclick="drAttach('file')">&#128206;</button>
-    <button class="dr-abt2" onclick="drAttach('photo')">&#128247;</button>
-    <input class="dr-inp" id="drInp" placeholder="Message Dr. Shabani..." onkeydown="if(event.key==='Enter')drSend()"/>
-    <button class="dr-snd" onclick="drSend()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-  </div>
-</div>
-
-
-
-
-<!-- GLOBAL ERROR TOAST -->
-<div class="err-toast" id="errToast">
-  <div class="err-toast-ico" id="errToastIco">&#9888;&#65039;</div>
-  <div class="err-toast-body">
-    <div class="err-toast-title" id="errToastTitle">Something went wrong</div>
-    <div class="err-toast-msg" id="errToastMsg">Please try again.</div>
-  </div>
-  <div class="err-toast-close" onclick="closeErrToast()">&#10005;</div>
-</div>
-
-<!-- NETWORK ERROR BAR -->
-<div class="net-err-bar" id="netErrBar">
-  <div class="net-err-dot"></div>
-  <span>No internet connection &mdash; Some features may be unavailable</span>
-</div>
-
-<!-- GLOBAL LOADER -->
-<div id="globalLoader">
-  <div class="gl-logo">&#127973;</div>
-  <div style="font-size:16px;font-weight:700;color:#F1F5FF;">Health BOT</div>
-  <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;">Loading your health data...</div>
-  <div class="gl-dots">
-    <div class="gl-dot"></div>
-    <div class="gl-dot"></div>
-    <div class="gl-dot"></div>
-  </div>
-</div>
-
-
-<!-- PROFILE BOTTOM SHEET MODAL -->
-<div class="prof-overlay" id="profOverlay" onclick="closeProfModal(event)">
-  <div class="prof-sheet">
-    <div class="prof-sheet-hdr">
-      <div class="prof-sheet-title">📋 Medical Profile</div>
-      <button onclick="closeProfModal()" style="width:30px;height:30px;border-radius:10px;border:none;background:var(--bg);font-size:16px;cursor:pointer;">✕</button>
-    </div>
-    <div class="prof-sheet-body">
-      <!-- DIAGNOSES -->
-      <div class="pf-sec-title">🏥 Diagnoses</div>
-      <div class="tag-wrap2" id="prof-diag-tags">
-        <span class="tag2 d">HTA Stage 1 <span class="tx" onclick="rmTag('prof-diag-tags',this)">×</span></span>
-        <span class="tag2 d">Pre-diabetes <span class="tx" onclick="rmTag('prof-diag-tags',this)">×</span></span>
-        <span class="tag2 d">Elevated Cholesterol <span class="tx" onclick="rmTag('prof-diag-tags',this)">×</span></span>
-      </div>
-      <div class="tadd-row">
-        <input class="ti" id="prof-diag-inp" placeholder="Add diagnosis..." onkeydown="if(event.key==='Enter')addTag('prof-diag-tags','prof-diag-inp','d')"/>
-        <button class="tb" style="background:var(--heart);" onclick="addTag('prof-diag-tags','prof-diag-inp','d')">+ Add</button>
-      </div>
-
-      <div class="divr"></div>
-      <!-- THERAPY -->
-      <div class="pf-sec-title">💊 Current Therapy</div>
-      <div class="tag-wrap2" id="prof-therapy-tags">
-        <span class="tag2 t">Amlodipine 5mg · Morning <span class="tx" onclick="rmTag('prof-therapy-tags',this)">×</span></span>
-        <span class="tag2 t">Metformin 500mg · Lunch <span class="tx" onclick="rmTag('prof-therapy-tags',this)">×</span></span>
-        <span class="tag2 t">Vitamin D3 · Evening <span class="tx" onclick="rmTag('prof-therapy-tags',this)">×</span></span>
-        <span class="tag2 t">Omega-3 1g · Evening <span class="tx" onclick="rmTag('prof-therapy-tags',this)">×</span></span>
-      </div>
-      <div class="tadd-row">
-        <input class="ti" id="prof-therapy-inp" placeholder="Add medication..." onkeydown="if(event.key==='Enter')addTag('prof-therapy-tags','prof-therapy-inp','t')"/>
-        <button class="tb" style="background:var(--purple);" onclick="addTag('prof-therapy-tags','prof-therapy-inp','t')">+ Add</button>
-      </div>
-
-      <div class="divr"></div>
-      <!-- ALLERGIES -->
-      <div class="pf-sec-title">⚠️ Allergies</div>
-      <div class="tag-wrap2" id="prof-allergy-tags">
-        <span class="tag2 a">Penicillin <span class="tx" onclick="rmTag('prof-allergy-tags',this)">×</span></span>
-        <span class="tag2 a">NSAIDs (mild) <span class="tx" onclick="rmTag('prof-allergy-tags',this)">×</span></span>
-      </div>
-      <div class="tadd-row">
-        <input class="ti" id="prof-allergy-inp" placeholder="Add allergy..." onkeydown="if(event.key==='Enter')addTag('prof-allergy-tags','prof-allergy-inp','a')"/>
-        <button class="tb" style="background:var(--heart);" onclick="addTag('prof-allergy-tags','prof-allergy-inp','a')">+ Add</button>
-      </div>
-
-      <div class="divr"></div>
-      <!-- LAB VALUES -->
-      <div class="pf-sec-title">🧬 Lab Values</div>
-      <div class="tag-wrap2" id="prof-lab-tags">
-        <span class="tag2 l">HbA1c: 5.9% <span class="tx" onclick="rmTag('prof-lab-tags',this)">×</span></span>
-        <span class="tag2 l">LDL: 3.8 mmol/L <span class="tx" onclick="rmTag('prof-lab-tags',this)">×</span></span>
-        
-      </div>
-      <div class="tadd-row">
-        <input class="ti" id="prof-lab-inp" placeholder="e.g. HbA1c: 5.9%..." onkeydown="if(event.key==='Enter')addTag('prof-lab-tags','prof-lab-inp','l')"/>
-        <button class="tb" style="background:var(--teal);" onclick="addTag('prof-lab-tags','prof-lab-inp','l')">+ Add</button>
-      </div>
-
-      <div class="divr"></div>
-      <!-- DOCUMENTS -->
-      <div class="pf-sec-title">📄 Documents</div>
-      <div class="fl-list" id="prof-fl-list">
-        <div class="fl-item"><span style="font-size:16px;">📋</span><span class="fl-nm">Blood_Panel_March2026.pdf</span><span class="fl-sz">2.1MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
-        <div class="fl-item"><span style="font-size:16px;">🫀</span><span class="fl-nm">ECG_Feb2026.pdf</span><span class="fl-sz">0.9MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
-      </div>
-      <label for="prof-file-input" class="upload-z" style="display:block;cursor:pointer;">
-        <div style="font-size:22px;margin-bottom:5px;">📎</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);">Upload lab results, ECG, reports</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">PDF, JPG, PNG · Max 10MB</div>
-        <input type="file" id="prof-file-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handleProfFileUpload(event)"/>
-      </label>
-
-      <div class="divr"></div>
-      <!-- NOTES -->
-      <div class="pf-sec-title">📝 Notes</div>
-      <textarea class="pf-ta" id="prof-notes">Family history of hypertension. Non-smoker. Light exercise 2x/week.</textarea>
-      <button class="pf-ai-btn" id="profAiBtn" onclick="analyzeProfModal()">Diagnostics</button>
-      <div class="errbanner" id="prof-ai-err">⚠️ Connection error. Try again.</div>
-      <div class="ai-resp" id="prof-ai-resp" style="display:none;">
-        <div class="ar-hdr"><div class="ar-av">🤖</div><div style="font-size:12px;font-weight:700;color:#fff;">Claude AI — Profile Assessment</div></div>
-        <div class="ar-txt" id="prof-ai-text"></div>
-      </div>
-      <div style="height:20px;"></div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ══ SCREEN DIAGNOSTIC ══ -->
-<div class="screen" id="screen-diagnostic">
-  <div class="sb" style="background:linear-gradient(160deg,#0D1B4B,#1565C0);color:rgba(255,255,255,0.85);"><span>9:41</span></div>
-  <div class="diag-screen-hdr">
-    <!-- Top row -->
-    <div class="diag-top-row">
-      <div class="diag-av-s">🏥</div>
-      <div style="flex:1;">
-        <div style="font-size:13px;font-weight:700;color:#fff;" id="ds-name">--</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.65);">Diagnostics · Vitals · Therapy · Reports</div>
-      </div>
-    </div>
-    <!-- Vitals grid -->
-    <div class="diag-vgrid">
-      <div class="diag-vcard"><div class="diag-vcard-ico">❤️</div><div class="diag-vcard-v" id="ds-hr">-- bpm</div><div class="diag-vcard-l">HR</div></div>
-      <div class="diag-vcard"><div class="diag-vcard-ico">🩸</div><div class="diag-vcard-v" id="ds-bp" style="color:#FCD34D;">128/84</div><div class="diag-vcard-l">BP</div></div>
-      <div class="diag-vcard"><div class="diag-vcard-ico">🍬</div><div class="diag-vcard-v" id="ds-glu" style="color:#5EEAD4;">5.4</div><div class="diag-vcard-l">Glucose</div></div>
-      <div class="diag-vcard"><div class="diag-vcard-ico">🫧</div><div class="diag-vcard-v" id="ds-spo2">--%</div><div class="diag-vcard-l">SpO2</div></div>
-    </div>
-    <!-- Score + Therapy -->
-    <div class="diag-score-row">
-      <div class="diag-score-box">
-        <div style="font-size:20px;">📊</div>
-        <div><div style="font-size:9px;color:rgba(255,255,255,0.6);">HEALTH SCORE</div><div id="diagHeaderScore" style="font-size:15px;font-weight:700;color:#FCD34D;">--/100</div></div>
-      </div>
-      <div class="diag-score-box">
-        <div style="font-size:20px;">💊</div>
-        <div><div style="font-size:9px;color:rgba(255,255,255,0.6);">THERAPY</div><div id="diagHeaderTherapy" style="font-size:15px;font-weight:700;color:#fff;">0 active</div></div>
-      </div>
-    </div>
-    <!-- Tabs -->
-    <div class="diag-tabs-row">
-      <button class="diag-tab-s active" id="dst-verdict" onclick="switchDiagS('verdict')">📊 Verdict</button>
-      <button class="diag-tab-s" id="dst-profile" onclick="switchDiagS('profile')">📋 Profile</button>
-      <button class="diag-tab-s" id="dst-report" onclick="switchDiagS('report')">📄 Report</button>
-      <button class="diag-tab-s" id="dst-therapy" onclick="switchDiagS('therapy')">💊 Therapy</button>
-    </div>
-  </div>
-
-  <!-- Body -->
-  <div class="diag-body-s">
-    <!-- VERDICT -->
-    <div class="diag-section-s active" id="dss-verdict">
-      <!-- Engine Output -->
-      <div id="engine-verdict-container">
-        <!-- Score circle default -->
-        <div style="text-align:center;padding:16px 0 12px;">
-          <div id="eng-score-circle" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#F97316,#FBBF24);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 8px 20px rgba(249,115,22,0.35);">
-            <div id="eng-score-num" style="font-size:28px;font-weight:700;color:#fff;">--</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.8);">/100</div>
-          </div>
-          <div id="eng-status-txt" style="font-size:14px;font-weight:700;color:#F1F5FF;">Press Re-Analyze to start</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px;">Correlation Engine — All data sources</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;" id="ds-date">--</div>
-        </div>
-        <!-- Alarms -->
-        <div id="eng-alarms" style="margin-bottom:10px;"></div>
-        <!-- Vitals summary -->
-        <div id="eng-vitals-summary" style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;"></div>
-        <!-- Correlations -->
-        <div id="eng-correlations" style="margin-bottom:10px;"></div>
-        <!-- Recommendations -->
-        <div id="eng-recommendations" style="background:linear-gradient(135deg,#1A0A2E,#2D1B69);border-radius:14px;padding:13px;margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">🤖 AI Recommendations</div>
-          <div id="eng-rec-content" style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.7;">Press Re-Analyze to generate personalized recommendations</div>
-        </div>
-        <!-- Doctor summary -->
-        <div id="eng-doctor-summary" style="display:none;background:var(--pl);border-radius:12px;padding:11px 13px;margin-bottom:10px;">
-          <div style="font-size:10px;font-weight:700;color:#60A5FA;margin-bottom:4px;">👨‍⚕️ For Dr. Shabani</div>
-          <div id="eng-doc-txt" style="font-size:11px;color:#F1F5FF;line-height:1.5;"></div>
-        </div>
-      </div>
-      <button onclick="runCorrelationEngine()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;" id="ds-analyze-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="white"/></svg>
-        Re-Analyze
-      </button>
-
-      <!-- DEEP PROFILE ANALYSIS -->
-      <button onclick="runDeepProfileAnalysis()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#0D3B8E,#7C3AED);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;" id="deepAnalyzeBtn">
-        🔬 Deep Profile Analysis
-      </button>
-
-      <!-- Deep Analysis Result -->
-      <div id="deepAnalysisResult" style="display:none;margin-top:12px;">
-        <!-- Overall Verdict -->
-        <div style="background:linear-gradient(135deg,#0D3B8E,#1E5FBA);border-radius:16px;padding:14px;margin-bottom:10px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🔬 Deep Health Analysis</div>
-          <div id="deepOverallVerdict" style="font-size:12px;color:#fff;line-height:1.7;"></div>
-        </div>
-        <!-- Diagnoses Analysis -->
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,0.12);">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🏥 Diagnoses Deep Dive</div>
-          <div id="deepDiagnosesText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
-        </div>
-        <!-- Therapy Analysis -->
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,0.12);">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">💊 Therapy Effectiveness</div>
-          <div id="deepTherapyText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
-        </div>
-        <!-- Lab Analysis -->
-        <div id="deepLabSection" style="display:none;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,0.12);">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🧪 Lab Values Analysis</div>
-          <div id="deepLabText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
-        </div>
-        <!-- Long-term Risks -->
-        <div style="background:linear-gradient(135deg,#FEF2F2,#FFF8EC);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(220,38,38,0.15);">
-          <div style="font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">⚠️ Long-term Risk Assessment</div>
-          <div id="deepRisksText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
-        </div>
-        <!-- Action Plan -->
-        <div style="background:linear-gradient(135deg,rgba(45,200,160,0.1),rgba(59,125,216,0.1));border-radius:14px;padding:13px;margin-bottom:10px;border:1px solid rgba(45,200,160,0.2);">
-          <div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🎯 Action Plan</div>
-          <div id="deepActionPlan" style="font-size:12px;color:#F1F5FF;line-height:1.8;"></div>
-        </div>
-        <!-- For Doctor -->
-        <div style="background:var(--pl);border-radius:12px;padding:11px 13px;margin-bottom:10px;">
-          <div style="font-size:10px;font-weight:700;color:#60A5FA;margin-bottom:4px;">👨‍⚕️ Clinical Summary for Dr. Shabani</div>
-          <div id="deepDoctorSummary" style="font-size:11px;color:#F1F5FF;line-height:1.5;"></div>
-        </div>
-      </div>
-
-      <div style="height:16px;"></div>
-    </div>
-
-
-    <!-- PROFILE -->
-    <div class="diag-section-s" id="dss-profile">
-      <div style="padding:14px;">
-        <!-- DIAGNOSES -->
-        <div class="pf-sec-title">🏥 Diagnoses</div>
-        <div class="tag-wrap2" id="ds-diag-tags">
-          <span class="tag2 d">HTA Stage 1 <span class="tx" onclick="rmTag('ds-diag-tags',this)">×</span></span>
-          <span class="tag2 d">Pre-diabetes <span class="tx" onclick="rmTag('ds-diag-tags',this)">×</span></span>
-          <span class="tag2 d">Elevated Cholesterol <span class="tx" onclick="rmTag('ds-diag-tags',this)">×</span></span>
-        </div>
-        <div class="tadd-row">
-          <input class="ti" id="ds-diag-inp" placeholder="Add diagnosis..." onkeydown="if(event.key==='Enter')addTag('ds-diag-tags','ds-diag-inp','d')"/>
-          <button class="tb" style="background:var(--heart);" onclick="addTag('ds-diag-tags','ds-diag-inp','d')">+ Add</button>
-        </div>
-        <div class="divr"></div>
-        <!-- THERAPY -->
-        <div class="pf-sec-title">💊 Current Therapy</div>
-        <div class="tag-wrap2" id="ds-therapy-tags">
-          <span class="tag2 t">Amlodipine 5mg · Morning <span class="tx" onclick="rmTag('ds-therapy-tags',this)">×</span></span>
-          <span class="tag2 t">Metformin 500mg · Lunch <span class="tx" onclick="rmTag('ds-therapy-tags',this)">×</span></span>
-          <span class="tag2 t">Vitamin D3 · Evening <span class="tx" onclick="rmTag('ds-therapy-tags',this)">×</span></span>
-          <span class="tag2 t">Omega-3 1g · Evening <span class="tx" onclick="rmTag('ds-therapy-tags',this)">×</span></span>
-        </div>
-        <div class="tadd-row">
-          <input class="ti" id="ds-therapy-inp" placeholder="Add medication..." onkeydown="if(event.key==='Enter')addTag('ds-therapy-tags','ds-therapy-inp','t')"/>
-          <button class="tb" style="background:var(--purple);" onclick="addTag('ds-therapy-tags','ds-therapy-inp','t')">+ Add</button>
-        </div>
-        <div class="divr"></div>
-        <!-- ALLERGIES -->
-        <div class="pf-sec-title">⚠️ Allergies</div>
-        <div class="tag-wrap2" id="ds-allergy-tags">
-          <span class="tag2 a">Penicillin <span class="tx" onclick="rmTag('ds-allergy-tags',this)">×</span></span>
-          <span class="tag2 a">NSAIDs (mild) <span class="tx" onclick="rmTag('ds-allergy-tags',this)">×</span></span>
-        </div>
-        <div class="tadd-row">
-          <input class="ti" id="ds-allergy-inp" placeholder="Add allergy..." onkeydown="if(event.key==='Enter')addTag('ds-allergy-tags','ds-allergy-inp','a')"/>
-          <button class="tb" style="background:var(--heart);" onclick="addTag('ds-allergy-tags','ds-allergy-inp','a')">+ Add</button>
-        </div>
-        <div class="divr"></div>
-        <!-- LAB VALUES -->
-        <div class="pf-sec-title">🧬 Lab Values</div>
-        <div class="tag-wrap2" id="ds-lab-tags">
-          <span class="tag2 l">HbA1c: 5.9% <span class="tx" onclick="rmTag('ds-lab-tags',this)">×</span></span>
-          <span class="tag2 l">LDL: 3.8 mmol/L <span class="tx" onclick="rmTag('ds-lab-tags',this)">×</span></span>
-          
-        </div>
-        <div class="tadd-row">
-          <input class="ti" id="ds-lab-inp" placeholder="e.g. HbA1c: 5.9%..." onkeydown="if(event.key==='Enter')addTag('ds-lab-tags','ds-lab-inp','l')"/>
-          <button class="tb" style="background:var(--teal);" onclick="addTag('ds-lab-tags','ds-lab-inp','l')">+ Add</button>
-        </div>
-        <div class="divr"></div>
-        <!-- DOCUMENTS -->
-        <div class="pf-sec-title">📄 Documents</div>
-        <div class="fl-list" id="ds-fl-list">
-          <div class="fl-item"><span style="font-size:16px;">📋</span><span class="fl-nm">Blood_Panel_March2026.pdf</span><span class="fl-sz">2.1MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
-          <div class="fl-item"><span style="font-size:16px;">🫀</span><span class="fl-nm">ECG_Feb2026.pdf</span><span class="fl-sz">0.9MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
-        </div>
-        <label for="ds-file-input" class="upload-z" style="display:block;cursor:pointer;">
-          <div style="font-size:22px;margin-bottom:5px;">📎</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.5);">Upload lab results, ECG, reports</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">PDF, JPG, PNG · Max 10MB</div>
-          <input type="file" id="ds-file-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handleDsFileUpload(event)"/>
-        </label>
-        <div class="divr"></div>
-        <!-- ECG ANALYSIS -->
-        <div class="pf-sec-title">🫀 ECG Analysis</div>
-        <div style="border:1px solid rgba(255,107,138,0.25);border-radius:14px;overflow:hidden;position:relative;margin-bottom:8px;">
-          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF6B8A,#8B6FE8);"></div>
-          <div style="padding:12px;">
-            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px;">Upload ECG nga smartwatch ose ring — Claude AI analizon dhe krahason me historikun</div>
-            <label for="ecgFileInputProfile" style="width:100%;padding:10px;border-radius:12px;background:linear-gradient(135deg,#FF6B8A,#8B6FE8);color:#fff;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15M17 8L12 3L7 8M12 3V15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Upload & Analyze ECG
-              <input type="file" id="ecgFileInputProfile" accept="image/*,.pdf" style="display:none;" onchange="handleECGUpload(event)"/>
-            </label>
-            <div id="ecgHistoryProfile" style="margin-top:8px;"></div>
-          </div>
-        </div>
-        <div class="divr"></div>
-        <!-- NOTES -->
-        <div class="pf-sec-title">📝 Notes</div>
-        <textarea class="pf-ta" id="ds-notes">Family history of hypertension. Non-smoker. Light exercise 2x/week.</textarea>
-        <button class="pf-ai-btn" onclick="analyzeDsProfile()">Diagnostics</button>
-        <div class="ai-resp" id="ds-prof-resp" style="display:none;">
-          <div class="ar-hdr"><div class="ar-av">🤖</div><div style="font-size:12px;font-weight:700;color:#fff;">Claude AI — Profile Assessment</div></div>
-          <div class="ar-txt" id="ds-prof-text"></div>
-        </div>
-        <div style="height:16px;"></div>
-      </div>
-    </div>
-    <!-- REPORT -->
-    <div class="diag-section-s" id="dss-report">
-      <div class="rpt-wrap">
-        <div class="rpt-hdr2">
-          <div class="rpt-tag2">📄 --, 2026</div>
-          <div class="rpt-title2">Weekly Health Report</div>
-          <div class="rpt-per">D Health · Claude AI</div>
-        </div>
-        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">📅 Daily Readings</div>
-        <div class="wt">
-          <div class="wt-row hdr"><div class="wt-cell">Day</div><div class="wt-cell">BP mmHg</div><div class="wt-cell">Glucose</div><div class="wt-cell">HR bpm</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Mon</div><div class="wt-cell wt-bp">130/86</div><div class="wt-cell wt-glu">5.6</div><div class="wt-cell wt-hr2">80</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Tue</div><div class="wt-cell wt-bp">127/83</div><div class="wt-cell wt-glu">5.3</div><div class="wt-cell wt-hr2">76</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Wed</div><div class="wt-cell wt-bp">132/88</div><div class="wt-cell wt-glu">5.8</div><div class="wt-cell wt-hr2">82</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Thu</div><div class="wt-cell wt-bp">126/82</div><div class="wt-cell wt-glu">5.1</div><div class="wt-cell wt-hr2">75</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Fri</div><div class="wt-cell wt-bp">129/85</div><div class="wt-cell wt-glu">5.5</div><div class="wt-cell wt-hr2">79</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Sat</div><div class="wt-cell wt-bp">133/87</div><div class="wt-cell wt-glu">5.7</div><div class="wt-cell wt-hr2">83</div></div>
-          <div class="wt-row tod" style="display:none"><div class="wt-cell wt-day">Sun★</div><div class="wt-cell wt-bp">128/84</div><div class="wt-cell wt-glu">5.4</div><div class="wt-cell wt-hr2">--</div></div>
-        </div>
-        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">📈 BP Trend</div>
-        <div class="ch-wrap"><canvas id="ds-chart"></canvas></div>
-        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">💊 Therapy Adherence</div>
-        <div class="adh-list">
-          <div class="adh-item"><span style="font-size:16px;">🔵</span><div class="adh-info"><div class="adh-name">Amlodipine 5mg</div><div class="adh-time">Every morning</div></div><div class="adh-bar"><div class="adh-fill" style="width:100%;background:var(--accent);"></div></div><div class="adh-pct" style="color:var(--accent);">100%</div></div>
-          <div class="adh-item"><span style="font-size:16px;">🟣</span><div class="adh-info"><div class="adh-name">Metformin 500mg</div><div class="adh-time">Every lunch</div></div><div class="adh-bar"><div class="adh-fill" style="width:86%;background:var(--primary);"></div></div><div class="adh-pct" style="color:#60A5FA;">86%</div></div>
-          <div class="adh-item"><span style="font-size:16px;">🟡</span><div class="adh-info"><div class="adh-name">Vitamin D3</div><div class="adh-time">Every evening</div></div><div class="adh-bar"><div class="adh-fill" style="width:71%;background:var(--amber);"></div></div><div class="adh-pct" style="color:var(--amber);">71%</div></div>
-        </div>
-        <button class="gen-btn2" id="dsGenBtn" onclick="generateDiagReport()">🤖 Generate health report</button>
-        <div class="ai-rpt-card" id="dsAiRptCard" style="display:none;">
-          <div class="arc-hdr"><div class="arc-av">🤖</div><div><div style="font-size:12px;font-weight:700;color:#fff;">Claude AI — Weekly Medical Report</div><div style="font-size:10px;color:rgba(255,255,255,0.6);" id="dsRptTime"></div></div></div>
-          <div class="arc-txt" id="dsRptText"><div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
-        </div>
-        <button class="pdf-btn2" onclick="exportPDF()">📄 Export as PDF</button>
-        <button class="share-btn2" onclick="shareReport()">📤 Send to Dr. Shabani</button>
-        <div style="height:16px;"></div>
-      </div>
-    </div>
-
-    <!-- CONNECT -->
-    <div class="diag-section-s" id="dss-therapy">
-      <div style="padding:14px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div>
-            <div style="font-size:15px;font-weight:700;color:#F1F5FF;">💊 Active Therapy</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Current medications and treatment plan</div>
-          </div>
-          <div id="therapy-count" style="background:rgba(139,111,232,0.2);border:0.5px solid rgba(139,111,232,0.4);border-radius:10px;padding:4px 10px;font-size:11px;font-weight:700;color:#C4B5FD;">0 active</div>
-        </div>
-        <div id="therapy-list-view" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
-        <div style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:13px;margin-bottom:14px;">
-          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">+ Add Medication</div>
-          <input class="ti" id="therapy-med-inp" placeholder="e.g. Amlodipine 5mg" style="width:100%;margin-bottom:8px;" onkeydown="if(event.key===&apos;Enter&apos;)addTherapyMed()"/>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
-            <select id="therapy-time-sel" style="padding:8px;border-radius:10px;border:0.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.07);color:#F1F5FF;font-size:12px;font-family:var(--font);">
-              <option value="Morning">🌅 Morning</option>
-              <option value="Lunch">☀️ Lunch</option>
-              <option value="Evening">🌙 Evening</option>
-              <option value="Night">⭐ Night</option>
-              <option value="As needed">⚡ As needed</option>
-            </select>
-            <button onclick="addTherapyMed()" style="padding:8px;border-radius:10px;border:none;background:linear-gradient(135deg,#8B6FE8,#A78BFA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+ Add</button>
-          </div>
-        </div>
-        <button onclick="analyzeTherapy()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:10px;">🤖 AI Therapy Analysis</button>
-        <div id="therapy-ai-resp" style="display:none;background:rgba(255,255,255,0.05);border:0.5px solid rgba(139,111,232,0.3);border-radius:14px;padding:13px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);display:flex;align-items:center;justify-content:center;font-size:13px;">🤖</div><div style="font-size:12px;font-weight:700;color:#F1F5FF;">AI Therapy Assessment</div></div>
-          <div id="therapy-ai-text" style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;"></div>
-        </div>
-        <div style="height:16px;"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Nav -->
-
-    <!-- SIGN OUT -->
-    <div style="padding:8px 14px 24px;">
-      <button onclick="doSignOut()" style="width:100%;padding:13px;background:rgba(239,68,68,0.12);border:0.5px solid rgba(239,68,68,0.3);border-radius:14px;color:#F87171;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">🚪 Sign Out</button>
-    </div>
-  </div>
-
-  <div class="bn">
-    <button class="ni" onclick="switchScreen('home')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Home</span></button>
-    <button class="ni" onclick="switchScreen('chat')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Chat</span></button>
-    <div class="nvw" onclick="switchScreen('vitals')"><button class="nvb"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M2 12H4L7 6L10 18L13 10L15 14H17L20 8L22 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="nvl">Vitals</span></div>
-    <button class="ni" onclick="switchScreen('calendar')"><svg class="nic" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="3" stroke="#7B8BAD" stroke-width="2"/><path d="M3 9H21" stroke="#7B8BAD" stroke-width="2"/><path d="M8 2V6M16 2V6" stroke="#7B8BAD" stroke-width="2" stroke-linecap="round"/></svg><span class="nl">Calendar</span></button>
-    <button class="ni" onclick="switchScreen('diagnostic')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M19 3H5C3.9 3 3 3.9 3 5V15C3 16.1 3.9 17 5 17H8L12 21L16 17H19C20.1 17 21 16.1 21 15V5C21 3.9 20.1 3 19 3Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Diagnosis</span></button>
-  </div>
-
-  <!-- LANGUAGE MODAL -->
-  <div id="langModal" style="display:none;position:absolute;inset:0;background:rgba(10,15,35,0.55);z-index:9000;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);" onclick="closeLangModal(event)">
-    <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:0.5px solid rgba(255,255,255,0.15);border-radius:24px 24px 44px 44px;padding:20px 18px 36px;width:100%;">
-      <div style="width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 16px;"></div>
-      <div style="font-size:16px;font-weight:700;color:#F1F5FF;margin-bottom:4px;">🌐 Language</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;">Choose your preferred language</div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <div id="lang-en" onclick="selectLang('en')" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:rgba(255,255,255,0.06);cursor:pointer;">
-          <div style="font-size:26px;">🇬🇧</div>
-          <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#F1F5FF;">English</div><div style="font-size:11px;color:rgba(255,255,255,0.5);">English (United Kingdom)</div></div>
-          <div id="check-en" style="width:20px;height:20px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
-        </div>
-        <div id="lang-sq" onclick="selectLang('sq')" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:rgba(255,255,255,0.06);cursor:pointer;">
-          <div style="font-size:26px;">🇦🇱</div>
-          <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#F1F5FF;">Shqip</div><div style="font-size:11px;color:rgba(255,255,255,0.5);">Albanian · Gjuha shqipe</div></div>
-          <div id="check-sq" style="width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;"></div>
-        </div>
-        <div id="lang-mk" onclick="selectLang('mk')" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:rgba(255,255,255,0.06);cursor:pointer;">
-          <div style="font-size:26px;">🇲🇰</div>
-          <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#F1F5FF;">Македонски</div><div style="font-size:11px;color:rgba(255,255,255,0.5);">Macedonian</div></div>
-          <div id="check-mk" style="width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;"></div>
-        </div>
-      </div>
-      <button onclick="closeLangModal(null)" style="width:100%;padding:12px;border-radius:14px;border:0.5px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:16px;">Close</button>
-    </div>
-  </div>
-
-
-<!-- ══════════ SUBSCRIPTION SCREEN ══════════ -->
 <div class="screen" id="screen-subscription">
   <div class="sb"><span>9:41</span></div>
   <div style="display:flex;align-items:center;padding:10px 16px 6px;gap:10px;">
@@ -3529,7 +2975,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div id="therapy-list-view" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
         <div style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:13px;margin-bottom:14px;">
           <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">+ Add Medication</div>
-          <input class="ti" id="therapy-med-inp" placeholder="e.g. Amlodipine 5mg" style="width:100%;margin-bottom:8px;" onkeydown="if(event.key===&apos;Enter&apos;)addTherapyMed()"/>
+          <input class="ti" id="therapy-med-inp" placeholder="e.g. Amlodipine 5mg" style="width:100%;margin-bottom:8px;"/>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
             <select id="therapy-time-sel" style="padding:8px;border-radius:10px;border:0.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.07);color:#F1F5FF;font-size:12px;font-family:var(--font);">
               <option value="Morning">🌅 Morning</option>
@@ -3548,8 +2994,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         </div>
         <div style="height:16px;"></div>
       </div>
-    </div>
-  </div>
+    </div></div>
 
   <!-- Nav -->
   <div class="bn">
@@ -4024,173 +3469,6 @@ function getProfile(){
     '• Temperature: '+vitalsState.temp+'°C\n'+
     'NOTES: '+notes;
 }
-
-/* ════════════════════════════════════════════════════════════
-   DIAGSYNC — Algoritmi qendror i sinkronizimit të Diagnostic
-   Lidh: Vitals ↔ Profile ↔ Verdict ↔ Therapy ↔ Report
-════════════════════════════════════════════════════════════ */
-var DiagSync = {
-
-  /* Burimi i vetëm i të dhënave */
-  getData: function(){
-    var getTagValues = function(ids){
-      var seen = {}, result = [];
-      ids.forEach(function(id){
-        var el = document.getElementById(id);
-        if(!el) return;
-        Array.from(el.querySelectorAll('.tag2')).forEach(function(t){
-          var v = t.textContent.replace('×','').trim();
-          if(v && !seen[v]){ seen[v]=1; result.push(v); }
-        });
-      });
-      return result;
-    };
-    return {
-      /* Profili mjekësor */
-      diagnoses: getTagValues(['diag-tags','prof-diag-tags','ds-diag-tags']),
-      therapy:   getTagValues(['therapy-tags','prof-therapy-tags','ds-therapy-tags']),
-      allergies: getTagValues(['allergy-tags','prof-allergy-tags','ds-allergy-tags']),
-      labs:      getTagValues(['lab-tags','prof-lab-tags','ds-lab-tags']),
-      notes:     (document.getElementById('ds-notes')||document.getElementById('prof-notes')||{}).value||'',
-      /* Vitals aktualë */
-      vitals: {
-        hr:    vitalsState.hr   || 0,
-        sys:   vitalsState.sys  || 0,
-        dia:   vitalsState.dia  || 0,
-        spo2:  vitalsState.spo2 || 0,
-        glu:   vitalsState.glu  || 0,
-        temp:  vitalsState.temp || 0,
-        hrv:   vitalsState.hrv  || 0,
-        steps: vitalsState.steps|| 0
-      },
-      /* Nutrition sot */
-      meals: JSON.parse(localStorage.getItem('dh_meals')||'[]').filter(function(m){
-        return m.date === new Date().toISOString().split('T')[0];
-      }),
-      /* Score i fundit */
-      lastScore: JSON.parse(localStorage.getItem('dh_last_score')||'{}'),
-      /* User */
-      name: (LST&&LST.currentUser&&LST.currentUser.name)||'Patient'
-    };
-  },
-
-  /* Update UI i Verdict tab nga të dhënat */
-  updateVerdictUI: function(d){
-    /* ds-name */
-    var nm = document.getElementById('ds-name');
-    if(nm) nm.textContent = d.name;
-    /* ds-bp */
-    var bp = document.getElementById('ds-bp');
-    if(bp) bp.textContent = d.vitals.sys>0 ? d.vitals.sys+'/'+d.vitals.dia : '--/--';
-    /* ds-hr */
-    var hr = document.getElementById('ds-hr');
-    if(hr) hr.textContent = d.vitals.hr>0 ? d.vitals.hr+' bpm' : '-- bpm';
-    /* ds-glu */
-    var glu = document.getElementById('ds-glu');
-    if(glu) glu.textContent = d.vitals.glu>0 ? d.vitals.glu+' mmol' : '-- mmol';
-    /* ds-spo2 */
-    var spo = document.getElementById('ds-spo2');
-    if(spo) spo.textContent = d.vitals.spo2>0 ? d.vitals.spo2+'%' : '--%';
-    /* ds-date */
-    var dt = document.getElementById('ds-date');
-    if(dt) dt.textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-    /* Header */
-    DiagSync.updateHeader(d);
-  },
-
-  /* Update header badge */
-  updateHeader: function(d){
-    var thEl = document.getElementById('diagHeaderTherapy');
-    if(thEl) thEl.textContent = d.therapy.length + ' active';
-    var stored = JSON.parse(localStorage.getItem('dh_last_score')||'{}');
-    var score = stored.score || '--';
-    var scEl = document.getElementById('diagHeaderScore');
-    if(scEl){
-      scEl.textContent = score+'/100';
-      scEl.style.color = score==='--'?'#FCD34D':(score>=75?'#34D399':score>=50?'#F97316':'#F87171');
-    }
-  },
-
-  /* Sync Profile tab → Therapy tab */
-  syncProfileToTherapy: function(){
-    setTimeout(function(){
-      if(document.getElementById('dss-therapy') &&
-         document.getElementById('dss-therapy').classList.contains('active')){
-        renderTherapyList();
-      }
-    }, 100);
-  },
-
-  /* Sync Vitals → Verdict header stats */
-  syncVitalsToVerdict: function(){
-    var d = DiagSync.getData();
-    DiagSync.updateVerdictUI(d);
-  },
-
-  /* Sync kur hapet Diagnostic screen */
-  onScreenOpen: function(){
-    var d = DiagSync.getData();
-    DiagSync.updateVerdictUI(d);
-    DiagSync.updateHeader(d);
-    /* Nëse Therapy tab aktiv — render listën */
-    if(document.getElementById('dss-therapy') &&
-       document.getElementById('dss-therapy').classList.contains('active')){
-      renderTherapyList();
-    }
-  },
-
-  /* Sync kur ndryshon ndonjë tag (diagnozë/terapi) */
-  onTagChange: function(){
-    var d = DiagSync.getData();
-    DiagSync.updateHeader(d);
-    DiagSync.syncProfileToTherapy();
-  },
-
-  /* Sync rezultatin e AI Verdict → Report tab */
-  onVerdictComplete: function(scoreData){
-    /* Ruaj score */
-    localStorage.setItem('dh_last_score', JSON.stringify(scoreData));
-    /* Update header */
-    DiagSync.updateHeader(DiagSync.getData());
-    /* Update Report chart me vitals të vërteta */
-    if(document.getElementById('dss-report') &&
-       document.getElementById('dss-report').classList.contains('active')){
-      setTimeout(loadDiagScreenChart, 200);
-    }
-  }
-};
-
-/* Hook DiagSync në switchScreen */
-var _origSwitchScreen = switchScreen;
-switchScreen = function(n){
-  _origSwitchScreen(n);
-  if(n === 'diagnostic'){
-    setTimeout(DiagSync.onScreenOpen, 150);
-  }
-};
-
-/* Hook DiagSync në addTag/rmTag */
-var _origAddTag = addTag;
-addTag = function(listId, inpId, cls){
-  _origAddTag(listId, inpId, cls);
-  setTimeout(DiagSync.onTagChange, 100);
-};
-var _origRmTag = rmTag;
-rmTag = function(listId, el){
-  _origRmTag(listId, el);
-  setTimeout(DiagSync.onTagChange, 100);
-};
-
-/* Hook DiagSync në updateAllVitalsUI */
-var _origUpdateAllVitalsUI = typeof updateAllVitalsUI === 'function' ? updateAllVitalsUI : null;
-if(_origUpdateAllVitalsUI){
-  updateAllVitalsUI = function(){
-    _origUpdateAllVitalsUI();
-    setTimeout(DiagSync.syncVitalsToVerdict, 100);
-  };
-}
-
-
 var BASE_SYS='You are Health BOT, an advanced medical AI with full access to the patient\'s medical profile.\n\n'+
   'INSTRUCTIONS:\n- Respond in the SAME language the user writes in (Albanian or English)\n- Reference actual values and diagnoses — be specific\n- Be empathetic, warm, and professional\n- Use **bold** for key values\n- For serious concerns, recommend Dr. Shabani\n- Keep responses focused (3-4 paragraphs max)\n\n';
 
@@ -4225,12 +3503,6 @@ async function runVerdictAI(){
     var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);if(d.error)throw new Error();
     var tx=d.content&&d.content[0]&&d.content[0].text;if(!tx)throw new Error();
     text.innerHTML=fmt(tx);
-    /* DiagSync — sinkronizo pas Verdict */
-    try{
-      var scoreMatch = tx.match(/(\d{1,3})\s*\/\s*100/);
-      var score = scoreMatch ? parseInt(scoreMatch[1]) : null;
-      if(score) DiagSync.onVerdictComplete({score:score, timestamp:Date.now()});
-    }catch(e){}
   }catch(e){resp.style.display='none';err.classList.add('vis');}
   btn.disabled=false;btn.innerHTML='🔄 Re-Analyze';
 }
@@ -5659,32 +4931,19 @@ function resendConf(email){
   var sb=getSupa();
   if(sb) sb.auth.resend({type:'signup',email:email}).then(function(){showToast('📧 Email u ridërgua!');});
 }
-async function ldoForgot() {
-  var em = document.getElementById('fgtem').value.trim();
+function ldoForgot() {
+  var em=document.getElementById('fgtem').value.trim();
   document.getElementById('lfgt-ok').classList.remove('lon');
   document.getElementById('fgtem').classList.remove('lerr','lok');
   document.getElementById('fgtem-e').classList.remove('lon');
-  if(!em||!lisEmail(em)){
-    document.getElementById('fgtem').classList.add('lerr');
-    document.getElementById('fgtem-e').classList.add('lon');
-    return;
-  }
-  lsetBtn('lbtn-fgt', true);
-  try {
-    var sb = getSupa();
-    var {error} = await sb.auth.resetPasswordForEmail(em, {
-      redirectTo: 'https://relaxed-pegasus-1e887c.netlify.app'
-    });
-    if(error) throw error;
-    lsetBtn('lbtn-fgt', false, 'Send Reset Link');
+  if(!em||!lisEmail(em)){document.getElementById('fgtem').classList.add('lerr');document.getElementById('fgtem-e').classList.add('lon');return;}
+  lsetBtn('lbtn-fgt',true);
+  setTimeout(function(){
+    lsetBtn('lbtn-fgt',false,'Send Reset Link');
     document.getElementById('lfgt-ok').classList.add('lon');
     document.getElementById('fgtem').classList.add('lok');
-    document.getElementById('fgtem').value = '';
-    showToast('✅ Reset link sent! Check your email.');
-  } catch(e) {
-    lsetBtn('lbtn-fgt', false, 'Send Reset Link');
-    showToast('❌ Error: ' + (e.message||'Could not send reset email'));
-  }
+    document.getElementById('fgtem').value='';
+  },1200);
 }
 function lsocialLogin() {
   document.getElementById('lsuccnm').textContent=name||'Welcome!';
@@ -5693,12 +4952,8 @@ function lsocialLogin() {
 }
 function doSignOut() {
   if(!confirm('Are you sure you want to sign out?')) return;
-  var sb = getSupa();
-  if(sb) sb.auth.signOut();
   LST.currentUser = null;
   LST.rem = false;
-  localStorage.removeItem('gfit_token');
-  localStorage.removeItem('gfit_expiry');
   document.getElementById('login-overlay').style.display = 'flex';
   switchScreen('home');
   showToast('✅ Signed out successfully');
@@ -7028,52 +6283,36 @@ function switchDiagS(tab){
   if(tab==='therapy') setTimeout(renderTherapyList, 100);
 }
 
-/* ════ THERAPY TAB FUNCTIONS ════ */
 function renderTherapyList(){
   var list = document.getElementById('therapy-list-view');
   var countEl = document.getElementById('therapy-count');
   if(!list) return;
-
-  /* Merr terapitë nga ds-therapy-tags */
-  var tags = document.querySelectorAll('#ds-therapy-tags .tag2');
-  var meds = Array.from(tags).map(function(t){
-    return t.textContent.replace('×','').trim();
-  }).filter(Boolean);
-
+  var tags = document.querySelectorAll('#ds-therapy-tags .tag2, #prof-therapy-tags .tag2, #therapy-tags .tag2');
+  var seen = {}; var meds = [];
+  Array.from(tags).forEach(function(t){
+    var v = t.textContent.replace('x','').replace('×','').trim();
+    if(v && !seen[v]){ seen[v]=1; meds.push(v); }
+  });
   list.innerHTML = '';
-
-  if(meds.length === 0){
-    list.innerHTML = '<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:12px;">No medications added yet.<br>Add them in the Profile tab.</div>';
-    if(countEl) countEl.textContent = '0 active';
+  if(countEl) countEl.textContent = meds.length + ' active';
+  if(meds.length===0){
+    list.innerHTML='<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:12px;">No medications added yet.<br>Add them in the Profile tab.</div>';
     return;
   }
-
-  if(countEl) countEl.textContent = meds.length + ' active';
-
-  var timeColors = {
-    'Morning':  {bg:'rgba(251,191,36,0.15)',  border:'rgba(251,191,36,0.3)',  color:'#FCD34D', icon:'🌅'},
-    'Lunch':    {bg:'rgba(96,165,250,0.15)',   border:'rgba(96,165,250,0.3)',  color:'#93C5FD', icon:'☀️'},
-    'Evening':  {bg:'rgba(167,139,250,0.15)',  border:'rgba(167,139,250,0.3)',color:'#C4B5FD', icon:'🌙'},
-    'Night':    {bg:'rgba(99,102,241,0.15)',   border:'rgba(99,102,241,0.3)', color:'#A5B4FC', icon:'⭐'},
-    'As needed':{bg:'rgba(45,200,160,0.15)',   border:'rgba(45,200,160,0.3)', color:'#4ADE80', icon:'⚡'}
-  };
-
-  meds.forEach(function(med, i){
-    /* Detekto kohën nga emri */
+  var colors = {'Morning':'#FCD34D','Lunch':'#93C5FD','Evening':'#C4B5FD','Night':'#A5B4FC','As needed':'#4ADE80'};
+  var icons  = {'Morning':'🌅','Lunch':'☀️','Evening':'🌙','Night':'⭐','As needed':'⚡'};
+  meds.forEach(function(med){
     var timeKey = 'Morning';
-    Object.keys(timeColors).forEach(function(k){
-      if(med.toLowerCase().includes(k.toLowerCase())) timeKey = k;
-    });
-    var tc = timeColors[timeKey];
-
+    Object.keys(colors).forEach(function(k){ if(med.toLowerCase().indexOf(k.toLowerCase())>-1) timeKey=k; });
+    var color = colors[timeKey]||'#C4B5FD';
+    var icon  = icons[timeKey]||'💊';
     var item = document.createElement('div');
-    item.style.cssText = 'background:'+tc.bg+';border:0.5px solid '+tc.border+';border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:11px;';
-    item.innerHTML = '<div style="width:38px;height:38px;border-radius:12px;background:'+tc.bg+';border:0.5px solid '+tc.border+';display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💊</div>'
-      +'<div style="flex:1;">'
-      +'<div style="font-size:13px;font-weight:600;color:#F1F5FF;margin-bottom:2px;">'+med.split('·')[0].trim()+'</div>'
-      +'<div style="font-size:11px;color:rgba(255,255,255,0.5);">'+tc.icon+' '+(med.includes('·') ? med.split('·').slice(1).join('·').trim() : timeKey)+'</div>'
-      +'</div>'
-      +'<div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:'+tc.bg+';color:'+tc.color+';border:0.5px solid '+tc.border+';">Active ✓</div>';
+    item.style.cssText='background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:11px;';
+    var parts = med.split('·');
+    item.innerHTML='<div style="width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💊</div>'
+      +'<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#F1F5FF;margin-bottom:2px;">'+(parts[0]||med).trim()+'</div>'
+      +'<div style="font-size:11px;color:rgba(255,255,255,0.5);">'+icon+' '+(parts[1]||timeKey).trim()+'</div></div>'
+      +'<div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(255,255,255,0.1);color:'+color+';">Active ✓</div>';
     list.appendChild(item);
   });
 }
@@ -7081,53 +6320,41 @@ function renderTherapyList(){
 function addTherapyMed(){
   var inp = document.getElementById('therapy-med-inp');
   var sel = document.getElementById('therapy-time-sel');
-  if(!inp || !inp.value.trim()) return;
-  var val = inp.value.trim() + ' · ' + (sel ? sel.value : 'Morning');
+  if(!inp||!inp.value.trim()){ showToast('⚠️ Enter medication name'); return; }
+  var val = inp.value.trim()+' · '+(sel?sel.value:'Morning');
+  inp.value='';
   /* Shto te ds-therapy-tags */
-  addTag('ds-therapy-tags','therapy-med-inp','t');
-  /* Pastro input manualisht nëse addTag nuk e bëri */
-  inp.value = '';
-  setTimeout(renderTherapyList, 100);
+  var el = document.getElementById('ds-therapy-tags');
+  if(el){
+    var span=document.createElement('span');
+    span.className='tag2 t';
+    span.innerHTML=val+' <span class="tx" onclick="this.parentElement.remove();renderTherapyList()">×</span>';
+    el.appendChild(span);
+  }
+  setTimeout(renderTherapyList,100);
+  showToast('✅ '+val+' added!');
+  try{ syncMedicalProfile(); }catch(e){}
 }
 
 async function analyzeTherapy(){
-  var btn = event.target;
-  var respEl = document.getElementById('therapy-ai-resp');
-  var textEl = document.getElementById('therapy-ai-text');
-  if(!respEl || !textEl) return;
-
-  btn.disabled = true;
-  btn.textContent = '⏳ Analyzing...';
-  respEl.style.display = 'block';
-  textEl.innerHTML = '<div style="display:flex;gap:4px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-
-  /* Merr terapitë dhe diagnozat */
-  var therapy = Array.from(document.querySelectorAll('#ds-therapy-tags .tag2')).map(function(t){ return t.textContent.replace('×','').trim(); }).filter(Boolean);
-  var diags   = Array.from(document.querySelectorAll('#ds-diag-tags .tag2')).map(function(t){ return t.textContent.replace('×','').trim(); }).filter(Boolean);
-
-  try {
-    var r = await fetch('/.netlify/functions/claude',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-5',
-        max_tokens:600,
-        system:'You are D Health AI Doctor. Analyze the patient therapy and provide: 1) Drug interactions check, 2) Timing optimization, 3) Side effects to watch, 4) Lifestyle recommendations. Be concise and specific.',
-        messages:[{role:'user',content:'Patient diagnoses: '+(diags.join(', ')||'None')+'\nCurrent therapy: '+(therapy.join(', ')||'None')+'\n\nProvide a brief therapy analysis in 3-4 key points.'}]
-      })
-    });
-    var d = await r.json();
-    var tx = d.content && d.content[0] && d.content[0].text;
-    if(tx) textEl.innerHTML = tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  var btn=event.target;
+  var respEl=document.getElementById('therapy-ai-resp');
+  var textEl=document.getElementById('therapy-ai-text');
+  if(!respEl||!textEl) return;
+  btn.disabled=true; btn.textContent='⏳ Analyzing...';
+  respEl.style.display='block';
+  textEl.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  var therapy=Array.from(document.querySelectorAll('#ds-therapy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).filter(Boolean);
+  var diags=Array.from(document.querySelectorAll('#ds-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).filter(Boolean);
+  try{
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,system:'You are D Health AI Doctor. Analyze therapy briefly.',messages:[{role:'user',content:'Diagnoses: '+(diags.join(', ')||'None')+'\nTherapy: '+(therapy.join(', ')||'None')+'\nProvide brief drug interaction check and timing tips in 3 bullet points.'}]})});
+    var d=await r.json();
+    var tx=d.content&&d.content[0]&&d.content[0].text;
+    if(tx) textEl.innerHTML=tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
     else throw new Error();
-  } catch(e) {
-    textEl.innerHTML = '<span style="color:rgba(255,255,255,0.5);">⚠️ Analysis unavailable. Check connection.</span>';
-  }
-  btn.disabled = false;
-  btn.textContent = '🤖 AI Therapy Analysis';
+  }catch(e){ textEl.innerHTML='<span style="color:rgba(255,255,255,0.5);">⚠️ Check connection and try again.</span>'; }
+  btn.disabled=false; btn.textContent='🤖 AI Therapy Analysis';
 }
-
-
 
 var dsChartInst = null;
 function loadDiagScreenChart(){
@@ -7837,17 +7064,26 @@ async function initUserData(userId, userName, userEmail){
 
 /* ════ GOOGLE SIGN-IN ════ */
 function signInWithGoogle(){
-  var sb = getSupa();
-  if(!sb){ showToast('⚠️ Connection error'); return; }
-  sb.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: window.location.origin + window.location.pathname,
-      scopes: 'openid email profile'
-    }
-  }).then(function(res){
-    if(res.error) showToast('❌ ' + res.error.message);
-  });
+  if(typeof google !== 'undefined' && google.accounts){
+    google.accounts.id.initialize({
+      client_id: '695949615023-sbc9lhr6dp7iik90qe9m1g7372ecgkfv.apps.googleusercontent.com',
+      callback: handleGoogleSignIn
+    });
+    google.accounts.id.prompt();
+  } else {
+    /* Fallback OAuth redirect */
+    var clientId = '695949615023-sbc9lhr6dp7iik90qe9m1g7372ecgkfv.apps.googleusercontent.com';
+    var redirect  = encodeURIComponent(window.location.href.split('?')[0]);
+    var scope     = encodeURIComponent('openid email profile');
+    var nonce     = Math.random().toString(36).substring(2);
+    var url = 'https://accounts.google.com/o/oauth2/v2/auth'
+      + '?client_id=' + clientId
+      + '&redirect_uri=' + redirect
+      + '&response_type=token id_token'
+      + '&scope=' + scope
+      + '&nonce=' + nonce;
+    window.location.href = url;
+  }
 }
 
 async function handleGoogleSignIn(response){
@@ -8567,7 +7803,7 @@ function showDHealthRingInfo(){
 
 /* ════ GOOGLE FIT OAUTH 2.0 ════ */
 var GFIT_CONFIG = {
-  clientId: '395744662733-t7onhalni4kpjikudh1a57ji6n9kf01i.apps.googleusercontent.com',
+  clientId: '695949615023-sbc9lhr6dp7iik90qe9m1g7372ecgkfv.apps.googleusercontent.com',
   redirectUri: 'https://relaxed-pegasus-1e887c.netlify.app/',
   scopes: [
     'https://www.googleapis.com/auth/fitness.activity.read',
@@ -9041,43 +8277,18 @@ function markUserHasData(){
 /* Clear demo data on page load if user just registered */
 window.addEventListener('load', function(){
   setTimeout(function(){
+    /* Check if user is logged in via Supabase */
     var sb = getSupa();
     if(!sb) return;
-
-    /* Handle OAuth redirect from Google */
-    sb.auth.onAuthStateChange(function(event, session){
-      if(event === 'SIGNED_IN' && session){
-        var user = session.user;
-        var name = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || user.email.split('@')[0];
-        var email = user.email;
-        LST.currentUser = { id: user.id, name: name, email: email };
-        /* Hide login overlay */
-        var overlay = document.getElementById('login-overlay');
-        if(overlay) overlay.style.display = 'none';
-        /* Show welcome/device sync screen */
-        var lsucc = document.getElementById('lsucc');
-        if(lsucc){
-          document.getElementById('lsuccnm').textContent = name;
-          document.getElementById('lsuccpl').textContent = 'Free Plan - Active';
-          lshow('lsucc');
-        }
-        initUserData(user.id, name, email);
-        showToast('✅ Welcome, ' + name + '!');
-      }
-      if(event === 'SIGNED_OUT'){
-        LST.currentUser = null;
-        var overlay = document.getElementById('login-overlay');
-        if(overlay) overlay.style.display = 'flex';
-      }
-    });
-
-    /* Check existing session */
     sb.auth.getSession().then(function(res){
       if(res && res.data && res.data.session){
-        if(isNewUser()) clearAllDemoData();
+        /* User is logged in - check if new */
+        if(isNewUser()){
+          clearAllDemoData();
+        }
       }
     });
-  }, 500);
+  }, 1500);
 });
 
 /* When user enters first vital - mark as having data */
