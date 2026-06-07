@@ -3491,20 +3491,73 @@ function fmt(t){return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace
 
 /* VERDICT */
 async function runVerdictAI(){
-  var btn=document.getElementById('verdictBtn');
-  var err=document.getElementById('verdict-err');
-  var resp=document.getElementById('verdict-resp');
-  var text=document.getElementById('verdict-text');
-  btn.disabled=true;btn.innerHTML='<div class="spin"></div> Claude AI analyzing...';
-  err.classList.remove('vis');resp.style.display='block';
-  text.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  var btn = document.getElementById('verdictAiBtn');
+  if(!btn) return;
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Analyzing...';
+
   try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:BASE_SYS+getProfile(),messages:[{role:'user',content:(vitalsState.sys>0 ? 'Provide a comprehensive health verdict including: HEALTH SCORE /100, status assessment, detailed analysis of each vital sign and diagnosis, therapy effectiveness review, and 5 priority recommendations.' : 'Patient has not recorded vitals yet. Provide: 1) Welcome message, 2) What vitals to track and why, 3) General health advice based on their diagnoses and therapy, 4) Encourage them to start tracking. Keep it warm and motivating.')}]})});
-    var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);if(d.error)throw new Error();
-    var tx=d.content&&d.content[0]&&d.content[0].text;if(!tx)throw new Error();
-    text.innerHTML=fmt(tx);
-  }catch(e){resp.style.display='none';err.classList.add('vis');}
-  btn.disabled=false;btn.innerHTML='🔄 Re-Analyze';
+    /* Safe profile */
+    var profileStr = '';
+    try{ profileStr = getProfile(); }catch(pe){}
+
+    var systemStr = 'You are D Health AI Doctor. Analyze patient health data and provide a comprehensive verdict.';
+    try{ if(typeof BASE_SYS !== 'undefined') systemStr = BASE_SYS + profileStr; }catch(e){}
+
+    var userMsg = vitalsState.sys > 0
+      ? 'Provide a health verdict with: 1) HEALTH SCORE /100, 2) Status (Good/Fair/Poor), 3) Vital signs analysis, 4) Diagnosis review, 5) Therapy effectiveness, 6) 5 priority recommendations. Be specific and medical.'
+      : 'Patient has no vitals yet. Welcome them warmly, explain what D Health tracks, and encourage them to add their first vitals. Mention their diagnoses/therapy if available.';
+
+    var r = await fetch('/.netlify/functions/claude', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1000,
+        system: systemStr,
+        messages: [{role:'user', content: userMsg}]
+      })
+    });
+
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    var rawT = await r.text();
+    if(rawT.trim().startsWith('<')) throw new Error('Server error');
+    var d = JSON.parse(rawT);
+    if(d.error) throw new Error(d.error.message || 'API error');
+    var tx = d.content && d.content[0] && d.content[0].text;
+    if(!tx) throw new Error('No response from AI');
+
+    /* Update verdict UI elements */
+    var scoreMatch = tx.match(/(\d{1,3})\s*\/\s*100/);
+    var score = scoreMatch ? parseInt(scoreMatch[1]) : null;
+
+    if(score){
+      var scoreEl = document.getElementById('eng-score-num');
+      if(scoreEl) scoreEl.textContent = score;
+      var statusEl = document.getElementById('eng-status-txt');
+      if(statusEl){
+        var statusColor = score>=75?'#4ADE80':score>=50?'#FCD34D':'#F87171';
+        statusEl.style.color = statusColor;
+        statusEl.textContent = score>=75?'Good Health':score>=50?'Fair Health':'Needs Attention';
+      }
+    }
+
+    /* Show result in recommendations area */
+    var recEl = document.getElementById('eng-rec-content');
+    if(recEl) recEl.innerHTML = tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+
+    var container = document.getElementById('engine-verdict-container');
+    if(container) container.style.opacity = '1';
+
+  }catch(e){
+    console.error('Verdict error:', e.message);
+    var recEl = document.getElementById('eng-rec-content');
+    if(recEl) recEl.innerHTML = '<span style="color:#F87171;">⚠️ '+(e.message||'Connection error')+'. Please try again.</span>';
+    showToast('❌ Verdict error: ' + (e.message||'Check connection'));
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="margin-right:6px;"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="white"/></svg> Re-Analyze';
 }
 
 /* PROFILE */
@@ -7330,7 +7383,24 @@ async function runCorrelationEngine(){
     if(resp.error){ throw new Error(resp.error.message); }
     var txt = resp.content&&resp.content[0]&&resp.content[0].text||'{}';
     txt = txt.replace(/```json|```/g,'').trim();
-    var result = JSON.parse(txt);
+    
+    /* Try JSON parse — nëse dështon ndërto result nga teksti */
+    var result;
+    try{
+      result = JSON.parse(txt);
+    }catch(pe){
+      /* AI nuk ktheu JSON — ndërto result nga teksti */
+      result = {
+        score: 50,
+        alarms: [],
+        correlations: [],
+        recommendations: [txt],
+        doctor_summary: ''
+      };
+      /* Provo të nxjerrësh score nga teksti */
+      var sm = txt.match(/(\d{1,3})\s*\/\s*100/);
+      if(sm) result.score = parseInt(sm[1]);
+    }
     renderEngineResult(result, data);
   }catch(e){
     document.getElementById('eng-rec-content').innerHTML = '❌ Error: '+e.message;
@@ -9046,11 +9116,29 @@ async function runDeepProfileAnalysis(){
 
     var txt = d.content&&d.content[0] ? d.content[0].text : '{}';
     txt = txt.replace(/```json|```/g,'').trim();
-    var res = JSON.parse(txt);
+
+    /* Try JSON parse — nëse dështon trego tekstin direkt */
+    var res;
+    try{
+      res = JSON.parse(txt);
+    }catch(pe){
+      /* Nuk është JSON — trego si tekst */
+      res = {
+        overall_verdict: txt,
+        diagnoses_analysis: '',
+        therapy_analysis: '',
+        lab_analysis: '',
+        long_term_risks: '',
+        action_plan: [],
+        doctor_summary: ''
+      };
+    }
     renderDeepAnalysis(res, labs.length > 0);
 
   }catch(e){
-    document.getElementById('deepOverallVerdict').textContent = '❌ Error: '+e.message;
+    console.error('Deep Analysis error:', e.message);
+    var errEl = document.getElementById('deepOverallVerdict');
+    if(errEl) errEl.innerHTML = '<span style="color:#F87171;">⚠️ '+( e.message||'Connection error')+'.<br>Make sure you are connected to internet and try again.</span>';
   }
 
   if(btn){ btn.disabled=false; btn.innerHTML='🔬 Re-Run Deep Analysis'; }
