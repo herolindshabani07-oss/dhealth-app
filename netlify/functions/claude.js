@@ -1,51 +1,42 @@
-// netlify/functions/claude.js
-// D Health - Claude AI proxy for Netlify
+const Anthropic = require('@anthropic-ai/sdk');
 
-exports.handler = async (event, context) => {
-  // CORS headers
+exports.handler = async function(event) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Content-Type': 'application/json'
   };
 
-  // Handle preflight
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers, body: '' };
   }
 
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: { message: 'Method not allowed' } })
-    };
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: event.body
+    const body = JSON.parse(event.body);
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+    const response = await client.messages.create({
+      model: body.model || 'claude-sonnet-4-5',
+      max_tokens: body.max_tokens || 1000,
+      system: body.system || 'You are D Health AI Doctor.',
+      messages: body.messages || []
     });
 
-    const data = await response.text();
-
     return {
-      statusCode: response.status,
+      statusCode: 200,
       headers,
-      body: data
+      body: JSON.stringify(response)
     };
   } catch (error) {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: { message: error.message } })
+      body: JSON.stringify({ error: error.message })
     };
   }
 };
