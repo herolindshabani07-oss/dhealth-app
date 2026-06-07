@@ -1397,11 +1397,14 @@ select option{background:#0A1628;color:#F1F5FF;}
       <!-- Integration Cards -->
       <div style="display:flex;flex-direction:column;gap:7px;">
         <!-- Google Fit -->
-        <div id="home-int-gfit" onclick="connectGoogleFit()" style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+        <div id="home-int-gfit" style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;">
           <div style="width:36px;height:36px;border-radius:11px;background:#E8F5E9;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💚</div>
-          <div style="flex:1;">
+          <div style="flex:1;" onclick="isConnected('gfit') ? syncGoogleFitData() : connectGoogleFit()">
             <div style="font-size:12px;font-weight:700;color:#F1F5FF;">Google Fit</div>
             <div class="int-status" id="ds-gfit-status" style="font-size:10px;color:rgba(255,255,255,0.4);">Tap to connect</div>
+          </div>
+          <button onclick="isConnected('gfit') ? syncGoogleFitData() : connectGoogleFit()" id="gfit-sync-btn" style="padding:5px 12px;border-radius:9px;border:none;background:#34A853;color:#fff;font-size:10px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button>
+        </div>s" id="ds-gfit-status" style="font-size:10px;color:rgba(255,255,255,0.4);">Tap to connect</div>
           </div>
           <span style="font-size:12px;color:rgba(255,255,255,0.3);">›</span>
         </div>
@@ -6783,23 +6786,49 @@ function disconnectApp(type){
 }
 
 function updateConnectCards(){
-  var gfit  = localStorage.getItem('connect_gfit') === '1';
-  var apple = localStorage.getItem('connect_apple') === '1';
-  /* Update status text in Home */
-  var cards = document.querySelectorAll('.int-card');
-  cards.forEach(function(card){
-    var name = card.querySelector('.int-name');
-    var status = card.querySelector('.int-status');
-    if(!name||!status) return;
-    if(name.textContent==='Google Fit'){
-      status.textContent = gfit ? 'Active ✓' : 'Connect →';
-      card.classList.toggle('conn', gfit);
-    }
-    if(name.textContent==='Apple Health'){
-      status.textContent = apple ? 'Active ✓' : 'Connect →';
-      card.classList.toggle('conn', apple);
-    }
-  });
+  var gfit  = localStorage.getItem('connect_gfit') === '1' || localStorage.getItem('connect_gfit') === 'true';
+  var apple = localStorage.getItem('connect_apple') === '1' || localStorage.getItem('connect_apple') === 'true';
+  var fitbit = localStorage.getItem('connect_fitbit') === '1' || localStorage.getItem('connect_fitbit') === 'true';
+
+  /* Update home-int-gfit card */
+  var gfitCard = document.getElementById('home-int-gfit');
+  if(gfitCard){
+    gfitCard.style.borderColor = gfit ? 'rgba(45,200,160,0.4)' : 'rgba(255,255,255,0.1)';
+    gfitCard.style.background  = gfit ? 'rgba(45,200,160,0.08)' : 'rgba(255,255,255,0.05)';
+  }
+  var gfitStatus = document.getElementById('ds-gfit-status');
+  if(gfitStatus){
+    var synced = localStorage.getItem('gfit_synced');
+    gfitStatus.textContent = gfit ? (synced ? '✓ Synced '+synced : '✓ Connected') : 'Tap to connect';
+    gfitStatus.style.color = gfit ? '#4ADE80' : 'rgba(255,255,255,0.4)';
+  }
+  var gfitBtn = document.getElementById('gfit-sync-btn');
+  if(gfitBtn){
+    gfitBtn.textContent = gfit ? '🔄 Sync' : 'Connect';
+    gfitBtn.style.background = gfit ? '#1565C0' : '#34A853';
+  }
+
+  /* Update ds-apple-status */
+  var appleStatus = document.getElementById('ds-apple-status');
+  if(appleStatus){
+    appleStatus.textContent = apple ? '✓ Connected' : 'Tap to connect';
+    appleStatus.style.color = apple ? '#4ADE80' : 'rgba(255,255,255,0.4)';
+  }
+
+  /* Update ds-fitbit-status */
+  var fitbitStatus = document.getElementById('ds-fitbit-status');
+  if(fitbitStatus){
+    fitbitStatus.textContent = fitbit ? '✓ Connected' : 'Tap to connect';
+    fitbitStatus.style.color = fitbit ? '#4ADE80' : 'rgba(255,255,255,0.4)';
+  }
+
+  /* Count connected */
+  var count = [gfit, apple, fitbit].filter(Boolean).length;
+  var countEl = document.getElementById('dataSourcesCount');
+  if(countEl){
+    countEl.textContent = count > 0 ? count + ' connected' : 'Manual only';
+    countEl.style.color = count > 0 ? '#4ADE80' : 'rgba(255,255,255,0.4)';
+  }
 }
 
 /* Init on load */
