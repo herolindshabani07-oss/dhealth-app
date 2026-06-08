@@ -7872,10 +7872,7 @@ async function syncGoogleFitData(){
       {dataTypeName: 'com.google.heart_rate.bpm'},
       {dataTypeName: 'com.google.calories.expended'},
       {dataTypeName: 'com.google.active_minutes'},
-      {dataTypeName: 'com.google.distance.delta'},
-      {dataTypeName: 'com.google.blood_pressure'},
-      {dataTypeName: 'com.google.blood_glucose'},
-      {dataTypeName: 'com.google.oxygen_saturation'}
+      {dataTypeName: 'com.google.distance.delta'}
     ],
     bucketByTime: {durationMillis: now - startMs},
     startTimeMillis: startMs,
@@ -7940,6 +7937,47 @@ async function syncGoogleFitData(){
         });
       });
     });
+
+    /* ── Lexo BP / glukozë / SpO2 me dataset:get (raw) ──
+       Këto lloje NUK mbështeten nga dataset:aggregate, ndaj i marrim
+       direkt nga burimet e bashkuara (merged) për 7 ditët e fundit. */
+    var rawWindowMs = 7 * 24 * 60 * 60 * 1000;
+    var rawStartNs  = (now - rawWindowMs) * 1e6;
+    var rawEndNs    = now * 1e6;
+
+    async function fetchRawLatest(dataTypeName){
+      var src = 'derived:' + dataTypeName + ':com.google.android.gms:merged';
+      var url = 'https://www.googleapis.com/fitness/v1/users/me/dataSources/'
+              + encodeURIComponent(src) + '/datasets/' + rawStartNs + '-' + rawEndNs;
+      try{
+        var r = await fetch(url, { headers: {'Authorization': 'Bearer ' + token} });
+        if(!r.ok) return null;
+        var d = await r.json();
+        var pts = d.point || [];
+        if(!pts.length) return null;
+        /* pika më e fundit sipas endTimeNanos */
+        pts.sort(function(a,b){ return (parseInt(b.endTimeNanos)||0) - (parseInt(a.endTimeNanos)||0); });
+        return pts[0].value || null;
+      }catch(e){ return null; }
+    }
+
+    var bpVal   = await fetchRawLatest('com.google.blood_pressure');
+    var gluVal  = await fetchRawLatest('com.google.blood_glucose');
+    var spo2Val = await fetchRawLatest('com.google.oxygen_saturation');
+
+    if(bpVal && bpVal.length){
+      var s = bpVal[0] ? Math.round(bpVal[0].fpVal || 0) : 0;
+      var dd = bpVal[1] ? Math.round(bpVal[1].fpVal || 0) : 0;
+      if(s > 0){ sys = s; dia = dd; }
+    }
+    if(gluVal && gluVal.length){
+      var g = gluVal[0] ? (gluVal[0].fpVal || 0) : 0;
+      if(g > 0) glu = Math.round(g * 10) / 10;
+    }
+    if(spo2Val && spo2Val.length){
+      var o = spo2Val[0] ? (spo2Val[0].fpVal || 0) : 0;
+      if(o > 0) spo2 = o < 2 ? Math.round(o * 100) : Math.round(o);
+    }
 
     steps    = Math.round(steps);
     calories = Math.round(calories);
