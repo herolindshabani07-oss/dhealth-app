@@ -7817,13 +7817,10 @@ var GFIT_CONFIG = {
 };
 
 function connectGoogleFit(){
-  var token = localStorage.getItem('gfit_token');
-  if(token){
-    /* Already connected — sync data */
-    syncGoogleFitData();
-    return;
-  }
-  /* OAuth 2.0 implicit flow */
+  /* Fshi token të vjetër për të marrë të ri me scopes */
+  localStorage.removeItem('gfit_token');
+  localStorage.removeItem('gfit_expiry');
+
   var state = Math.random().toString(36).substring(2);
   localStorage.setItem('gfit_oauth_state', state);
   var url = 'https://accounts.google.com/o/oauth2/v2/auth'
@@ -7832,6 +7829,7 @@ function connectGoogleFit(){
     + '&response_type=token'
     + '&scope='         + encodeURIComponent(GFIT_CONFIG.scopes)
     + '&state='         + state
+    + '&prompt=consent'
     + '&include_granted_scopes=true';
   window.location.href = url;
 }
