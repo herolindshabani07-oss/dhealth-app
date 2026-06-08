@@ -12,10 +12,7 @@ exports.handler = async function(event) {
 
   try {
     const token = (event.headers['authorization'] || event.headers['Authorization'] || '').replace('Bearer ', '');
-    
-    if (!token) {
-      return { statusCode: 401, headers, body: JSON.stringify({ error: 'No token' }) };
-    }
+    if (!token) return { statusCode: 401, headers, body: JSON.stringify({ error: 'No token' }) };
 
     const now = Date.now();
     const dayMs = 86400000;
@@ -30,8 +27,7 @@ exports.handler = async function(event) {
         aggregateBy: [
           { dataTypeName: 'com.google.step_count.delta' },
           { dataTypeName: 'com.google.heart_rate.bpm' },
-          { dataTypeName: 'com.google.calories.expended' },
-          { dataTypeName: 'com.google.distance.delta' }
+          { dataTypeName: 'com.google.calories.expended' }
         ],
         bucketByTime: { durationMillis: dayMs },
         startTimeMillis: now - dayMs,
@@ -43,15 +39,11 @@ exports.handler = async function(event) {
     
     if (!response.ok) {
       console.log('Google API error:', response.status, responseText);
-      return { 
-        statusCode: response.status, 
-        headers, 
-        body: JSON.stringify({ error: `Google API error: ${response.status}`, details: responseText }) 
-      };
+      return { statusCode: response.status, headers, body: JSON.stringify({ error: `Google API error: ${response.status}` }) };
     }
 
     const data = JSON.parse(responseText);
-    let steps = 0, hr = 0, calories = 0, distance = 0;
+    let steps = 0, hr = 0, calories = 0;
 
     if (data.bucket && data.bucket[0]) {
       data.bucket[0].dataset.forEach(ds => {
@@ -60,14 +52,14 @@ exports.handler = async function(event) {
         if (ds.dataSourceId && ds.dataSourceId.includes('step_count')) steps = val.intVal || 0;
         if (ds.dataSourceId && ds.dataSourceId.includes('heart_rate')) hr = Math.round(val.fpVal || 0);
         if (ds.dataSourceId && ds.dataSourceId.includes('calories')) calories = Math.round(val.fpVal || 0);
-        if (ds.dataSourceId && ds.dataSourceId.includes('distance')) distance = Math.round((val.fpVal || 0) / 10) / 100;
       });
     }
 
+    console.log('Sync success - Steps:', steps, 'HR:', hr, 'Cal:', calories);
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ steps, hr, calories, distance, synced: new Date().toISOString() })
+      body: JSON.stringify({ steps, hr, calories, distance: 0, synced: new Date().toISOString() })
     };
 
   } catch (error) {
