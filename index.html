@@ -2,8 +2,7 @@
 <html lang="sq">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Health BOT — Complete App</title>
 
 <style>
@@ -28,26 +27,15 @@
   --glass-border:rgba(255,255,255,0.15);
   --glass-hover:rgba(255,255,255,0.12);
 }
-body{background:#050B1F;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;font-family:var(--font);}
+body{background:#050B1F;display:flex;justify-content:center;min-height:100vh;font-family:var(--font);}
 .device{width:390px;height:844px;background:linear-gradient(145deg,#050B1F 0%,#0A1628 25%,#0D2F6B 55%,#0A4D8C 80%,#0891B2 100%);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 0 0 10px #0A0F1E,0 0 0 11px #1a2a4a,0 40px 80px rgba(0,0,0,0.9);margin:20px auto;}
-@media screen and (max-width:768px){
-  html{height:100%;}
-  body{display:block;margin:0;padding:0;width:100%;height:100%;overflow:hidden;}
-  .device{position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;border-radius:0!important;box-shadow:none!important;margin:0!important;}
-  .device::before,.device::after,.notch{display:none!important;}
-  .screen{height:100vh!important;}
-  .sb{padding-top:16px!important;}
-  .bn{border-radius:0!important;}
-}
 .device::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(99,102,241,0.35),transparent 70%);border-radius:50%;pointer-events:none;z-index:0;}
 .device::after{content:'';position:absolute;bottom:80px;left:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(6,182,212,0.25),transparent 70%);border-radius:50%;pointer-events:none;z-index:0;}
 .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:34px;background:#0A0F1E;border-radius:0 0 20px 20px;z-index:1000;}
 
 /* ALL SCREENS */
 .screen{display:none;flex-direction:column;height:844px;overflow:hidden;background:transparent;position:absolute;inset:0;transition:opacity 0.25s;z-index:1;}
-
 .screen.active{display:flex;}
-@media screen and (max-width:768px){.screen{height:100vh!important;height:100dvh!important;}}
 .sa{flex:1;overflow-y:auto;scrollbar-width:none;}
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
@@ -60,7 +48,6 @@ select option{background:#0A1628;color:#F1F5FF;}
 
 /* BOTTOM NAV — Glassmorphism */
 .bn{height:82px;background:rgba(5,11,31,0.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:0.5px solid rgba(255,255,255,0.1);display:flex;align-items:center;padding:0 8px 16px;flex-shrink:0;border-radius:0 0 44px 44px;}
-
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 4px;border-radius:16px;cursor:pointer;transition:all 0.2s;border:none;background:transparent;}
 .ni.active{background:rgba(96,165,250,0.15);border:0.5px solid rgba(96,165,250,0.25);}
 .nic{width:22px;height:22px;filter:brightness(0) invert(0.7);}
@@ -1311,29 +1298,153 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="vc" style="border:1px solid rgba(13,148,136,0.2);"><div class="vir"><div class="vic" style="background:var(--tl);">🍬</div><span class="vs2 sg">Normal</span></div><div class="vlbl">Glucose</div><div class="vv" style="font-size:16px;color:var(--teal);" id="home-glu">5.4</div><div class="vsb">mmol/L</div></div>
     </div>
     <div class="hs">
-      <div class="sh"><div class="st">AI Doctor</div><span style="font-size:12px;color:#60A5FA;font-weight:500;cursor:pointer;" onclick="switchScreen('chat')">Open →</span></div>
-      <div onclick="switchScreen('chat')" style="background:rgba(255,255,255,0.07);border:0.5px solid rgba(255,255,255,0.12);border-radius:16px;padding:14px;cursor:pointer;display:flex;align-items:center;gap:12px;">
-        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🩺</div>
-        <div style="flex:1;">
-          <div style="font-size:13px;font-weight:700;color:#F1F5FF;margin-bottom:3px;">D Health AI Doctor</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.5);">Ask any medical question · Powered by Claude AI</div>
+      <div class="sh"><div class="st">Diagnostic AI</div><span style="font-size:12px;color:#60A5FA;font-weight:500;cursor:pointer;" onclick="switchScreen('diagnostic');">See full →</span></div>
+      <div class="score-card" onclick="switchScreen('diagnostic');">
+        <div class="sc-row">
+          <div class="sc-circle"><div class="sc-n">--</div><div class="sc-l">/100</div></div>
+          <div>
+            <div class="sc-title">No analysis yet</div>
+            <div class="sc-desc">Run Re-Analyze to get your health score</div>
+            <div class="sc-tap">Tap for full AI analysis →</div>
+          </div>
         </div>
-        <span style="font-size:18px;color:rgba(255,255,255,0.4);">›</span>
+        
       </div>
     </div>
+    <div class="hs">
+      <div class="sh"><div class="st">🌍 Air Quality — Skopje</div><span style="font-size:11px;color:rgba(255,255,255,0.5);" id="aqiTime">Loading...</span></div>
+      <div id="aqiCard" style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;padding:14px 16px;border:0.5px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:14px;">
+        <div id="aqiCircle" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">
+          <div id="aqiVal" style="font-size:20px;font-weight:700;color:#fff;">—</div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.8);">AQI</div>
+        </div>
+        <div style="flex:1;">
+          <div id="aqiStatus" style="font-size:14px;font-weight:700;color:#F1F5FF;">Checking...</div>
+          <div id="aqiDesc" style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;line-height:1.5;">Connecting to IQAir...</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);">PM2.5</div>
+          <div id="aqiPm" style="font-size:16px;font-weight:700;color:#F1F5FF;">—</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.5);">μg/m³</div>
+        </div>
+      </div>
+    </div>
+    <div class="hs">
+      <!-- DAILY HEALTH SCORE -->
+      <div id="dailyScoreCard" style="background:linear-gradient(135deg,#1A0A2E,#2D1B69);border-radius:16px;padding:14px;margin-top:10px;cursor:pointer;" onclick="calcDailyScore()">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.5px;">⚡ Daily Health Score</div>
+          <div id="dailyScoreRefresh" style="font-size:10px;color:rgba(255,255,255,0.5);">Tap to calculate</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="position:relative;flex-shrink:0;">
+            <div id="dailyScoreCircle" style="width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,0.2);">
+              <div id="dailyScoreNum" style="font-size:24px;font-weight:700;color:#fff;line-height:1;">--</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.6);">/100</div>
+            </div>
+            <div id="dailyScoreEmoji" style="position:absolute;bottom:-4px;right:-4px;font-size:18px;"></div>
+          </div>
+          <div style="flex:1;">
+            <div id="dailyScoreMain" style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;">Calculate your daily score</div>
+            <div id="dailyScoreBadge" style="display:none;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;display:inline-block;margin-bottom:4px;"></div>
+            <div id="dailyScoreDetails" style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5;">Based on steps, vitals, activity & diagnoses</div>
+          </div>
+        </div>
+        <div id="dailyScoreBarWrap" style="display:none;margin-top:10px;">
+          <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
+            <div id="dailyScoreBar" style="height:100%;border-radius:4px;transition:width 0.8s ease;width:0%;"></div>
+          </div>
+        </div>
+        <div id="dailyScoreBenefits" style="margin-top:10px;display:none;">
+          <div style="height:0.5px;background:rgba(255,255,255,0.1);margin-bottom:8px;"></div>
+          <div id="dailyScoreBenefitsList" style="font-size:11px;color:rgba(255,255,255,0.8);line-height:1.8;"></div>
+        </div>
+      </div>
 
+    </div>
+    <div class="hs">
+      <div class="sh"><div class="st">Daily Activity</div><span style="font-size:12px;color:#60A5FA;font-weight:500;">Today</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
+          <div style="font-size:22px;margin-bottom:4px;">👟</div>
+          <div style="font-size:18px;font-weight:700;color:#60A5FA;" id="da-steps">--</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Steps</div>
+          <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--primary);"></div></div>
+        </div>
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
+          <div style="font-size:22px;margin-bottom:4px;">🔥</div>
+          <div style="font-size:18px;font-weight:700;color:var(--orange);" id="da-cal">--</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Calories</div>
+          <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--orange);"></div></div>
+        </div>
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
+          <div style="font-size:22px;margin-bottom:4px;">❤️</div>
+          <div style="font-size:18px;font-weight:700;color:var(--heart);" id="da-hr">--</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Puls avg</div>
+          <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--heart);"></div></div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:10px 13px;border:0.5px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:8px;">
+        <div style="font-size:18px;">🏃</div>
+        <div style="flex:1;font-size:11px;color:rgba(255,255,255,0.5);">Distance: <strong style="color:#F1F5FF;">--</strong> &nbsp;·&nbsp; Active: <strong style="color:#F1F5FF;">--</strong> &nbsp;·&nbsp; Sleep: <strong style="color:#F1F5FF;">--</strong></div>
+      </div>
+
+    </div>
+    <div class="hs" style="padding-bottom:18px;">
+      <div class="sh"><div class="st">🔗 Data Sources</div><span style="font-size:11px;color:rgba(255,255,255,0.5);" id="dataSourcesCount">Loading...</span></div>
+      <!-- Platform Banner — Android/iOS auto-detect -->
+      <div id="platformBanner"></div>
+      <!-- Integration Cards -->
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <!-- Google Fit -->
+        <div id="home-int-gfit" onclick="connectGoogleFit()" style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:11px;background:#E8F5E9;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💚</div>
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:700;color:#F1F5FF;">Google Fit</div>
+            <div class="int-status" id="ds-gfit-status" style="font-size:10px;color:rgba(255,255,255,0.4);">Tap to connect</div>
+          </div>
+          <span style="font-size:12px;color:rgba(255,255,255,0.3);">›</span>
+        </div>
+        <!-- Apple Health -->
+        <div id="home-int-apple" onclick="connectAppleHealth()" style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:11px;background:#FFF0F3;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">❤️</div>
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:700;color:#F1F5FF;">Apple Health</div>
+            <div class="int-status" id="ds-apple-status" style="font-size:10px;color:rgba(255,255,255,0.4);">Tap to connect</div>
+          </div>
+          <span style="font-size:12px;color:rgba(255,255,255,0.3);">›</span>
+        </div>
+        <!-- Fitbit -->
+        <div id="home-int-fitbit" onclick="connectFitbit()" style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:11px;background:#E0F7FA;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">⏱</div>
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:700;color:#F1F5FF;">Fitbit</div>
+            <div class="int-status" id="ds-fitbit-status" style="font-size:10px;color:rgba(255,255,255,0.4);">Tap to connect</div>
+          </div>
+          <span style="font-size:12px;color:rgba(255,255,255,0.3);">›</span>
+        </div>
+        <!-- Manual — always active, no disconnect -->
+        <div style="background:rgba(45,200,160,0.07);border:0.5px solid rgba(45,200,160,0.2);border-radius:14px;padding:11px 13px;display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:11px;background:rgba(45,200,160,0.15);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📝</div>
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:700;color:#F1F5FF;">Manual Input</div>
+            <div style="font-size:10px;color:#4ADE80;font-weight:600;">Always active ✓</div>
+          </div>
+          <div style="font-size:10px;font-weight:700;color:#4ADE80;background:rgba(45,200,160,0.2);padding:3px 9px;border-radius:8px;">Active</div>
+        </div>
+      </div>
+    </div>
   </div>
-
   <div class="bn">
-    <button class="ni" onclick="switchScreen('home')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Home</span></button>
-    <button class="ni active" onclick="switchScreen('chat')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="#3B7DD8"/></svg><span class="nl" style="color:#60A5FA">Chat</span></button>
+    <button class="ni active" onclick="switchScreen('home')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" fill="#3B7DD8"/></svg><span class="nl" style="color:#60A5FA">Home</span></button>
+    <button class="ni" onclick="switchScreen('chat')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Chat</span></button>
     <div class="nvw" onclick="switchScreen('vitals')"><button class="nvb"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M2 12H4L7 6L10 18L13 10L15 14H17L20 8L22 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="nvl">Vitals</span></div>
     <button class="ni" onclick="switchScreen('calendar')"><svg class="nic" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="3" stroke="#7B8BAD" stroke-width="2"/><path d="M3 9H21" stroke="#7B8BAD" stroke-width="2"/><path d="M8 2V6M16 2V6" stroke="#7B8BAD" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="14" r="1" fill="#7B8BAD"/><circle cx="12" cy="14" r="1" fill="#7B8BAD"/><circle cx="16" cy="14" r="1" fill="#7B8BAD"/></svg><span class="nl">Calendar</span></button>
     <button class="ni" onclick="switchScreen('diagnostic')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M19 3H5C3.9 3 3 3.9 3 5V15C3 16.1 3.9 17 5 17H8L12 21L16 17H19C20.1 17 21 16.1 21 15V5C21 3.9 20.1 3 19 3Z" stroke="#7B8BAD" stroke-width="2" fill="none"/><circle cx="8.5" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="12" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="15.5" cy="10" r="1.1" fill="#7B8BAD"/></svg><span class="nl">Diagnosis</span></button>
   </div>
 </div>
 
-<!-- ══════════ VITALS ══════════ -->
+<!-- ══════════ CHAT ══════════ -->
 <div class="screen" id="screen-chat">
   <div class="sb"><span>9:41</span></div>
   <div class="ch-hdr">
@@ -1449,7 +1560,6 @@ select option{background:#0A1628;color:#F1F5FF;}
 </div>
 
 <!-- ══════════ VITALS ══════════ -->
-
 <div class="screen" id="screen-vitals">
   <div class="sb"><span>9:41</span></div>
   <div class="sa">
@@ -3381,73 +3491,20 @@ function fmt(t){return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace
 
 /* VERDICT */
 async function runVerdictAI(){
-  var btn = document.getElementById('verdictAiBtn');
-  if(!btn) return;
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Analyzing...';
-
+  var btn=document.getElementById('verdictBtn');
+  var err=document.getElementById('verdict-err');
+  var resp=document.getElementById('verdict-resp');
+  var text=document.getElementById('verdict-text');
+  btn.disabled=true;btn.innerHTML='<div class="spin"></div> Claude AI analyzing...';
+  err.classList.remove('vis');resp.style.display='block';
+  text.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
   try{
-    /* Safe profile */
-    var profileStr = '';
-    try{ profileStr = getProfile(); }catch(pe){}
-
-    var systemStr = 'You are D Health AI Doctor. Analyze patient health data and provide a comprehensive verdict.';
-    try{ if(typeof BASE_SYS !== 'undefined') systemStr = BASE_SYS + profileStr; }catch(e){}
-
-    var userMsg = vitalsState.sys > 0
-      ? 'Provide a health verdict with: 1) HEALTH SCORE /100, 2) Status (Good/Fair/Poor), 3) Vital signs analysis, 4) Diagnosis review, 5) Therapy effectiveness, 6) 5 priority recommendations. Be specific and medical.'
-      : 'Patient has no vitals yet. Welcome them warmly, explain what D Health tracks, and encourage them to add their first vitals. Mention their diagnoses/therapy if available.';
-
-    var r = await fetch('/.netlify/functions/claude', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 1000,
-        system: systemStr,
-        messages: [{role:'user', content: userMsg}]
-      })
-    });
-
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    var rawT = await r.text();
-    if(rawT.trim().startsWith('<')) throw new Error('Server error');
-    var d = JSON.parse(rawT);
-    if(d.error) throw new Error(d.error.message || 'API error');
-    var tx = d.content && d.content[0] && d.content[0].text;
-    if(!tx) throw new Error('No response from AI');
-
-    /* Update verdict UI elements */
-    var scoreMatch = tx.match(/(\d{1,3})\s*\/\s*100/);
-    var score = scoreMatch ? parseInt(scoreMatch[1]) : null;
-
-    if(score){
-      var scoreEl = document.getElementById('eng-score-num');
-      if(scoreEl) scoreEl.textContent = score;
-      var statusEl = document.getElementById('eng-status-txt');
-      if(statusEl){
-        var statusColor = score>=75?'#4ADE80':score>=50?'#FCD34D':'#F87171';
-        statusEl.style.color = statusColor;
-        statusEl.textContent = score>=75?'Good Health':score>=50?'Fair Health':'Needs Attention';
-      }
-    }
-
-    /* Show result in recommendations area */
-    var recEl = document.getElementById('eng-rec-content');
-    if(recEl) recEl.innerHTML = tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-
-    var container = document.getElementById('engine-verdict-container');
-    if(container) container.style.opacity = '1';
-
-  }catch(e){
-    console.error('Verdict error:', e.message);
-    var recEl = document.getElementById('eng-rec-content');
-    if(recEl) recEl.innerHTML = '<span style="color:#F87171;">⚠️ '+(e.message||'Connection error')+'. Please try again.</span>';
-    showToast('❌ Verdict error: ' + (e.message||'Check connection'));
-  }
-
-  btn.disabled = false;
-  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="margin-right:6px;"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="white"/></svg> Re-Analyze';
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:BASE_SYS+getProfile(),messages:[{role:'user',content:(vitalsState.sys>0 ? 'Provide a comprehensive health verdict including: HEALTH SCORE /100, status assessment, detailed analysis of each vital sign and diagnosis, therapy effectiveness review, and 5 priority recommendations.' : 'Patient has not recorded vitals yet. Provide: 1) Welcome message, 2) What vitals to track and why, 3) General health advice based on their diagnoses and therapy, 4) Encourage them to start tracking. Keep it warm and motivating.')}]})});
+    var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);if(d.error)throw new Error();
+    var tx=d.content&&d.content[0]&&d.content[0].text;if(!tx)throw new Error();
+    text.innerHTML=fmt(tx);
+  }catch(e){resp.style.display='none';err.classList.add('vis');}
+  btn.disabled=false;btn.innerHTML='🔄 Re-Analyze';
 }
 
 /* PROFILE */
@@ -6673,49 +6730,23 @@ function disconnectApp(type){
 }
 
 function updateConnectCards(){
-  var gfit  = localStorage.getItem('connect_gfit') === '1' || localStorage.getItem('connect_gfit') === 'true';
-  var apple = localStorage.getItem('connect_apple') === '1' || localStorage.getItem('connect_apple') === 'true';
-  var fitbit = localStorage.getItem('connect_fitbit') === '1' || localStorage.getItem('connect_fitbit') === 'true';
-
-  /* Update home-int-gfit card */
-  var gfitCard = document.getElementById('home-int-gfit');
-  if(gfitCard){
-    gfitCard.style.borderColor = gfit ? 'rgba(45,200,160,0.4)' : 'rgba(255,255,255,0.1)';
-    gfitCard.style.background  = gfit ? 'rgba(45,200,160,0.08)' : 'rgba(255,255,255,0.05)';
-  }
-  var gfitStatus = document.getElementById('ds-gfit-status');
-  if(gfitStatus){
-    var synced = localStorage.getItem('gfit_synced');
-    gfitStatus.textContent = gfit ? (synced ? '✓ Synced '+synced : '✓ Connected') : 'Tap to connect';
-    gfitStatus.style.color = gfit ? '#4ADE80' : 'rgba(255,255,255,0.4)';
-  }
-  var gfitBtn = document.getElementById('gfit-sync-btn');
-  if(gfitBtn){
-    gfitBtn.textContent = gfit ? '🔄 Sync' : 'Connect';
-    gfitBtn.style.background = gfit ? '#1565C0' : '#34A853';
-  }
-
-  /* Update ds-apple-status */
-  var appleStatus = document.getElementById('ds-apple-status');
-  if(appleStatus){
-    appleStatus.textContent = apple ? '✓ Connected' : 'Tap to connect';
-    appleStatus.style.color = apple ? '#4ADE80' : 'rgba(255,255,255,0.4)';
-  }
-
-  /* Update ds-fitbit-status */
-  var fitbitStatus = document.getElementById('ds-fitbit-status');
-  if(fitbitStatus){
-    fitbitStatus.textContent = fitbit ? '✓ Connected' : 'Tap to connect';
-    fitbitStatus.style.color = fitbit ? '#4ADE80' : 'rgba(255,255,255,0.4)';
-  }
-
-  /* Count connected */
-  var count = [gfit, apple, fitbit].filter(Boolean).length;
-  var countEl = document.getElementById('dataSourcesCount');
-  if(countEl){
-    countEl.textContent = count > 0 ? count + ' connected' : 'Manual only';
-    countEl.style.color = count > 0 ? '#4ADE80' : 'rgba(255,255,255,0.4)';
-  }
+  var gfit  = localStorage.getItem('connect_gfit') === '1';
+  var apple = localStorage.getItem('connect_apple') === '1';
+  /* Update status text in Home */
+  var cards = document.querySelectorAll('.int-card');
+  cards.forEach(function(card){
+    var name = card.querySelector('.int-name');
+    var status = card.querySelector('.int-status');
+    if(!name||!status) return;
+    if(name.textContent==='Google Fit'){
+      status.textContent = gfit ? 'Active ✓' : 'Connect →';
+      card.classList.toggle('conn', gfit);
+    }
+    if(name.textContent==='Apple Health'){
+      status.textContent = apple ? 'Active ✓' : 'Connect →';
+      card.classList.toggle('conn', apple);
+    }
+  });
 }
 
 /* Init on load */
@@ -7299,24 +7330,7 @@ async function runCorrelationEngine(){
     if(resp.error){ throw new Error(resp.error.message); }
     var txt = resp.content&&resp.content[0]&&resp.content[0].text||'{}';
     txt = txt.replace(/```json|```/g,'').trim();
-    
-    /* Try JSON parse — nëse dështon ndërto result nga teksti */
-    var result;
-    try{
-      result = JSON.parse(txt);
-    }catch(pe){
-      /* AI nuk ktheu JSON — ndërto result nga teksti */
-      result = {
-        score: 50,
-        alarms: [],
-        correlations: [],
-        recommendations: [txt],
-        doctor_summary: ''
-      };
-      /* Provo të nxjerrësh score nga teksti */
-      var sm = txt.match(/(\d{1,3})\s*\/\s*100/);
-      if(sm) result.score = parseInt(sm[1]);
-    }
+    var result = JSON.parse(txt);
     renderEngineResult(result, data);
   }catch(e){
     document.getElementById('eng-rec-content').innerHTML = '❌ Error: '+e.message;
@@ -7851,97 +7865,112 @@ function handleGFitCallback(){
 async function syncGoogleFitData(){
   var token = localStorage.getItem('gfit_token');
   if(!token){ showToast('⚠️ Connect Google Fit first'); return; }
-
   /* Check expiry */
   var expiry = parseInt(localStorage.getItem('gfit_expiry')||'0');
   if(Date.now() > expiry){
     localStorage.removeItem('gfit_token');
-    showToast('⚠️ Google Fit session expired — reconnecting...');
-    setTimeout(connectGoogleFit, 1000);
+    showToast('⚠️ Google Fit session expired. Please reconnect.');
     return;
   }
-
   showToast('🔄 Syncing Google Fit...');
-
+  var now  = Date.now();
+  var day  = 86400000;
+  var startTime = (now - day) * 1000000; /* nanoseconds */
+  var endTime   = now * 1000000;
   try {
-    /* Përdor Netlify proxy — jo direkt Google API (CORS) */
-    var res = await fetch('/.netlify/functions/google-fit', {
+    /* Steps */
+    var stepsRes = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      }
+      headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        aggregateBy: [{ dataTypeName: 'com.google.step_count.delta' }],
+        bucketByTime: { durationMillis: day },
+        startTimeMillis: now - day,
+        endTimeMillis: now
+      })
     });
-
-    if(!res.ok){
-      var errData = await res.json().catch(function(){return {};});
-      throw new Error(errData.error || 'HTTP ' + res.status);
+    var stepsData = await stepsRes.json();
+    var steps = 0;
+    if(stepsData.bucket && stepsData.bucket[0]){
+      var ds = stepsData.bucket[0].dataset[0];
+      if(ds && ds.point && ds.point[0]) steps = ds.point[0].value[0].intVal || 0;
     }
-
-    var data = await res.json();
-    var steps    = data.steps    || 0;
-    var hr       = data.hr       || 0;
-    var calories = data.calories || 0;
-    var distance = data.distance || 0;
-    var activeMin= data.activeMin|| 0;
-
-    /* Update vitalsState */
-    if(steps > 0)    vitalsState.steps = steps;
-    if(hr > 0)       vitalsState.hr    = hr;
-
-    /* Update Home screen elements */
-    var stepsEl = document.getElementById('da-steps');
-    if(stepsEl) stepsEl.textContent = steps.toLocaleString();
-
-    var calEl = document.getElementById('da-cal');
-    if(calEl) calEl.textContent = calories.toLocaleString();
-
-    var hrEl = document.getElementById('da-hr');
-    if(hrEl) hrEl.textContent = hr || '--';
-
-    var distEl = document.getElementById('da-dist');
-    if(distEl) distEl.textContent = distance > 0 ? distance + ' km' : '--';
-
-    var actEl = document.getElementById('da-active');
-    if(actEl) actEl.textContent = activeMin > 0 ? activeMin + ' min' : '--';
-
-    /* Update vitals cards */
-    if(hr > 0) updateAllVitalsUI();
-
+    /* Heart Rate */
+    var hrRes = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        aggregateBy: [{ dataTypeName: 'com.google.heart_rate.bpm' }],
+        bucketByTime: { durationMillis: day },
+        startTimeMillis: now - day,
+        endTimeMillis: now
+      })
+    });
+    var hrData = await hrRes.json();
+    var hr = 0;
+    if(hrData.bucket && hrData.bucket[0]){
+      var ds2 = hrData.bucket[0].dataset[0];
+      if(ds2 && ds2.point && ds2.point[0]) hr = Math.round(ds2.point[0].value[0].fpVal || 0);
+    }
+    /* Calories */
+    var calRes = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        aggregateBy: [{ dataTypeName: 'com.google.calories.expended' }],
+        bucketByTime: { durationMillis: day },
+        startTimeMillis: now - day,
+        endTimeMillis: now
+      })
+    });
+    var calData = await calRes.json();
+    var cal = 0;
+    if(calData.bucket && calData.bucket[0]){
+      var ds3 = calData.bucket[0].dataset[0];
+      if(ds3 && ds3.point && ds3.point[0]) cal = Math.round(ds3.point[0].value[0].fpVal || 0);
+    }
+    /* Update app state */
+    if(steps > 0){
+      vitalsState.steps = steps;
+      var stepsEl = document.getElementById('da-steps');
+      if(stepsEl) stepsEl.textContent = steps.toLocaleString();
+      var vitStepsEl = document.getElementById('vit-steps');
+      if(vitStepsEl) vitStepsEl.textContent = steps.toLocaleString();
+    }
+    if(hr > 0){
+      vitalsState.hr = hr;
+      updateAllVitalsUI();
+    }
+    if(cal > 0){
+      var calEl = document.getElementById('da-cal');
+      if(calEl) calEl.textContent = cal.toLocaleString();
+    }
     /* Save to Supabase */
-    try{
-      var sb = getSupa();
-      if(sb && LST.currentUser && LST.currentUser.id && (steps>0||hr>0)){
-        sb.from('vitals').insert({
-          patient_id: LST.currentUser.id,
-          hr: hr||null,
-          steps: steps||null,
-          source: 'google_fit',
-          recorded_at: new Date().toISOString()
-        });
-      }
-    }catch(se){}
-
-    /* Save sync status */
-    localStorage.setItem('connect_gfit', 'true');
+    var sb = getSupa();
+    if(sb && LST.currentUser && LST.currentUser.id && (steps>0||hr>0)){
+      await sb.from('vitals').insert({
+        patient_id: LST.currentUser.id,
+        hr: hr||null,
+        steps: steps||null,
+        source: 'google_fit',
+        recorded_at: new Date().toISOString()
+      }).catch(function(){});
+    }
+    /* Update connection UI */
+    setConnected('gfit', true); refreshIntegBadges();
     localStorage.setItem('gfit_steps', steps);
     localStorage.setItem('gfit_hr', hr);
-    localStorage.setItem('gfit_cal', calories);
-    localStorage.setItem('gfit_dist', distance);
+    localStorage.setItem('gfit_cal', cal);
     localStorage.setItem('gfit_synced', new Date().toLocaleTimeString());
-
-    try{ updateConnectCards(); }catch(e){}
-    try{ refreshIntegBadges(); }catch(e){}
+    updateIntegrationCard('gfit');
+    showToast('✅ Google Fit synced! Steps: '+steps.toLocaleString()+' · HR: '+hr+' bpm');
     try{ calcDailyScore(); }catch(e){}
-
-    showToast('✅ Google Fit synced! Steps: ' + steps.toLocaleString() + (hr?' · HR: '+hr+' bpm':'') + (distance?' · '+distance+' km':''));
-
-  } catch(e) {
-    console.error('Google Fit sync error:', e.message);
-    showToast('❌ Sync failed: ' + (e.message||'Check connection'));
+  } catch(e){
+    console.error('Google Fit sync error:', e);
+    showToast('❌ Sync failed. Check connection and try again.');
   }
 }
-  
+
 function disconnectGoogleFit(){
   localStorage.removeItem('gfit_token');
   localStorage.removeItem('gfit_expiry');
@@ -9017,29 +9046,11 @@ async function runDeepProfileAnalysis(){
 
     var txt = d.content&&d.content[0] ? d.content[0].text : '{}';
     txt = txt.replace(/```json|```/g,'').trim();
-
-    /* Try JSON parse — nëse dështon trego tekstin direkt */
-    var res;
-    try{
-      res = JSON.parse(txt);
-    }catch(pe){
-      /* Nuk është JSON — trego si tekst */
-      res = {
-        overall_verdict: txt,
-        diagnoses_analysis: '',
-        therapy_analysis: '',
-        lab_analysis: '',
-        long_term_risks: '',
-        action_plan: [],
-        doctor_summary: ''
-      };
-    }
+    var res = JSON.parse(txt);
     renderDeepAnalysis(res, labs.length > 0);
 
   }catch(e){
-    console.error('Deep Analysis error:', e.message);
-    var errEl = document.getElementById('deepOverallVerdict');
-    if(errEl) errEl.innerHTML = '<span style="color:#F87171;">⚠️ '+( e.message||'Connection error')+'.<br>Make sure you are connected to internet and try again.</span>';
+    document.getElementById('deepOverallVerdict').textContent = '❌ Error: '+e.message;
   }
 
   if(btn){ btn.disabled=false; btn.innerHTML='🔬 Re-Run Deep Analysis'; }
