@@ -28,11 +28,18 @@
   --glass-hover:rgba(255,255,255,0.12);
 }
 body{background:#050B1F;display:flex;justify-content:center;min-height:100vh;font-family:var(--font);}
-@media (max-width:768px){html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;display:block;}.device{position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;border-radius:0!important;box-shadow:none!important;margin:0!important;}.device::before,.device::after,.notch{display:none!important;}.screen{height:100vh!important;height:100dvh!important;}.sb{padding-top:16px!important;}.bn{border-radius:0!important;}}
 .device{width:390px;height:844px;background:linear-gradient(145deg,#050B1F 0%,#0A1628 25%,#0D2F6B 55%,#0A4D8C 80%,#0891B2 100%);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 0 0 10px #0A0F1E,0 0 0 11px #1a2a4a,0 40px 80px rgba(0,0,0,0.9);margin:20px auto;}
 .device::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(99,102,241,0.35),transparent 70%);border-radius:50%;pointer-events:none;z-index:0;}
 .device::after{content:'';position:absolute;bottom:80px;left:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(6,182,212,0.25),transparent 70%);border-radius:50%;pointer-events:none;z-index:0;}
 .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:34px;background:#0A0F1E;border-radius:0 0 20px 20px;z-index:1000;}
+@media (max-width:768px){
+  html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;display:block;}
+  .device{position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;border-radius:0!important;box-shadow:none!important;margin:0!important;}
+  .device::before,.device::after,.notch{display:none!important;}
+  .screen{height:100vh!important;height:100dvh!important;}
+  .sb{padding-top:16px!important;}
+  .bn{border-radius:0!important;}
+}
 
 /* ALL SCREENS */
 .screen{display:none;flex-direction:column;height:844px;overflow:hidden;background:transparent;position:absolute;inset:0;transition:opacity 0.25s;z-index:1;}
@@ -999,14 +1006,14 @@ select option{background:#0A1628;color:#F1F5FF;}
 
 /* ══ SCREEN DIAGNOSTIC ══ */
 .diag-screen-hdr{background:linear-gradient(160deg,#0D1B4B,#1565C0,#8B6FE8);padding:0 16px 0;flex-shrink:0;}
-.diag-top-row{display:flex;align-items:center;gap:10px;padding:12px 0 10px;}
+.diag-top-row{display:flex;align-items:center;gap:10px;padding:6px 0 4px;}
 .diag-av-s{width:38px;height:38px;border-radius:13px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:18px;border:1.5px solid rgba(255,255,255,0.3);}
-.diag-vgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:0 0 10px;}
+.diag-vgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:0 0 6px;}
 .diag-vcard{background:rgba(255,255,255,0.12);border-radius:10px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;gap:2px;border:0.5px solid rgba(255,255,255,0.15);}
 .diag-vcard-ico{font-size:14px;}
 .diag-vcard-v{font-size:11px;font-weight:700;color:#fff;}
 .diag-vcard-l{font-size:8px;color:rgba(255,255,255,0.55);}
-.diag-score-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 0 10px;}
+.diag-score-row{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:0 0 6px;}
 .diag-score-box{background:rgba(255,255,255,0.12);border-radius:10px;padding:8px 12px;border:0.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:8px;}
 .diag-tabs-row{display:flex;background:rgba(255,255,255,0.08);border-radius:12px 12px 0 0;padding:3px;}
 .diag-tab-s{flex:1;padding:7px 4px;border-radius:9px;border:none;background:transparent;font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:var(--font);}
@@ -1294,9 +1301,9 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div>
     <div class="vg">
       <div class="vc"><div class="vir"><div class="vic" style="background:var(--hl);">❤️</div><span class="vs2 sn" id="home-hr-status">Normal</span></div><div class="vlbl">Heart Rate</div><div class="vv" id="home-hr">78 <span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.5)">bpm</span></div></div>
-      <div class="vc"><div class="vir"><div class="vic" style="background:var(--pl);">🫧</div><span class="vs2 sg" id="home-spo2-status">Good</span></div><div class="vlbl">Oxygen</div><div class="vv" id="home-spo2">97 <span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.5)">%</span></div></div>
-      <div class="vc" style="border:1px solid rgba(249,115,22,0.2);"><div class="vir"><div class="vic" style="background:var(--ol);">🩸</div><span class="vs2 sw">Watch</span></div><div class="vlbl">Blood Pressure</div><div class="vv" style="font-size:16px;color:var(--orange);" id="home-bp">128/84</div><div class="vsb">Stage 1 HTA</div></div>
-      <div class="vc" style="border:1px solid rgba(13,148,136,0.2);"><div class="vir"><div class="vic" style="background:var(--tl);">🍬</div><span class="vs2 sg">Normal</span></div><div class="vlbl">Glucose</div><div class="vv" style="font-size:16px;color:var(--teal);" id="home-glu">5.4</div><div class="vsb">mmol/L</div></div>
+      <div class="vc"><div class="vir"><div class="vic" style="background:var(--pl);">🫧</div><span class="vs2 sg" id="home-spo2-status">--</span></div><div class="vlbl">Oxygen</div><div class="vv" id="home-spo2">-- <span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.5)">%</span></div></div>
+      <div class="vc" style="border:1px solid rgba(249,115,22,0.2);"><div class="vir"><div class="vic" style="background:var(--ol);">🩸</div><span class="vs2 sw" id="home-bp-status">--</span></div><div class="vlbl">Blood Pressure</div><div class="vv" style="font-size:16px;color:var(--orange);" id="home-bp">--</div><div class="vsb" id="home-bp-sub">mmHg</div></div>
+      <div class="vc" style="border:1px solid rgba(13,148,136,0.2);"><div class="vir"><div class="vic" style="background:var(--tl);">🍬</div><span class="vs2 sg" id="home-glu-status">--</span></div><div class="vlbl">Glucose</div><div class="vv" style="font-size:16px;color:var(--teal);" id="home-glu">--</div><div class="vsb">mmol/L</div></div>
     </div>
     <div class="hs">
       <div class="sh"><div class="st">Diagnostic AI</div><span style="font-size:12px;color:#60A5FA;font-weight:500;cursor:pointer;" onclick="switchScreen('diagnostic');">See full →</span></div>
@@ -1568,10 +1575,10 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="vbig-grid">
       <div class="vbig-card"><div class="vbig-lbl">Heart Rate</div><input class="vbig-inp" id="v-hr" type="number" value="78" oninput="updateV('hr',this.value)"/><div class="vbig-unit">bpm</div><span class="vbig-status" style="background:var(--pl);color:#60A5FA;">NORMAL</span></div>
       <div class="vbig-card"><div class="vbig-lbl">Oxygen SpO2</div><input class="vbig-inp" id="v-spo2" type="number" value="97" oninput="updateV('spo2',this.value)"/><div class="vbig-unit">%</div><span class="vbig-status" style="background:var(--al);color:#059669;">GOOD</span></div>
-      <div class="vbig-card" style="border-color:rgba(249,115,22,0.25);"><div class="vbig-lbl">Systolic BP</div><input class="vbig-inp" id="v-sys" type="number" value="128" style="color:var(--orange);" oninput="updateV('sys',this.value)"/><div class="vbig-unit">mmHg</div><span class="vbig-status" style="background:var(--ambl);color:#B45309;">WATCH</span></div>
-      <div class="vbig-card" style="border-color:rgba(249,115,22,0.25);"><div class="vbig-lbl">Diastolic BP</div><input class="vbig-inp" id="v-dia" type="number" value="84" style="color:var(--orange);" oninput="updateV('dia',this.value)"/><div class="vbig-unit">mmHg</div><span class="vbig-status" style="background:var(--ambl);color:#B45309;">WATCH</span></div>
-      <div class="vbig-card" style="border-color:rgba(13,148,136,0.25);"><div class="vbig-lbl">Blood Glucose</div><input class="vbig-inp" id="v-glu" type="number" value="5.4" step="0.1" style="color:var(--teal);" oninput="updateV('glu',this.value)"/><div class="vbig-unit">mmol/L</div><span class="vbig-status" style="background:var(--al);color:#059669;">NORMAL</span></div>
-      <div class="vbig-card"><div class="vbig-lbl">Steps Today</div><input class="vbig-inp" id="v-steps" type="number" value="8420" oninput="updateV('steps',this.value)"/><div class="vbig-unit">steps</div><span class="vbig-status" style="background:var(--al);color:#059669;">ACTIVE</span></div>
+      <div class="vbig-card" style="border-color:rgba(249,115,22,0.25);"><div class="vbig-lbl">Systolic BP</div><input class="vbig-inp" id="v-sys" type="number" placeholder="--" style="color:var(--orange);" oninput="updateV('sys',this.value)"/><div class="vbig-unit">mmHg</div><span class="vbig-status" id="v-sys-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
+      <div class="vbig-card" style="border-color:rgba(249,115,22,0.25);"><div class="vbig-lbl">Diastolic BP</div><input class="vbig-inp" id="v-dia" type="number" placeholder="--" style="color:var(--orange);" oninput="updateV('dia',this.value)"/><div class="vbig-unit">mmHg</div><span class="vbig-status" id="v-dia-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
+      <div class="vbig-card" style="border-color:rgba(13,148,136,0.25);"><div class="vbig-lbl">Blood Glucose</div><input class="vbig-inp" id="v-glu" type="number" placeholder="--" step="0.1" style="color:var(--teal);" oninput="updateV('glu',this.value)"/><div class="vbig-unit">mmol/L</div><span class="vbig-status" id="v-glu-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
+      <div class="vbig-card"><div class="vbig-lbl">Steps Today</div><input class="vbig-inp" id="v-steps" type="number" placeholder="--" oninput="updateV('steps',this.value)"/><div class="vbig-unit">steps</div><span class="vbig-status" id="v-steps-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
     </div>
     <button class="enter-trig" id="vitTrig" onclick="toggleVI()">
       <div style="display:flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>Enter Vital Signs</div>
@@ -1634,21 +1641,21 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div class="gauge-box"><div class="gauge-val" style="color:var(--amber);" id="g-dia">--</div><div class="gauge-lbl">Diastolic</div><div class="gauge-sub">Normal &lt;80</div></div>
         <div class="gauge-box"><div class="gauge-val" style="color:#60A5FA;" id="g-hr">--</div><div class="gauge-lbl">Pulse</div><div class="gauge-sub">bpm</div></div>
       </div>
-      <div class="prog-wrap"><div class="prog-lbl"><span>Systolic risk</span><span style="color:var(--orange);">128/180 mmHg</span></div><div class="prog-bar"><div class="prog-fill" style="width:55%;background:linear-gradient(90deg,#F97316,#FBBF24);"></div></div></div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>Systolic risk</span><span style="color:var(--orange);" id="bp-prog-lbl">--/180 mmHg</span></div><div class="prog-bar"><div class="prog-fill" id="bp-prog-fill" style="width:0%;background:linear-gradient(90deg,#F97316,#FBBF24);"></div></div></div>
     </div>
     <div class="glu-detail">
       <div class="det-hdr"><div class="det-title">🍬 Glucose Detail</div><span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--al);color:#059669;">Normal</span></div>
       <div class="gauge-row">
         <div class="gauge-box"><div class="gauge-val" style="color:var(--teal);" id="g-glu">--</div><div class="gauge-lbl">Fasting</div><div class="gauge-sub">mmol/L</div></div>
-        <div class="gauge-box"><div class="gauge-val" style="color:var(--accent);">7.1</div><div class="gauge-lbl">Post-meal</div><div class="gauge-sub">mmol/L</div></div>
-        <div class="gauge-box"><div class="gauge-val" style="color:#60A5FA;">5.7%</div><div class="gauge-lbl">HbA1c</div><div class="gauge-sub">3-mo avg</div></div>
+        <div class="gauge-box"><div class="gauge-val" style="color:var(--accent);" id="g-glu-post">--</div><div class="gauge-lbl">Post-meal</div><div class="gauge-sub">mmol/L</div></div>
+        <div class="gauge-box"><div class="gauge-val" style="color:#60A5FA;" id="g-hba1c">--</div><div class="gauge-lbl">HbA1c</div><div class="gauge-sub">3-mo avg</div></div>
       </div>
-      <div class="prog-wrap"><div class="prog-lbl"><span>Fasting range</span><span style="color:var(--teal);">5.4/7.0</span></div><div class="prog-bar"><div class="prog-fill" style="width:42%;background:linear-gradient(90deg,#0D9488,#2DC8A0);"></div></div></div>
+      <div class="prog-wrap"><div class="prog-lbl"><span>Fasting range</span><span style="color:var(--teal);" id="glu-prog-lbl">--/7.0</span></div><div class="prog-bar"><div class="prog-fill" id="glu-prog-fill" style="width:0%;background:linear-gradient(90deg,#0D9488,#2DC8A0);"></div></div></div>
     </div>
     <div class="hrv-row">
-      <div class="hrv-card"><div class="hrv-val" style="color:var(--purple);">82ms</div><div class="hrv-lbl">HRV</div></div>
-      <div class="hrv-card"><div class="hrv-val" style="color:#60A5FA;">16</div><div class="hrv-lbl">Breath/min</div></div>
-      <div class="hrv-card"><div class="hrv-val" style="color:var(--accent);">36.7°</div><div class="hrv-lbl">Temp</div></div>
+      <div class="hrv-card"><div class="hrv-val" style="color:var(--purple);" id="g-hrv">--</div><div class="hrv-lbl">HRV</div></div>
+      <div class="hrv-card"><div class="hrv-val" style="color:#60A5FA;" id="g-rr">--</div><div class="hrv-lbl">Breath/min</div></div>
+      <div class="hrv-card"><div class="hrv-val" style="color:var(--accent);" id="g-temp">--</div><div class="hrv-lbl">Temp</div></div>
     </div>
     <!-- ECG ANALYSIS CARD -->
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;margin:10px 16px 0;border:1px solid rgba(255,107,138,0.25);padding:14px;position:relative;overflow:hidden;">
@@ -1715,7 +1722,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;margin:10px 16px 0;border:0.5px solid rgba(255,255,255,0.12);overflow:hidden;">
       <div style="padding:14px 14px 10px;display:flex;gap:10px;align-items:flex-start;border-bottom:0.5px solid var(--border);">
         <div style="font-size:24px;flex-shrink:0;">🤖</div>
-        <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;margin-bottom:4px;">AI Interpretation</div><div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;" id="aiInterpText">BP slightly elevated (Stage 1 HTA) at 128/84. Glucose and other vitals within normal range. Monitor BP daily, reduce salt intake. 🫀</div></div>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;margin-bottom:4px;">AI Interpretation</div><div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;" id="aiInterpText">Enter your vitals above, then tap Analyze to get an AI interpretation of your health data.</div></div>
       </div>
       <!-- VITAL INTELLIGENCE ENGINE -->
       <div style="padding:10px 14px;">
@@ -1788,11 +1795,11 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="cal-hs"><button class="cal-nb" onclick="prevM()">‹</button><span class="cal-m" id="calTitle">April 2026</span><button class="cal-nb" onclick="nextM()">›</button></div>
       <div class="cal-dh"><div class="cdn">Su</div><div class="cdn">Mo</div><div class="cdn">Tu</div><div class="cdn">We</div><div class="cdn">Th</div><div class="cdn">Fr</div><div class="cdn">Sa</div></div>
       <div class="cal-g" id="calGrid"></div>
-      <div class="als"><div class="alt" id="alTitle">Alarms</div><div id="alList"></div><button class="addab" onclick="openMod()">+ Add therapy alarm</button></div>
+      <div class="als"><div class="alt" id="alTitle">Alarms — April 9</div><div id="alList"></div><button class="addab" onclick="openMod()">+ Add therapy alarm</button></div>
     </div>
     <div style="margin:12px 16px 0;background:var(--pul);border-radius:16px;padding:13px;border:0.5px solid rgba(139,111,232,0.2);display:flex;align-items:center;gap:10px;">
       <div style="font-size:24px;">📅</div>
-      <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:var(--purple);">Next Appointment</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Dr. Herolind Shabani</div></div>
+      <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:var(--purple);">Next Appointment</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Dr. Herolind Shabani · Within 2 weeks</div></div>
       <button style="padding:7px 13px;border-radius:10px;background:var(--purple);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);" onclick="openBkModal()">&#128197; Book →</button>
     </div>
 
@@ -2115,7 +2122,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#E8F5E9;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💚</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Google Fit</div><div id="spGfit" style="font-size:11px;color:rgba(255,255,255,0.5);">Not connected</div></div><button id="spGfitBtn" onclick="toggleInteg('gfit')" style="padding:7px 14px;border-radius:10px;border:none;background:#34A853;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
         <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#FFF0F3;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">❤️</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Apple Health</div><div id="spApple" style="font-size:11px;color:rgba(255,255,255,0.5);">iOS only</div></div><button id="spAppleBtn" onclick="toggleInteg('apple')" style="padding:7px 14px;border-radius:10px;border:none;background:#FF2D55;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
         <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#E3F2FD;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">⌚</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Fitbit</div><div id="spFitbit" style="font-size:11px;color:rgba(255,255,255,0.5);">Not connected</div></div><button id="spFitbitBtn" onclick="connectFitbit()" style="padding:7px 14px;border-radius:10px;border:none;background:#00B0B9;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        
+        <div style="background:var(--al);border-radius:14px;padding:13px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:rgba(45,200,160,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📝</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Manual Input</div><div style="font-size:11px;color:var(--accent);">Always active ✓</div></div><div style="padding:7px 14px;border-radius:10px;background:rgba(45,200,160,0.2);font-size:11px;font-weight:700;color:var(--accent);">Active</div></div>
       </div>
 
     </div>
@@ -2124,216 +2131,6 @@ select option{background:#0A1628;color:#F1F5FF;}
 </div>
 
 <!-- ══════════ PRIVATE ══════════ -->
-<div class="screen" id="screen-private" style="background:linear-gradient(180deg,#0A1628 0%,#0D2144 40%,#0A1628 100%);">
-  <div class="dr-status-bar">
-    <span class="dr-status-time">9:41</span>
-    <div class="dr-enc-badge">&#128274; End-to-End Encrypted</div>
-  </div>
-  <div class="dr-hdr">
-    <div class="dr-hdr-row">
-      <button class="dr-bk" onclick="switchScreen('more')">&#8249;</button>
-      <div class="dr-av-wrap">
-        <div class="dr-av">&#128104;&#8205;&#9877;&#65039;</div>
-        <div class="dr-ondot"></div>
-      </div>
-      <div class="dr-info">
-        <div class="dr-name2">Dr. Herolind Shabani</div>
-        <div class="dr-title2">Mjek i Pergjithshem &middot; General Practitioner</div>
-        <div class="dr-online2">&#9679; Available now &middot; Clinic Plan</div>
-      </div>
-      <div class="dr-acts">
-        <button class="dr-abt" onclick="showToast('Call feature coming soon')">&#128222;</button>
-        <button class="dr-abt" onclick="showToast('Dr. Shabani &middot; Klinika Shabani, Prishtine')">&#8942;</button>
-      </div>
-    </div>
-    <div class="dr-pstrip">
-      <div class="dr-pchip" onclick="drSendChip('What is my BP status?')"><span>&#129654;</span><span class="dr-pchip-lbl">BP 128/84</span></div>
-      <div class="dr-pchip" onclick="drSendChip('HbA1c: 5.7% - Pre-diabetic range')"><span>&#127846;</span><span class="dr-pchip-lbl">HbA1c 5.7%</span></div>
-      <div class="dr-pchip" onclick="drSendChip('Diagnoses: HTA Stage 1, Pre-diabetes, Elevated Cholesterol')"><span>&#127973;</span><span class="dr-pchip-lbl">Diagnoses</span></div>
-      <div class="dr-pchip" onclick="drSendChip('Therapy: Amlodipine 5mg, Metformin 500mg, Vitamin D3')"><span>&#128138;</span><span class="dr-pchip-lbl">Therapy</span></div>
-      <div class="dr-pchip" onclick="drSendChip('Review my lab results')"><span>&#129516;</span><span class="dr-pchip-lbl">Labs</span></div>
-    </div>
-  </div>
-  <div class="dr-enc-notice">
-    <span>&#128737;&#65039;</span>
-    <span>Messages are <strong>end-to-end encrypted</strong> &mdash; visible only to you and Dr. Shabani</span>
-  </div>
-  <div class="sa" id="drScroll">
-    <div class="dr-msgs" id="drMsgs">
-      <div class="dr-row"><div class="dr-bbl sys2">Consultation started &mdash; April 9, 2026 &middot; 9:30 AM</div></div>
-      <div class="dr-row">
-        <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
-        <div><div class="dr-bbl doc">Hello! I am Dr. Herolind Shabani. How can I help you today? &#128298;<br><br>Kam pare raportin tuaj javor. Presioni 128/84 ka qene qendrueshme gjate javes.</div>
-        <div class="dr-tm doc">9:30 AM &middot; Delivered</div></div>
-      </div>
-      <div class="dr-row me">
-        <div><div class="dr-bbl me2">Doktor, miredita! Doja te pyesja per Amlodipinen. A duhet te rris dozen?</div>
-        <div class="dr-tm">9:32 AM &#10003;&#10003;</div></div>
-      </div>
-      <div class="dr-row me">
-        <div><div class="dr-fbbl">
-          <div class="dr-fic">&#128196;</div>
-          <div><div class="dr-fnm">Weekly_Report_Apr9.pdf</div><div class="dr-fsz">Health BOT &middot; 1.2 MB</div></div>
-        </div><div class="dr-tm">9:33 AM &#10003;&#10003;</div></div>
-      </div>
-      <div class="dr-row">
-        <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
-        <div><div class="dr-bbl doc">Faleminderit per raportin! &#128203;<br><br>&#128308; <strong>BP 128/84</strong> &mdash; Stage 1, ne kufi<br>&#128994; <strong>Glucose 5.4</strong> &mdash; brenda normes<br>&#128309; <strong>HbA1c 5.7%</strong> &mdash; pre-diabet<br><br>Vazhdoni <strong>Amlodipine 5mg</strong> per momentin. Rishikim pas 2 javesh.</div>
-        <div class="dr-tm doc">9:35 AM &middot; Read</div></div>
-      </div>
-      <div class="dr-row">
-        <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
-        <div>
-          <div class="dr-appt">
-            <div class="dr-appt-title">&#128197; Next Appointment</div>
-            <div class="dr-appt-row"><span class="dr-appt-lbl">Date:</span><span class="dr-appt-val">April 23, 2026</span></div>
-            <div class="dr-appt-row"><span class="dr-appt-lbl">Time:</span><span class="dr-appt-val">10:00 AM</span></div>
-            <div class="dr-appt-row"><span class="dr-appt-lbl">Type:</span><span class="dr-appt-val">Follow-up</span></div>
-            <div class="dr-appt-row"><span class="dr-appt-lbl">Where:</span><span class="dr-appt-val">Klinika Shabani, Prishtine</span></div>
-            <button class="dr-appt-btn" onclick="showToast('Appointment confirmed!')">&#10003; Confirm Appointment</button>
-          </div>
-          <div class="dr-tm doc" style="margin-top:5px;">9:36 AM</div>
-        </div>
-      </div>
-    </div>
-    <div class="dr-upld" id="drUpld">
-      <div class="dr-upld-row">
-        <span style="font-size:14px;">&#128196;</span>
-        <span style="font-size:12px;color:rgba(255,255,255,0.8);flex:1;" id="drUpNm">Uploading...</span>
-        <span style="font-size:11px;color:rgba(255,255,255,0.5);" id="drUpPct">0%</span>
-      </div>
-      <div class="dr-upbar"><div class="dr-upfill" id="drUpFill" style="width:0%;"></div></div>
-    </div>
-    <div class="dr-typing2" id="drTyping">
-      <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
-      <div class="dr-tbbl"><div class="dr-td"></div><div class="dr-td"></div><div class="dr-td"></div></div>
-    </div>
-    <div style="height:8px;"></div>
-  </div>
-  <div class="dr-quick2" id="drQuick">
-    <button class="dr-qr2" onclick="drQR(this)">&#128202; Send latest vitals</button>
-    <button class="dr-qr2" onclick="drQR(this)">&#128138; Medication question</button>
-    <button class="dr-qr2" onclick="drQR(this)">&#128197; Request appointment</button>
-    <button class="dr-qr2" onclick="drQR(this)">&#128196; Send report</button>
-  </div>
-  <div class="dr-ibar">
-    <button class="dr-abt2" onclick="drAttach('file')">&#128206;</button>
-    <button class="dr-abt2" onclick="drAttach('photo')">&#128247;</button>
-    <input class="dr-inp" id="drInp" placeholder="Message Dr. Shabani..." onkeydown="if(event.key==='Enter')drSend()"/>
-    <button class="dr-snd" onclick="drSend()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-  </div>
-</div>
-
-
-
-
-<!-- GLOBAL ERROR TOAST -->
-<div class="err-toast" id="errToast">
-  <div class="err-toast-ico" id="errToastIco">&#9888;&#65039;</div>
-  <div class="err-toast-body">
-    <div class="err-toast-title" id="errToastTitle">Something went wrong</div>
-    <div class="err-toast-msg" id="errToastMsg">Please try again.</div>
-  </div>
-  <div class="err-toast-close" onclick="closeErrToast()">&#10005;</div>
-</div>
-
-<!-- NETWORK ERROR BAR -->
-<div class="net-err-bar" id="netErrBar">
-  <div class="net-err-dot"></div>
-  <span>No internet connection &mdash; Some features may be unavailable</span>
-</div>
-
-<!-- GLOBAL LOADER -->
-<div id="globalLoader">
-  <div class="gl-logo">&#127973;</div>
-  <div style="font-size:16px;font-weight:700;color:#F1F5FF;">Health BOT</div>
-  <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;">Loading your health data...</div>
-  <div class="gl-dots">
-    <div class="gl-dot"></div>
-    <div class="gl-dot"></div>
-    <div class="gl-dot"></div>
-  </div>
-</div>
-
-
-<!-- PROFILE BOTTOM SHEET MODAL -->
-<div class="prof-overlay" id="profOverlay" onclick="closeProfModal(event)">
-  <div class="prof-sheet">
-    <div class="prof-sheet-hdr">
-      <div class="prof-sheet-title">📋 Medical Profile</div>
-      <button onclick="closeProfModal()" style="width:30px;height:30px;border-radius:10px;border:none;background:var(--bg);font-size:16px;cursor:pointer;">✕</button>
-    </div>
-    <div class="prof-sheet-body">
-      <!-- DIAGNOSES -->
-      <div class="pf-sec-title">🏥 Diagnoses</div>
-      <div class="tag-wrap2" id="prof-diag-tags">
-          </div>
-      <div class="tadd-row">
-        <input class="ti" id="prof-diag-inp" placeholder="Add diagnosis..." onkeydown="if(event.key==='Enter')addTag('prof-diag-tags','prof-diag-inp','d')"/>
-        <button class="tb" style="background:var(--heart);" onclick="addTag('prof-diag-tags','prof-diag-inp','d')">+ Add</button>
-      </div>
-
-      <div class="divr"></div>
-      <!-- THERAPY -->
-      <div class="pf-sec-title">💊 Current Therapy</div>
-      <div class="tag-wrap2" id="prof-therapy-tags">
-          </div>
-      <div class="tadd-row">
-        <input class="ti" id="prof-therapy-inp" placeholder="Add medication..." onkeydown="if(event.key==='Enter')addTag('prof-therapy-tags','prof-therapy-inp','t')"/>
-        <button class="tb" style="background:var(--purple);" onclick="addTag('prof-therapy-tags','prof-therapy-inp','t')">+ Add</button>
-      </div>
-
-      <div class="divr"></div>
-      <!-- ALLERGIES -->
-      <div class="pf-sec-title">⚠️ Allergies</div>
-      <div class="tag-wrap2" id="prof-allergy-tags">
-          </div>
-      <div class="tadd-row">
-        <input class="ti" id="prof-allergy-inp" placeholder="Add allergy..." onkeydown="if(event.key==='Enter')addTag('prof-allergy-tags','prof-allergy-inp','a')"/>
-        <button class="tb" style="background:var(--heart);" onclick="addTag('prof-allergy-tags','prof-allergy-inp','a')">+ Add</button>
-      </div>
-
-      <div class="divr"></div>
-      <!-- LAB VALUES -->
-      <div class="pf-sec-title">🧬 Lab Values</div>
-      <div class="tag-wrap2" id="prof-lab-tags">
-          </div>
-      <div class="tadd-row">
-        <input class="ti" id="prof-lab-inp" placeholder="e.g. HbA1c: 5.9%..." onkeydown="if(event.key==='Enter')addTag('prof-lab-tags','prof-lab-inp','l')"/>
-        <button class="tb" style="background:var(--teal);" onclick="addTag('prof-lab-tags','prof-lab-inp','l')">+ Add</button>
-      </div>
-
-      <div class="divr"></div>
-      <!-- DOCUMENTS -->
-      <div class="pf-sec-title">📄 Documents</div>
-      <div class="fl-list" id="prof-fl-list">
-        <div class="fl-item"><span style="font-size:16px;">📋</span><span class="fl-nm">Blood_Panel_March2026.pdf</span><span class="fl-sz">2.1MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
-        <div class="fl-item"><span style="font-size:16px;">🫀</span><span class="fl-nm">ECG_Feb2026.pdf</span><span class="fl-sz">0.9MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
-      </div>
-      <label for="prof-file-input" class="upload-z" style="display:block;cursor:pointer;">
-        <div style="font-size:22px;margin-bottom:5px;">📎</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);">Upload lab results, ECG, reports</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">PDF, JPG, PNG · Max 10MB</div>
-        <input type="file" id="prof-file-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handleProfFileUpload(event)"/>
-      </label>
-
-      <div class="divr"></div>
-      <!-- NOTES -->
-      <div class="pf-sec-title">📝 Notes</div>
-      <textarea class="pf-ta" id="prof-notes">Family history of hypertension. Non-smoker. Light exercise 2x/week.</textarea>
-      <button class="pf-ai-btn" id="profAiBtn" onclick="analyzeProfModal()">Diagnostics</button>
-      <div class="errbanner" id="prof-ai-err">⚠️ Connection error. Try again.</div>
-      <div class="ai-resp" id="prof-ai-resp" style="display:none;">
-        <div class="ar-hdr"><div class="ar-av">🤖</div><div style="font-size:12px;font-weight:700;color:#fff;">Claude AI — Profile Assessment</div></div>
-        <div class="ar-txt" id="prof-ai-text"></div>
-      </div>
-      <div style="height:20px;"></div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ══ SCREEN DIAGNOSTIC ══ -->
 <div class="screen" id="screen-subscription">
   <div class="sb"><span>9:41</span></div>
   <div style="display:flex;align-items:center;padding:10px 16px 6px;gap:10px;">
@@ -2569,23 +2366,23 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="vh-summary">
       <div class="vhs-card">
         <div class="vhs-label">Average BP</div>
-        <div><span class="vhs-val" id="vhAvgSys">126</span><span class="vhs-unit">/</span><span class="vhs-val" id="vhAvgDia">82</span><span class="vhs-unit">mmHg</span></div>
-        <div class="vhs-trend trend-dn" id="vhBpTrend">&#8595; 3/2 vs last period</div>
+        <div><span class="vhs-val" id="vhAvgSys">--</span><span class="vhs-unit">/</span><span class="vhs-val" id="vhAvgDia">--</span><span class="vhs-unit">mmHg</span></div>
+        <div class="vhs-trend trend-eq" id="vhBpTrend">No data yet</div>
       </div>
       <div class="vhs-card">
         <div class="vhs-label">Avg Heart Rate</div>
-        <div><span class="vhs-val" id="vhAvgHr">76</span><span class="vhs-unit">bpm</span></div>
-        <div class="vhs-trend trend-eq" id="vhHrTrend">&#8594; Stable</div>
+        <div><span class="vhs-val" id="vhAvgHr">--</span><span class="vhs-unit">bpm</span></div>
+        <div class="vhs-trend trend-eq" id="vhHrTrend">No data yet</div>
       </div>
       <div class="vhs-card">
         <div class="vhs-label">Avg Glucose</div>
-        <div><span class="vhs-val" id="vhAvgGlu">5.3</span><span class="vhs-unit">mmol/L</span></div>
-        <div class="vhs-trend trend-dn" id="vhGluTrend">&#8595; 0.2 improved</div>
+        <div><span class="vhs-val" id="vhAvgGlu">--</span><span class="vhs-unit">mmol/L</span></div>
+        <div class="vhs-trend trend-eq" id="vhGluTrend">No data yet</div>
       </div>
       <div class="vhs-card">
         <div class="vhs-label">Avg SpO2</div>
         <div><span class="vhs-val" id="vhAvgSpo2">--</span><span class="vhs-unit">%</span></div>
-        <div class="vhs-trend trend-up" id="vhSpoTrend">&#8593; +0.3%</div>
+        <div class="vhs-trend trend-eq" id="vhSpoTrend">No data yet</div>
       </div>
     </div>
 
@@ -2593,7 +2390,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="vh-chart-sec">
       <div class="vh-chart-hdr">
         <div class="vh-chart-title" id="vhChartTitle">Blood Pressure — 7 days</div>
-        <div class="vh-chart-badge" id="vhChartBadge" style="background:var(--ambl);color:#B45309;">Stage 1 HTA</div>
+        <div class="vh-chart-badge" id="vhChartBadge" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">No data</div>
       </div>
       <div class="vh-chart-body">
         <canvas id="vhChart" height="140"></canvas>
@@ -2601,8 +2398,8 @@ select option{background:#0A1628;color:#F1F5FF;}
       <!-- STATS ROW -->
       <div class="vh-stat-row" id="vhStatRow">
         <div class="vh-stat"><div class="vh-stat-val" id="vhStatMin">--/--</div><div class="vh-stat-lbl">Min</div></div>
-        <div class="vh-stat"><div class="vh-stat-val" id="vhStatAvg">126/82</div><div class="vh-stat-lbl">Average</div></div>
-        <div class="vh-stat"><div class="vh-stat-val" id="vhStatMax">136/88</div><div class="vh-stat-lbl">Max</div></div>
+        <div class="vh-stat"><div class="vh-stat-val" id="vhStatAvg"></div><div class="vh-stat-lbl">Average</div></div>
+        <div class="vh-stat"><div class="vh-stat-val" id="vhStatMax">--</div><div class="vh-stat-lbl">Max</div></div>
       </div>
       <div style="height:12px;"></div>
     </div>
@@ -2610,13 +2407,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <!-- LOG TABLE -->
     <div class="vh-log">
       <div class="vh-log-hdr">&#128203; Recent Readings</div>
-      <div class="vh-log-row"><div class="vh-log-dot" style="background:#F97316;"></div><div class="vh-log-date">Apr 9</div><div class="vh-log-vals"><span class="vh-log-val">128/84</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmHg</span><span class="vh-log-val" style="margin-left:8px;">--</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">bpm</span><span class="vh-log-val" style="margin-left:8px;">5.4</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmol</span></div></div>
-      <div class="vh-log-row"><div class="vh-log-dot" style="background:#F97316;"></div><div class="vh-log-date">Apr 8</div><div class="vh-log-vals"><span class="vh-log-val">130/85</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmHg</span><span class="vh-log-val" style="margin-left:8px;">75</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">bpm</span><span class="vh-log-val" style="margin-left:8px;">5.5</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmol</span></div></div>
-      <div class="vh-log-row"><div class="vh-log-dot" style="background:#2DC8A0;"></div><div class="vh-log-date">Apr 7</div><div class="vh-log-vals"><span class="vh-log-val">122/80</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmHg</span><span class="vh-log-val" style="margin-left:8px;">74</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">bpm</span><span class="vh-log-val" style="margin-left:8px;">5.2</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmol</span></div></div>
-      <div class="vh-log-row"><div class="vh-log-dot" style="background:#F97316;"></div><div class="vh-log-date">Apr 6</div><div class="vh-log-vals"><span class="vh-log-val">134/87</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmHg</span><span class="vh-log-val" style="margin-left:8px;">80</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">bpm</span><span class="vh-log-val" style="margin-left:8px;">5.6</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmol</span></div></div>
-      <div class="vh-log-row"><div class="vh-log-dot" style="background:#2DC8A0;"></div><div class="vh-log-date">Apr 5</div><div class="vh-log-vals"><span class="vh-log-val">120/79</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmHg</span><span class="vh-log-val" style="margin-left:8px;">72</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">bpm</span><span class="vh-log-val" style="margin-left:8px;">5.1</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmol</span></div></div>
-      <div class="vh-log-row"><div class="vh-log-dot" style="background:#2DC8A0;"></div><div class="vh-log-date">Apr 4</div><div class="vh-log-vals"><span class="vh-log-val">118/78</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmHg</span><span class="vh-log-val" style="margin-left:8px;">73</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">bpm</span><span class="vh-log-val" style="margin-left:8px;">5.3</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmol</span></div></div>
-      <div class="vh-log-row"><div class="vh-log-dot" style="background:#F97316;"></div><div class="vh-log-date">Apr 3</div><div class="vh-log-vals"><span class="vh-log-val">132/86</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmHg</span><span class="vh-log-val" style="margin-left:8px;">79</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">bpm</span><span class="vh-log-val" style="margin-left:8px;">5.5</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">mmol</span></div></div>
+      <div id="vh-log-empty" style="text-align:center;padding:16px 0;font-size:12px;color:rgba(255,255,255,0.4);">No readings recorded yet. Add your first vitals to see history.</div>
     </div>
 
     <!-- DAILY ACTIVITY LOG -->
@@ -2643,43 +2434,43 @@ select option{background:#0A1628;color:#F1F5FF;}
       <!-- Daily rows -->
       <div id="activityLogList">
         <div style="display:grid;grid-template-columns:60px 1fr 1fr 1fr;padding:9px 14px;border-bottom:0.5px solid var(--border);align-items:center;">
-          <div style="font-size:11px;font-weight:700;color:#F1F5FF;">Apr 9</div>
+          <div style="font-size:11px;font-weight:700;color:#F1F5FF;"></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:#60A5FA;">--</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">👟 hapa</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--orange);">--</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">🔥 kcal</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--heart);">--</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">❤️ bpm</div></div>
         </div>
         <div style="display:grid;grid-template-columns:60px 1fr 1fr 1fr;padding:9px 14px;border-bottom:0.5px solid var(--border);align-items:center;">
-          <div style="font-size:11px;font-weight:700;color:#F1F5FF;">Apr 8</div>
+          <div style="font-size:11px;font-weight:700;color:#F1F5FF;"></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:#60A5FA;">7,850</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">👟 hapa</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--orange);">1,100</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">🔥 kcal</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--heart);">75</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">❤️ bpm</div></div>
         </div>
         <div style="display:grid;grid-template-columns:60px 1fr 1fr 1fr;padding:9px 14px;border-bottom:0.5px solid var(--border);align-items:center;">
-          <div style="font-size:11px;font-weight:700;color:#F1F5FF;">Apr 7</div>
+          <div style="font-size:11px;font-weight:700;color:#F1F5FF;"></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:#60A5FA;">10,200</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">👟 hapa</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--orange);">1,380</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">🔥 kcal</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--accent);">72</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">❤️ bpm</div></div>
         </div>
         <div style="display:grid;grid-template-columns:60px 1fr 1fr 1fr;padding:9px 14px;border-bottom:0.5px solid var(--border);align-items:center;">
-          <div style="font-size:11px;font-weight:700;color:#F1F5FF;">Apr 6</div>
+          <div style="font-size:11px;font-weight:700;color:#F1F5FF;"></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:#60A5FA;">6,300</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">👟 hapa</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--orange);">980</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">🔥 kcal</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--heart);">80</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">❤️ bpm</div></div>
         </div>
         <div style="display:grid;grid-template-columns:60px 1fr 1fr 1fr;padding:9px 14px;border-bottom:0.5px solid var(--border);align-items:center;">
-          <div style="font-size:11px;font-weight:700;color:#F1F5FF;">Apr 5</div>
+          <div style="font-size:11px;font-weight:700;color:#F1F5FF;"></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:#60A5FA;">9,100</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">👟 hapa</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--orange);">1,290</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">🔥 kcal</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--accent);">73</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">❤️ bpm</div></div>
         </div>
         <div style="display:grid;grid-template-columns:60px 1fr 1fr 1fr;padding:9px 14px;border-bottom:0.5px solid var(--border);align-items:center;">
-          <div style="font-size:11px;font-weight:700;color:#F1F5FF;">Apr 4</div>
+          <div style="font-size:11px;font-weight:700;color:#F1F5FF;"></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:#60A5FA;">7,200</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">👟 hapa</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--orange);">1,050</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">🔥 kcal</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--heart);">74</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">❤️ bpm</div></div>
         </div>
         <div style="display:grid;grid-template-columns:60px 1fr 1fr 1fr;padding:9px 14px;align-items:center;">
-          <div style="font-size:11px;font-weight:700;color:#F1F5FF;">Apr 3</div>
+          <div style="font-size:11px;font-weight:700;color:#F1F5FF;"></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:#60A5FA;">8,560</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">👟 hapa</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--orange);">1,210</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">🔥 kcal</div></div>
           <div style="text-align:center;"><div style="font-size:12px;font-weight:700;color:var(--heart);">77</div><div style="font-size:9px;color:rgba(255,255,255,0.5);">❤️ bpm</div></div>
@@ -2690,7 +2481,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <!-- AI INSIGHT -->
     <div style="margin:12px 14px 0;background:linear-gradient(135deg,var(--pl),var(--pul));border-radius:18px;padding:14px 16px;border:0.5px solid rgba(59,125,216,0.2);">
       <div style="font-size:12px;font-weight:700;color:#60A5FA;margin-bottom:6px;">&#129302; Claude AI Trend Analysis</div>
-      <div style="font-size:12px;color:#F1F5FF;line-height:1.65;" id="vhAiInsight">Your BP shows a declining trend over the last 7 days — from 132/86 to 128/84. This is positive progress. Glucose is stable and within normal range. Continue current therapy and monitor BP daily.</div>
+      <div style="font-size:12px;color:#F1F5FF;line-height:1.65;" id="vhAiInsight">Your BP shows a declining trend over the last 7 days — from  to . This is positive progress. Glucose is stable and within normal range. Continue current therapy and monitor BP daily.</div>
     </div>
 
     <div style="height:24px;"></div>
@@ -2699,6 +2490,182 @@ select option{background:#0A1628;color:#F1F5FF;}
 
 <!-- SETTINGS SCREEN -->
 <!-- ══════════ PRIVATE ══════════ -->
+
+<div class="screen" id="screen-private" style="background:linear-gradient(180deg,#0A1628 0%,#0D2144 40%,#0A1628 100%);">
+  <div class="dr-status-bar">
+    <span class="dr-status-time">9:41</span>
+    <div class="dr-enc-badge">&#128274; End-to-End Encrypted</div>
+  </div>
+  <div class="dr-hdr">
+    <div class="dr-hdr-row">
+      <button class="dr-bk" onclick="switchScreen('more')">&#8249;</button>
+      <div class="dr-av-wrap">
+        <div class="dr-av">&#128104;&#8205;&#9877;&#65039;</div>
+        <div class="dr-ondot"></div>
+      </div>
+      <div class="dr-info">
+        <div class="dr-name2">Dr. Herolind Shabani</div>
+        <div class="dr-title2">Mjek i Pergjithshem &middot; General Practitioner</div>
+        <div class="dr-online2">&#9679; Available now &middot; Clinic Plan</div>
+      </div>
+      <div class="dr-acts">
+        <button class="dr-abt" onclick="showToast('Call feature coming soon')">&#128222;</button>
+        <button class="dr-abt" onclick="showToast('Dr. Shabani &middot; Klinika Shabani, Prishtine')">&#8942;</button>
+      </div>
+    </div>
+    <div class="dr-pstrip">
+      <div class="dr-pchip" onclick="drSendChip('What is my BP status?')"><span>&#129654;</span><span class="dr-pchip-lbl">BP Status</span></div>
+      <div class="dr-pchip" onclick="drSendChip('Review my latest lab results')"><span>&#127846;</span><span class="dr-pchip-lbl">Lab Results</span></div>
+      <div class="dr-pchip" onclick="drSendChip('Tell me about my diagnoses')"><span>&#127973;</span><span class="dr-pchip-lbl">Diagnoses</span></div>
+      <div class="dr-pchip" onclick="drSendChip('Review my current therapy and medications')"><span>&#128138;</span><span class="dr-pchip-lbl">Therapy</span></div>
+      <div class="dr-pchip" onclick="drSendChip('Review my recent vitals and give recommendations')"><span>&#129516;</span><span class="dr-pchip-lbl">Vitals Review</span></div>
+    </div>
+  </div>
+  <div class="dr-enc-notice">
+    <span>&#128737;&#65039;</span>
+    <span>Messages are <strong>end-to-end encrypted</strong> &mdash; visible only to you and Dr. Shabani</span>
+  </div>
+  <div class="sa" id="drScroll">
+    <div class="dr-msgs" id="drMsgs">
+    </div>
+    <div class="dr-upld" id="drUpld">
+      <div class="dr-upld-row">
+        <span style="font-size:14px;">&#128196;</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.8);flex:1;" id="drUpNm">Uploading...</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.5);" id="drUpPct">0%</span>
+      </div>
+      <div class="dr-upbar"><div class="dr-upfill" id="drUpFill" style="width:0%;"></div></div>
+    </div>
+    <div class="dr-typing2" id="drTyping">
+      <div class="dr-dav">&#128104;&#8205;&#9877;&#65039;</div>
+      <div class="dr-tbbl"><div class="dr-td"></div><div class="dr-td"></div><div class="dr-td"></div></div>
+    </div>
+    <div style="height:8px;"></div>
+  </div>
+  <div class="dr-quick2" id="drQuick">
+    <button class="dr-qr2" onclick="drQR(this)">&#128202; Send latest vitals</button>
+    <button class="dr-qr2" onclick="drQR(this)">&#128138; Medication question</button>
+    <button class="dr-qr2" onclick="drQR(this)">&#128197; Request appointment</button>
+    <button class="dr-qr2" onclick="drQR(this)">&#128196; Send report</button>
+  </div>
+  <div class="dr-ibar">
+    <button class="dr-abt2" onclick="drAttach('file')">&#128206;</button>
+    <button class="dr-abt2" onclick="drAttach('photo')">&#128247;</button>
+    <input class="dr-inp" id="drInp" placeholder="Message Dr. Shabani..." onkeydown="if(event.key==='Enter')drSend()"/>
+    <button class="dr-snd" onclick="drSend()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+</div>
+
+
+
+
+<!-- GLOBAL ERROR TOAST -->
+<div class="err-toast" id="errToast">
+  <div class="err-toast-ico" id="errToastIco">&#9888;&#65039;</div>
+  <div class="err-toast-body">
+    <div class="err-toast-title" id="errToastTitle">Something went wrong</div>
+    <div class="err-toast-msg" id="errToastMsg">Please try again.</div>
+  </div>
+  <div class="err-toast-close" onclick="closeErrToast()">&#10005;</div>
+</div>
+
+<!-- NETWORK ERROR BAR -->
+<div class="net-err-bar" id="netErrBar">
+  <div class="net-err-dot"></div>
+  <span>No internet connection &mdash; Some features may be unavailable</span>
+</div>
+
+<!-- GLOBAL LOADER -->
+<div id="globalLoader">
+  <div class="gl-logo">&#127973;</div>
+  <div style="font-size:16px;font-weight:700;color:#F1F5FF;">Health BOT</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;">Loading your health data...</div>
+  <div class="gl-dots">
+    <div class="gl-dot"></div>
+    <div class="gl-dot"></div>
+    <div class="gl-dot"></div>
+  </div>
+</div>
+
+
+<!-- PROFILE BOTTOM SHEET MODAL -->
+<div class="prof-overlay" id="profOverlay" onclick="closeProfModal(event)">
+  <div class="prof-sheet">
+    <div class="prof-sheet-hdr">
+      <div class="prof-sheet-title">📋 Medical Profile</div>
+      <button onclick="closeProfModal()" style="width:30px;height:30px;border-radius:10px;border:none;background:var(--bg);font-size:16px;cursor:pointer;">✕</button>
+    </div>
+    <div class="prof-sheet-body">
+      <!-- DIAGNOSES -->
+      <div class="pf-sec-title">🏥 Diagnoses</div>
+      <div class="tag-wrap2" id="prof-diag-tags">
+          </div>
+      <div class="tadd-row">
+        <input class="ti" id="prof-diag-inp" placeholder="Add diagnosis..." onkeydown="if(event.key==='Enter')addTag('prof-diag-tags','prof-diag-inp','d')"/>
+        <button class="tb" style="background:var(--heart);" onclick="addTag('prof-diag-tags','prof-diag-inp','d')">+ Add</button>
+      </div>
+
+      <div class="divr"></div>
+      <!-- THERAPY -->
+      <div class="pf-sec-title">💊 Current Therapy</div>
+      <div class="tag-wrap2" id="prof-therapy-tags">
+          </div>
+      <div class="tadd-row">
+        <input class="ti" id="prof-therapy-inp" placeholder="Add medication..." onkeydown="if(event.key==='Enter')addTag('prof-therapy-tags','prof-therapy-inp','t')"/>
+        <button class="tb" style="background:var(--purple);" onclick="addTag('prof-therapy-tags','prof-therapy-inp','t')">+ Add</button>
+      </div>
+
+      <div class="divr"></div>
+      <!-- ALLERGIES -->
+      <div class="pf-sec-title">⚠️ Allergies</div>
+      <div class="tag-wrap2" id="prof-allergy-tags">
+          </div>
+      <div class="tadd-row">
+        <input class="ti" id="prof-allergy-inp" placeholder="Add allergy..." onkeydown="if(event.key==='Enter')addTag('prof-allergy-tags','prof-allergy-inp','a')"/>
+        <button class="tb" style="background:var(--heart);" onclick="addTag('prof-allergy-tags','prof-allergy-inp','a')">+ Add</button>
+      </div>
+
+      <div class="divr"></div>
+      <!-- LAB VALUES -->
+      <div class="pf-sec-title">🧬 Lab Values</div>
+      <div class="tag-wrap2" id="prof-lab-tags">
+          </div>
+      <div class="tadd-row">
+        <input class="ti" id="prof-lab-inp" placeholder="e.g. HbA1c: 5.9%..." onkeydown="if(event.key==='Enter')addTag('prof-lab-tags','prof-lab-inp','l')"/>
+        <button class="tb" style="background:var(--teal);" onclick="addTag('prof-lab-tags','prof-lab-inp','l')">+ Add</button>
+      </div>
+
+      <div class="divr"></div>
+      <!-- DOCUMENTS -->
+      <div class="pf-sec-title">📄 Documents</div>
+      <div class="fl-list" id="prof-fl-list">
+        <div class="fl-item"><span style="font-size:16px;">📋</span><span class="fl-nm">Blood_Panel_March2026.pdf</span><span class="fl-sz">2.1MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
+        <div class="fl-item"><span style="font-size:16px;">🫀</span><span class="fl-nm">ECG_Feb2026.pdf</span><span class="fl-sz">0.9MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
+      </div>
+      <label for="prof-file-input" class="upload-z" style="display:block;cursor:pointer;">
+        <div style="font-size:22px;margin-bottom:5px;">📎</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);">Upload lab results, ECG, reports</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">PDF, JPG, PNG · Max 10MB</div>
+        <input type="file" id="prof-file-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handleProfFileUpload(event)"/>
+      </label>
+
+      <div class="divr"></div>
+      <!-- NOTES -->
+      <div class="pf-sec-title">📝 Notes</div>
+      <textarea class="pf-ta" id="prof-notes">Family history of hypertension. Non-smoker. Light exercise 2x/week.</textarea>
+      <button class="pf-ai-btn" id="profAiBtn" onclick="analyzeProfModal()">Diagnostics</button>
+      <div class="errbanner" id="prof-ai-err">⚠️ Connection error. Try again.</div>
+      <div class="ai-resp" id="prof-ai-resp" style="display:none;">
+        <div class="ar-hdr"><div class="ar-av">🤖</div><div style="font-size:12px;font-weight:700;color:#fff;">Claude AI — Profile Assessment</div></div>
+        <div class="ar-txt" id="prof-ai-text"></div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ SCREEN DIAGNOSTIC ══ -->
 <div class="screen" id="screen-diagnostic">
   <div class="sb" style="background:linear-gradient(160deg,#0D1B4B,#1565C0);color:rgba(255,255,255,0.85);"><span>9:41</span></div>
   <div class="diag-screen-hdr">
@@ -2713,8 +2680,8 @@ select option{background:#0A1628;color:#F1F5FF;}
     <!-- Vitals grid -->
     <div class="diag-vgrid">
       <div class="diag-vcard"><div class="diag-vcard-ico">❤️</div><div class="diag-vcard-v" id="ds-hr">-- bpm</div><div class="diag-vcard-l">HR</div></div>
-      <div class="diag-vcard"><div class="diag-vcard-ico">🩸</div><div class="diag-vcard-v" id="ds-bp" style="color:#FCD34D;">128/84</div><div class="diag-vcard-l">BP</div></div>
-      <div class="diag-vcard"><div class="diag-vcard-ico">🍬</div><div class="diag-vcard-v" id="ds-glu" style="color:#5EEAD4;">5.4</div><div class="diag-vcard-l">Glucose</div></div>
+      <div class="diag-vcard"><div class="diag-vcard-ico">🩸</div><div class="diag-vcard-v" id="ds-bp" style="color:#FCD34D;">--</div><div class="diag-vcard-l">BP</div></div>
+      <div class="diag-vcard"><div class="diag-vcard-ico">🍬</div><div class="diag-vcard-v" id="ds-glu" style="color:#5EEAD4;">--</div><div class="diag-vcard-l">Glucose</div></div>
       <div class="diag-vcard"><div class="diag-vcard-ico">🫧</div><div class="diag-vcard-v" id="ds-spo2">--%</div><div class="diag-vcard-l">SpO2</div></div>
     </div>
     <!-- Score + Therapy -->
@@ -2733,7 +2700,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       <button class="diag-tab-s active" id="dst-verdict" onclick="switchDiagS('verdict')">📊 Verdict</button>
       <button class="diag-tab-s" id="dst-profile" onclick="switchDiagS('profile')">📋 Profile</button>
       <button class="diag-tab-s" id="dst-report" onclick="switchDiagS('report')">📄 Report</button>
-      <button class="diag-tab-s" id="dst-connect" onclick="switchDiagS('connect')">🔗 Connect</button>
+      <button class="diag-tab-s" id="dst-therapy" onclick="switchDiagS('therapy')">💊 Therapy</button>
     </div>
   </div>
 
@@ -2904,53 +2871,72 @@ select option{background:#0A1628;color:#F1F5FF;}
     <!-- REPORT -->
     <div class="diag-section-s" id="dss-report">
       <div class="rpt-wrap">
+        <!-- HEADER dinamik -->
         <div class="rpt-hdr2">
-          <div class="rpt-tag2">📄 --, 2026</div>
+          <div class="rpt-tag2" id="rpt-date-tag">📄 Weekly Report</div>
           <div class="rpt-title2">Weekly Health Report</div>
           <div class="rpt-per">D Health · Claude AI</div>
         </div>
+
+        <!-- DAILY READINGS - dinamike nga vitals history -->
         <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">📅 Daily Readings</div>
-        <div class="wt">
+        <div class="wt" id="rpt-readings-table">
           <div class="wt-row hdr"><div class="wt-cell">Day</div><div class="wt-cell">BP mmHg</div><div class="wt-cell">Glucose</div><div class="wt-cell">HR bpm</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Mon</div><div class="wt-cell wt-bp">130/86</div><div class="wt-cell wt-glu">5.6</div><div class="wt-cell wt-hr2">80</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Tue</div><div class="wt-cell wt-bp">127/83</div><div class="wt-cell wt-glu">5.3</div><div class="wt-cell wt-hr2">76</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Wed</div><div class="wt-cell wt-bp">132/88</div><div class="wt-cell wt-glu">5.8</div><div class="wt-cell wt-hr2">82</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Thu</div><div class="wt-cell wt-bp">126/82</div><div class="wt-cell wt-glu">5.1</div><div class="wt-cell wt-hr2">75</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Fri</div><div class="wt-cell wt-bp">129/85</div><div class="wt-cell wt-glu">5.5</div><div class="wt-cell wt-hr2">79</div></div>
-          <div class="wt-row"><div class="wt-cell wt-day">Sat</div><div class="wt-cell wt-bp">133/87</div><div class="wt-cell wt-glu">5.7</div><div class="wt-cell wt-hr2">83</div></div>
-          <div class="wt-row tod" style="display:none"><div class="wt-cell wt-day">Sun★</div><div class="wt-cell wt-bp">128/84</div><div class="wt-cell wt-glu">5.4</div><div class="wt-cell wt-hr2">--</div></div>
+          <div id="rpt-readings-body">
+            <div style="text-align:center;padding:16px;color:rgba(255,255,255,0.3);font-size:12px;">No readings yet — add vitals to see weekly data</div>
+          </div>
         </div>
-        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">📈 BP Trend</div>
-        <div class="ch-wrap"><canvas id="ds-chart"></canvas></div>
-        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">💊 Therapy Adherence</div>
-        <div class="adh-list">
-          <div class="adh-item"><span style="font-size:16px;">🔵</span><div class="adh-info"><div class="adh-name">Amlodipine 5mg</div><div class="adh-time">Every morning</div></div><div class="adh-bar"><div class="adh-fill" style="width:100%;background:var(--accent);"></div></div><div class="adh-pct" style="color:var(--accent);">100%</div></div>
-          <div class="adh-item"><span style="font-size:16px;">🟣</span><div class="adh-info"><div class="adh-name">Metformin 500mg</div><div class="adh-time">Every lunch</div></div><div class="adh-bar"><div class="adh-fill" style="width:86%;background:var(--primary);"></div></div><div class="adh-pct" style="color:#60A5FA;">86%</div></div>
-          <div class="adh-item"><span style="font-size:16px;">🟡</span><div class="adh-info"><div class="adh-name">Vitamin D3</div><div class="adh-time">Every evening</div></div><div class="adh-bar"><div class="adh-fill" style="width:71%;background:var(--amber);"></div></div><div class="adh-pct" style="color:var(--amber);">71%</div></div>
+
+        <!-- AI REPORT -->
+        <div id="aiRptCard" style="margin-top:14px;">
+          <div id="rptText" style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;min-height:60px;">
+            Press "Generate" to create your weekly AI health report.
+          </div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:6px;text-align:right;" id="rptTime"></div>
         </div>
-        <button class="gen-btn2" id="dsGenBtn" onclick="generateDiagReport()">🤖 Generate health report</button>
-        <div class="ai-rpt-card" id="dsAiRptCard" style="display:none;">
-          <div class="arc-hdr"><div class="arc-av">🤖</div><div><div style="font-size:12px;font-weight:700;color:#fff;">Claude AI — Weekly Medical Report</div><div style="font-size:10px;color:rgba(255,255,255,0.6);" id="dsRptTime"></div></div></div>
-          <div class="arc-txt" id="dsRptText"><div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+
+        <!-- BUTTONS -->
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">
+          <button onclick="generateWeeklyReport(this)" style="width:100%;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">🤖 Generate health report</button>
+          <button onclick="exportReportPDF()" style="width:100%;padding:11px;border-radius:12px;border:none;background:rgba(255,255,255,0.07);color:#F1F5FF;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">📄 Export as PDF</button>
+          <button onclick="sendReportToDoctor()" style="width:100%;padding:11px;border-radius:12px;border:none;background:rgba(255,255,255,0.07);color:#F1F5FF;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">📤 Send to Dr. Shabani</button>
         </div>
-        <button class="pdf-btn2" onclick="exportPDF()">📄 Export as PDF</button>
-        <button class="share-btn2" onclick="shareReport()">📤 Send to Dr. Shabani</button>
         <div style="height:16px;"></div>
       </div>
     </div>
 
-    <!-- CONNECT -->
-    <div class="diag-section-s" id="dss-connect">
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;background:var(--pl);border-radius:12px;padding:11px 13px;margin-bottom:12px;">🔗 Connect your health apps to automatically sync vitals.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">💚</div><div style="font-size:12px;font-weight:700;">Google Fit</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Steps, HR, Sleep</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">❤️</div><div style="font-size:12px;font-weight:700;">Apple Health</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Full health data</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">⌚</div><div style="font-size:12px;font-weight:700;">Fitbit</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin:3px 0 8px;">Activity & Sleep</div><button style="padding:6px 14px;border-radius:10px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:var(--al);border-radius:14px;padding:13px;border:0.5px solid rgba(45,200,160,0.4);text-align:center;"><div style="font-size:26px;margin-bottom:5px;">📝</div><div style="font-size:12px;font-weight:700;">Manual</div><div style="font-size:10px;color:var(--accent);margin:3px 0 8px;">Connected ✓</div><button style="padding:6px 14px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-size:11px;font-weight:700;font-family:var(--font);">Active</button></div>
+    <div class="diag-section-s" id="dss-therapy">
+      <div style="padding:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#F1F5FF;">💊 Active Therapy</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Current medications and treatment plan</div>
+          </div>
+          <div id="therapy-count" style="background:rgba(139,111,232,0.2);border:0.5px solid rgba(139,111,232,0.4);border-radius:10px;padding:4px 10px;font-size:11px;font-weight:700;color:#C4B5FD;">0 active</div>
+        </div>
+        <div id="therapy-list-view" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+        <div style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:13px;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">+ Add Medication</div>
+          <input class="ti" id="therapy-med-inp" placeholder="e.g. Amlodipine 5mg" style="width:100%;margin-bottom:8px;"/>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+            <select id="therapy-time-sel" style="padding:8px;border-radius:10px;border:0.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.07);color:#F1F5FF;font-size:12px;font-family:var(--font);">
+              <option value="Morning">🌅 Morning</option>
+              <option value="Lunch">☀️ Lunch</option>
+              <option value="Evening">🌙 Evening</option>
+              <option value="Night">⭐ Night</option>
+              <option value="As needed">⚡ As needed</option>
+            </select>
+            <button onclick="addTherapyMed()" style="padding:8px;border-radius:10px;border:none;background:linear-gradient(135deg,#8B6FE8,#A78BFA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+ Add</button>
+          </div>
+        </div>
+        <button onclick="analyzeTherapy()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:10px;">🤖 AI Therapy Analysis</button>
+        <div id="therapy-ai-resp" style="display:none;background:rgba(255,255,255,0.05);border:0.5px solid rgba(139,111,232,0.3);border-radius:14px;padding:13px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);display:flex;align-items:center;justify-content:center;font-size:13px;">🤖</div><div style="font-size:12px;font-weight:700;color:#F1F5FF;">AI Therapy Assessment</div></div>
+          <div id="therapy-ai-text" style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;"></div>
+        </div>
+        <div style="height:16px;"></div>
       </div>
-      <div style="height:16px;"></div>
-    </div>
-  </div>
+    </div></div>
 
   <!-- Nav -->
   <div class="bn">
@@ -3270,11 +3256,11 @@ function drDocReply(msg){
   if(m.includes('presion')||m.includes('bp')||m.includes('blood pressure')){
     r='BP values not yet recorded. \u00ebsht\u00eb Stage 1 HTA.<br><br>Rekomandoj:<br>\u2022 Krip\u00eb &lt;2g/dit\u00eb<br>\u2022 Ushtrimi 30min/dit\u00eb<br>\u2022 Monitorim ditor';
   } else if(m.includes('amlodip')||m.includes('mjekim')||m.includes('medication')){
-    r='Amlodipine 5mg \u00ebsht\u00eb adekuate. Vazhdoni t\u00eb nj\u00ebjt\u00ebn doz\u00eb dhe kontrolloni BP pas 2 jav\u00ebsh.';
+    r='P\u00ebr pyetje rreth medikamenteve tuaja, ju lutem konsultohuni me mjekun tuaj ose shtoni terapin\u00eb tuaj n\u00eb profilin e Health BOT p\u00ebr analiza t\u00eb personalizuara.';
   } else if(m.includes('glukoz')||m.includes('glucose')||m.includes('diabet')){
-    r='Glucose values not yet recorded. \u00ebsht\u00eb n\u00ebn norm\u00eb. HbA1c 5.7% tregon pre-diabet. Metformin vazhdon. Evitoni karbohidrate t\u00eb rafinuara.';
+    r='Glucose values not yet recorded. Please enter your latest glucose reading in Vitals to get a personalized analysis.';
   } else if(m.includes('appointment')||m.includes('vizit')||m.includes('takim')){
-    r='Vizita \u00ebsht\u00eb planifikuar p\u00ebr <strong>23 Prill 2026</strong> n\u00eb or\u00ebn 10:00. D\u00ebshironi ta konfirmoni?';
+    r='P\u00ebr t\u00eb rezervuar nj\u00eb vizit\u00eb, shkoni te seksioni Calendar dhe zgjidhni dat\u00ebn dhe or\u00ebn e preferuar.';
   } else if(m.includes('report')||m.includes('raport')){
     r='Raporti u mor! Faleminderit. Do e analizoj dhe p\u00ebrgatis rekomandime t\u00eb detajuara p\u00ebr vizit\u00ebn e ardhshme.';
   } else if(m.includes('vital')){
@@ -3287,7 +3273,9 @@ function drDocReply(msg){
 }
 function drSendChip(txt){document.getElementById('drInp').value=txt;drSend();}
 function drQR(btn){
-  var map={'Send latest vitals':'Here are my vitals: BP 128/84, HR 78bpm, Glucose 5.4mmol, SpO2 97%','Medication question':'I have a question about my current medications','Request appointment':'I would like to request a consultation appointment','Send report':'I am sending my weekly health report from D Health'};
+  var vBP=(vitalsState.sys&&vitalsState.dia)?(vitalsState.sys+'/'+vitalsState.dia):'--';
+  var vHR=vitalsState.hr||'--'; var vGlu=vitalsState.glu||'--'; var vSpo=vitalsState.spo2||'--';
+  var map={'Send latest vitals':'Here are my vitals: BP '+vBP+', HR '+vHR+'bpm, Glucose '+vGlu+'mmol, SpO2 '+vSpo+'%','Medication question':'I have a question about my current medications','Request appointment':'I would like to request a consultation appointment','Send report':'I am sending my weekly health report from D Health'};
   var txt=btn.textContent.trim().replace(/[^\w\s]/g,'').trim();
   var found=''; for(var k in map){if(txt.toLowerCase().includes(k.toLowerCase().substring(0,12))){found=map[k];break;}}
   document.getElementById('drInp').value=found||txt;
@@ -3766,9 +3754,6 @@ var cY=2026,cM=3,sD=9,sY=2026,sM=3,pC='red';
 var alarms={};var cMap={red:'#FF6B8A',amber:'#F5A623',green:'#2DC8A0',purple:'#8B6FE8',orange:'#F97316'};
 var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
 function dk(y,m,d){return y+'-'+m+'-'+d;}
-
-alarms[dk(2026,3,12)]=[{name:'Cardio Session',time:'09:00',color:'red',on:true}];
-
 function gPer(t){var h=parseInt(t.split(':')[0]);if(h>=5&&h<12)return{l:'Morning',c:'pm'};if(h>=12&&h<18)return{l:'Daytime',c:'pd'};return{l:'Evening',c:'pe'};}
 function renderCal(){document.getElementById('calTitle').textContent=months[cM]+' '+cY;var g=document.getElementById('calGrid');g.innerHTML='';var first=new Date(cY,cM,1).getDay(),days=new Date(cY,cM+1,0).getDate(),prev=new Date(cY,cM,0).getDate();for(var i=0;i<first;i++){var d=document.createElement('div');d.className='cd om';d.innerHTML='<span class="cdn2">'+(prev-first+1+i)+'</span>';g.appendChild(d);}for(var d=1;d<=days;d++){var el=document.createElement('div');el.className='cd';if(d===9&&cM===3&&cY===2026)el.className+=' tod';else if(d===sD&&cM===sM&&cY===sY)el.className+=' sel';var k=dk(cY,cM,d);if(alarms[k]&&alarms[k].length)el.className+=' ha';el.innerHTML='<span class="cdn2">'+d+'</span>';(function(day){el.onclick=function(){sD=day;sM=cM;sY=cY;renderCal();};})(d);g.appendChild(el);}renderAlarms();}
 function renderAlarms(){var k=dk(sY,sM,sD);document.getElementById('alTitle').textContent='Alarms — '+months[sM].slice(0,3)+' '+sD;var list=document.getElementById('alList');list.innerHTML='';var arr=alarms[k]||[];if(!arr.length){var e=document.createElement('div');e.style='text-align:center;padding:10px 0;font-size:12px;color:rgba(255,255,255,0.5);';e.textContent='No alarms for this day';list.appendChild(e);return;}arr.forEach(function(a,i){var p=gPer(a.time);var item=document.createElement('div');item.className='ali';item.innerHTML='<div class="ald" style="background:'+cMap[a.color]+';"></div><div class="alf"><div class="alnm">'+a.name+'</div><div class="altr"><span class="altm">'+ft(a.time)+'</span><span class="alpb '+p.c+'">'+p.l+'</span></div></div><div style="display:flex;align-items:center;gap:6px;"><button class="altg '+(a.on?'on':'off')+'" onclick="togA(\''+k+'\','+i+',this)"></button><button onclick="removeAlarm(\''+k+'\','+i+')" style="width:24px;height:24px;border-radius:8px;border:none;background:rgba(239,68,68,0.1);color:#DC2626;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Remove">×</button></div>';list.appendChild(item);});}
@@ -4721,7 +4706,7 @@ function hlTxt(text,q){
 
 
 /* ═══════ LOGIN JS ═══════ */
-var LST = { plan:'free', rem:false, users:{'demo@healthbot.app':{pwd:'demo1234',name:'Demo User',plan:'premium'}} };
+var LST = { plan:'free', rem:false, users:{} };
 
 function lshow(id, tab) {
   document.querySelectorAll('.ls').forEach(function(s){ s.classList.add('lhide'); });
@@ -5055,11 +5040,11 @@ var VH_CONFIG = {
 };
 
 var VH_INSIGHTS = {
-  bp:    '7-day BP trend: 132/86 → 128/84 (+↓). Gradual improvement with current therapy. Maintain low-sodium diet.',
-  hr:    'Average heart rate 76 bpm. Stable and within normal range. HRV suggests good cardiovascular fitness.',
-  glu:   'Fasting glucose stable 5.1-5.6 mmol/L. Pre-diabetic range controlled. Continue Metformin therapy.',
+  bp:    'No BP data recorded yet. Start tracking your blood pressure to see trends.',
+  hr:    'No heart rate data recorded yet. Add your vitals to see analysis.',
+  glu:   'No glucose data recorded yet. Start logging to monitor your levels.',
   spo2:  'No SpO2 data recorded yet.',
-  steps: 'Average 8,200 steps/day. Exceeds WHO recommendation of 7,000. Keep up the great activity level!'
+  steps: 'No activity data recorded yet. Start tracking your daily steps.'
 };
 
 function initVitalsHistory() {
@@ -5375,7 +5360,7 @@ function renderEmptyChatAI(){
       + '<div class="empty-chat-suggestions">'
       + '<button class="ecs-btn" onclick="useAISuggestion(this)"><span>&#129654;</span> What does my BP mean?</button>'
       + '<button class="ecs-btn" onclick="useAISuggestion(this)"><span>&#128138;</span> Should I take Amlodipine with food?</button>'
-      + '<button class="ecs-btn" onclick="useAISuggestion(this)"><span>&#128202;</span> Explain my HbA1c result of 5.7%</button>'
+      + '<button class="ecs-btn" onclick="useAISuggestion(this)"><span>&#128202;</span> What does HbA1c mean?</button>'
       + '<button class="ecs-btn" onclick="useAISuggestion(this)"><span>&#128736;</span> Tips to lower blood pressure naturally</button>'
       + '</div>';
     msgArea.parentNode.insertBefore(empty, msgArea);
@@ -5735,7 +5720,7 @@ function updateAllVitalsUI(){
   var bpCls  = sys >= 130 ? 'vpi w' : 'vpi ok';
   var gluTxt = glu >= 7 ? glu+' mmol/L — High. Adjust therapy.' : glu >= 5.6 ? glu+' mmol/L — Pre-diabetic. Watch diet.' : glu+' mmol/L — Normal fasting. Metformin effective.';
   var gluCls = glu >= 7 ? 'vpi w' : 'vpi ok';
-  var hrTxt  = hr > 100 ? hr+' bpm — Tachycardia. Monitor.' : hr < 60 ? hr+' bpm — Bradycardia. Monitor.' : hr+' bpm — Normal. HRV 82ms stable.';
+  var hrTxt  = hr > 100 ? hr+' bpm — Tachycardia. Monitor.' : hr < 60 ? hr+' bpm — Bradycardia. Monitor.' : hr+' bpm — Normal range.';
   var spo2Txt = spo2 < 95 ? spo2+'% — Low! Seek medical advice.' : spo2 < 97 ? spo2+'% — Acceptable. Monitor breathing.' : spo2+'% — Excellent. No respiratory concerns.';
   var spo2Cls = spo2 < 95 ? 'vpi w' : 'vpi ok';
 
@@ -6026,7 +6011,7 @@ async function handleECGUpload(event){
 
   /* Get patient context */
   var diagTags = document.getElementById('diag-tags');
-  var diags = diagTags ? Array.from(diagTags.children).map(function(t){return t.textContent.replace('×','').trim();}).join(', ') : 'HTA Stage 1';
+  var diags = diagTags ? Array.from(diagTags.children).map(function(t){return t.textContent.replace('×','').trim();}).join(', ') : 'None';
   var vitals = 'HR:'+vitalsState.hr+'bpm, BP:'+vitalsState.sys+'/'+vitalsState.dia+'mmHg, SpO2:'+vitalsState.spo2+'%, Glucose:'+vitalsState.glu+'mmol/L';
   var lastECG = ecgHistory.length > 0 ? 'Previous ECG ('+ecgHistory[ecgHistory.length-1].date+'): '+ecgHistory[ecgHistory.length-1].summary : 'No previous ECG on file.';
   var mediaType = file.type.includes('pdf') ? 'application/pdf' : 'image/'+file.type.split('/')[1];
@@ -6203,33 +6188,169 @@ async function analyzeProfModal(){
 
 /* ══ SCREEN DIAGNOSTIC ══ */
 function switchDiagS(tab){
-  ['verdict','profile','report','connect'].forEach(function(t){
+  ['verdict','profile','report','therapy'].forEach(function(t){
     var sec = document.getElementById('dss-'+t);
     var btn = document.getElementById('dst-'+t);
     if(sec) sec.classList.toggle('active', t===tab);
     if(btn) btn.classList.toggle('active', t===tab);
   });
-  if(tab==='report') setTimeout(loadDiagScreenChart, 100);
+  if(tab==='report')  setTimeout(loadDiagScreenChart, 100);
+  if(tab==='therapy') setTimeout(renderTherapyList, 100);
+}
+
+function renderTherapyList(){
+  var list = document.getElementById('therapy-list-view');
+  var countEl = document.getElementById('therapy-count');
+  if(!list) return;
+  var tags = document.querySelectorAll('#ds-therapy-tags .tag2, #prof-therapy-tags .tag2, #therapy-tags .tag2');
+  var seen = {}; var meds = [];
+  Array.from(tags).forEach(function(t){
+    var v = t.textContent.replace('x','').replace('×','').trim();
+    if(v && !seen[v]){ seen[v]=1; meds.push(v); }
+  });
+  list.innerHTML = '';
+  if(countEl) countEl.textContent = meds.length + ' active';
+  if(meds.length===0){
+    list.innerHTML='<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:12px;">No medications added yet.<br>Add them in the Profile tab.</div>';
+    return;
+  }
+  var colors = {'Morning':'#FCD34D','Lunch':'#93C5FD','Evening':'#C4B5FD','Night':'#A5B4FC','As needed':'#4ADE80'};
+  var icons  = {'Morning':'🌅','Lunch':'☀️','Evening':'🌙','Night':'⭐','As needed':'⚡'};
+  meds.forEach(function(med){
+    var timeKey = 'Morning';
+    Object.keys(colors).forEach(function(k){ if(med.toLowerCase().indexOf(k.toLowerCase())>-1) timeKey=k; });
+    var color = colors[timeKey]||'#C4B5FD';
+    var icon  = icons[timeKey]||'💊';
+    var item = document.createElement('div');
+    item.style.cssText='background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:11px;';
+    var parts = med.split('·');
+    item.innerHTML='<div style="width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💊</div>'
+      +'<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#F1F5FF;margin-bottom:2px;">'+(parts[0]||med).trim()+'</div>'
+      +'<div style="font-size:11px;color:rgba(255,255,255,0.5);">'+icon+' '+(parts[1]||timeKey).trim()+'</div></div>'
+      +'<div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(255,255,255,0.1);color:'+color+';">Active ✓</div>';
+    list.appendChild(item);
+  });
+}
+
+function addTherapyMed(){
+  var inp = document.getElementById('therapy-med-inp');
+  var sel = document.getElementById('therapy-time-sel');
+  if(!inp||!inp.value.trim()){ showToast('⚠️ Enter medication name'); return; }
+  var val = inp.value.trim()+' · '+(sel?sel.value:'Morning');
+  inp.value='';
+  /* Shto te ds-therapy-tags */
+  var el = document.getElementById('ds-therapy-tags');
+  if(el){
+    var span=document.createElement('span');
+    span.className='tag2 t';
+    span.innerHTML=val+' <span class="tx" onclick="this.parentElement.remove();renderTherapyList()">×</span>';
+    el.appendChild(span);
+  }
+  setTimeout(renderTherapyList,100);
+  showToast('✅ '+val+' added!');
+  try{ syncMedicalProfile(); }catch(e){}
+}
+
+async function analyzeTherapy(){
+  var btn=event.target;
+  var respEl=document.getElementById('therapy-ai-resp');
+  var textEl=document.getElementById('therapy-ai-text');
+  if(!respEl||!textEl) return;
+  btn.disabled=true; btn.textContent='⏳ Analyzing...';
+  respEl.style.display='block';
+  textEl.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  var therapy=Array.from(document.querySelectorAll('#ds-therapy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).filter(Boolean);
+  var diags=Array.from(document.querySelectorAll('#ds-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).filter(Boolean);
+  try{
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,system:'You are D Health AI Doctor. Analyze therapy briefly.',messages:[{role:'user',content:'Diagnoses: '+(diags.join(', ')||'None')+'\nTherapy: '+(therapy.join(', ')||'None')+'\nProvide brief drug interaction check and timing tips in 3 bullet points.'}]})});
+    var d=await r.json();
+    var tx=d.content&&d.content[0]&&d.content[0].text;
+    if(tx) textEl.innerHTML=tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    else throw new Error();
+  }catch(e){ textEl.innerHTML='<span style="color:rgba(255,255,255,0.5);">⚠️ Check connection and try again.</span>'; }
+  btn.disabled=false; btn.textContent='🤖 AI Therapy Analysis';
 }
 
 var dsChartInst = null;
 function loadDiagScreenChart(){
-  var canvas = document.getElementById('ds-chart');
-  if(!canvas || typeof Chart==='undefined') return;
-  if(dsChartInst){ try{dsChartInst.destroy();}catch(e){} dsChartInst=null; }
-  dsChartInst = new Chart(canvas.getContext('2d'),{
-    type:'line',
-    data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-      datasets:[
-        {label:'Systolic',data:[],borderColor:'#F97316',backgroundColor:'rgba(249,115,22,0.1)',tension:0.4,fill:true,borderWidth:2.5,pointBackgroundColor:'#F97316',pointRadius:3},
-        {label:'Diastolic',data:[],borderColor:'#3B7DD8',backgroundColor:'rgba(59,125,216,0.05)',tension:0.4,fill:false,borderWidth:2,pointRadius:3}
-      ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:true,position:'top',labels:{font:{size:9},boxWidth:10}}},
-      scales:{x:{grid:{display:false},ticks:{font:{size:9},color:'#B0BCCF'}},y:{display:false}},
-      elements:{line:{tension:0.4}}
-    }
+  /* Load real vitals into report table */
+  loadReportReadings();
+
+
+  var body = document.getElementById('rpt-readings-body');
+  var dateTag = document.getElementById('rpt-date-tag');
+  if(!body) return;
+
+  var history = JSON.parse(localStorage.getItem('vitals_daily_history')||'[]');
+  var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var now = new Date();
+  var weekStart = new Date(now); weekStart.setDate(now.getDate() - now.getDay() + 1);
+
+  if(dateTag){
+    dateTag.textContent = '📄 Week of ' + weekStart.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  }
+
+  if(history.length === 0){
+    body.innerHTML = '<div style="text-align:center;padding:16px;color:rgba(255,255,255,0.3);font-size:12px;">No readings yet — add vitals to see weekly data</div>';
+    return;
+  }
+
+  var html = '';
+  /* Shfaq 7 ditët e fundit */
+  var last7 = history.slice(0,7).reverse();
+  last7.forEach(function(v, i){
+    var d = v.date ? new Date(v.date) : new Date();
+    var dayName = days[d.getDay()] || ('Day '+(i+1));
+    var bp = (v.sys && v.dia) ? v.sys+'/'+v.dia : '--/--';
+    var glu = v.glu || '--';
+    var hr = v.hr || '--';
+    var bpColor = (!v.sys||v.sys<130) ? '#4ADE80' : v.sys<140 ? '#FBBF24' : '#F87171';
+    html += '<div class="wt-row">'
+      + '<div class="wt-cell wt-day">'+dayName+'</div>'
+      + '<div class="wt-cell wt-bp" style="color:'+bpColor+'">'+bp+'</div>'
+      + '<div class="wt-cell wt-glu">'+glu+'</div>'
+      + '<div class="wt-cell wt-hr2">'+hr+'</div>'
+      + '</div>';
   });
+  body.innerHTML = html;
+}
+
+async function generateWeeklyReport(btn){
+  var textEl = document.getElementById('rptText');
+  var timeEl = document.getElementById('rptTime');
+  if(!textEl) return;
+  if(btn){ btn.disabled=true; btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Generating...'; }
+
+  textEl.innerHTML = '<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+
+  var history = JSON.parse(localStorage.getItem('vitals_daily_history')||'[]');
+  var weekData = history.length > 0
+    ? 'VITALS (last '+Math.min(history.length,7)+' readings):\n' + history.slice(0,7).map(function(v){
+        return (v.date||'') + ' BP:'+(v.sys||'--')+'/'+(v.dia||'--')+' HR:'+(v.hr||'--')+' Glu:'+(v.glu||'--');
+      }).join('\n')
+    : 'No vitals recorded yet.';
+
+  try{
+    var r = await fetch('/.netlify/functions/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-5',
+        max_tokens:800,
+        system: 'You are D Health AI Doctor. Write concise weekly health reports.',
+        messages:[{role:'user',content:'Generate a professional weekly health report.\n\n'+weekData+'\n\nPatient profile: '+getProfile()+'\n\nBe specific, medical, and encouraging. If no data, give guidance on what to track.'}]
+      })
+    });
+    var d = await r.json();
+    var tx = d.content&&d.content[0]&&d.content[0].text;
+    if(tx){
+      textEl.innerHTML = tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+      if(timeEl) timeEl.textContent = 'Generated ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    } else throw new Error('No response');
+  }catch(e){
+    textEl.innerHTML = '<span style="color:#F87171;">⚠️ '+(e.message||'Check connection')+'</span>';
+  }
+  if(btn){ btn.disabled=false; btn.innerHTML='🤖 Generate health report'; }
 }
 
 async function generateDiagReport(){
@@ -6241,7 +6362,7 @@ async function generateDiagReport(){
   btn.disabled=true; btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Generating...';
   card.style.display='block';
   var now=new Date(); if(time) time.textContent='Generated '+now.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  var diags=Array.from(document.querySelectorAll('#prof-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'HTA Stage 1';
+  var diags=Array.from(document.querySelectorAll('#prof-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'None';
   var therapy=Array.from(document.querySelectorAll('#prof-therapy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'Amlodipine';
   try{
     var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,messages:[{role:'user',content:'Generate a weekly medical report for: Diagnoses: '+diags+'. Therapy: '+therapy+'. Avg BP: '+vitalsState.sys+'/'+vitalsState.dia+'. HR: '+vitalsState.hr+'. Glucose: '+vitalsState.glu+'. SpO2: '+vitalsState.spo2+'%. Include: weekly summary, therapy adherence assessment, recommendations. Be concise and structured.'}]})});
@@ -6291,8 +6412,8 @@ async function runDiagnosticAI(){
   btn.disabled=true;
   btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;"></div> Claude AI analyzing...';
   rec.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  var diags=Array.from(document.querySelectorAll('#prof-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'HTA Stage 1';
-  var therapy=Array.from(document.querySelectorAll('#prof-therapy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'Amlodipine 5mg';
+  var diags=Array.from(document.querySelectorAll('#prof-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'None';
+  var therapy=Array.from(document.querySelectorAll('#prof-therapy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'None';
   try{
     var r=await fetch('/.netlify/functions/claude',{
       method:'POST',
@@ -7187,8 +7308,19 @@ async function runCorrelationEngine(){
     var txt = resp.content&&resp.content[0]&&resp.content[0].text||'{}';
     txt = txt.replace(/```json|```/g,'').trim();
     var result;
-    try{ result = JSON.parse(txt); }
-    catch(pe){ var sm=txt.match(/(\d{1,3})\/100/); result={score:sm?parseInt(sm[1]):50,alarms:[],correlations:[],recommendations:[txt],doctor_summary:''}; }
+    try{
+      result = JSON.parse(txt);
+    }catch(pe){
+      /* AI nuk ktheu JSON — ndërtoj result nga teksti */
+      var sm = txt.match(/(\d{1,3})\s*\/\s*100/);
+      result = {
+        score: sm ? parseInt(sm[1]) : 50,
+        alarms: [],
+        correlations: [],
+        recommendations: [txt],
+        doctor_summary: ''
+      };
+    }
     renderEngineResult(result, data);
   }catch(e){
     document.getElementById('eng-rec-content').innerHTML = '❌ Error: '+e.message;
@@ -7659,10 +7791,12 @@ function showDHealthRingInfo(){
   /* Mund te shtohet nje modal me detaje me vone */
 }
 
-/* ════ GOOGLE FIT OAUTH 2.0 ════ */
+/* ════ GOOGLE FIT OAUTH 2.0 — Direct Browser API ════ */
 var GFIT_CONFIG = {
   clientId: '695949615023-sbc9lhr6dp7iik90qe9m1g7372ecgkfv.apps.googleusercontent.com',
-  redirectUri: 'https://relaxed-pegasus-1e887c.netlify.app/',
+  get redirectUri(){
+    return window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
+  },
   scopes: [
     'https://www.googleapis.com/auth/fitness.activity.read',
     'https://www.googleapis.com/auth/fitness.heart_rate.read',
@@ -7675,13 +7809,8 @@ var GFIT_CONFIG = {
 };
 
 function connectGoogleFit(){
-  var token = localStorage.getItem('gfit_token');
-  if(token){
-    /* Already connected — sync data */
-    syncGoogleFitData();
-    return;
-  }
-  /* OAuth 2.0 implicit flow */
+  localStorage.removeItem('gfit_token');
+  localStorage.removeItem('gfit_expiry');
   var state = Math.random().toString(36).substring(2);
   localStorage.setItem('gfit_oauth_state', state);
   var url = 'https://accounts.google.com/o/oauth2/v2/auth'
@@ -7690,6 +7819,7 @@ function connectGoogleFit(){
     + '&response_type=token'
     + '&scope='         + encodeURIComponent(GFIT_CONFIG.scopes)
     + '&state='         + state
+    + '&prompt=consent'
     + '&include_granted_scopes=true';
   window.location.href = url;
 }
@@ -7704,130 +7834,185 @@ function handleGFitCallback(){
     params[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]||'');
   });
   if(!params.access_token) return false;
-  /* Verify state */
   var savedState = localStorage.getItem('gfit_oauth_state');
   if(params.state && params.state !== savedState) return false;
-  /* Save token */
   var expiry = Date.now() + (parseInt(params.expires_in)||3600)*1000;
   localStorage.setItem('gfit_token',  params.access_token);
-  localStorage.setItem('gfit_expiry', expiry);
-  setConnected('gfit', true); refreshIntegBadges();
-  /* Clean URL */
+  localStorage.setItem('gfit_expiry', String(expiry));
+  setConnected('gfit', true);
+  try{ refreshIntegBadges(); }catch(e){}
   history.replaceState(null, '', window.location.pathname);
   showToast('✅ Google Fit connected!');
-  /* Sync data immediately */
-  setTimeout(syncGoogleFitData, 500);
+  setTimeout(syncGoogleFitData, 600);
   return true;
 }
 
 async function syncGoogleFitData(){
-  var token = localStorage.getItem('gfit_token');
-  if(!token){ showToast('⚠️ Connect Google Fit first'); return; }
-  /* Check expiry */
-  var expiry = parseInt(localStorage.getItem('gfit_expiry')||'0');
-  if(Date.now() > expiry){
+  var token  = localStorage.getItem('gfit_token');
+  var expiry = parseInt(localStorage.getItem('gfit_expiry') || '0');
+
+  /* Token i skaduar ose mungon — ridrejto te OAuth */
+  if(!token || Date.now() > expiry){
     localStorage.removeItem('gfit_token');
-    showToast('⚠️ Google Fit session expired. Please reconnect.');
+    localStorage.removeItem('gfit_expiry');
+    showToast('⚠️ Google Fit session skadoi. Po ridrejtohesh...');
+    setTimeout(connectGoogleFit, 1200);
     return;
   }
-  showToast('🔄 Syncing Google Fit...');
-  var now  = Date.now();
-  var day  = 86400000;
-  var startTime = (now - day) * 1000000; /* nanoseconds */
-  var endTime   = now * 1000000;
+
+  showToast('🔄 Duke sinkronizuar Google Fit...');
+
+  var now      = Date.now();
+  var startDay = new Date(); startDay.setHours(0,0,0,0);
+  var startMs  = startDay.getTime();
+
+  var body = JSON.stringify({
+    aggregateBy: [
+      {dataTypeName: 'com.google.step_count.delta'},
+      {dataTypeName: 'com.google.heart_rate.bpm'},
+      {dataTypeName: 'com.google.calories.expended'},
+      {dataTypeName: 'com.google.active_minutes'},
+      {dataTypeName: 'com.google.distance.delta'},
+      {dataTypeName: 'com.google.blood_pressure'},
+      {dataTypeName: 'com.google.blood_glucose'},
+      {dataTypeName: 'com.google.oxygen_saturation'}
+    ],
+    bucketByTime: {durationMillis: now - startMs},
+    startTimeMillis: startMs,
+    endTimeMillis:   now
+  });
+
   try {
-    /* Steps */
-    var stepsRes = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        aggregateBy: [{ dataTypeName: 'com.google.step_count.delta' }],
-        bucketByTime: { durationMillis: day },
-        startTimeMillis: now - day,
-        endTimeMillis: now
-      })
+    var res = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
+      method:  'POST',
+      headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+      body:    body
     });
-    var stepsData = await stepsRes.json();
-    var steps = 0;
-    if(stepsData.bucket && stepsData.bucket[0]){
-      var ds = stepsData.bucket[0].dataset[0];
-      if(ds && ds.point && ds.point[0]) steps = ds.point[0].value[0].intVal || 0;
+
+    /* Token i pavlefshëm — kërko ri-autorizim */
+    if(res.status === 401){
+      localStorage.removeItem('gfit_token');
+      localStorage.removeItem('gfit_expiry');
+      showToast('⚠️ Google Fit: duhet ri-autorizim. Po ridrejtohesh...');
+      setTimeout(connectGoogleFit, 1500);
+      return;
     }
-    /* Heart Rate */
-    var hrRes = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        aggregateBy: [{ dataTypeName: 'com.google.heart_rate.bpm' }],
-        bucketByTime: { durationMillis: day },
-        startTimeMillis: now - day,
-        endTimeMillis: now
-      })
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+
+    var data = await res.json();
+
+    /* ── Nxirr vlerat nga buckets ── */
+    var steps = 0, hr = 0, calories = 0, distance = 0, activeMin = 0;
+    var sys = 0, dia = 0, glu = 0, spo2 = 0;
+
+    (data.bucket || []).forEach(function(bucket){
+      (bucket.dataset || []).forEach(function(ds){
+        var type = ds.dataSourceId || '';
+        (ds.point || []).forEach(function(pt){
+          var v = pt.value;
+          if(!v || !v.length) return;
+          if(type.includes('step_count'))
+            steps    += (v[0].intVal || 0);
+          else if(type.includes('calories'))
+            calories += (v[0].fpVal  || 0);
+          else if(type.includes('distance'))
+            distance += (v[0].fpVal  || 0);
+          else if(type.includes('active_minutes'))
+            activeMin+= (v[0].intVal || 0);
+          else if(type.includes('heart_rate')){
+            /* aggregate: v[0]=avg, v[1]=max, v[2]=min */
+            var avg = v[0] ? (v[0].fpVal || 0) : 0;
+            if(avg > 0) hr = Math.round(avg);
+          }
+          else if(type.includes('blood_pressure')){
+            var s = v[0] ? Math.round(v[0].fpVal || 0) : 0;
+            var d = v[1] ? Math.round(v[1].fpVal || 0) : 0;
+            if(s > 0){ sys = s; dia = d; }
+          }
+          else if(type.includes('blood_glucose')){
+            var g = v[0] ? (v[0].fpVal || 0) : 0;
+            if(g > 0) glu = Math.round(g * 10) / 10;
+          }
+          else if(type.includes('oxygen_saturation')){
+            var o = v[0] ? (v[0].fpVal || 0) : 0;
+            if(o > 0) spo2 = o < 2 ? Math.round(o * 100) : Math.round(o);
+          }
+        });
+      });
     });
-    var hrData = await hrRes.json();
-    var hr = 0;
-    if(hrData.bucket && hrData.bucket[0]){
-      var ds2 = hrData.bucket[0].dataset[0];
-      if(ds2 && ds2.point && ds2.point[0]) hr = Math.round(ds2.point[0].value[0].fpVal || 0);
-    }
-    /* Calories */
-    var calRes = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        aggregateBy: [{ dataTypeName: 'com.google.calories.expended' }],
-        bucketByTime: { durationMillis: day },
-        startTimeMillis: now - day,
-        endTimeMillis: now
-      })
-    });
-    var calData = await calRes.json();
-    var cal = 0;
-    if(calData.bucket && calData.bucket[0]){
-      var ds3 = calData.bucket[0].dataset[0];
-      if(ds3 && ds3.point && ds3.point[0]) cal = Math.round(ds3.point[0].value[0].fpVal || 0);
-    }
-    /* Update app state */
-    if(steps > 0){
-      vitalsState.steps = steps;
-      var stepsEl = document.getElementById('da-steps');
-      if(stepsEl) stepsEl.textContent = steps.toLocaleString();
-      var vitStepsEl = document.getElementById('vit-steps');
-      if(vitStepsEl) vitStepsEl.textContent = steps.toLocaleString();
-    }
-    if(hr > 0){
-      vitalsState.hr = hr;
-      updateAllVitalsUI();
-    }
-    if(cal > 0){
-      var calEl = document.getElementById('da-cal');
-      if(calEl) calEl.textContent = cal.toLocaleString();
-    }
-    /* Save to Supabase */
-    var sb = getSupa();
-    if(sb && LST.currentUser && LST.currentUser.id && (steps>0||hr>0)){
-      await sb.from('vitals').insert({
-        patient_id: LST.currentUser.id,
-        hr: hr||null,
-        steps: steps||null,
-        source: 'google_fit',
-        recorded_at: new Date().toISOString()
-      }).catch(function(){});
-    }
-    /* Update connection UI */
-    setConnected('gfit', true); refreshIntegBadges();
-    localStorage.setItem('gfit_steps', steps);
-    localStorage.setItem('gfit_hr', hr);
-    localStorage.setItem('gfit_cal', cal);
-    localStorage.setItem('gfit_synced', new Date().toLocaleTimeString());
-    updateIntegrationCard('gfit');
-    showToast('✅ Google Fit synced! Steps: '+steps.toLocaleString()+' · HR: '+hr+' bpm');
+
+    steps    = Math.round(steps);
+    calories = Math.round(calories);
+    distance = Math.round(distance / 1000 * 10) / 10; /* m → km */
+
+    /* ── Perditëso vitalsState ── */
+    if(steps    > 0)  vitalsState.steps = steps;
+    if(hr       > 0)  vitalsState.hr    = hr;
+    if(sys      > 0){ vitalsState.sys   = sys; vitalsState.dia = dia; }
+    if(glu      > 0)  vitalsState.glu   = glu;
+    if(spo2     > 0)  vitalsState.spo2  = spo2;
+
+    /* ── Perditëso UI ── */
+    var el;
+    el = document.getElementById('da-steps'); if(el) el.textContent = steps > 0 ? steps.toLocaleString() : '--';
+    el = document.getElementById('da-cal');   if(el) el.textContent = calories > 0 ? calories.toLocaleString() : '--';
+    el = document.getElementById('da-hr');    if(el) el.textContent = hr > 0 ? hr : '--';
+    el = document.getElementById('da-dist');  if(el && distance > 0) el.textContent = distance + ' km';
+    el = document.getElementById('home-bp');  if(el && sys > 0) el.textContent = sys + '/' + dia;
+    el = document.getElementById('home-glu'); if(el && glu > 0) el.textContent = glu;
+    el = document.getElementById('home-spo2');if(el && spo2 > 0) el.textContent = spo2 + ' %';
+    el = document.getElementById('g-sys');    if(el && sys > 0) el.textContent = sys;
+    el = document.getElementById('g-dia');    if(el && dia > 0) el.textContent = dia;
+    el = document.getElementById('g-hr');     if(el && hr > 0)  el.textContent = hr;
+    el = document.getElementById('g-glu');    if(el && glu > 0) el.textContent = glu;
+    el = document.getElementById('ds-bp');    if(el && sys > 0) el.textContent = sys + '/' + dia;
+    el = document.getElementById('ds-hr');    if(el && hr > 0)  el.textContent = hr + ' bpm';
+    el = document.getElementById('ds-glu');   if(el && glu > 0) el.textContent = glu;
+    el = document.getElementById('ds-spo2');  if(el && spo2 > 0) el.textContent = spo2 + '%';
+
+    if(hr > 0 || sys > 0 || glu > 0 || spo2 > 0) try{ updateAllVitalsUI(); }catch(e){}
+
+    /* ── Ruaj në Supabase ── */
+    try{
+      var sb = getSupa();
+      if(sb && LST.currentUser && LST.currentUser.id){
+        sb.from('vitals').insert({
+          patient_id:  LST.currentUser.id,
+          hr:          hr    || null,
+          sys:         sys   || null,
+          dia:         dia   || null,
+          glu:         glu   || null,
+          spo2:        spo2  || null,
+          steps:       steps || null,
+          source:      'google_fit',
+          recorded_at: new Date().toISOString()
+        });
+      }
+    }catch(se){}
+
+    /* ── Ruaj në localStorage ── */
+    localStorage.setItem('connect_gfit',  'true');
+    localStorage.setItem('gfit_steps',    String(steps));
+    localStorage.setItem('gfit_hr',       String(hr));
+    localStorage.setItem('gfit_cal',      String(calories));
+    localStorage.setItem('gfit_dist',     String(distance));
+    localStorage.setItem('gfit_synced',   new Date().toLocaleTimeString());
+
+    try{ updateConnectCards(); }catch(e){}
     try{ calcDailyScore(); }catch(e){}
-  } catch(e){
+
+    var msg = '✅ Google Fit u sinkronizua!';
+    if(steps > 0)    msg += ' · ' + steps.toLocaleString() + ' hapa';
+    if(hr    > 0)    msg += ' · HR ' + hr + ' bpm';
+    if(sys   > 0)    msg += ' · BP ' + sys + '/' + dia;
+    showToast(msg);
+
+  } catch(e) {
     console.error('Google Fit sync error:', e);
-    showToast('❌ Sync failed. Check connection and try again.');
+    showToast('❌ Sinkronizimi dështoi: ' + (e.message || 'Kontrollo lidhjen'));
   }
 }
+
 
 function disconnectGoogleFit(){
   localStorage.removeItem('gfit_token');
@@ -8066,7 +8251,11 @@ function clearAllDemoData(){
   vitalsState = {hr:0,spo2:0,sys:0,dia:0,glu:0,steps:0,temp:0,rr:0,hrv:0};
 
   /* Clear vitals UI */
-  ['home-bp','home-glu','g-sys','g-dia','g-hr','g-glu','ds-bp','ds-hr','ds-glu','ds-spo2'].forEach(function(id){
+  ['home-bp','home-glu','home-spo2','g-sys','g-dia','g-hr','g-glu','ds-bp','ds-hr','ds-glu','ds-spo2'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.textContent = '--';
+  });
+  ['home-bp-status','home-glu-status','home-spo2-status'].forEach(function(id){
     var el = document.getElementById(id);
     if(el) el.textContent = '--';
   });
