@@ -7865,111 +7865,87 @@ function handleGFitCallback(){
 async function syncGoogleFitData(){
   var token = localStorage.getItem('gfit_token');
   if(!token){ showToast('⚠️ Connect Google Fit first'); return; }
-  /* Check expiry */
+
   var expiry = parseInt(localStorage.getItem('gfit_expiry')||'0');
   if(Date.now() > expiry){
     localStorage.removeItem('gfit_token');
-    showToast('⚠️ Google Fit session expired. Please reconnect.');
+    showToast('⚠️ Google Fit token expired — reconnecting...');
+    setTimeout(connectGoogleFit, 800);
     return;
   }
+
   showToast('🔄 Syncing Google Fit...');
-  var now  = Date.now();
-  var day  = 86400000;
-  var startTime = (now - day) * 1000000; /* nanoseconds */
-  var endTime   = now * 1000000;
+
   try {
-    /* Steps */
-    var stepsRes = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
+    var res = await fetch('/.netlify/functions/google-fit', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        aggregateBy: [{ dataTypeName: 'com.google.step_count.delta' }],
-        bucketByTime: { durationMillis: day },
-        startTimeMillis: now - day,
-        endTimeMillis: now
-      })
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
     });
-    var stepsData = await stepsRes.json();
-    var steps = 0;
-    if(stepsData.bucket && stepsData.bucket[0]){
-      var ds = stepsData.bucket[0].dataset[0];
-      if(ds && ds.point && ds.point[0]) steps = ds.point[0].value[0].intVal || 0;
-    }
-    /* Heart Rate */
-    var hrRes = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        aggregateBy: [{ dataTypeName: 'com.google.heart_rate.bpm' }],
-        bucketByTime: { durationMillis: day },
-        startTimeMillis: now - day,
-        endTimeMillis: now
-      })
-    });
-    var hrData = await hrRes.json();
-    var hr = 0;
-    if(hrData.bucket && hrData.bucket[0]){
-      var ds2 = hrData.bucket[0].dataset[0];
-      if(ds2 && ds2.point && ds2.point[0]) hr = Math.round(ds2.point[0].value[0].fpVal || 0);
-    }
-    /* Calories */
-    var calRes = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        aggregateBy: [{ dataTypeName: 'com.google.calories.expended' }],
-        bucketByTime: { durationMillis: day },
-        startTimeMillis: now - day,
-        endTimeMillis: now
-      })
-    });
-    var calData = await calRes.json();
-    var cal = 0;
-    if(calData.bucket && calData.bucket[0]){
-      var ds3 = calData.bucket[0].dataset[0];
-      if(ds3 && ds3.point && ds3.point[0]) cal = Math.round(ds3.point[0].value[0].fpVal || 0);
-    }
-    /* Update app state */
-    if(steps > 0){
-      vitalsState.steps = steps;
-      var stepsEl = document.getElementById('da-steps');
-      if(stepsEl) stepsEl.textContent = steps.toLocaleString();
-      var vitStepsEl = document.getElementById('vit-steps');
-      if(vitStepsEl) vitStepsEl.textContent = steps.toLocaleString();
-    }
-    if(hr > 0){
-      vitalsState.hr = hr;
-      updateAllVitalsUI();
-    }
-    if(cal > 0){
-      var calEl = document.getElementById('da-cal');
-      if(calEl) calEl.textContent = cal.toLocaleString();
-    }
+
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+    if(data.error) throw new Error(data.error);
+
+    var steps    = data.steps    || 0;
+    var hr       = data.hr       || 0;
+    var calories = data.calories || 0;
+    var distance = data.distance || 0;
+    var activeMin= data.activeMin|| 0;
+
+    /* Update vitalsState */
+    if(steps > 0) vitalsState.steps = steps;
+    if(hr > 0)    vitalsState.hr    = hr;
+
+    /* Update Home screen */
+    var stepsEl = document.getElementById('da-steps');
+    if(stepsEl) stepsEl.textContent = steps.toLocaleString();
+    var calEl = document.getElementById('da-cal');
+    if(calEl) calEl.textContent = calories.toLocaleString();
+    var hrEl = document.getElementById('da-hr');
+    if(hrEl) hrEl.textContent = hr || '--';
+    var distEl = document.getElementById('da-dist');
+    if(distEl) distEl.textContent = distance > 0 ? distance + ' km' : '--';
+
+    /* Update vitals cards */
+    if(hr > 0) try{ updateAllVitalsUI(); }catch(e){}
+
     /* Save to Supabase */
-    var sb = getSupa();
-    if(sb && LST.currentUser && LST.currentUser.id && (steps>0||hr>0)){
-      await sb.from('vitals').insert({
-        patient_id: LST.currentUser.id,
-        hr: hr||null,
-        steps: steps||null,
-        source: 'google_fit',
-        recorded_at: new Date().toISOString()
-      }).catch(function(){});
-    }
-    /* Update connection UI */
-    setConnected('gfit', true); refreshIntegBadges();
+    try{
+      var sb = getSupa();
+      if(sb && LST.currentUser && LST.currentUser.id && (steps>0||hr>0)){
+        sb.from('vitals').insert({
+          patient_id: LST.currentUser.id,
+          hr: hr||null,
+          steps: steps||null,
+          source: 'google_fit',
+          recorded_at: new Date().toISOString()
+        });
+      }
+    }catch(se){}
+
+    localStorage.setItem('connect_gfit','true');
     localStorage.setItem('gfit_steps', steps);
     localStorage.setItem('gfit_hr', hr);
-    localStorage.setItem('gfit_cal', cal);
+    localStorage.setItem('gfit_cal', calories);
+    localStorage.setItem('gfit_dist', distance);
     localStorage.setItem('gfit_synced', new Date().toLocaleTimeString());
-    updateIntegrationCard('gfit');
-    showToast('✅ Google Fit synced! Steps: '+steps.toLocaleString()+' · HR: '+hr+' bpm');
+
+    try{ updateConnectCards(); }catch(e){}
     try{ calcDailyScore(); }catch(e){}
-  } catch(e){
-    console.error('Google Fit sync error:', e);
-    showToast('❌ Sync failed. Check connection and try again.');
+
+    showToast('✅ Synced! Steps: ' + steps.toLocaleString() +
+      (hr ? ' · HR: '+hr+' bpm' : '') +
+      (distance ? ' · '+distance+' km' : ''));
+
+  } catch(e) {
+    console.error('Google Fit sync error:', e.message);
+    showToast('❌ Sync failed: ' + (e.message||'Check connection'));
   }
 }
+
 
 function disconnectGoogleFit(){
   localStorage.removeItem('gfit_token');
