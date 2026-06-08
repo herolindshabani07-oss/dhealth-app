@@ -7862,14 +7862,9 @@ function handleGFitCallback(){
 
 async function syncGoogleFitData(){
   var token = localStorage.getItem('gfit_token');
-  if(!token){ showToast('⚠️ Connect Google Fit first'); return; }
-
-  var expiry = parseInt(localStorage.getItem('gfit_expiry')||'0');
-  if(Date.now() > expiry){
-    localStorage.removeItem('gfit_token');
-    showToast('⚠️ Google Fit token expired — reconnecting...');
-    setTimeout(connectGoogleFit, 800);
-    return;
+  if(!token){ 
+    showToast('⚠️ Connect Google Fit first');
+    return; 
   }
 
   showToast('🔄 Syncing Google Fit...');
