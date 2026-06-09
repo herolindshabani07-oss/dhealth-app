@@ -3474,6 +3474,37 @@ async function callClaude(systemExtra, userMsg, onSuccess, onError, loadingEl, r
 
 function fmt(t){return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');}
 
+/* ════ HELPER I VETËM PËR PANELET AI (kontekst i thellë getProfile, pa dyfishim) ════ */
+async function aiPanel(opts){
+  var btn  = (typeof opts.btn==='string') ? document.getElementById(opts.btn) : opts.btn;
+  var resp = opts.resp ? document.getElementById(opts.resp) : null;
+  var text = document.getElementById(opts.text);
+  var err  = opts.err ? document.getElementById(opts.err) : null;
+  if(!text) return;
+  if(!navigator.onLine){
+    if(typeof showErrToast==='function') showErrToast('No Internet','Connect to the internet to use Claude AI analysis.','warn');
+    else showToast('⚠️ No internet');
+    return;
+  }
+  var origLabel = btn ? btn.innerHTML : '';
+  if(btn){ btn.disabled=true; btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Claude AI analyzing...'; }
+  if(resp){ resp.style.display='block'; if(resp.classList) resp.classList.add('vis'); }
+  if(err) err.classList.remove('vis');
+  text.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  try{
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:opts.maxTokens||900,system:BASE_SYS+getProfile(),messages:[{role:'user',content:opts.prompt}]})});
+    var rawT=await r.text(); if(rawT.trim().startsWith('<')) throw new Error('AI unavailable');
+    var d=JSON.parse(rawT); if(d.error) throw new Error(d.error.message);
+    var tx=d.content&&d.content[0]&&d.content[0].text; if(!tx) throw new Error('Empty');
+    text.innerHTML=fmt(tx);
+  }catch(e){
+    if(err){ if(resp){ resp.style.display='none'; if(resp.classList) resp.classList.remove('vis'); } err.classList.add('vis'); }
+    else text.innerHTML='❌ Connection error. Provo përsëri.';
+  }
+  if(btn){ btn.disabled=false; btn.innerHTML=opts.label || origLabel || 'Re-Analyze'; }
+}
+
 /* VERDICT */
 async function runVerdictAI(){
   var btn=document.getElementById('verdictBtn');
@@ -3494,20 +3525,8 @@ async function runVerdictAI(){
 
 /* PROFILE */
 async function analyzeProfileAI(){
-  var btn=document.getElementById('profileAiBtn');
-  var err=document.getElementById('profile-err');
-  var resp=document.getElementById('profile-resp');
-  var text=document.getElementById('profile-text');
-  btn.disabled=true;btn.innerHTML='<div class="spin"></div> Claude AI analyzing...';
-  err.classList.remove('vis');resp.classList.add('vis');
-  text.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:BASE_SYS+getProfile(),messages:[{role:'user',content:'Analyze my complete medical profile: diagnoses, therapy, lab values, and lifestyle. How are these conditions related? Is my therapy optimal? What are the main health risks I should focus on?'}]})});
-    var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);if(d.error)throw new Error();
-    var tx=d.content&&d.content[0]&&d.content[0].text;if(!tx)throw new Error();
-    text.innerHTML=fmt(tx);
-  }catch(e){resp.classList.remove('vis');err.classList.add('vis');}
-  btn.disabled=false;btn.innerHTML='Diagnostics';
+  return aiPanel({btn:'profileAiBtn', resp:'profile-resp', text:'profile-text', err:'profile-err', label:'Diagnostics',
+    prompt:'Analyze my complete medical profile above: diagnoses, therapy, lab values, vitals, 7-day history and lifestyle. How are these conditions related? Is my therapy optimal? What are the main health risks I should focus on? Use bullet points, be concise.'});
 }
 
 /* BOT CHAT */
@@ -6437,56 +6456,8 @@ async function handleProfFileUpload(event){
 
 /* ══ ANALYZE PROFILE MODAL ══ */
 async function analyzeProfModal(){
-  var btn  = document.getElementById('profAiBtn');
-  var resp = document.getElementById('prof-ai-resp');
-  var text = document.getElementById('prof-ai-text');
-  var err  = document.getElementById('prof-ai-err');
-  if(!btn||!resp||!text) return;
-
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Claude AI analyzing...';
-  resp.style.display = 'block';
-  err.classList.remove('vis');
-  text.innerHTML = '<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-
-  /* Merr te dhenat nga prof modal */
-  var diags   = Array.from(document.querySelectorAll('#prof-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ') || 'None';
-  var therapy = Array.from(document.querySelectorAll('#prof-therapy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ') || 'None';
-  var allergy = Array.from(document.querySelectorAll('#prof-allergy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ') || 'None';
-  var labs    = Array.from(document.querySelectorAll('#prof-lab-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ') || 'None';
-  var notes   = (document.getElementById('prof-notes')||{}).value || '';
-  var vitals  = 'HR:'+vitalsState.hr+'bpm, BP:'+vitalsState.sys+'/'+vitalsState.dia+'mmHg, SpO2:'+vitalsState.spo2+'%, Glucose:'+vitalsState.glu+'mmol/L';
-
-  try {
-    var r = await fetch('/.netlify/functions/claude',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-5',
-        max_tokens:900,
-        messages:[{role:'user', content:
-          'You are a medical AI. Analyze this patient profile:\n\n'
-          +'Diagnoses: '+diags+'\n'
-          +'Current Therapy: '+therapy+'\n'
-          +'Allergies: '+allergy+'\n'
-          +'Lab Values: '+labs+'\n'
-          +'Vitals: '+vitals+'\n'
-          +'Notes: '+notes+'\n\n'
-          +'Please: 1) Assess how conditions are related, 2) Evaluate therapy effectiveness, 3) Flag any drug-allergy conflicts, 4) Identify top 3 health risks, 5) Give specific recommendations. Be concise and use bullet points.'
-        }]
-      })
-    });
-    var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);
-    if(d.error) throw new Error();
-    var tx = d.content&&d.content[0]&&d.content[0].text;
-    if(!tx) throw new Error();
-    text.innerHTML = tx.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
-  } catch(e) {
-    resp.style.display = 'none';
-    err.classList.add('vis');
-  }
-  btn.disabled = false;
-  btn.innerHTML = 'Diagnostics';
+  return aiPanel({btn:'profAiBtn', resp:'prof-ai-resp', text:'prof-ai-text', err:'prof-ai-err', label:'Diagnostics',
+    prompt:'Analyze my complete patient profile above. 1) How are my conditions related? 2) Evaluate therapy effectiveness, 3) Flag any drug-allergy conflicts, 4) Identify top 3 health risks, 5) Give specific recommendations. Be concise and use bullet points.'});
 }
 
 
@@ -6901,25 +6872,8 @@ async function handleDsFileUpload(event){
 }
 
 async function analyzeDsProfile(){
-  var btn = event.target;
-  var resp = document.getElementById('ds-prof-resp');
-  var text = document.getElementById('ds-prof-text');
-  if(!resp||!text) return;
-  btn.disabled=true; btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Analyzing...';
-  resp.style.display='block';
-  text.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  var diags=Array.from(document.querySelectorAll('#ds-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'None';
-  var therapy=Array.from(document.querySelectorAll('#ds-therapy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'None';
-  var allergy=Array.from(document.querySelectorAll('#ds-allergy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'None';
-  var labs=Array.from(document.querySelectorAll('#ds-lab-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'None';
-  var notes=(document.getElementById('ds-notes')||{}).value||'';
-  var vitals='BP:'+vitalsState.sys+'/'+vitalsState.dia+', HR:'+vitalsState.hr+', Glucose:'+vitalsState.glu+', SpO2:'+vitalsState.spo2;
-  try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,messages:[{role:'user',content:'Analyze patient profile:\nDiagnoses: '+diags+'\nTherapy: '+therapy+'\nAllergies: '+allergy+'\nLabs: '+labs+'\nVitals: '+vitals+'\nNotes: '+notes+'\n\nAssess: 1) condition relationships, 2) therapy effectiveness, 3) drug-allergy conflicts, 4) top 3 risks, 5) recommendations. Use bullets. Be concise.'}]})});
-    var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);
-    text.innerHTML=(d.content&&d.content[0]?d.content[0].text:'Failed.').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
-  }catch(e){text.innerHTML='❌ Connection error.';}
-  btn.disabled=false; btn.innerHTML='Diagnostics';
+  return aiPanel({btn:event.target, resp:'ds-prof-resp', text:'ds-prof-text', label:'Diagnostics', maxTokens:700,
+    prompt:'Analyze my complete patient profile above. Assess: 1) condition relationships, 2) therapy effectiveness, 3) drug-allergy conflicts, 4) top 3 risks, 5) recommendations. Use bullets. Be concise.'});
 }
 
 
