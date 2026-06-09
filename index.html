@@ -1404,6 +1404,15 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div id="platformBanner"></div>
       <!-- Integration Cards -->
       <div style="display:flex;flex-direction:column;gap:7px;">
+        <!-- D Health Ring (pajisja jonë) -->
+        <div id="home-int-ring" onclick="ringConnect()" style="background:linear-gradient(135deg,rgba(13,59,142,0.25),rgba(139,111,232,0.15));border:0.5px solid rgba(139,111,232,0.35);border-radius:14px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#0D3B8E,#8B6FE8);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💍</div>
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:700;color:#F1F5FF;">D Health Ring</div>
+            <div class="int-status" id="ds-ring-status" style="font-size:10px;color:rgba(255,255,255,0.4);">Trokit për t'u lidhur</div>
+          </div>
+          <span style="font-size:12px;color:rgba(255,255,255,0.3);">›</span>
+        </div>
         <!-- Google Fit -->
         <div id="home-int-gfit" onclick="connectGoogleFit()" style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;">
           <div style="width:36px;height:36px;border-radius:11px;background:#E8F5E9;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💚</div>
@@ -5220,6 +5229,7 @@ function llaunchApp() {
     try{ restoreVitalDetails(); }catch(e){}
     try{ restoreHomeScore(); }catch(e){}
     try{ applyAvatar(); }catch(e){}
+    try{ updateRingCard(); }catch(e){}
     try{ updateIndicatorBadge(); }catch(e){}
     /* Auto-sync nëse i lidhur */
     if(isConnected('gfit'))   syncGoogleFitData();
@@ -8383,6 +8393,111 @@ function getHealthPlugin(){
   return window.Capacitor.registerPlugin('HealthPlugin');
 }
 
+/* ═══════════════ D HEALTH RING — COLMI R02 (Bluetooth LE) ═══════════════
+   Protokolli i hapur i COLMI R02: pako 16-byte, byte[0]=komanda,
+   byte[15]=checksum (shuma e 15 byte-ve të parë % 255). */
+var DHRING = {
+  SERVICE:'6e40fff0-b5a3-f393-e0a9-e50e24dcca9e',
+  WRITE:  '6e400002-b5a3-f393-e0a9-e50e24dcca9e',
+  NOTIFY: '6e400003-b5a3-f393-e0a9-e50e24dcca9e',
+  deviceId:null, connected:false, battery:0,
+  steps:0, calories:0, distance:0
+};
+function getBle(){
+  if(!window.Capacitor || !window.Capacitor.registerPlugin) return null;
+  return window.Capacitor.registerPlugin('BluetoothLe');
+}
+function ringChecksum(b){ var s=0; for(var i=0;i<15;i++) s+=b[i]; return s & 255; }
+function ringPacket(cmd, payload){
+  var b=[]; for(var i=0;i<16;i++) b.push(0);
+  b[0]=cmd & 255;
+  if(payload){ for(var j=0;j<payload.length && j<14;j++) b[1+j]=payload[j]&255; }
+  b[15]=ringChecksum(b);
+  return b;
+}
+function bytesToHex(b){ return b.map(function(x){ return ('0'+(x&255).toString(16)).slice(-2); }).join(''); }
+function hexToBytes(h){ var a=[]; h=(h||'').replace(/[^0-9a-fA-F]/g,''); for(var i=0;i<h.length;i+=2) a.push(parseInt(h.substr(i,2),16)); return a; }
+
+async function ringWrite(cmd, payload){
+  var Ble=getBle(); if(!Ble||!DHRING.deviceId) return;
+  try{
+    await Ble.write({ deviceId:DHRING.deviceId, service:DHRING.SERVICE, characteristic:DHRING.WRITE, value:bytesToHex(ringPacket(cmd,payload)) });
+  }catch(e){ console.warn('ring write err', e); }
+}
+
+function ringHandlePacket(bytes){
+  if(!bytes || !bytes.length) return;
+  var cmd=bytes[0];
+  if(cmd===105){                         /* real-time HR / SpO2 */
+    var type=bytes[1], err=bytes[2], val=bytes[3];
+    if(err===0 && val>0){
+      if(type===1){ vitalsState.hr=val; if(typeof dailyState!=='undefined') dailyState.hr=val; showToast('💍 Ring · HR '+val+' bpm'); }
+      else if(type===3){ vitalsState.spo2=val; showToast('💍 Ring · SpO2 '+val+'%'); }
+      try{ updateAllVitalsUI(); }catch(e){}
+    }
+  } else if(cmd===3){                     /* battery */
+    DHRING.battery=bytes[1]; try{ updateRingCard(); }catch(e){}
+  } else if(cmd===0x43){                  /* steps interval (15-min) */
+    var cal=bytes[7]|(bytes[8]<<8), st=bytes[9]|(bytes[10]<<8), di=bytes[11]|(bytes[12]<<8);
+    DHRING.steps+=st; DHRING.calories+=cal; DHRING.distance+=di;
+    if(typeof dailyState!=='undefined'){
+      dailyState.steps=DHRING.steps; dailyState.cal=DHRING.calories;
+      dailyState.dist=Math.round(DHRING.distance/1000*10)/10; vitalsState.steps=DHRING.steps;
+    }
+    try{ updateAllVitalsUI(); }catch(e){}
+  }
+}
+
+async function ringConnect(){
+  if(!isNativeApp()){ showToast('💍 Lidhja me unazën punon vetëm te app-i Android'); return; }
+  var Ble=getBle(); if(!Ble){ showToast('⚠️ Bluetooth s\'është i disponueshëm'); return; }
+  try{
+    showToast('🔵 Duke kërkuar D Health Ring...');
+    await Ble.initialize({ androidNeverForLocation:true });
+    var dev = await Ble.requestDevice({ optionalServices:[DHRING.SERVICE] });
+    DHRING.deviceId = dev.deviceId;
+    await Ble.connect({ deviceId:DHRING.deviceId, timeout:12000 });
+    var key='notification|'+DHRING.deviceId+'|'+DHRING.SERVICE+'|'+DHRING.NOTIFY;
+    Ble.addListener(key, function(res){ try{ ringHandlePacket(hexToBytes(res.value)); }catch(e){} });
+    await Ble.startNotifications({ deviceId:DHRING.deviceId, service:DHRING.SERVICE, characteristic:DHRING.NOTIFY });
+    DHRING.connected=true;
+    localStorage.setItem('dh_ring_id', DHRING.deviceId);
+    localStorage.setItem('connect_ring','true');
+    showToast('✅ D Health Ring u lidh!');
+    try{ updateRingCard(); }catch(e){}
+    setTimeout(ringSync, 1000);
+  }catch(e){ console.error('ring connect', e); showToast('❌ Lidhja dështoi: '+(e.message||e)); }
+}
+
+async function ringSync(){
+  if(!DHRING.connected){ ringConnect(); return; }
+  showToast('🔄 Duke lexuar D Health Ring...');
+  DHRING.steps=0; DHRING.calories=0; DHRING.distance=0;
+  await ringWrite(3);                              /* battery */
+  await ringWrite(0x43,[0,0x0f,0x00,0x5f,0x01]);   /* hapat e sotme */
+  await ringWrite(105,[1,1]);                      /* start HR */
+  setTimeout(function(){ ringWrite(106,[1,0,0]); }, 8000);
+  setTimeout(function(){ ringWrite(105,[3,1]); }, 9000);   /* start SpO2 */
+  setTimeout(function(){ ringWrite(106,[3,0,0]); }, 17000);
+}
+
+async function ringDisconnect(){
+  var Ble=getBle();
+  try{ if(Ble&&DHRING.deviceId) await Ble.disconnect({deviceId:DHRING.deviceId}); }catch(e){}
+  DHRING.connected=false; DHRING.deviceId=null;
+  localStorage.removeItem('connect_ring');
+  try{ updateRingCard(); }catch(e){}
+  showToast('💍 D Health Ring u shkëput');
+}
+
+function updateRingCard(){
+  var st=document.getElementById('ds-ring-status');
+  if(!st) return;
+  var conn = DHRING.connected || localStorage.getItem('connect_ring')==='true';
+  st.textContent = conn ? ('Connected ✓'+(DHRING.battery?(' · 🔋'+DHRING.battery+'%'):'')) : 'Trokit për t\'u lidhur';
+  st.style.color = conn ? 'var(--accent)' : 'rgba(255,255,255,0.4)';
+}
+
 async function connectHealthConnect(){
   var Health = getHealthPlugin();
   if(!Health){ showToast('⚠️ Health Connect s\'është i disponueshëm'); return; }
@@ -8949,6 +9064,8 @@ function syncNow(){
   var btn = document.getElementById('homeSyncBtn');
   if(btn){ btn.disabled=true; btn.innerHTML='⏳ Sync...'; setTimeout(function(){ if(btn){btn.disabled=false; btn.innerHTML='🔄 Sync';} }, 4000); }
   var did = false;
+  /* D Health Ring (përparësi) */
+  if(DHRING.connected || localStorage.getItem('connect_ring')==='true'){ try{ ringSync(); did=true; }catch(e){} }
   /* Burimi i aktivitetit (Google Fit / Health Connect) */
   if(isConnected('gfit')){ try{ syncGoogleFitData(); did=true; }catch(e){} }
   else if(isConnected('fitbit')){ try{ loadFitbitData(); did=true; }catch(e){} }
