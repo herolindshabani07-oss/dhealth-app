@@ -1394,7 +1394,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       </div>
       <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:10px 13px;border:0.5px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:8px;">
         <div style="font-size:18px;">🏃</div>
-        <div style="flex:1;font-size:11px;color:rgba(255,255,255,0.5);">Distance: <strong style="color:#F1F5FF;">--</strong> &nbsp;·&nbsp; Active: <strong style="color:#F1F5FF;">--</strong> &nbsp;·&nbsp; Sleep: <strong style="color:#F1F5FF;">--</strong></div>
+        <div style="flex:1;font-size:11px;color:rgba(255,255,255,0.5);">Distance: <strong id="da-dist" onclick="editDailyMetric('dist')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp; Active: <strong id="da-active" onclick="editDailyMetric('active')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp; Sleep: <strong id="da-sleep" onclick="editDailyMetric('sleep')" style="color:#F1F5FF;cursor:pointer;">--</strong> <span style="opacity:0.5;">✎</span></div>
       </div>
 
     </div>
@@ -3443,8 +3443,13 @@ function getProfile(){
     '• Blood Pressure: '+vitalsState.sys+'/'+vitalsState.dia+' mmHg\n'+
     '• SpO2: '+vitalsState.spo2+'%\n'+
     '• Blood Glucose: '+vitalsState.glu+' mmol/L\n'+
-    '• Temperature: '+vitalsState.temp+'°C\n'+
-    '• Steps today: '+(vitalsState.steps||0)+'\n\n'+
+    '• Temperature: '+vitalsState.temp+'°C\n\n'+
+    'TODAY\'S ACTIVITY:\n'+
+    '• Steps: '+(dailyState.steps||0)+'\n'+
+    '• Calories burned: '+(dailyState.cal||0)+'\n'+
+    '• Distance: '+(dailyState.dist||0)+' km\n'+
+    '• Active minutes: '+(dailyState.active||0)+'\n'+
+    '• Sleep: '+(dailyState.sleep||0)+' h\n\n'+
     '7-DAY VITALS HISTORY:\n'+histStr+'\n\n'+
     'RECENT MEALS:\n'+mealStr+'\n\n'+
     'CURRENT AIR QUALITY ('+(airState.city||'Skopje')+'):\n'+
@@ -3583,22 +3588,35 @@ function updateV(key,val){
   try{setTimeout(calcDailyScore,500);}catch(e){}
 }
 
-/* ════════ FUTJE MANUALE — Daily Activity (Steps / Calories / Puls) ════════ */
+/* ════════ FUTJE MANUALE — Daily Activity (6 metrika) ════════ */
+var dailyState = {steps:0, cal:0, hr:0, dist:0, active:0, sleep:0};
+var DAILY_METRICS = {
+  steps:  {label:'Steps (hapa)',    icon:'👟', el:'da-steps',  max:100000, dec:false},
+  cal:    {label:'Calories (kcal)', icon:'🔥', el:'da-cal',    max:20000,  dec:false},
+  hr:     {label:'Puls avg (bpm)',  icon:'❤️', el:'da-hr',     max:250,    dec:false},
+  dist:   {label:'Distance (km)',   icon:'🏃', el:'da-dist',   max:500,    dec:true},
+  active: {label:'Active (min)',    icon:'⏱', el:'da-active', max:1440,   dec:false},
+  sleep:  {label:'Sleep (orë)',     icon:'😴', el:'da-sleep',  max:24,     dec:true}
+};
+function fmtDaily(type, v){
+  if(!(v>0)) return '--';
+  if(type==='steps'||type==='cal') return v.toLocaleString();
+  if(type==='dist')   return v+' km';
+  if(type==='active') return v+' min';
+  if(type==='sleep')  return v+' h';
+  return String(v);
+}
 function editDailyMetric(type){
-  var cfg = {
-    steps: {label:'Steps (hapa)',     icon:'👟', el:'da-steps', max:100000},
-    cal:   {label:'Calories (kcal)',  icon:'🔥', el:'da-cal',   max:20000},
-    hr:    {label:'Puls avg (bpm)',   icon:'❤️', el:'da-hr',    max:250}
-  }[type];
+  var cfg = DAILY_METRICS[type];
   if(!cfg) return;
-  var raw = ((document.getElementById(cfg.el)||{}).textContent||'').replace(/[^0-9.]/g,'');
+  var cur = dailyState[type]>0 ? dailyState[type] : '';
   var ov = document.createElement('div');
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;';
   ov.innerHTML =
     '<div style="background:#1B2030;border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:20px;width:100%;max-width:320px;font-family:var(--font);box-shadow:0 12px 40px rgba(0,0,0,0.5);">'
     + '<div style="font-size:15px;font-weight:700;color:#F1F5FF;margin-bottom:4px;">'+cfg.icon+' '+cfg.label+'</div>'
     + '<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:14px;">Fut vlerën manualisht për sot</div>'
-    + '<input id="dmInp" type="number" inputmode="numeric" value="'+raw+'" placeholder="0" '
+    + '<input id="dmInp" type="number" inputmode="'+(cfg.dec?'decimal':'numeric')+'" step="'+(cfg.dec?'0.1':'1')+'" value="'+cur+'" placeholder="0" '
     + 'style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;font-size:20px;font-weight:700;text-align:center;font-family:var(--font);margin-bottom:14px;box-sizing:border-box;"/>'
     + '<div style="display:flex;gap:8px;">'
     + '<button id="dmCancel" style="flex:1;padding:12px;border-radius:12px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font);">Anulo</button>'
@@ -3611,9 +3629,10 @@ function editDailyMetric(type){
   ov.addEventListener('click', function(e){ if(e.target===ov) close(); });
   ov.querySelector('#dmCancel').onclick = close;
   ov.querySelector('#dmSave').onclick = function(){
-    var val = parseInt(inp.value)||0;
+    var val = cfg.dec ? (parseFloat(inp.value)||0) : (parseInt(inp.value)||0);
     if(val < 0) val = 0;
     if(val > cfg.max) val = cfg.max;
+    if(cfg.dec) val = Math.round(val*10)/10;
     saveDailyMetric(type, val);
     close();
   };
@@ -3621,24 +3640,20 @@ function editDailyMetric(type){
 }
 
 function saveDailyMetric(type, val){
-  if(type==='steps'){
-    vitalsState.steps = val;
-    var s=document.getElementById('da-steps'); if(s) s.textContent = val>0?val.toLocaleString():'--';
-    localStorage.setItem('da_steps_manual', String(val));
-  } else if(type==='cal'){
-    var c=document.getElementById('da-cal'); if(c) c.textContent = val>0?val.toLocaleString():'--';
-    localStorage.setItem('da_cal_manual', String(val));
-  } else if(type==='hr'){
-    vitalsState.hr = val;
-    var h=document.getElementById('da-hr'); if(h) h.textContent = val>0?val:'--';
-    localStorage.setItem('da_hr_manual', String(val));
-  }
+  if(!DAILY_METRICS[type]) return;
+  dailyState[type] = val;
+  if(type==='steps') vitalsState.steps = val;
+  if(type==='hr')    vitalsState.hr = val;
+  var el = document.getElementById(DAILY_METRICS[type].el);
+  if(el) el.textContent = fmtDaily(type, val);
+  localStorage.setItem('da_'+type+'_manual', String(val));
   localStorage.setItem('da_manual_date', new Date().toDateString());
   try{ updateAllVitalsUI(); }catch(e){}   /* sinkronizon Home + Diagnostic */
   try{ saveDailyRecord(); }catch(e){}     /* ruan në historik lokal (për AI) */
   try{ calcDailyScore(); }catch(e){}
   try{ saveDailyActivityToSupabase(); }catch(e){}  /* ruan në llogari (email) */
-  showToast('✅ '+(type==='steps'?'Hapat':type==='cal'?'Kaloritë':'Pulsi')+' u ruajtën: '+val.toLocaleString());
+  var names={steps:'Hapat',cal:'Kaloritë',hr:'Pulsi',dist:'Distanca',active:'Aktiviteti',sleep:'Gjumi'};
+  showToast('✅ '+(names[type]||type)+' u ruajtën: '+fmtDaily(type,val));
 }
 
 /* Ruaj Daily Activity te llogaria (Supabase) — një rresht për ditë */
@@ -3646,14 +3661,16 @@ async function saveDailyActivityToSupabase(){
   try{
     var sb = getSupa();
     if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return;
-    var num = function(id){ var e=document.getElementById(id); return e?(parseInt((e.textContent||'').replace(/[^0-9]/g,''))||0):0; };
     var today = new Date().toISOString().split('T')[0];
     await sb.from('daily_activity').upsert({
       patient_id:    LST.currentUser.id,
       activity_date: today,
-      steps:         num('da-steps'),
-      calories:      num('da-cal'),
-      hr_avg:        num('da-hr'),
+      steps:         dailyState.steps,
+      calories:      dailyState.cal,
+      hr_avg:        dailyState.hr,
+      distance_km:   dailyState.dist,
+      active_min:    dailyState.active,
+      sleep_h:       dailyState.sleep,
       updated_at:    new Date().toISOString()
     }, {onConflict:'patient_id,activity_date'});
   }catch(e){ console.log('Daily activity Supabase error:', e.message); }
@@ -3667,9 +3684,17 @@ async function loadDailyActivityFromSupabase(userId){
     var today = new Date().toISOString().split('T')[0];
     var da = await sb.from('daily_activity').select('*').eq('patient_id', userId).eq('activity_date', today).single();
     if(da && da.data){
-      if(da.data.steps>0){ vitalsState.steps = da.data.steps; var s=document.getElementById('da-steps'); if(s) s.textContent = da.data.steps.toLocaleString(); }
-      if(da.data.calories>0){ var c=document.getElementById('da-cal'); if(c) c.textContent = da.data.calories.toLocaleString(); }
-      if(da.data.hr_avg>0){ if(!vitalsState.hr) vitalsState.hr = da.data.hr_avg; var h=document.getElementById('da-hr'); if(h) h.textContent = da.data.hr_avg; }
+      var map = {steps:'steps', cal:'calories', hr:'hr_avg', dist:'distance_km', active:'active_min', sleep:'sleep_h'};
+      Object.keys(map).forEach(function(k){
+        var v = da.data[map[k]];
+        if(v && v>0){
+          dailyState[k] = v;
+          var el = document.getElementById(DAILY_METRICS[k].el);
+          if(el) el.textContent = fmtDaily(k, v);
+        }
+      });
+      if(dailyState.steps>0) vitalsState.steps = dailyState.steps;
+      if(dailyState.hr>0 && !vitalsState.hr) vitalsState.hr = dailyState.hr;
     }
   }catch(e){}
 }
@@ -3677,14 +3702,18 @@ async function loadDailyActivityFromSupabase(userId){
 /* Rikthe vlerat manuale të sotme pas rifreskimit (vetëm nëse s'ka sync aktiv) */
 function restoreDailyActivity(){
   if(localStorage.getItem('da_manual_date') !== new Date().toDateString()) return;
-  var st = parseInt(localStorage.getItem('da_steps_manual')||'0')||0;
-  var cl = parseInt(localStorage.getItem('da_cal_manual')||'0')||0;
-  var hr = parseInt(localStorage.getItem('da_hr_manual')||'0')||0;
-  var s=document.getElementById('da-steps'); if(s && st>0) s.textContent = st.toLocaleString();
-  var c=document.getElementById('da-cal');   if(c && cl>0) c.textContent = cl.toLocaleString();
-  var h=document.getElementById('da-hr');    if(h && hr>0) h.textContent = hr;
-  if(st>0) vitalsState.steps = st;
-  if(hr>0) vitalsState.hr = hr;
+  Object.keys(DAILY_METRICS).forEach(function(k){
+    var dec = DAILY_METRICS[k].dec;
+    var v = dec ? (parseFloat(localStorage.getItem('da_'+k+'_manual')||'0')||0)
+                : (parseInt(localStorage.getItem('da_'+k+'_manual')||'0')||0);
+    if(v>0){
+      dailyState[k] = v;
+      var el = document.getElementById(DAILY_METRICS[k].el);
+      if(el) el.textContent = fmtDaily(k, v);
+    }
+  });
+  if(dailyState.steps>0) vitalsState.steps = dailyState.steps;
+  if(dailyState.hr>0) vitalsState.hr = dailyState.hr;
 }
 
 function toggleVI(){
@@ -7405,11 +7434,12 @@ function collectAllData(){
     glu:  vitalsState.glu  || 0,
     temp: vitalsState.temp || 0
   };
-  /* Aktiviteti */
-  var stepsEl = document.getElementById('da-steps');
-  var steps = stepsEl ? parseInt(stepsEl.textContent.replace(',',''))||0 : 0;
-  var calEl = document.getElementById('da-cal');
-  var cal = calEl ? parseInt(calEl.textContent.replace(',',''))||0 : 0;
+  /* Aktiviteti (nga dailyState) */
+  var steps  = (typeof dailyState!=='undefined' ? dailyState.steps : 0) || 0;
+  var cal    = (typeof dailyState!=='undefined' ? dailyState.cal   : 0) || 0;
+  var dist   = (typeof dailyState!=='undefined' ? dailyState.dist  : 0) || 0;
+  var active = (typeof dailyState!=='undefined' ? dailyState.active: 0) || 0;
+  var sleep  = (typeof dailyState!=='undefined' ? dailyState.sleep : 0) || 0;
   /* AQI */
   var aqiEl = document.getElementById('aqiVal');
   var aqi = aqiEl ? parseInt(aqiEl.textContent)||0 : 0;
@@ -7442,7 +7472,7 @@ function collectAllData(){
   /* Historiku 7-ditor */
   var histArr = [];
   try{ var rawH=JSON.parse(localStorage.getItem('vitals_daily_history')||'[]'); histArr=Array.isArray(rawH)?rawH:Object.keys(rawH).sort().reverse().map(function(k){return rawH[k];}); }catch(e){}
-  return {v, steps, cal, aqi, aqiStatus, diags, therapy, allergies, labs, notes, ecg, history: histArr};
+  return {v, steps, cal, dist, active, sleep, aqi, aqiStatus, diags, therapy, allergies, labs, notes, ecg, history: histArr};
 }
 
 async function runCorrelationEngine(){
@@ -7464,6 +7494,9 @@ async function runCorrelationEngine(){
   + '\nACTIVITY:\n'
   + '- Steps today: '+d.steps+'\n'
   + '- Calories: '+d.cal+'\n'
+  + '- Distance: '+d.dist+' km\n'
+  + '- Active minutes: '+d.active+'\n'
+  + '- Sleep: '+d.sleep+' h\n'
   + '\nAIR QUALITY:\n'
   + '- AQI: '+d.aqi+' ('+d.aqiStatus+')\n'
   + '\nMEDICAL PROFILE:\n'
@@ -8080,6 +8113,8 @@ async function syncHealthConnect(){
 
     if(steps > 0) vitalsState.steps = steps;
     if(hr    > 0) vitalsState.hr    = hr;
+    /* Popullo dailyState që getProfile/analiza ta marrin */
+    dailyState.steps = steps; dailyState.cal = calories; dailyState.dist = distance; if(hr>0) dailyState.hr = hr;
 
     var el;
     el=document.getElementById('da-steps'); if(el) el.textContent = steps>0 ? steps.toLocaleString() : '--';
@@ -8299,6 +8334,8 @@ async function syncGoogleFitData(){
     /* ── Perditëso vitalsState ── */
     if(steps    > 0)  vitalsState.steps = steps;
     if(hr       > 0)  vitalsState.hr    = hr;
+    /* Popullo dailyState që getProfile/analiza ta marrin */
+    dailyState.steps = steps; dailyState.cal = calories; dailyState.dist = distance; if(hr>0) dailyState.hr = hr;
     if(sys      > 0){ vitalsState.sys   = sys; vitalsState.dia = dia; }
     if(glu      > 0)  vitalsState.glu   = glu;
     if(spo2     > 0)  vitalsState.spo2  = spo2;
