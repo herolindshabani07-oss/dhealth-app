@@ -7897,6 +7897,8 @@ async function syncGoogleFitData(){
 
     var data = await res.json();
 
+    console.log('🔵 GFit aggregate response:', JSON.stringify(data));
+
     /* ── Nxirr vlerat nga buckets ── */
     var steps = 0, hr = 0, calories = 0, distance = 0, activeMin = 0;
     var sys = 0, dia = 0, glu = 0, spo2 = 0;
@@ -7936,6 +7938,8 @@ async function syncGoogleFitData(){
         });
       });
     });
+
+    console.log('🟢 GFit parsed → steps:', steps, '| hr:', hr, '| calories:', calories, '| activeMin:', activeMin);
 
     /* ── Lexo BP / glukozë / SpO2 me dataset:get (raw) ──
        Këto lloje NUK mbështeten nga dataset:aggregate, ndaj i marrim
