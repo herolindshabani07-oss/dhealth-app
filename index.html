@@ -1288,10 +1288,10 @@ select option{background:#0A1628;color:#F1F5FF;}
               <div class="av-drop-av">👩‍⚕️</div>
               <div><div class="av-drop-name">User</div><div class="av-drop-plan">Free Plan</div></div>
             </div>
-            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(initSettings,100)"><div class="av-drop-ico" style="background:var(--bg);">👤</div><div class="av-drop-lbl">My Profile</div></div>
+            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(function(){initSettings();applyProfileMode('profile');},100)"><div class="av-drop-ico" style="background:var(--bg);">👤</div><div class="av-drop-lbl">My Profile</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();switchScreen('subscription')"><div class="av-drop-ico" style="background:var(--ambl);">⭐</div><div class="av-drop-lbl">Subscription</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();switchScreen('notifications');initNotifications()"><div class="av-drop-ico" style="background:var(--pul);">🔔</div><div class="av-drop-lbl">Notifications</div></div>
-            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');initSettings()"><div class="av-drop-ico" style="background:var(--bg);">⚙️</div><div class="av-drop-lbl">Settings</div></div>
+            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(function(){initSettings();applyProfileMode('settings');},100)"><div class="av-drop-ico" style="background:var(--bg);">⚙️</div><div class="av-drop-lbl">Settings</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();gatedAction('private')"><div class="av-drop-ico" style="background:#EBF3FF;">🔒</div><div class="av-drop-lbl">Dr. Shabani</div></div>
             <div class="av-drop-item red" onclick="closeAvDrop();doSignOut()"><div class="av-drop-ico" style="background:#FEF2F2;">🚪</div><div class="av-drop-lbl">Sign Out</div></div>
           </div>
@@ -1883,7 +1883,7 @@ select option{background:#0A1628;color:#F1F5FF;}
   <!-- HEADER -->
   <div style="display:flex;align-items:center;padding:12px 16px 0;gap:10px;">
     <button onclick="goBack()" style="width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.12);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#F1F5FF;">‹</button>
-    <div style="font-size:18px;font-weight:700;color:#F1F5FF;flex:1;">My Profile</div>
+    <div style="font-size:18px;font-weight:700;color:#F1F5FF;flex:1;" id="moreScreenTitle">My Profile</div>
   </div>
 
   <div class="sa">
@@ -1909,7 +1909,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     
 
     <!-- ACCOUNT -->
-    <div class="set-sec">
+    <div class="set-sec" id="sec-account">
       <div class="set-sec-title">Account</div>
       <div class="set-card">
         <div class="set-row" onclick="setShowEdit()">
@@ -1936,7 +1936,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div>
 
     <!-- APPEARANCE -->
-    <div class="set-sec">
+    <div class="set-sec" id="sec-appearance">
       <div class="set-sec-title">Appearance &amp; Language</div>
       <div class="set-card">
         <div class="set-row" style="cursor:default;">
@@ -1958,7 +1958,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div>
 
     <!-- NOTIFICATIONS & PRIVACY -->
-    <div class="set-sec">
+    <div class="set-sec" id="sec-notifications">
       <div class="set-sec-title">Notifications &amp; Privacy</div>
       <div class="set-card">
         <div class="set-row" onclick="switchScreen('notifications');initNotifications();">
@@ -1986,7 +1986,7 @@ select option{background:#0A1628;color:#F1F5FF;}
 
 
     <!-- SUPPORT -->
-    <div class="set-sec">
+    <div class="set-sec" id="sec-support">
       <div class="set-sec-title">Support &amp; About</div>
       <div class="set-card">
         <div class="set-row" onclick="showToast('&#128172; Support chat coming soon')">
@@ -5531,6 +5531,22 @@ function setToggleDark(btn){
   if(mainTgl) mainTgl.style.background = on ? 'var(--primary)' : '#D1D5DB';
   if(mainThumb) mainThumb.style.left = on ? '23px' : '3px';
 }
+/* Filtro ekranin 'more': My Profile = vetëm Account; Settings = pa Account */
+function applyProfileMode(mode){
+  var acct = document.getElementById('sec-account');
+  var others = ['sec-appearance','sec-notifications','sec-support'].map(function(id){ return document.getElementById(id); });
+  var title = document.getElementById('moreScreenTitle');
+  if(mode==='settings'){
+    if(acct) acct.style.display='none';
+    others.forEach(function(e){ if(e) e.style.display=''; });
+    if(title) title.textContent='Settings';
+  } else {
+    if(acct) acct.style.display='';
+    others.forEach(function(e){ if(e) e.style.display='none'; });
+    if(title) title.textContent='My Profile';
+  }
+}
+
 function initSettings(){
   // Sync plan text
   var planEl = document.getElementById('setPlanSub');
