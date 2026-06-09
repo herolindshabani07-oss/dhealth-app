@@ -3412,12 +3412,20 @@ function getProfile(){
       }).join('\n')
     : 'No history recorded yet';
 
-  /* ── Ushqimet e fundit ── */
+  /* ── Ushqyerja e sotme (totale + lista) ── */
   var mealsArr = [];
   try{ mealsArr = JSON.parse(localStorage.getItem('dh_meals') || '[]'); }catch(e){}
-  var mealStr = (mealsArr && mealsArr.length)
-    ? mealsArr.slice(0,5).map(function(m){ return '• '+(m.name||'meal')+' ('+(m.cal||'?')+' kcal)'; }).join('\n')
-    : 'None logged';
+  var todayKey = new Date().toISOString().split('T')[0];
+  var todayMeals = (mealsArr||[]).filter(function(m){ return m.date===todayKey; });
+  var nut = {cal:0,p:0,c:0,f:0,na:0,sugar:0};
+  todayMeals.forEach(function(m){
+    nut.cal+=(m.cal||0); nut.p+=(m.protein||0); nut.c+=(m.carbs||0);
+    nut.f+=(m.fat||0); nut.na+=(m.sodium||0); nut.sugar+=(m.sugar||0);
+  });
+  var mealStr = todayMeals.length
+    ? ('• Total: '+nut.cal+' kcal | Protein '+nut.p+'g | Carbs '+nut.c+'g | Fat '+nut.f+'g | Sodium '+nut.na+'mg | Sugar '+nut.sugar+'g\n'
+       + '• Meals: '+todayMeals.slice(0,6).map(function(m){ return (m.name||'meal')+' ('+(m.cal||0)+' kcal)'; }).join(', '))
+    : 'No meals logged today';
 
   /* ── ECG e fundit (nga historiku) ── */
   var ecgArr = [];
@@ -3445,7 +3453,7 @@ function getProfile(){
     '• Active minutes: '+(dailyState.active||0)+'\n'+
     '• Sleep: '+(dailyState.sleep||0)+' h\n\n'+
     '7-DAY VITALS HISTORY:\n'+histStr+'\n\n'+
-    'RECENT MEALS:\n'+mealStr+'\n\n'+
+    'NUTRITION TODAY:\n'+mealStr+'\n\n'+
     'CURRENT AIR QUALITY ('+(airState.city||'Skopje')+'):\n'+
     (airState.aqi>0
       ? '• US AQI: '+airState.aqi+' ('+(airState.status||'')+')\n• PM2.5: '+airState.pm25+' µg/m³\n'
@@ -7538,7 +7546,15 @@ function collectAllData(){
   /* Historiku 7-ditor */
   var histArr = [];
   try{ var rawH=JSON.parse(localStorage.getItem('vitals_daily_history')||'[]'); histArr=Array.isArray(rawH)?rawH:Object.keys(rawH).sort().reverse().map(function(k){return rawH[k];}); }catch(e){}
-  return {v, steps, cal, dist, active, sleep, aqi, aqiStatus, diags, therapy, allergies, labs, notes, ecg, history: histArr};
+  /* Ushqyerja e sotme */
+  var nut = {cal:0,p:0,c:0,f:0,na:0,sugar:0};
+  try{
+    var tk=new Date().toISOString().split('T')[0];
+    JSON.parse(localStorage.getItem('dh_meals')||'[]').filter(function(m){return m.date===tk;}).forEach(function(m){
+      nut.cal+=(m.cal||0); nut.p+=(m.protein||0); nut.c+=(m.carbs||0); nut.f+=(m.fat||0); nut.na+=(m.sodium||0); nut.sugar+=(m.sugar||0);
+    });
+  }catch(e){}
+  return {v, steps, cal, dist, active, sleep, aqi, aqiStatus, diags, therapy, allergies, labs, notes, ecg, history: histArr, nut: nut};
 }
 
 async function runCorrelationEngine(){
@@ -7563,6 +7579,10 @@ async function runCorrelationEngine(){
   + '- Distance: '+d.dist+' km\n'
   + '- Active minutes: '+d.active+'\n'
   + '- Sleep: '+d.sleep+' h\n'
+  + '\nNUTRITION TODAY:\n'
+  + '- Calories: '+(d.nut?d.nut.cal:0)+' kcal\n'
+  + '- Protein: '+(d.nut?d.nut.p:0)+'g, Carbs: '+(d.nut?d.nut.c:0)+'g, Fat: '+(d.nut?d.nut.f:0)+'g\n'
+  + '- Sodium: '+(d.nut?d.nut.na:0)+'mg, Sugar: '+(d.nut?d.nut.sugar:0)+'g\n'
   + '\nAIR QUALITY:\n'
   + '- AQI: '+d.aqi+' ('+d.aqiStatus+')\n'
   + '\nMEDICAL PROFILE:\n'
@@ -7577,8 +7597,8 @@ async function runCorrelationEngine(){
           return '- '+(h.date||'?')+': BP '+(h.sys||'--')+'/'+(h.dia||'--')+', HR '+(h.hr||'--')+', Glu '+(h.glu||'--')+(h.steps?(', Steps '+h.steps):'');
         }).join('\n')+'\n'
       : '')
-  + '\nFind ALL dangerous correlations between diagnoses, medications, vitals, activity, labs, ECG findings, 7-day trends and environment.'
-  + '\nExamples: High AQI + respiratory disease, low steps + HTA, high glucose + poor sleep, ECG arrhythmia + therapy, worsening BP trend, drug interactions.'
+  + '\nFind ALL dangerous correlations between diagnoses, medications, vitals, activity, nutrition, labs, ECG findings, 7-day trends and environment.'
+  + '\nExamples: high sodium + HTA, high sugar/carbs + diabetes, High AQI + respiratory disease, low steps + HTA, high glucose + poor sleep, ECG arrhythmia + therapy, worsening BP trend, drug interactions.'
   + '\nConsider all possible combinations.'
   + '\n\nRespond ONLY in this exact JSON format (no markdown, no backticks):'
   + '{"score":75,"alarms":[{"level":"critical","title":"Title","message":"Message","action":"What to do now"}],'
