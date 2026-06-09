@@ -8943,14 +8943,17 @@ async function handleMealPhoto(input){
       var mediaType = currentMealPhoto.match(/data:(.*?);/)[1];
 
       var prompt = 'Analyze this meal photo and assess its impact on MY health, using my COMPLETE profile above '
-        + '(today\'s vitals — BP, glucose, HR, SpO2 — plus my diagnoses, therapy and nutrition so far today).\n\n'
+        + '(today\'s vitals BP/glucose/HR/SpO2, my DIAGNOSES, my LAB VALUES, my latest ECG findings, my current THERAPY/medications, and my nutrition so far today).\n\n'
+        + 'CRUCIAL: consider DRUG–FOOD and CONDITION–FOOD interactions and reference them explicitly. '
+        + 'Example: if I take Metformin for diabetes and this is a high-sugar dessert, explain how harmful it is for my glucose control and exactly what to do. '
+        + 'Likewise: sodium vs my BP/HTA, saturated fat vs my cholesterol/ECG/cardiac status, potassium vs kidney labs, etc.\n\n'
         + 'Return ONLY valid JSON in this exact format (no markdown, no backticks):\n'
         + '{"meal_name":"Name","ingredients":[{"item":"ingredient","amount":"100g","kcal":150}],'
         + '"total_calories":388,"protein":25,"carbs":30,"fat":15,"sodium_mg":450,"sugar_g":5,'
         + '"warnings":["warning if applicable"],'
         + '"health_impact":{"level":"worsen|neutral|improve",'
-        + '"summary":"1-2 sentences: how THIS meal affects my current vitals/conditions — does it worsen or improve my state, referencing my real numbers",'
-        + '"tips":["short actionable tip 1","tip 2"]}}';
+        + '"summary":"2-3 sentences: how THIS meal affects my current state given my vitals, lab values, ECG, diagnoses AND medications — reference my REAL numbers and name the specific interaction (e.g. high sugar vs my Metformin/diabetes and glucose X, sodium vs my BP X, fat vs my cholesterol/ECG)",'
+        + '"tips":["CONCRETE quantified action e.g. walk 10,000 steps or 45 min","another concrete action e.g. drink 500ml water / take medication with food / skip carbs next meal"]}}';
 
       var r = await fetch('/.netlify/functions/claude',{
         method:'POST',
@@ -9121,10 +9124,10 @@ async function aiMealSuggestion(meal){
         model:'claude-sonnet-4-5', max_tokens:450, system: BASE_SYS+getProfile(),
         messages:[{role:'user', content:
           'I just logged this meal: '+mealDesc+'.\n\n'
-          + 'Based on my COMPLETE profile above (today\'s vitals — BP, glucose, HR, SpO2; my diagnoses; my therapy; and my total nutrition so far today), give SHORT personalized feedback:\n'
-          + '1) Is this meal OK for me right now given my vitals and conditions?\n'
-          + '2) Any specific risk (e.g. sodium vs my BP, sugar/carbs vs my glucose, fat vs cholesterol/heart)?\n'
-          + '3) One concrete action (e.g. drink water, walk X min, lighter next meal, avoid salt).\n'
+          + 'Based on my COMPLETE profile above (today\'s vitals BP/glucose/HR/SpO2; my diagnoses; my LAB VALUES; my latest ECG; my THERAPY/medications; and my total nutrition today), give SHORT personalized feedback:\n'
+          + '1) Is this meal OK for me right now given my vitals, labs and conditions?\n'
+          + '2) Any specific DRUG–FOOD or CONDITION–FOOD risk (e.g. high sugar vs my Metformin/diabetes, sodium vs my BP, fat vs cholesterol/ECG/heart, potassium vs kidney labs)? Name the interaction.\n'
+          + '3) One CONCRETE quantified action (e.g. walk 10,000 steps / 45 min, drink 500ml water, take medication with food, skip carbs next meal).\n'
           + 'Use max 3 short bullets •. Reference my REAL numbers. Be warm, practical, specific. Reply in the user\'s language (Albanian if profile is Albanian).'
         }]
       })});
