@@ -1373,28 +1373,28 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="hs">
       <div class="sh"><div class="st">Daily Activity</div><span style="font-size:12px;color:#60A5FA;font-weight:500;">Today</span></div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
-        <div onclick="editDailyMetric('steps')" title="Trokit për të futur hapat" style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;cursor:pointer;">
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
           <div style="font-size:22px;margin-bottom:4px;">👟</div>
           <div style="font-size:18px;font-weight:700;color:#60A5FA;" id="da-steps">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Steps ✎</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Steps</div>
           <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--primary);"></div></div>
         </div>
-        <div onclick="editDailyMetric('cal')" title="Trokit për të futur kaloritë" style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;cursor:pointer;">
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
           <div style="font-size:22px;margin-bottom:4px;">🔥</div>
           <div style="font-size:18px;font-weight:700;color:var(--orange);" id="da-cal">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Calories ✎</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Calories</div>
           <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--orange);"></div></div>
         </div>
-        <div onclick="editDailyMetric('hr')" title="Trokit për të futur pulsin mesatar" style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;cursor:pointer;">
+        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
           <div style="font-size:22px;margin-bottom:4px;">❤️</div>
           <div style="font-size:18px;font-weight:700;color:var(--heart);" id="da-hr">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Puls avg ✎</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Puls avg</div>
           <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--heart);"></div></div>
         </div>
       </div>
       <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:10px 13px;border:0.5px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:8px;">
         <div style="font-size:18px;">🏃</div>
-        <div style="flex:1;font-size:11px;color:rgba(255,255,255,0.5);">Distance: <strong id="da-dist" onclick="editDailyMetric('dist')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp; Active: <strong id="da-active" onclick="editDailyMetric('active')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp; Sleep: <strong id="da-sleep" onclick="editDailyMetric('sleep')" style="color:#F1F5FF;cursor:pointer;">--</strong> <span style="opacity:0.5;">✎</span></div>
+        <div style="flex:1;font-size:11px;color:rgba(255,255,255,0.5);">Distance: <strong id="da-dist" style="color:#F1F5FF;">--</strong> &nbsp;·&nbsp; Active: <strong id="da-active" style="color:#F1F5FF;">--</strong> &nbsp;·&nbsp; Sleep: <strong id="da-sleep" style="color:#F1F5FF;">--</strong></div>
       </div>
 
     </div>
@@ -1440,6 +1440,7 @@ select option{background:#0A1628;color:#F1F5FF;}
           </div>
           <div style="font-size:10px;font-weight:700;color:#4ADE80;background:rgba(45,200,160,0.2);padding:3px 9px;border-radius:8px;">Active</div>
         </div>
+        <button id="ds-toggle-btn" onclick="toggleDataSources()" style="margin-top:2px;padding:9px;border-radius:12px;border:0.5px dashed rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.6);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">➕ Shfaq burimet e tjera</button>
       </div>
     </div>
   </div>
@@ -1703,20 +1704,25 @@ select option{background:#0A1628;color:#F1F5FF;}
 
     <!-- DAILY ACTIVITY IN VITALS -->
     <div style="margin:10px 16px 0;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;border:0.5px solid rgba(255,255,255,0.12);padding:13px 14px;">
-      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">🏃 Daily Activity</div>
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">🏃 Daily Activity <span style="opacity:0.6;font-weight:500;text-transform:none;">— trokit për të shënuar ✎</span></div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-        <div style="text-align:center;">
+        <div onclick="editDailyMetric('steps')" title="Fut hapat" style="text-align:center;cursor:pointer;">
           <div style="font-size:18px;font-weight:700;color:#60A5FA;" id="vit-steps">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">👟 Steps</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">👟 Steps ✎</div>
         </div>
-        <div style="text-align:center;">
+        <div onclick="editDailyMetric('cal')" title="Fut kaloritë" style="text-align:center;cursor:pointer;">
           <div style="font-size:18px;font-weight:700;color:var(--orange);" id="vit-cal">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">🔥 Calories</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">🔥 Calories ✎</div>
         </div>
-        <div style="text-align:center;">
+        <div onclick="editDailyMetric('hr')" title="Fut pulsin mesatar" style="text-align:center;cursor:pointer;">
           <div style="font-size:18px;font-weight:700;color:var(--heart);" id="vit-hr-avg">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">❤️ Puls avg</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">❤️ Puls avg ✎</div>
         </div>
+      </div>
+      <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);font-size:11px;color:rgba(255,255,255,0.5);text-align:center;">
+        Distance: <strong id="vit-dist" onclick="editDailyMetric('dist')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp;
+        Active: <strong id="vit-active" onclick="editDailyMetric('active')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp;
+        Sleep: <strong id="vit-sleep" onclick="editDailyMetric('sleep')" style="color:#F1F5FF;cursor:pointer;">--</strong> <span style="opacity:0.5;">✎</span>
       </div>
     </div>
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;margin:10px 16px 0;border:0.5px solid rgba(255,255,255,0.12);overflow:hidden;">
@@ -5955,16 +5961,18 @@ function updateAllVitalsUI(){
   if(vrdSpo2) vrdSpo2.className = spo2Cls;
   if(vrdSpo2V) vrdSpo2V.textContent = spo2Txt;
 
-  /* Pasqyro Daily Activity (steps/calories/puls) midis Home dhe Vitals — sinkron i plotë */
+  /* Pasqyro Daily Activity (6 metrika) midis Home (da-*) dhe Vitals (vit-*) — sinkron i plotë */
   if(typeof dailyState!=='undefined'){
     var pulsAvg = dailyState.hr || vitalsState.hr || 0;
-    var setTxt = function(id, v, comma){
-      var e=document.getElementById(id); if(!e) return;
-      e.textContent = (v>0 ? (comma ? v.toLocaleString() : v) : '--');
-    };
-    setTxt('da-steps',  dailyState.steps, true);  setTxt('vit-steps',  dailyState.steps, true);
-    setTxt('da-cal',    dailyState.cal,   true);  setTxt('vit-cal',    dailyState.cal,   true);
-    setTxt('da-hr',     pulsAvg,          false); setTxt('vit-hr-avg', pulsAvg,          false);
+    var num=function(v){return v.toLocaleString();}, plain=function(v){return String(v);},
+        km=function(v){return v+' km';}, mn=function(v){return v+' min';}, hh=function(v){return v+' h';};
+    var setT = function(id, v, f){ var e=document.getElementById(id); if(!e) return; e.textContent = (v>0 ? f(v) : '--'); };
+    /* Home */
+    setT('da-steps',dailyState.steps,num); setT('da-cal',dailyState.cal,num); setT('da-hr',pulsAvg,plain);
+    setT('da-dist',dailyState.dist,km);    setT('da-active',dailyState.active,mn); setT('da-sleep',dailyState.sleep,hh);
+    /* Vitals */
+    setT('vit-steps',dailyState.steps,num); setT('vit-cal',dailyState.cal,num); setT('vit-hr-avg',pulsAvg,plain);
+    setT('vit-dist',dailyState.dist,km);    setT('vit-active',dailyState.active,mn); setT('vit-sleep',dailyState.sleep,hh);
     var vst=document.getElementById('v-steps');
     if(vst && document.activeElement!==vst) vst.value = dailyState.steps>0 ? dailyState.steps : '';
   }
@@ -8688,6 +8696,11 @@ setInterval(function(){
 
 
 /* ════ DATA SOURCES STATUS ════ */
+var dsExpanded = false;
+function toggleDataSources(){
+  dsExpanded = !dsExpanded;
+  updateDataSources();
+}
 function updateDataSources(){
   var apps = [
     {key:'gfit',  name:'Google Fit',  storage:'connect_gfit'},
@@ -8695,6 +8708,7 @@ function updateDataSources(){
     {key:'fitbit',name:'Fitbit',       storage:'connect_fitbit'}
   ];
   var connected = 0;
+  var hiddenCount = 0;
   apps.forEach(function(a){
     var rawConn = localStorage.getItem(a.storage);
     var isConn = rawConn === '1' || rawConn === 'true';
@@ -8709,11 +8723,28 @@ function updateDataSources(){
         el.style.color = 'var(--tm)';
       }
     }
+    /* Shfaq vetëm aktivin; të paaktivizuarit fshihen derisa të shtypet butoni */
+    var card = document.getElementById('home-int-'+a.key);
+    if(card){
+      var show = isConn || dsExpanded;
+      card.style.display = show ? 'flex' : 'none';
+      if(!isConn) hiddenCount++;
+    }
   });
   /* Manual is always active */
   connected++;
   var countEl = document.getElementById('dataSourcesCount');
   if(countEl) countEl.textContent = connected+'/'+(apps.length+1)+' active';
+
+  /* Butoni i palosjes */
+  var btn = document.getElementById('ds-toggle-btn');
+  if(btn){
+    if(hiddenCount===0){ btn.style.display='none'; }   /* të gjitha aktive */
+    else{
+      btn.style.display='block';
+      btn.textContent = dsExpanded ? '➖ Fshih burimet e tjera' : ('➕ Shto burim ('+hiddenCount+')');
+    }
+  }
 }
 
 /* Auto-update */
