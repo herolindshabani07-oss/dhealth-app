@@ -1700,6 +1700,11 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div style="text-align:center;"><div id="nutrFat" style="font-size:13px;font-weight:700;color:#FBBF24;">0g</div><div style="color:rgba(255,255,255,0.5);">Fat</div></div>
         <div style="text-align:center;"><div id="nutrSodium" style="font-size:13px;font-weight:700;color:#DC2626;">0mg</div><div style="color:rgba(255,255,255,0.5);">Sodium</div></div>
       </div>
+      <!-- AI SUGGESTION — i lidhur me vitals + Diagnostic profile -->
+      <div id="mealAiSuggestion" style="display:none;margin-top:10px;padding:11px 12px;border-radius:14px;background:linear-gradient(135deg,rgba(13,59,142,0.25),rgba(139,111,232,0.15));border:0.5px solid rgba(139,111,232,0.3);">
+        <div style="font-size:10px;font-weight:700;color:#A5B4FC;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">🤖 AI Suggestion — sipas gjendjes suaj</div>
+        <div id="mealAiSuggestionText" style="font-size:12px;color:rgba(255,255,255,0.9);line-height:1.6;"></div>
+      </div>
     </div>
 
     <!-- DAILY ACTIVITY IN VITALS -->
@@ -9013,8 +9018,9 @@ function confirmAddMeal(){
   saveMeal(meal);
   closeNutritionModal(null);
   showToast('✅ '+meal.name+' added! +'+meal.cal+' kcal');
-  /* Run risk check after meal added */
+  /* Run risk check + AI suggestion after meal added */
   setTimeout(function(){ foodRiskCheck(meal); }, 600);
+  setTimeout(function(){ try{ aiMealSuggestion(meal); }catch(e){} }, 700);
 }
 
 function addManualMeal(){
@@ -9037,6 +9043,7 @@ function addManualMeal(){
   closeNutritionModal(null);
   showToast('✅ '+meal.name+' added!');
   setTimeout(function(){ foodRiskCheck(meal); }, 600);
+  setTimeout(function(){ try{ aiMealSuggestion(meal); }catch(e){} }, 700);
 }
 
 function saveMeal(meal){
@@ -9066,6 +9073,37 @@ function saveMeal(meal){
       else console.log('✅ Meal saved to Supabase:', meal.name);
     });
   }
+}
+
+/* ══ AI MEAL SUGGESTION — i lidhur me vitals + gjithë profilin Diagnostic ══ */
+async function aiMealSuggestion(meal){
+  var box = document.getElementById('mealAiSuggestion');
+  var txt = document.getElementById('mealAiSuggestionText');
+  if(!box || !txt) return;
+  box.style.display = 'block';
+  txt.innerHTML = '<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  if(!navigator.onLine){ txt.textContent = '⚠️ S\'ka internet për sugjerime AI.'; return; }
+  var mealDesc = (meal.name||'meal')+' — '+(meal.cal||0)+' kcal, protein '+(meal.protein||0)
+    + 'g, carbs '+(meal.carbs||0)+'g, fat '+(meal.fat||0)+'g, sodium '+(meal.sodium||0)
+    + 'mg, sugar '+(meal.sugar||0)+'g';
+  try{
+    var r = await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-5', max_tokens:450, system: BASE_SYS+getProfile(),
+        messages:[{role:'user', content:
+          'I just logged this meal: '+mealDesc+'.\n\n'
+          + 'Based on my COMPLETE profile above (today\'s vitals — BP, glucose, HR, SpO2; my diagnoses; my therapy; and my total nutrition so far today), give SHORT personalized feedback:\n'
+          + '1) Is this meal OK for me right now given my vitals and conditions?\n'
+          + '2) Any specific risk (e.g. sodium vs my BP, sugar/carbs vs my glucose, fat vs cholesterol/heart)?\n'
+          + '3) One concrete action (e.g. drink water, walk X min, lighter next meal, avoid salt).\n'
+          + 'Use max 3 short bullets •. Reference my REAL numbers. Be warm, practical, specific. Reply in the user\'s language (Albanian if profile is Albanian).'
+        }]
+      })});
+    var rawT = await r.text(); if(rawT.trim().startsWith('<')) throw new Error('AI unavailable');
+    var d = JSON.parse(rawT); if(d.error) throw new Error(d.error.message);
+    var tx = d.content&&d.content[0]&&d.content[0].text; if(!tx) throw new Error('Empty');
+    txt.innerHTML = fmt(tx);
+  }catch(e){ txt.textContent = '⚠️ Sugjerimi AI dështoi. Provo përsëri.'; }
 }
 
 /* ══ FOOD RISK CHECK — kryqëzon ushqimin me profilin mjekësor ══ */
@@ -9214,6 +9252,7 @@ function renderNutritionUI(){
     document.getElementById('nutrTotalCal').textContent = '0';
     document.getElementById('nutrProgress').textContent = '📊 0%';
     document.getElementById('nutrMacros').style.display = 'none';
+    var sugBox = document.getElementById('mealAiSuggestion'); if(sugBox) sugBox.style.display='none';
     return;
   }
 
