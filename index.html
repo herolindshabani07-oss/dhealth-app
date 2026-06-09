@@ -8253,7 +8253,8 @@ function updateDataSources(){
   ];
   var connected = 0;
   apps.forEach(function(a){
-    var isConn = localStorage.getItem(a.storage) === '1';
+    var rawConn = localStorage.getItem(a.storage);
+    var isConn = rawConn === '1' || rawConn === 'true';
     var el = document.getElementById('ds-'+a.key+'-status');
     if(el){
       if(isConn){
