@@ -1373,22 +1373,22 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="hs">
       <div class="sh"><div class="st">Daily Activity</div><span style="font-size:12px;color:#60A5FA;font-weight:500;">Today</span></div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
+        <div onclick="editDailyMetric('steps')" title="Trokit për të futur hapat" style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;cursor:pointer;">
           <div style="font-size:22px;margin-bottom:4px;">👟</div>
           <div style="font-size:18px;font-weight:700;color:#60A5FA;" id="da-steps">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Steps</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Steps ✎</div>
           <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--primary);"></div></div>
         </div>
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
+        <div onclick="editDailyMetric('cal')" title="Trokit për të futur kaloritë" style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;cursor:pointer;">
           <div style="font-size:22px;margin-bottom:4px;">🔥</div>
           <div style="font-size:18px;font-weight:700;color:var(--orange);" id="da-cal">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Calories</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Calories ✎</div>
           <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--orange);"></div></div>
         </div>
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
+        <div onclick="editDailyMetric('hr')" title="Trokit për të futur pulsin mesatar" style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;cursor:pointer;">
           <div style="font-size:22px;margin-bottom:4px;">❤️</div>
           <div style="font-size:18px;font-weight:700;color:var(--heart);" id="da-hr">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Puls avg</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Puls avg ✎</div>
           <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--heart);"></div></div>
         </div>
       </div>
@@ -3567,6 +3567,77 @@ function updateV(key,val){
   try{updateAllVitalsUI();}catch(e){}
   try{setTimeout(calcDailyScore,500);}catch(e){}
 }
+
+/* ════════ FUTJE MANUALE — Daily Activity (Steps / Calories / Puls) ════════ */
+function editDailyMetric(type){
+  var cfg = {
+    steps: {label:'Steps (hapa)',     icon:'👟', el:'da-steps', max:100000},
+    cal:   {label:'Calories (kcal)',  icon:'🔥', el:'da-cal',   max:20000},
+    hr:    {label:'Puls avg (bpm)',   icon:'❤️', el:'da-hr',    max:250}
+  }[type];
+  if(!cfg) return;
+  var raw = ((document.getElementById(cfg.el)||{}).textContent||'').replace(/[^0-9.]/g,'');
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;';
+  ov.innerHTML =
+    '<div style="background:#1B2030;border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:20px;width:100%;max-width:320px;font-family:var(--font);box-shadow:0 12px 40px rgba(0,0,0,0.5);">'
+    + '<div style="font-size:15px;font-weight:700;color:#F1F5FF;margin-bottom:4px;">'+cfg.icon+' '+cfg.label+'</div>'
+    + '<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:14px;">Fut vlerën manualisht për sot</div>'
+    + '<input id="dmInp" type="number" inputmode="numeric" value="'+raw+'" placeholder="0" '
+    + 'style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;font-size:20px;font-weight:700;text-align:center;font-family:var(--font);margin-bottom:14px;box-sizing:border-box;"/>'
+    + '<div style="display:flex;gap:8px;">'
+    + '<button id="dmCancel" style="flex:1;padding:12px;border-radius:12px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font);">Anulo</button>'
+    + '<button id="dmSave" style="flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#0D3B8E,#3B7DD8);color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font);">Ruaj</button>'
+    + '</div></div>';
+  document.body.appendChild(ov);
+  var inp = ov.querySelector('#dmInp');
+  setTimeout(function(){ try{ inp.focus(); inp.select(); }catch(e){} }, 50);
+  function close(){ try{ document.body.removeChild(ov); }catch(e){} }
+  ov.addEventListener('click', function(e){ if(e.target===ov) close(); });
+  ov.querySelector('#dmCancel').onclick = close;
+  ov.querySelector('#dmSave').onclick = function(){
+    var val = parseInt(inp.value)||0;
+    if(val < 0) val = 0;
+    if(val > cfg.max) val = cfg.max;
+    saveDailyMetric(type, val);
+    close();
+  };
+  inp.addEventListener('keydown', function(e){ if(e.key==='Enter') ov.querySelector('#dmSave').click(); });
+}
+
+function saveDailyMetric(type, val){
+  if(type==='steps'){
+    vitalsState.steps = val;
+    var s=document.getElementById('da-steps'); if(s) s.textContent = val>0?val.toLocaleString():'--';
+    localStorage.setItem('da_steps_manual', String(val));
+  } else if(type==='cal'){
+    var c=document.getElementById('da-cal'); if(c) c.textContent = val>0?val.toLocaleString():'--';
+    localStorage.setItem('da_cal_manual', String(val));
+  } else if(type==='hr'){
+    vitalsState.hr = val;
+    var h=document.getElementById('da-hr'); if(h) h.textContent = val>0?val:'--';
+    localStorage.setItem('da_hr_manual', String(val));
+  }
+  localStorage.setItem('da_manual_date', new Date().toDateString());
+  try{ updateAllVitalsUI(); }catch(e){}   /* sinkronizon Home + Diagnostic */
+  try{ saveDailyRecord(); }catch(e){}     /* ruan në historik (për AI) */
+  try{ calcDailyScore(); }catch(e){}
+  showToast('✅ '+(type==='steps'?'Hapat':type==='cal'?'Kaloritë':'Pulsi')+' u ruajtën: '+val.toLocaleString());
+}
+
+/* Rikthe vlerat manuale të sotme pas rifreskimit (vetëm nëse s'ka sync aktiv) */
+function restoreDailyActivity(){
+  if(localStorage.getItem('da_manual_date') !== new Date().toDateString()) return;
+  var st = parseInt(localStorage.getItem('da_steps_manual')||'0')||0;
+  var cl = parseInt(localStorage.getItem('da_cal_manual')||'0')||0;
+  var hr = parseInt(localStorage.getItem('da_hr_manual')||'0')||0;
+  var s=document.getElementById('da-steps'); if(s && st>0) s.textContent = st.toLocaleString();
+  var c=document.getElementById('da-cal');   if(c && cl>0) c.textContent = cl.toLocaleString();
+  var h=document.getElementById('da-hr');    if(h && hr>0) h.textContent = hr;
+  if(st>0) vitalsState.steps = st;
+  if(hr>0) vitalsState.hr = hr;
+}
+
 function toggleVI(){
   panelOpen=!panelOpen;
   var panel=document.getElementById('viPanel'),arr=document.getElementById('trigArr'),btn=document.getElementById('vitTrig');
@@ -4941,6 +5012,8 @@ function llaunchApp() {
   setTimeout(function(){
     initPlatformDetection();
     refreshIntegBadges();
+    /* Rikthe vlerat manuale të Daily Activity (para sync-ut) */
+    try{ restoreDailyActivity(); }catch(e){}
     /* Auto-sync nëse i lidhur */
     if(isConnected('gfit'))   syncGoogleFitData();
     if(isConnected('fitbit')) try{ loadFitbitData(); }catch(e){}
