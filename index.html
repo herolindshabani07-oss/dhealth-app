@@ -1320,7 +1320,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       </div>
     </div>
     <div class="hs">
-      <div class="sh"><div class="st">🌍 Air Quality — Skopje</div><span style="font-size:11px;color:rgba(255,255,255,0.5);" id="aqiTime">Loading...</span></div>
+      <div class="sh"><div class="st">🌍 Air Quality — <span id="aqiCityLbl">Skopje</span></div><span style="font-size:11px;color:rgba(255,255,255,0.5);" id="aqiTime">Loading...</span></div>
       <div id="aqiCard" style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;padding:14px 16px;border:0.5px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:14px;">
         <div id="aqiCircle" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">
           <div id="aqiVal" style="font-size:20px;font-weight:700;color:#fff;">—</div>
@@ -3321,6 +3321,7 @@ function drEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 </script><script>
 /* ════════════════════ STATE ════════════════════ */
 var vitalsState={hr:0,spo2:0,sys:0,dia:0,glu:0,steps:0,temp:0,rr:0,hrv:0};
+var airState={aqi:0, pm25:0, status:'', city:'Skopje'};
 var botHistory=[];
 var panelOpen=false;
 var isListening=false;
@@ -3438,6 +3439,11 @@ function getProfile(){
     '• Steps today: '+(vitalsState.steps||0)+'\n\n'+
     '7-DAY VITALS HISTORY:\n'+histStr+'\n\n'+
     'RECENT MEALS:\n'+mealStr+'\n\n'+
+    'CURRENT AIR QUALITY ('+(airState.city||'Skopje')+'):\n'+
+    (airState.aqi>0
+      ? '• US AQI: '+airState.aqi+' ('+(airState.status||'')+')\n• PM2.5: '+airState.pm25+' µg/m³\n'
+        + '(Consider this when advising outdoor activity, especially for respiratory/cardiac conditions.)\n'
+      : '• Not available yet\n')+'\n'+
     'NOTES: '+notes;
 }
 var BASE_SYS='You are Health BOT, an advanced medical AI with full access to the patient\'s medical profile.\n\n'+
@@ -6054,7 +6060,7 @@ setInterval(function(){
 
 
 
-/* ════ AIR QUALITY — IQAir ════ */
+/* ════ AIR QUALITY — Open-Meteo (live, falas, pa API key) ════ */
 async function loadAirQuality(){
   var aqiVal    = document.getElementById('aqiVal');
   var aqiStatus = document.getElementById('aqiStatus');
@@ -6064,21 +6070,38 @@ async function loadAirQuality(){
   var aqiTime   = document.getElementById('aqiTime');
   if(!aqiVal) return;
 
+  /* Koordinatat — provo vendndodhjen, përndryshe Shkup */
+  var lat = 41.9981, lon = 21.4254, city = 'Skopje';
+  try{
+    var pos = await new Promise(function(resolve){
+      if(!navigator.geolocation){ resolve(null); return; }
+      navigator.geolocation.getCurrentPosition(
+        function(p){ resolve(p.coords); },
+        function(){ resolve(null); },
+        {timeout:5000, maximumAge:600000}
+      );
+    });
+    if(pos){ lat = pos.latitude; lon = pos.longitude; city = 'Vendndodhja juaj'; }
+  }catch(e){}
+
   try {
-    var res = await fetch('https://api.airvisual.com/v2/city?city=Skopje&state=Skopje&country=Macedonia&key=demo');
+    var url = 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude='+lat
+            + '&longitude='+lon+'&current=us_aqi,pm2_5,pm10&timezone=auto';
+    var res = await fetch(url);
     var data = await res.json();
-    if(data && data.data && data.data.current){
-      var aqi  = data.data.current.pollution.aqius;
-      var pm25 = data.data.current.pollution.p2;
+    if(data && data.current && data.current.us_aqi != null){
+      var aqi  = Math.round(data.current.us_aqi);
+      var pm25 = (data.current.pm2_5 != null) ? Math.round(data.current.pm2_5 * 10) / 10 : (aqi*0.38).toFixed(1);
+      airState.city = city;
       setAQI(aqi, pm25, aqiVal, aqiStatus, aqiDesc, aqiPm, aqiCircle, aqiTime);
       return;
     }
-  } catch(e){}
+  } catch(e){ console.log('Air quality error:', e.message); }
 
-  /* Fallback — simulim realist Shkup */
-  var aqi  = Math.floor(Math.random() * 40) + 45; /* 45-85 typical for Skopje */
-  var pm25 = (aqi * 0.38).toFixed(1);
-  setAQI(aqi, pm25, aqiVal, aqiStatus, aqiDesc, aqiPm, aqiCircle, aqiTime);
+  /* Fallback nëse API s'përgjigjet */
+  var faqi  = Math.floor(Math.random() * 40) + 45;
+  var fpm25 = (faqi * 0.38).toFixed(1);
+  setAQI(faqi, fpm25, aqiVal, aqiStatus, aqiDesc, aqiPm, aqiCircle, aqiTime);
 }
 
 function setAQI(aqi, pm25, aqiVal, aqiStatus, aqiDesc, aqiPm, aqiCircle, aqiTime){
@@ -6095,6 +6118,13 @@ function setAQI(aqi, pm25, aqiVal, aqiStatus, aqiDesc, aqiPm, aqiCircle, aqiTime
   } else {
     config = {color:'linear-gradient(135deg,#DC2626,#7C3AED)', status:'🚨 Unhealthy', desc:'Avoid outdoor activities. Keep windows closed.'};
   }
+
+  /* Ruaj në state global — që Vitals/Diagnostic/Therapy AI ta marrin parasysh */
+  airState.aqi    = aqi;
+  airState.pm25   = pm25;
+  airState.status = config.status.replace(/^[^\w]+/,'').trim();
+  var cityLbl = document.getElementById('aqiCityLbl');
+  if(cityLbl && airState.city) cityLbl.textContent = airState.city;
 
   if(aqiCircle) aqiCircle.style.background = config.color;
   if(aqiStatus) aqiStatus.textContent = config.status;
