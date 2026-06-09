@@ -1654,9 +1654,9 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="prog-wrap"><div class="prog-lbl"><span>Fasting range</span><span style="color:var(--teal);" id="glu-prog-lbl">--/7.0</span></div><div class="prog-bar"><div class="prog-fill" id="glu-prog-fill" style="width:0%;background:linear-gradient(90deg,#0D9488,#2DC8A0);"></div></div></div>
     </div>
     <div class="hrv-row">
-      <div class="hrv-card"><div class="hrv-val" style="color:var(--purple);" id="g-hrv">--</div><div class="hrv-lbl">HRV</div></div>
-      <div class="hrv-card"><div class="hrv-val" style="color:#60A5FA;" id="g-rr">--</div><div class="hrv-lbl">Breath/min</div></div>
-      <div class="hrv-card"><div class="hrv-val" style="color:var(--accent);" id="g-temp">--</div><div class="hrv-lbl">Temp</div></div>
+      <div class="hrv-card" onclick="editVitalDetail('hrv')" title="Fut HRV" style="cursor:pointer;"><div class="hrv-val" style="color:var(--purple);" id="g-hrv">--</div><div class="hrv-lbl">HRV ✎</div></div>
+      <div class="hrv-card" onclick="editVitalDetail('rr')" title="Fut frymëmarrjet/min" style="cursor:pointer;"><div class="hrv-val" style="color:#60A5FA;" id="g-rr">--</div><div class="hrv-lbl">Breath/min ✎</div></div>
+      <div class="hrv-card" onclick="editVitalDetail('temp')" title="Fut temperaturën" style="cursor:pointer;"><div class="hrv-val" style="color:var(--accent);" id="g-temp">--</div><div class="hrv-lbl">Temp ✎</div></div>
     </div>
     <!-- ECG ANALYSIS CARD -->
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;margin:10px 16px 0;border:1px solid rgba(255,107,138,0.25);padding:14px;position:relative;overflow:hidden;">
@@ -3699,7 +3699,10 @@ function saveDailyMetric(type, val){
 var VITAL_DETAILS = {
   glu:     {label:'Glukozë esëll (mmol/L)', icon:'🍬', el:'g-glu',      vs:'glu',     max:40},
   glupost: {label:'Glukozë pas ngrënies',   icon:'🍬', el:'g-glu-post', vs:'glupost', max:40},
-  hba1c:   {label:'HbA1c (%)',               icon:'🩸', el:'g-hba1c',    vs:'hba1c',   max:20}
+  hba1c:   {label:'HbA1c (%)',               icon:'🩸', el:'g-hba1c',    vs:'hba1c',   max:20},
+  hrv:     {label:'HRV (ms)',                icon:'💜', el:'g-hrv',      vs:'hrv',     max:300},
+  rr:      {label:'Frymëmarrje (në min)',    icon:'🫁', el:'g-rr',       vs:'rr',      max:60},
+  temp:    {label:'Temperatura (°C)',        icon:'🌡️', el:'g-temp',     vs:'temp',    max:45}
 };
 function editVitalDetail(type){
   var cfg = VITAL_DETAILS[type]; if(!cfg) return;
@@ -3729,7 +3732,7 @@ function saveVitalDetail(type,val){
   vitalsState[cfg.vs]=val;
   var el=document.getElementById(cfg.el); if(el) el.textContent = val>0 ? val : '--';
   localStorage.setItem('vd_'+type, String(val));
-  if(type==='glu'){ try{updateAllVitalsUI();}catch(e){} try{saveVitalsToSupabase();}catch(e){} }
+  if(type==='glu' || type==='temp'){ try{updateAllVitalsUI();}catch(e){} try{saveVitalsToSupabase();}catch(e){} }
   showToast('✅ U ruajt: '+(val>0?val:'--'));
 }
 function restoreVitalDetails(){
