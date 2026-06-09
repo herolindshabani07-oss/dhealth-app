@@ -6871,6 +6871,70 @@ function loadDiagScreenChart(){
   body.innerHTML = html;
 }
 
+function renderReportReadings(){
+  var body = document.getElementById('rpt-readings-body');
+  if(!body) return;
+  var history = JSON.parse(localStorage.getItem('vitals_daily_history')||'[]');
+  var rows = history.slice(0,7);
+  try{
+    var vs = window.vitalsState||{};
+    if(vs.sys || vs.hr || vs.glu){
+      var today = new Date().toISOString().slice(0,10);
+      if(!rows.length || (rows[0] && rows[0].date !== today)){
+        rows.unshift({date:today, sys:vs.sys, dia:vs.dia, hr:vs.hr, glu:vs.glu});
+        rows = rows.slice(0,7);
+      }
+    }
+  }catch(e){}
+  if(!rows.length){
+    body.innerHTML = '<div style="text-align:center;padding:16px;color:rgba(255,255,255,0.3);font-size:12px;">No readings yet — add vitals to see weekly data</div>';
+    return;
+  }
+  body.innerHTML = rows.map(function(v){
+    var d = (v.date||'').slice(5) || '--';
+    var bp = (v.sys||'--')+'/'+(v.dia||'--');
+    return '<div class="wt-row"><div class="wt-cell">'+d+'</div><div class="wt-cell">'+bp+'</div><div class="wt-cell">'+(v.glu||'--')+'</div><div class="wt-cell">'+(v.hr||'--')+'</div></div>';
+  }).join('');
+}
+
+function buildLocalReport(history){
+  var vs = window.vitalsState||{};
+  var score = parseInt(localStorage.getItem('dh_last_score')||'0')||null;
+  function avg(key){
+    var vals = (history||[]).map(function(v){return parseFloat(v[key]);}).filter(function(n){return !isNaN(n);});
+    if(!vals.length) return null;
+    return Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length);
+  }
+  var aSys=avg('sys'), aDia=avg('dia'), aHr=avg('hr'), aGlu=avg('glu');
+  var lines = [];
+  lines.push('<strong>📄 Raporti Javor i Shëndetit — D Health</strong>');
+  lines.push('Datë: '+new Date().toLocaleDateString('sq-AL'));
+  if(score) lines.push('Health Score: <strong>'+score+'/100</strong>');
+  lines.push('');
+  lines.push('<strong>Treguesit Vital</strong>');
+  var bpNow = (vs.sys&&vs.dia) ? (vs.sys+'/'+vs.dia+' mmHg') : '—';
+  lines.push('• Tensioni i sotëm: '+bpNow + (aSys&&aDia ? '  (mesatare javore: '+aSys+'/'+aDia+')' : ''));
+  lines.push('• Pulsi: '+(vs.hr?vs.hr+' bpm':'—') + (aHr ? '  (mesatare: '+aHr+' bpm)' : ''));
+  lines.push('• Glukoza: '+(vs.glu?vs.glu+' mg/dL':'—') + (aGlu ? '  (mesatare: '+aGlu+' mg/dL)' : ''));
+  if(vs.spo2) lines.push('• SpO2: '+vs.spo2+'%');
+  lines.push('');
+  var notes = [];
+  if((aSys && aSys>=140) || (vs.sys&&vs.sys>=140)) notes.push('⚠️ Tension i lartë — ndiqni terapinë dhe reduktoni kripën.');
+  else if(aSys && aSys<110) notes.push('ℹ️ Tension i ulët — hidratohuni mirë.');
+  if((aGlu&&aGlu>=126)||(vs.glu&&vs.glu>=126)) notes.push('⚠️ Glukozë e ngritur — kujdes me karbohidratet, ndiqni terapinë.');
+  if((aHr&&aHr>100)||(vs.hr&&vs.hr>100)) notes.push('⚠️ Puls i shpejtë — pushim dhe vlerësim nëse vazhdon.');
+  if(!notes.length) notes.push('✅ Treguesit brenda kufijve të pranueshëm. Vazhdoni kështu!');
+  lines.push('<strong>Vlerësim</strong>');
+  notes.forEach(function(n){ lines.push('• '+n); });
+  lines.push('');
+  lines.push('<strong>Rekomandime</strong>');
+  lines.push('• Matni treguesit çdo ditë në të njëjtën orë.');
+  lines.push('• Ndiqni terapinë e përshkruar dhe dietat.');
+  lines.push('• Aktivitet fizik 30 min/ditë sipas mundësisë.');
+  lines.push('• Ndani këtë raport me Dr. Shabani për ndjekje.');
+  return lines.join('<br>');
+}
+
 async function generateWeeklyReport(btn){
   var textEl = document.getElementById('rptText');
   var timeEl = document.getElementById('rptTime');
@@ -6879,12 +6943,15 @@ async function generateWeeklyReport(btn){
 
   textEl.innerHTML = '<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
 
+  try{ renderReportReadings(); }catch(e){}
   var history = JSON.parse(localStorage.getItem('vitals_daily_history')||'[]');
   var weekData = history.length > 0
     ? 'VITALS (last '+Math.min(history.length,7)+' readings):\n' + history.slice(0,7).map(function(v){
         return (v.date||'') + ' BP:'+(v.sys||'--')+'/'+(v.dia||'--')+' HR:'+(v.hr||'--')+' Glu:'+(v.glu||'--');
       }).join('\n')
     : 'No vitals recorded yet.';
+
+  var localReport = buildLocalReport(history);
 
   try{
     var r = await fetch('/.netlify/functions/claude',{
@@ -6897,15 +6964,17 @@ async function generateWeeklyReport(btn){
         messages:[{role:'user',content:'Generate a professional weekly health report.\n\n'+weekData+'\n\nPatient profile: '+getProfile()+'\n\nBe specific, medical, and encouraging. If no data, give guidance on what to track.'}]
       })
     });
-    var d = await r.json();
+    var raw = await r.text();
+    if(!r.ok || !raw || raw.trim().charAt(0)==='<') throw new Error('offline');
+    var d = JSON.parse(raw);
     var tx = d.content&&d.content[0]&&d.content[0].text;
-    if(tx){
-      textEl.innerHTML = tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-      if(timeEl) timeEl.textContent = 'Generated ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    } else throw new Error('No response');
+    if(!tx) throw new Error('empty');
+    textEl.innerHTML = tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
   }catch(e){
-    textEl.innerHTML = '<span style="color:#F87171;">⚠️ '+(e.message||'Check connection')+'</span>';
+    // Fallback: raport lokal real nga të dhënat — butoni gjithmonë prodhon diçka
+    textEl.innerHTML = localReport + '<div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,0.35);">⚙️ Raport lokal (AI jashtë linje)</div>';
   }
+  if(timeEl) timeEl.textContent = 'Generated ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   if(btn){ btn.disabled=false; btn.innerHTML='🤖 Generate health report'; }
 }
 
