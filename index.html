@@ -8042,10 +8042,16 @@ async function syncGoogleFitData(){
     try{ updateConnectCards(); }catch(e){}
     try{ calcDailyScore(); }catch(e){}
 
-    var msg = '✅ Google Fit u sinkronizua!';
-    if(steps > 0)    msg += ' · ' + steps.toLocaleString() + ' hapa';
-    if(hr    > 0)    msg += ' · HR ' + hr + ' bpm';
-    if(sys   > 0)    msg += ' · BP ' + sys + '/' + dia;
+    /* Toast diagnostik — tregon gjithmonë numrat (edhe 0) që ktheu Google */
+    var msg = '✅ Sync: ' + steps.toLocaleString() + ' hapa · '
+            + hr + ' HR · ' + calories + ' kcal';
+    if(sys > 0)  msg += ' · BP ' + sys + '/' + dia;
+    if(glu > 0)  msg += ' · Glu ' + glu;
+    if(spo2 > 0) msg += ' · SpO2 ' + spo2 + '%';
+    if(steps === 0 && hr === 0 && calories === 0){
+      msg = '⚠️ Sync OK, por Google Fit s\'ka të dhëna sot (0 hapa). '
+          + 'Kontrollo që telefoni numëron hapat te kjo llogari.';
+    }
     showToast(msg);
 
   } catch(e) {
