@@ -3425,6 +3425,14 @@ function getProfile(){
     ? mealsArr.slice(0,5).map(function(m){ return '• '+(m.name||'meal')+' ('+(m.cal||'?')+' kcal)'; }).join('\n')
     : 'None logged';
 
+  /* ── ECG e fundit (nga historiku) ── */
+  var ecgArr = [];
+  try{ ecgArr = JSON.parse(localStorage.getItem('ecg_history') || '[]'); }catch(e){}
+  var ecgStr = (ecgArr && ecgArr.length)
+    ? ('• '+(ecgArr[ecgArr.length-1].date||'?')+' ['+(ecgArr[ecgArr.length-1].status||'')+']: '
+        + (ecgArr[ecgArr.length-1].summary||''))
+    : 'No ECG analyzed yet';
+
   return 'PATIENT: '+userName+'\n'+
     'DIAGNOSES: '+(diags.join(', ')||'None')+'\n'+
     'THERAPY:\n'+(ther.length?ther.map(function(t){return '• '+t;}).join('\n'):'None')+'\n'+
@@ -3444,6 +3452,7 @@ function getProfile(){
       ? '• US AQI: '+airState.aqi+' ('+(airState.status||'')+')\n• PM2.5: '+airState.pm25+' µg/m³\n'
         + '(Consider this when advising outdoor activity, especially for respiratory/cardiac conditions.)\n'
       : '• Not available yet\n')+'\n'+
+    'LATEST ECG ANALYSIS:\n'+ecgStr+'\n\n'+
     'NOTES: '+notes;
 }
 var BASE_SYS='You are Health BOT, an advanced medical AI with full access to the patient\'s medical profile.\n\n'+
@@ -6184,11 +6193,8 @@ async function handleECGUpload(event){
     reader.readAsDataURL(file);
   });
 
-  /* Get patient context */
-  var diagTags = document.getElementById('diag-tags');
-  var diags = diagTags ? Array.from(diagTags.children).map(function(t){return t.textContent.replace('×','').trim();}).join(', ') : 'None';
-  var vitals = 'HR:'+vitalsState.hr+'bpm, BP:'+vitalsState.sys+'/'+vitalsState.dia+'mmHg, SpO2:'+vitalsState.spo2+'%, Glucose:'+vitalsState.glu+'mmol/L';
-  var lastECG = ecgHistory.length > 0 ? 'Previous ECG ('+ecgHistory[ecgHistory.length-1].date+'): '+ecgHistory[ecgHistory.length-1].summary : 'No previous ECG on file.';
+  /* Konteksti i plotë i pacientit vjen nga getProfile() (diagnoza, terapi, labs,
+     vitals, historik 7-ditor, air quality dhe ECG e mëparshme) */
   var mediaType = file.type.includes('pdf') ? 'application/pdf' : 'image/'+file.type.split('/')[1];
 
   try {
@@ -6197,18 +6203,18 @@ async function handleECGUpload(event){
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model:'claude-sonnet-4-5',
-        max_tokens:600,
+        max_tokens:700,
+        system: BASE_SYS+getProfile(),
         messages:[{
           role:'user',
           content:[
             {type: mediaType.includes('pdf') ? 'document' : 'image', source:{type:'base64',media_type:mediaType,data:base64}},
             {type:'text', text:
-              'You are a cardiologist AI. Analyze this ECG carefully.\n\n'
-              +'PATIENT:\nDiagnoses: '+diags+'\nVitals: '+vitals+'\nPrevious ECG: '+lastECG+'\n\n'
+              'You are a cardiologist AI. Analyze this ECG in the context of MY COMPLETE profile above (diagnoses, therapy, lab values, today\'s vitals, 7-day history, air quality and any previous ECG).\n\n'
               +'Analyze:\n1. Current rhythm (normal sinus / AFib / other)\n'
               +'2. Heart rate from ECG\n3. Key intervals (PR, QRS, QT)\n'
-              +'4. Comparison with previous ECG\n5. New findings or changes\n'
-              +'6. Risk based on diagnoses\n7. Recommendation\n\n'
+              +'4. Comparison with my previous ECG\n5. New findings or changes\n'
+              +'6. Risk based on my diagnoses, therapy and vitals\n7. Recommendation\n\n'
               +'Use ✅ normal, ⚠️ caution, 🚨 urgent. Format:\n'
               +'Pacienti: [diagnoza]\nECG i ri: [ritmi]\nKrahasimi: [vs herën e kaluar]\n[⚠️/✅] KONKLUZION: [rekomandim]'
             }
@@ -6227,7 +6233,7 @@ async function handleECGUpload(event){
     /* Save to history */
     var now = new Date();
     var dateStr = now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-    ecgHistory.push({date:dateStr, summary:result.substring(0,120), status:status});
+    ecgHistory.push({date:dateStr, summary:result.replace(/\s+/g,' ').substring(0,400), status:status});
     if(ecgHistory.length > 10) ecgHistory.shift();
     localStorage.setItem('ecg_history', JSON.stringify(ecgHistory));
     renderECGHistory();
@@ -7427,7 +7433,16 @@ function collectAllData(){
   var allergies= getUniqueTags(['allergy-tags','prof-allergy-tags','ds-allergy-tags']);
   var labs     = getUniqueTags(['lab-tags','prof-lab-tags','ds-lab-tags']);
   var notes    = (document.getElementById('prof-notes')||{}).value||'';
-  return {v, steps, cal, aqi, aqiStatus, diags, therapy, allergies, labs, notes};
+  /* ECG e fundit */
+  var ecgArr = [];
+  try{ ecgArr = JSON.parse(localStorage.getItem('ecg_history')||'[]'); }catch(e){}
+  var ecg = ecgArr.length
+    ? ((ecgArr[ecgArr.length-1].date||'?')+' ['+(ecgArr[ecgArr.length-1].status||'')+']: '+(ecgArr[ecgArr.length-1].summary||''))
+    : '';
+  /* Historiku 7-ditor */
+  var histArr = [];
+  try{ var rawH=JSON.parse(localStorage.getItem('vitals_daily_history')||'[]'); histArr=Array.isArray(rawH)?rawH:Object.keys(rawH).sort().reverse().map(function(k){return rawH[k];}); }catch(e){}
+  return {v, steps, cal, aqi, aqiStatus, diags, therapy, allergies, labs, notes, ecg, history: histArr};
 }
 
 async function runCorrelationEngine(){
@@ -7457,8 +7472,14 @@ async function runCorrelationEngine(){
   + '- Allergies: '+(d.allergies.join(', ')||'None')+'\n'
   + '- Lab Values: '+(d.labs.join(', ')||'None')+'\n'
   + (d.notes ? '- Notes: '+d.notes+'\n' : '')
-  + '\nFind ALL dangerous correlations between diagnoses, medications, vitals, activity, labs and environment.'
-  + '\nExamples: High AQI + respiratory disease, low steps + HTA, high glucose + poor sleep, drug interactions.'
+  + (d.ecg ? '\nLATEST ECG:\n- '+d.ecg+'\n' : '')
+  + (d.history && d.history.length
+      ? '\n7-DAY VITALS HISTORY:\n'+d.history.slice(0,7).map(function(h){
+          return '- '+(h.date||'?')+': BP '+(h.sys||'--')+'/'+(h.dia||'--')+', HR '+(h.hr||'--')+', Glu '+(h.glu||'--')+(h.steps?(', Steps '+h.steps):'');
+        }).join('\n')+'\n'
+      : '')
+  + '\nFind ALL dangerous correlations between diagnoses, medications, vitals, activity, labs, ECG findings, 7-day trends and environment.'
+  + '\nExamples: High AQI + respiratory disease, low steps + HTA, high glucose + poor sleep, ECG arrhythmia + therapy, worsening BP trend, drug interactions.'
   + '\nConsider all possible combinations.'
   + '\n\nRespond ONLY in this exact JSON format (no markdown, no backticks):'
   + '{"score":75,"alarms":[{"level":"critical","title":"Title","message":"Message","action":"What to do now"}],'
