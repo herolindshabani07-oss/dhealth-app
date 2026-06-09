@@ -3640,7 +3640,32 @@ async function generateReport(){
   btn.disabled=false;btn.innerHTML='🔄 Re-generate Report';
 }
 function exportPDF(){window.print();}
-function shareReport(){showToast('✅ Report sent to Dr. Shabani!');}
+function shareReport(){ sendReportToDoctor(); }
+
+/* Dërgo raportin te dashboard-i i mjekut (tabela reports) */
+async function sendReportToDoctor(){
+  var el = document.getElementById('rptText') || document.getElementById('dsRptText');
+  var txt = el ? (el.innerText || el.textContent || '').trim() : '';
+  if(!txt || txt.length < 20){ showToast('⚠️ Gjenero raportin së pari'); return; }
+  var sb = getSupa();
+  if(!sb || !LST.currentUser || !LST.currentUser.id){ showToast('⚠️ Kyçu për të dërguar raportin'); return; }
+  var score = parseInt(localStorage.getItem('dh_last_score')||'0') || null;
+  var now = new Date(), start = new Date(now.getFullYear(),0,1);
+  var week = Math.ceil((((now - start)/86400000) + start.getDay() + 1)/7);
+  try{
+    var {error} = await sb.from('reports').insert({
+      patient_id:   LST.currentUser.id,
+      report_text:  txt,
+      health_score: score,
+      week_number:  week,
+      generated_at: new Date().toISOString()
+    });
+    if(error) throw error;
+    /* Njofto mjekun te chat-i */
+    try{ await sb.from('messages').insert({ sender_id:LST.currentUser.id, receiver_id:DOCTOR_ID, content:'📄 Kam ndarë një raport të ri shëndetësor me ju.', is_read:false }); }catch(e){}
+    showToast('✅ Raporti u dërgua te Dr. Shabani!');
+  }catch(e){ console.error('report send', e); showToast('❌ Dërgimi dështoi: '+(e.message||e)); }
+}
 
 /* VITALS */
 function updateV(key,val){
