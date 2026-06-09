@@ -1636,7 +1636,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       </div>
     </div>
     <div class="hta-detail">
-      <div class="det-hdr"><div class="det-title">🩸 HTA Detail</div><span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--ambl);color:#B45309;">Stage 1</span></div>
+      <div class="det-hdr"><div class="det-title">🩸 TA Detail</div><span id="ta-badge" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--ambl);color:#B45309;">--</span></div>
       <div class="gauge-row">
         <div class="gauge-box"><div class="gauge-val" style="color:var(--orange);" id="g-sys">--</div><div class="gauge-lbl">Systolic</div><div class="gauge-sub">Normal &lt;120</div></div>
         <div class="gauge-box"><div class="gauge-val" style="color:var(--amber);" id="g-dia">--</div><div class="gauge-lbl">Diastolic</div><div class="gauge-sub">Normal &lt;80</div></div>
@@ -1645,11 +1645,11 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="prog-wrap"><div class="prog-lbl"><span>Systolic risk</span><span style="color:var(--orange);" id="bp-prog-lbl">--/180 mmHg</span></div><div class="prog-bar"><div class="prog-fill" id="bp-prog-fill" style="width:0%;background:linear-gradient(90deg,#F97316,#FBBF24);"></div></div></div>
     </div>
     <div class="glu-detail">
-      <div class="det-hdr"><div class="det-title">🍬 Glucose Detail</div><span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--al);color:#059669;">Normal</span></div>
+      <div class="det-hdr"><div class="det-title">🍬 Glucose Detail <span style="opacity:0.55;font-weight:500;font-size:9px;">— trokit ✎</span></div><span id="glu-badge" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--al);color:#059669;">--</span></div>
       <div class="gauge-row">
-        <div class="gauge-box"><div class="gauge-val" style="color:var(--teal);" id="g-glu">--</div><div class="gauge-lbl">Fasting</div><div class="gauge-sub">mmol/L</div></div>
-        <div class="gauge-box"><div class="gauge-val" style="color:var(--accent);" id="g-glu-post">--</div><div class="gauge-lbl">Post-meal</div><div class="gauge-sub">mmol/L</div></div>
-        <div class="gauge-box"><div class="gauge-val" style="color:#60A5FA;" id="g-hba1c">--</div><div class="gauge-lbl">HbA1c</div><div class="gauge-sub">3-mo avg</div></div>
+        <div class="gauge-box" onclick="editVitalDetail('glu')" title="Fut glukozën esëll" style="cursor:pointer;"><div class="gauge-val" style="color:var(--teal);" id="g-glu">--</div><div class="gauge-lbl">Fasting ✎</div><div class="gauge-sub">mmol/L</div></div>
+        <div class="gauge-box" onclick="editVitalDetail('glupost')" title="Fut glukozën pas ngrënies" style="cursor:pointer;"><div class="gauge-val" style="color:var(--accent);" id="g-glu-post">--</div><div class="gauge-lbl">Post-meal ✎</div><div class="gauge-sub">mmol/L</div></div>
+        <div class="gauge-box" onclick="editVitalDetail('hba1c')" title="Fut HbA1c" style="cursor:pointer;"><div class="gauge-val" style="color:#60A5FA;" id="g-hba1c">--</div><div class="gauge-lbl">HbA1c ✎</div><div class="gauge-sub">3-mo avg</div></div>
       </div>
       <div class="prog-wrap"><div class="prog-lbl"><span>Fasting range</span><span style="color:var(--teal);" id="glu-prog-lbl">--/7.0</span></div><div class="prog-bar"><div class="prog-fill" id="glu-prog-fill" style="width:0%;background:linear-gradient(90deg,#0D9488,#2DC8A0);"></div></div></div>
     </div>
@@ -3695,6 +3695,51 @@ function saveDailyMetric(type, val){
   showToast('✅ '+(names[type]||type)+' u ruajtën: '+fmtDaily(type,val));
 }
 
+/* ════ FUTJE MANUALE — Glucose Detail (esëll / pas ngrënies / HbA1c) ════ */
+var VITAL_DETAILS = {
+  glu:     {label:'Glukozë esëll (mmol/L)', icon:'🍬', el:'g-glu',      vs:'glu',     max:40},
+  glupost: {label:'Glukozë pas ngrënies',   icon:'🍬', el:'g-glu-post', vs:'glupost', max:40},
+  hba1c:   {label:'HbA1c (%)',               icon:'🩸', el:'g-hba1c',    vs:'hba1c',   max:20}
+};
+function editVitalDetail(type){
+  var cfg = VITAL_DETAILS[type]; if(!cfg) return;
+  var cur = (vitalsState[cfg.vs] && vitalsState[cfg.vs]>0) ? vitalsState[cfg.vs] : '';
+  var ov = document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;';
+  ov.innerHTML='<div style="background:#1B2030;border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:20px;width:100%;max-width:320px;font-family:var(--font);box-shadow:0 12px 40px rgba(0,0,0,0.5);">'
+    +'<div style="font-size:15px;font-weight:700;color:#F1F5FF;margin-bottom:4px;">'+cfg.icon+' '+cfg.label+'</div>'
+    +'<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:14px;">Fut vlerën manualisht</div>'
+    +'<input id="vdInp" type="number" inputmode="decimal" step="0.1" value="'+cur+'" placeholder="0" style="width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;font-size:20px;font-weight:700;text-align:center;font-family:var(--font);margin-bottom:14px;box-sizing:border-box;"/>'
+    +'<div style="display:flex;gap:8px;"><button id="vdCancel" style="flex:1;padding:12px;border-radius:12px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font);">Anulo</button>'
+    +'<button id="vdSave" style="flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#0D3B8E,#3B7DD8);color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font);">Ruaj</button></div></div>';
+  document.body.appendChild(ov);
+  var inp=ov.querySelector('#vdInp');
+  setTimeout(function(){try{inp.focus();inp.select();}catch(e){}},50);
+  function close(){try{document.body.removeChild(ov);}catch(e){}}
+  ov.addEventListener('click',function(e){if(e.target===ov)close();});
+  ov.querySelector('#vdCancel').onclick=close;
+  ov.querySelector('#vdSave').onclick=function(){
+    var val=parseFloat(inp.value)||0; if(val<0)val=0; if(val>cfg.max)val=cfg.max; val=Math.round(val*10)/10;
+    saveVitalDetail(type,val); close();
+  };
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter')ov.querySelector('#vdSave').click();});
+}
+function saveVitalDetail(type,val){
+  var cfg=VITAL_DETAILS[type]; if(!cfg) return;
+  vitalsState[cfg.vs]=val;
+  var el=document.getElementById(cfg.el); if(el) el.textContent = val>0 ? val : '--';
+  localStorage.setItem('vd_'+type, String(val));
+  if(type==='glu'){ try{updateAllVitalsUI();}catch(e){} try{saveVitalsToSupabase();}catch(e){} }
+  showToast('✅ U ruajt: '+(val>0?val:'--'));
+}
+function restoreVitalDetails(){
+  Object.keys(VITAL_DETAILS).forEach(function(type){
+    var cfg=VITAL_DETAILS[type];
+    var v=parseFloat(localStorage.getItem('vd_'+type)||'0')||0;
+    if(v>0){ vitalsState[cfg.vs]=v; var el=document.getElementById(cfg.el); if(el) el.textContent=v; }
+  });
+}
+
 /* Ruaj Daily Activity te llogaria (Supabase) — një rresht për ditë */
 async function saveDailyActivityToSupabase(){
   try{
@@ -3767,7 +3812,9 @@ function applyVitals(){
   var any=false;
   Object.keys(fields).forEach(function(k){var el=document.getElementById(fields[k]);if(el&&el.value){vitalsState[k]=parseFloat(el.value);document.getElementById('v-'+k)&&(document.getElementById('v-'+k).value=el.value);if(k==='sys')document.getElementById('g-sys').textContent=el.value;if(k==='dia')document.getElementById('g-dia').textContent=el.value;if(k==='hr')document.getElementById('g-hr').textContent=el.value;if(k==='glu')document.getElementById('g-glu').textContent=el.value;el.value='';any=true;}});
   if(any){
+    try{ updateAllVitalsUI(); }catch(e){}   /* reflekto te TA Detail + Home + Diagnostic */
     saveDailyRecord();
+    try{ saveVitalsToSupabase(); }catch(e){}
     showToast('✅ Vitals u ruajtën!');
     toggleVI();
   }
@@ -5131,8 +5178,9 @@ function llaunchApp() {
   setTimeout(function(){
     initPlatformDetection();
     refreshIntegBadges();
-    /* Rikthe vlerat manuale të Daily Activity (para sync-ut) */
+    /* Rikthe vlerat manuale të Daily Activity + Glucose Detail (para sync-ut) */
     try{ restoreDailyActivity(); }catch(e){}
+    try{ restoreVitalDetails(); }catch(e){}
     try{ updateIndicatorBadge(); }catch(e){}
     /* Auto-sync nëse i lidhur */
     if(isConnected('gfit'))   syncGoogleFitData();
@@ -5917,6 +5965,9 @@ function updateAllVitalsUI(){
   setStat('home-glu-status',  glu>=7?'High': glu>=5.6?'Pre-diabetic': glu>0?'Normal':'--');
   setStat('home-hr-status',   hr>100?'High': (hr>0&&hr<60)?'Low': hr>0?'Normal':'--');
   setStat('home-spo2-status', (spo2>0&&spo2<95)?'Low': spo2>0?'Normal':'--');
+  /* Badge dinamik te TA Detail dhe Glucose Detail (Vitals) */
+  setStat('ta-badge',  sys>=140?'Stage 2': sys>=130?'Stage 1': sys>0?'Normal':'--');
+  setStat('glu-badge', glu>=7?'High': glu>=5.6?'Pre-diab': glu>0?'Normal':'--');
 
   /* Vitals big cards (v-hr, v-spo2 etj) */
   var fields = {hr:'v-hr', spo2:'v-spo2', sys:'v-sys', dia:'v-dia', glu:'v-glu', temp:'v-temp'};
