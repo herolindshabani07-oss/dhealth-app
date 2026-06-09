@@ -3254,7 +3254,9 @@ function drDocReply(msg){
   var m=msg.toLowerCase();
   var r='';
   if(m.includes('presion')||m.includes('bp')||m.includes('blood pressure')){
-    r='BP values not yet recorded. \u00ebsht\u00eb Stage 1 HTA.<br><br>Rekomandoj:<br>\u2022 Krip\u00eb &lt;2g/dit\u00eb<br>\u2022 Ushtrimi 30min/dit\u00eb<br>\u2022 Monitorim ditor';
+    r=(vitalsState.sys>0)
+      ? ('Presioni juaj i fundit: <strong>'+vitalsState.sys+'/'+vitalsState.dia+' mmHg</strong>.<br><br>Rekomandoj:<br>\u2022 Krip\u00eb &lt;2g/dit\u00eb<br>\u2022 Ushtrimi 30min/dit\u00eb<br>\u2022 Monitorim ditor')
+      : 'Ende nuk keni regjistruar presionin. Shtoni nj\u00eb matje te Vitals p\u00ebr analiz\u00eb t\u00eb personalizuar.';
   } else if(m.includes('amlodip')||m.includes('mjekim')||m.includes('medication')){
     r='P\u00ebr pyetje rreth medikamenteve tuaja, ju lutem konsultohuni me mjekun tuaj ose shtoni terapin\u00eb tuaj n\u00eb profilin e Health BOT p\u00ebr analiza t\u00eb personalizuara.';
   } else if(m.includes('glukoz')||m.includes('glucose')||m.includes('diabet')){
@@ -3400,6 +3402,28 @@ function getProfile(){
   var labs  = getT('lab-tags').concat(getT('prof-lab-tags')).concat(getT('ds-lab-tags')).filter(function(v,i,a){return a.indexOf(v)===i;});
   var notes = (document.getElementById('pf-notes')||document.getElementById('prof-notes')||document.getElementById('ds-notes')||{}).value||'';
   var userName = (LST&&LST.currentUser&&LST.currentUser.name) || 'Patient';
+
+  /* ── Historiku 7-ditor i vitals (normalizo objekt OSE array) ── */
+  var histArr = [];
+  try{
+    var rawH = JSON.parse(localStorage.getItem('vitals_daily_history') || '[]');
+    histArr = Array.isArray(rawH) ? rawH : Object.keys(rawH).sort().reverse().map(function(k){ return rawH[k]; });
+  }catch(e){}
+  var histStr = histArr.length
+    ? histArr.slice(0,7).map(function(v){
+        return '• '+(v.date||'?')+': BP '+(v.sys||'--')+'/'+(v.dia||'--')
+             + ', HR '+(v.hr||'--')+', Glu '+(v.glu||'--')+', SpO2 '+(v.spo2||'--')
+             + (v.steps?(', Steps '+v.steps):'');
+      }).join('\n')
+    : 'No history recorded yet';
+
+  /* ── Ushqimet e fundit ── */
+  var mealsArr = [];
+  try{ mealsArr = JSON.parse(localStorage.getItem('dh_meals') || '[]'); }catch(e){}
+  var mealStr = (mealsArr && mealsArr.length)
+    ? mealsArr.slice(0,5).map(function(m){ return '• '+(m.name||'meal')+' ('+(m.cal||'?')+' kcal)'; }).join('\n')
+    : 'None logged';
+
   return 'PATIENT: '+userName+'\n'+
     'DIAGNOSES: '+(diags.join(', ')||'None')+'\n'+
     'THERAPY:\n'+(ther.length?ther.map(function(t){return '• '+t;}).join('\n'):'None')+'\n'+
@@ -3411,6 +3435,9 @@ function getProfile(){
     '• SpO2: '+vitalsState.spo2+'%\n'+
     '• Blood Glucose: '+vitalsState.glu+' mmol/L\n'+
     '• Temperature: '+vitalsState.temp+'°C\n'+
+    '• Steps today: '+(vitalsState.steps||0)+'\n\n'+
+    '7-DAY VITALS HISTORY:\n'+histStr+'\n\n'+
+    'RECENT MEALS:\n'+mealStr+'\n\n'+
     'NOTES: '+notes;
 }
 var BASE_SYS='You are Health BOT, an advanced medical AI with full access to the patient\'s medical profile.\n\n'+
@@ -5716,9 +5743,9 @@ function updateAllVitalsUI(){
   }
 
   /* Verdict static values */
-  var bpTxt  = sys >= 140 ? sys+'/'+dia+' — Stage 2 HTA. Monitor closely.' : sys >= 130 ? sys+'/'+dia+' — Stage 1 HTA. Amlodipine ongoing.' : sys+'/'+dia+' — Normal. Keep monitoring.';
+  var bpTxt  = sys >= 140 ? sys+'/'+dia+' — Stage 2 HTA. Monitor closely.' : sys >= 130 ? sys+'/'+dia+' — Stage 1 HTA. Monitor closely.' : sys>0 ? sys+'/'+dia+' — Normal. Keep monitoring.' : '-- — No data yet.';
   var bpCls  = sys >= 130 ? 'vpi w' : 'vpi ok';
-  var gluTxt = glu >= 7 ? glu+' mmol/L — High. Adjust therapy.' : glu >= 5.6 ? glu+' mmol/L — Pre-diabetic. Watch diet.' : glu+' mmol/L — Normal fasting. Metformin effective.';
+  var gluTxt = glu >= 7 ? glu+' mmol/L — High. Discuss with your doctor.' : glu >= 5.6 ? glu+' mmol/L — Pre-diabetic. Watch diet.' : glu>0 ? glu+' mmol/L — Normal fasting.' : '-- — No data yet.';
   var gluCls = glu >= 7 ? 'vpi w' : 'vpi ok';
   var hrTxt  = hr > 100 ? hr+' bpm — Tachycardia. Monitor.' : hr < 60 ? hr+' bpm — Bradycardia. Monitor.' : hr+' bpm — Normal range.';
   var spo2Txt = spo2 < 95 ? spo2+'% — Low! Seek medical advice.' : spo2 < 97 ? spo2+'% — Acceptable. Monitor breathing.' : spo2+'% — Excellent. No respiratory concerns.';
@@ -6259,10 +6286,8 @@ async function analyzeTherapy(){
   btn.disabled=true; btn.textContent='⏳ Analyzing...';
   respEl.style.display='block';
   textEl.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  var therapy=Array.from(document.querySelectorAll('#ds-therapy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).filter(Boolean);
-  var diags=Array.from(document.querySelectorAll('#ds-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).filter(Boolean);
   try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,system:'You are D Health AI Doctor. Analyze therapy briefly.',messages:[{role:'user',content:'Diagnoses: '+(diags.join(', ')||'None')+'\nTherapy: '+(therapy.join(', ')||'None')+'\nProvide brief drug interaction check and timing tips in 3 bullet points.'}]})});
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:700,system:BASE_SYS+getProfile(),messages:[{role:'user',content:'Analyze my therapy in the context of my COMPLETE profile above (diagnoses, lab values, allergies, vitals, and 7-day history). Provide: 1) drug–drug and drug–condition interaction check, 2) optimal timing for each medication, 3) whether the therapy fits my current vitals and trends, 4) any gaps or risks. Use bullet points •.'}]})});
     var d=await r.json();
     var tx=d.content&&d.content[0]&&d.content[0].text;
     if(tx) textEl.innerHTML=tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
@@ -6362,10 +6387,8 @@ async function generateDiagReport(){
   btn.disabled=true; btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Generating...';
   card.style.display='block';
   var now=new Date(); if(time) time.textContent='Generated '+now.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  var diags=Array.from(document.querySelectorAll('#prof-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'None';
-  var therapy=Array.from(document.querySelectorAll('#prof-therapy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'Amlodipine';
   try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,messages:[{role:'user',content:'Generate a weekly medical report for: Diagnoses: '+diags+'. Therapy: '+therapy+'. Avg BP: '+vitalsState.sys+'/'+vitalsState.dia+'. HR: '+vitalsState.hr+'. Glucose: '+vitalsState.glu+'. SpO2: '+vitalsState.spo2+'%. Include: weekly summary, therapy adherence assessment, recommendations. Be concise and structured.'}]})});
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,system:BASE_SYS+getProfile(),messages:[{role:'user',content:'Generate a professional weekly medical report using ONLY my real data from the profile above (diagnoses, therapy, labs, today\'s vitals and 7-day history). Include: weekly summary of vital trends, therapy adherence and effectiveness assessment, correlations between conditions/therapy/vitals, and prioritized recommendations. Be structured and concise. Do not invent data.'}]})});
     var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);
     text.innerHTML=(d.content&&d.content[0]?d.content[0].text:'Failed.').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
   }catch(e){text.innerHTML='❌ Connection error.';}
@@ -6388,7 +6411,7 @@ function updateDiagScreen(){
   var rGlu=document.getElementById('ds-rpt-glu'); if(rGlu) rGlu.textContent=glu;
 
   /* Verdict */
-  var bpTxt=sys>=140?sys+'/'+dia+' — Stage 2 HTA.':sys>=130?sys+'/'+dia+' — Stage 1 HTA. Amlodipine ongoing.':sys+'/'+dia+' — Normal.';
+  var bpTxt=sys>=140?sys+'/'+dia+' — Stage 2 HTA.':sys>=130?sys+'/'+dia+' — Stage 1 HTA.':sys>0?sys+'/'+dia+' — Normal.':'-- — No data yet.';
   var gluTxt=glu>=7?glu+' mmol/L — High.':glu>=5.6?glu+' mmol/L — Pre-diabetic.':glu+' mmol/L — Normal fasting.';
   var hrTxt=hr>100?hr+' bpm — Tachycardia.':hr<60?hr+' bpm — Bradycardia.':hr+' bpm — Normal.';
   var spo2Txt=spo2<95?spo2+'% — Low!':spo2+'% — Excellent.';
@@ -6412,8 +6435,6 @@ async function runDiagnosticAI(){
   btn.disabled=true;
   btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;"></div> Claude AI analyzing...';
   rec.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  var diags=Array.from(document.querySelectorAll('#prof-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'None';
-  var therapy=Array.from(document.querySelectorAll('#prof-therapy-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).join(', ')||'None';
   try{
     var r=await fetch('/.netlify/functions/claude',{
       method:'POST',
@@ -6422,8 +6443,9 @@ async function runDiagnosticAI(){
       },
       body:JSON.stringify({
         model:'claude-sonnet-4-5',
-        max_tokens:400,
-        messages:[{role:'user',content:'Patient: BP '+vitalsState.sys+'/'+vitalsState.dia+', HR '+vitalsState.hr+', Glucose '+vitalsState.glu+', SpO2 '+vitalsState.spo2+'%. Diagnoses: '+diags+'. Therapy: '+therapy+'. Give 5 specific recommendations. Use bullets •. Be concise.'}]
+        max_tokens:700,
+        system:BASE_SYS+getProfile(),
+        messages:[{role:'user',content:'Based on my COMPLETE profile above (diagnoses, therapy, labs, allergies, today\'s vitals AND 7-day history), perform a deep cross-analysis: how do my conditions, medications and vital trends relate? Then give 5 specific, prioritized recommendations. Use bullets •. Be concise but specific to my real data.'}]
       })
     });
     var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);
@@ -7808,7 +7830,122 @@ var GFIT_CONFIG = {
   ].join(' ')
 };
 
+/* ═══════════════ HEALTH CONNECT (app native Android via Capacitor) ═══════════════
+   Kur app-i xhiron si app Android (Capacitor), lexon hapat/HR/kaloritë/distancën
+   direkt nga Health Connect (Samsung Health) — pa Google Fit REST API. */
+function isNativeApp(){
+  return !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function'
+            && window.Capacitor.isNativePlatform());
+}
+function getHealthPlugin(){
+  if(!window.Capacitor || !window.Capacitor.registerPlugin) return null;
+  return window.Capacitor.registerPlugin('HealthPlugin');
+}
+
+async function connectHealthConnect(){
+  var Health = getHealthPlugin();
+  if(!Health){ showToast('⚠️ Health Connect s\'është i disponueshëm'); return; }
+  try{
+    var avail = await Health.isHealthAvailable();
+    if(!avail || !avail.available){
+      showToast('⚠️ Instalo "Health Connect" nga Play Store dhe provo prapë');
+      return;
+    }
+    await Health.requestHealthPermissions({
+      permissions: ['READ_STEPS','READ_HEART_RATE','READ_CALORIES','READ_DISTANCE']
+    });
+    setConnected('gfit', true);
+    localStorage.setItem('connect_gfit','true');
+    try{ refreshIntegBadges(); updateDataSources(); }catch(e){}
+    showToast('✅ Health Connect u lidh!');
+    setTimeout(syncHealthConnect, 500);
+  }catch(e){
+    console.error('Health Connect connect error:', e);
+    showToast('❌ Lidhja dështoi: ' + (e.message || e));
+  }
+}
+
+async function syncHealthConnect(){
+  var Health = getHealthPlugin();
+  if(!Health) return;
+  showToast('🔄 Duke lexuar Health Connect...');
+  var end   = new Date();
+  var start = new Date(); start.setHours(0,0,0,0);
+  var iso = function(d){ return d.toISOString(); };
+
+  async function agg(dataType){
+    try{
+      var r = await Health.queryAggregated({
+        startDate: iso(start), endDate: iso(end), dataType: dataType, bucket: 'day'
+      });
+      var arr = (r && r.aggregatedData) || [];
+      var sum = 0; arr.forEach(function(s){ sum += (s.value || 0); });
+      return sum;
+    }catch(e){ console.warn('agg '+dataType+' error', e); return 0; }
+  }
+
+  try{
+    var steps     = Math.round(await agg('steps'));
+    var calories  = Math.round(await agg('calories'));
+    var distanceM = await agg('distance');
+    var distance  = Math.round(distanceM / 1000 * 10) / 10;
+
+    /* HR mesatar nga workouts (nëse ka) */
+    var hr = 0;
+    try{
+      var w = await Health.queryWorkouts({
+        startDate: iso(start), endDate: iso(end), includeHeartRate: true, includeRoute: false
+      });
+      var wk = (w && w.workouts) || [];
+      var hrs = [];
+      wk.forEach(function(x){ (x.heartRate || []).forEach(function(h){
+        var b = h.bpm || h.value; if(b) hrs.push(b);
+      }); });
+      if(hrs.length) hr = Math.round(hrs.reduce(function(a,b){return a+b;},0) / hrs.length);
+    }catch(e){}
+
+    console.log('🟢 HealthConnect parsed → steps:', steps, '| hr:', hr, '| cal:', calories, '| dist:', distance);
+
+    if(steps > 0) vitalsState.steps = steps;
+    if(hr    > 0) vitalsState.hr    = hr;
+
+    var el;
+    el=document.getElementById('da-steps'); if(el) el.textContent = steps>0 ? steps.toLocaleString() : '--';
+    el=document.getElementById('da-cal');   if(el) el.textContent = calories>0 ? calories.toLocaleString() : '--';
+    el=document.getElementById('da-hr');    if(el) el.textContent = hr>0 ? hr : '--';
+    el=document.getElementById('da-dist');  if(el && distance>0) el.textContent = distance + ' km';
+
+    localStorage.setItem('connect_gfit','true');
+    localStorage.setItem('gfit_steps',  String(steps));
+    localStorage.setItem('gfit_hr',     String(hr));
+    localStorage.setItem('gfit_cal',    String(calories));
+    localStorage.setItem('gfit_dist',   String(distance));
+    localStorage.setItem('gfit_synced', new Date().toLocaleTimeString());
+    try{ updateConnectCards(); updateDataSources(); calcDailyScore(); }catch(e){}
+
+    /* Ruaj në Supabase */
+    try{
+      var sb = getSupa();
+      if(sb && LST.currentUser && LST.currentUser.id){
+        sb.from('vitals').insert({
+          patient_id: LST.currentUser.id, hr: hr||null, steps: steps||null,
+          source: 'health_connect', recorded_at: new Date().toISOString()
+        });
+      }
+    }catch(se){}
+
+    var msg = '✅ Sync: ' + steps.toLocaleString() + ' hapa · ' + hr + ' HR · ' + calories + ' kcal';
+    if(steps===0 && hr===0 && calories===0)
+      msg = '⚠️ Health Connect: 0 të dhëna sot. Ec pak me telefonin dhe provo prapë.';
+    showToast(msg);
+  }catch(e){
+    console.error('Health Connect sync error:', e);
+    showToast('❌ Sync dështoi: ' + (e.message || e));
+  }
+}
+
 function connectGoogleFit(){
+  if(isNativeApp()){ connectHealthConnect(); return; }
   localStorage.removeItem('gfit_token');
   localStorage.removeItem('gfit_expiry');
   var state = Math.random().toString(36).substring(2);
@@ -7848,6 +7985,7 @@ function handleGFitCallback(){
 }
 
 async function syncGoogleFitData(){
+  if(isNativeApp()){ return syncHealthConnect(); }
   var token  = localStorage.getItem('gfit_token');
   var expiry = parseInt(localStorage.getItem('gfit_expiry') || '0');
 
