@@ -3547,7 +3547,7 @@ async function runVerdictAI(){
 /* PROFILE */
 async function analyzeProfileAI(){
   return aiPanel({btn:'profileAiBtn', resp:'profile-resp', text:'profile-text', err:'profile-err', label:'Diagnostics',
-    prompt:'Analyze my complete medical profile above: diagnoses, therapy, lab values, vitals, 7-day history and lifestyle. How are these conditions related? Is my therapy optimal? What are the main health risks I should focus on? Use bullet points, be concise.'});
+    prompt:'Analyze my complete medical profile above: diagnoses, therapy, lab values, vitals, TODAY\'S ACTIVITY (steps + calories burned), nutrition, and 7-day history. How are these conditions related? Is my therapy optimal? Comment specifically on my steps/calories/activity and nutrition vs my conditions. What are the main health risks I should focus on? Reference my real numbers, use bullet points, be concise.'});
 }
 
 /* BOT CHAT */
@@ -6550,7 +6550,7 @@ async function handleProfFileUpload(event){
 /* ══ ANALYZE PROFILE MODAL ══ */
 async function analyzeProfModal(){
   return aiPanel({btn:'profAiBtn', resp:'prof-ai-resp', text:'prof-ai-text', err:'prof-ai-err', label:'Diagnostics',
-    prompt:'Analyze my complete patient profile above. 1) How are my conditions related? 2) Evaluate therapy effectiveness, 3) Flag any drug-allergy conflicts, 4) Identify top 3 health risks, 5) Give specific recommendations. Be concise and use bullet points.'});
+    prompt:'Analyze my complete patient profile above. 1) How are my conditions related? 2) Evaluate therapy effectiveness, 3) Flag any drug-allergy conflicts, 4) Comment specifically on my TODAY\'S ACTIVITY (steps and calories burned) and NUTRITION — are they adequate for my conditions and what should I change? 5) Identify top 3 health risks, 6) Give specific recommendations. Reference my real numbers. Be concise and use bullet points.'});
 }
 
 
@@ -6592,13 +6592,30 @@ function renderTherapyList(){
     var icon  = icons[timeKey]||'💊';
     var item = document.createElement('div');
     item.style.cssText='background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:11px;';
+    item.setAttribute('data-med', med);
     var parts = med.split('·');
     item.innerHTML='<div style="width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💊</div>'
       +'<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#F1F5FF;margin-bottom:2px;">'+(parts[0]||med).trim()+'</div>'
       +'<div style="font-size:11px;color:rgba(255,255,255,0.5);">'+icon+' '+(parts[1]||timeKey).trim()+'</div></div>'
-      +'<div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(255,255,255,0.1);color:'+color+';">Active ✓</div>';
+      +'<div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(255,255,255,0.1);color:'+color+';">Active ✓</div>'
+      +'<button onclick="removeTherapyMed(this)" title="Hiq terapinë" style="width:26px;height:26px;border-radius:8px;border:none;background:rgba(239,68,68,0.12);color:#F87171;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;">×</button>';
     list.appendChild(item);
   });
+}
+
+function removeTherapyMed(btn){
+  var item = btn.closest('[data-med]'); if(!item) return;
+  var med = item.getAttribute('data-med');
+  ['ds-therapy-tags','prof-therapy-tags','therapy-tags'].forEach(function(id){
+    var w=document.getElementById(id); if(!w) return;
+    w.querySelectorAll('.tag2').forEach(function(t){
+      if(t.textContent.replace('×','').trim()===med) t.remove();
+    });
+  });
+  renderTherapyList();
+  try{ updateIndicatorBadge(); }catch(e){}
+  try{ syncMedicalProfile(); }catch(e){}
+  showToast('🗑️ Terapia u hoq');
 }
 
 function addTherapyMed(){
@@ -6966,7 +6983,7 @@ async function handleDsFileUpload(event){
 
 async function analyzeDsProfile(){
   return aiPanel({btn:event.target, resp:'ds-prof-resp', text:'ds-prof-text', label:'Diagnostics', maxTokens:700,
-    prompt:'Analyze my complete patient profile above. Assess: 1) condition relationships, 2) therapy effectiveness, 3) drug-allergy conflicts, 4) top 3 risks, 5) recommendations. Use bullets. Be concise.'});
+    prompt:'Analyze my complete patient profile above. Assess: 1) condition relationships, 2) therapy effectiveness, 3) drug-allergy conflicts, 4) my TODAY\'S ACTIVITY (steps + calories burned) and NUTRITION — are they enough for my conditions and what to change, 5) top 3 risks, 6) recommendations. Reference my real numbers. Use bullets. Be concise.'});
 }
 
 
@@ -7678,11 +7695,14 @@ async function runCorrelationEngine(){
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model:'claude-sonnet-4-5',
-        max_tokens:1500,
+        max_tokens:1200,
+        system:'You are the D Health Correlation Engine. Respond ONLY with the requested JSON.',
         messages:[{role:'user',content:prompt}]
       })
     });
-    var resp = await r.json();
+    var rawCE = await r.text();
+    if(rawCE.trim().startsWith('<')) throw new Error('AI server unavailable — provo përsëri pas pak.');
+    var resp = JSON.parse(rawCE);
     if(resp.error){ throw new Error(resp.error.message); }
     var txt = resp.content&&resp.content[0]&&resp.content[0].text||'{}';
     txt = txt.replace(/```json|```/g,'').trim();
