@@ -1573,7 +1573,7 @@ select option{background:#0A1628;color:#F1F5FF;}
   <div class="sa">
     <div class="vitals-hdr" style="display:flex;align-items:flex-end;justify-content:space-between;"><div><div class="vh-title">Today's Vitals</div><div class="vh-sub">Thursday, April 9 · 6 indicators</div></div><button onclick="switchScreen('vitals-history');initVitalsHistory();" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:11px;color:#fff;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer;font-family:var(--font);white-space:nowrap;">&#128200; History</button></div>
     <div class="vbig-grid">
-      <div class="vbig-card"><div class="vbig-lbl">Heart Rate</div><input class="vbig-inp" id="v-hr" type="number" value="78" oninput="updateV('hr',this.value)"/><div class="vbig-unit">bpm</div><span class="vbig-status" style="background:var(--pl);color:#60A5FA;">NORMAL</span></div>
+      <div class="vbig-card"><div class="vbig-lbl">Heart Rate</div><input class="vbig-inp" id="v-hr" type="number" placeholder="--" oninput="updateV('hr',this.value)"/><div class="vbig-unit">bpm</div><span class="vbig-status" id="v-hr-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
       <div class="vbig-card"><div class="vbig-lbl">Oxygen SpO2</div><input class="vbig-inp" id="v-spo2" type="number" value="97" oninput="updateV('spo2',this.value)"/><div class="vbig-unit">%</div><span class="vbig-status" style="background:var(--al);color:#059669;">GOOD</span></div>
       <div class="vbig-card" style="border-color:rgba(249,115,22,0.25);"><div class="vbig-lbl">Systolic BP</div><input class="vbig-inp" id="v-sys" type="number" placeholder="--" style="color:var(--orange);" oninput="updateV('sys',this.value)"/><div class="vbig-unit">mmHg</div><span class="vbig-status" id="v-sys-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
       <div class="vbig-card" style="border-color:rgba(249,115,22,0.25);"><div class="vbig-lbl">Diastolic BP</div><input class="vbig-inp" id="v-dia" type="number" placeholder="--" style="color:var(--orange);" oninput="updateV('dia',this.value)"/><div class="vbig-unit">mmHg</div><span class="vbig-status" id="v-dia-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
@@ -3593,6 +3593,11 @@ function shareReport(){showToast('✅ Report sent to Dr. Shabani!');}
 /* VITALS */
 function updateV(key,val){
   vitalsState[key]=parseFloat(val)||0;
+  /* Sinkronizo aktivitetin: steps/hr nga Vitals → dailyState (Home + analiza) */
+  if(typeof dailyState!=='undefined'){
+    if(key==='steps') dailyState.steps = vitalsState.steps;
+    if(key==='hr')    dailyState.hr    = vitalsState.hr;
+  }
   if(key==='sys'){document.getElementById('g-sys').textContent=val||'—';}
   if(key==='dia'){document.getElementById('g-dia').textContent=val||'—';}
   if(key==='hr'){document.getElementById('g-hr').textContent=val||'—';}
@@ -5941,6 +5946,20 @@ function updateAllVitalsUI(){
   if(vrdHrV) vrdHrV.textContent = hrTxt;
   if(vrdSpo2) vrdSpo2.className = spo2Cls;
   if(vrdSpo2V) vrdSpo2V.textContent = spo2Txt;
+
+  /* Pasqyro Daily Activity (steps/calories/puls) midis Home dhe Vitals — sinkron i plotë */
+  if(typeof dailyState!=='undefined'){
+    var pulsAvg = dailyState.hr || vitalsState.hr || 0;
+    var setTxt = function(id, v, comma){
+      var e=document.getElementById(id); if(!e) return;
+      e.textContent = (v>0 ? (comma ? v.toLocaleString() : v) : '--');
+    };
+    setTxt('da-steps',  dailyState.steps, true);  setTxt('vit-steps',  dailyState.steps, true);
+    setTxt('da-cal',    dailyState.cal,   true);  setTxt('vit-cal',    dailyState.cal,   true);
+    setTxt('da-hr',     pulsAvg,          false); setTxt('vit-hr-avg', pulsAvg,          false);
+    var vst=document.getElementById('v-steps');
+    if(vst && document.activeElement!==vst) vst.value = dailyState.steps>0 ? dailyState.steps : '';
+  }
 
   /* Sinkronizo edhe ekranin Diagnostic (ds-*) — që detajet të jenë gjithmonë të njëjta me Vitals/Home */
   try{ updateDiagScreen(); }catch(e){}
