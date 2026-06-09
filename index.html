@@ -1309,14 +1309,14 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="sh"><div class="st">Diagnostic AI</div><span style="font-size:12px;color:#60A5FA;font-weight:500;cursor:pointer;" onclick="switchScreen('diagnostic');">See full →</span></div>
       <div class="score-card" onclick="switchScreen('diagnostic');">
         <div class="sc-row">
-          <div class="sc-circle"><div class="sc-n">--</div><div class="sc-l">/100</div></div>
+          <div class="sc-circle"><div class="sc-n" id="home-sc-num">--</div><div class="sc-l">/100</div></div>
           <div>
-            <div class="sc-title">No analysis yet</div>
-            <div class="sc-desc">Run Re-Analyze to get your health score</div>
+            <div class="sc-title" id="home-sc-title">No analysis yet</div>
+            <div class="sc-desc" id="home-sc-desc">Run Re-Analyze to get your health score</div>
             <div class="sc-tap">Tap for full AI analysis →</div>
           </div>
         </div>
-        
+
       </div>
     </div>
     <div class="hs">
@@ -1399,7 +1399,7 @@ select option{background:#0A1628;color:#F1F5FF;}
 
     </div>
     <div class="hs" style="padding-bottom:18px;">
-      <div class="sh"><div class="st">🔗 Data Sources</div><span style="font-size:11px;color:rgba(255,255,255,0.5);" id="dataSourcesCount">Loading...</span></div>
+      <div class="sh"><div class="st">🔗 Data Sources</div><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:rgba(255,255,255,0.5);" id="dataSourcesCount">Loading...</span><button onclick="syncNow()" id="homeSyncBtn" style="padding:5px 11px;border-radius:9px;border:none;background:linear-gradient(135deg,#0D3B8E,#3B7DD8);color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:4px;">🔄 Sync</button></div></div>
       <!-- Platform Banner — Android/iOS auto-detect -->
       <div id="platformBanner"></div>
       <!-- Integration Cards -->
@@ -3740,6 +3740,18 @@ function restoreVitalDetails(){
   });
 }
 
+/* Rikthe score-in e fundit te karta "Diagnostic AI" në Home */
+function restoreHomeScore(){
+  var s = localStorage.getItem('dh_last_score');
+  if(!s) return;
+  var n=document.getElementById('home-sc-num');
+  var t=document.getElementById('home-sc-title');
+  var d=document.getElementById('home-sc-desc');
+  if(n){ n.textContent=s; var c=localStorage.getItem('dh_last_score_color'); if(c) n.style.color=c; }
+  if(t) t.textContent=localStorage.getItem('dh_last_score_title')||t.textContent;
+  if(d) d.textContent=localStorage.getItem('dh_last_score_desc')||d.textContent;
+}
+
 /* Ruaj Daily Activity te llogaria (Supabase) — një rresht për ditë */
 async function saveDailyActivityToSupabase(){
   try{
@@ -5181,6 +5193,7 @@ function llaunchApp() {
     /* Rikthe vlerat manuale të Daily Activity + Glucose Detail (para sync-ut) */
     try{ restoreDailyActivity(); }catch(e){}
     try{ restoreVitalDetails(); }catch(e){}
+    try{ restoreHomeScore(); }catch(e){}
     try{ updateIndicatorBadge(); }catch(e){}
     /* Auto-sync nëse i lidhur */
     if(isConnected('gfit'))   syncGoogleFitData();
@@ -7748,6 +7761,19 @@ function renderEngineResult(result, data){
   if(stEl)   stEl.textContent = score>=75 ? '✅ Good Health Status' : score>=50 ? '⚠️ Fair Health Status' : '🚨 Poor Health Status';
   if(dateEl){ var now=new Date(); dateEl.textContent = now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
 
+  /* ── Lidh kartën "Diagnostic AI" te Home me këtë rezultat ── */
+  var hTitle = score>=75 ? 'Good health status' : score>=50 ? 'Fair health status' : 'Poor health status';
+  var hDesc  = (recs[0] || docSum || 'Tap for full AI analysis').toString().substring(0,90);
+  var hNumEl=document.getElementById('home-sc-num'); if(hNumEl){ hNumEl.textContent=score; hNumEl.style.color=scoreColor; }
+  var hTitleEl=document.getElementById('home-sc-title'); if(hTitleEl) hTitleEl.textContent=hTitle;
+  var hDescEl=document.getElementById('home-sc-desc'); if(hDescEl) hDescEl.textContent=hDesc;
+  try{
+    localStorage.setItem('dh_last_score', String(score));
+    localStorage.setItem('dh_last_score_title', hTitle);
+    localStorage.setItem('dh_last_score_desc', hDesc);
+    localStorage.setItem('dh_last_score_color', scoreColor);
+  }catch(e){}
+
   /* Alarms */
   var alarmsEl = document.getElementById('eng-alarms');
   if(alarmsEl){
@@ -8778,6 +8804,27 @@ var dsExpanded = false;
 function toggleDataSources(){
   dsExpanded = !dsExpanded;
   updateDataSources();
+}
+
+/* Buton Sync në Home — sinkronizon burimin e lidhur + rifreskon gjithçka */
+function syncNow(){
+  var btn = document.getElementById('homeSyncBtn');
+  if(btn){ btn.disabled=true; btn.innerHTML='⏳ Sync...'; setTimeout(function(){ if(btn){btn.disabled=false; btn.innerHTML='🔄 Sync';} }, 4000); }
+  var did = false;
+  /* Burimi i aktivitetit (Google Fit / Health Connect) */
+  if(isConnected('gfit')){ try{ syncGoogleFitData(); did=true; }catch(e){} }
+  else if(isConnected('fitbit')){ try{ loadFitbitData(); did=true; }catch(e){} }
+  /* Rifresko Daily Activity nga llogaria */
+  try{ if(LST&&LST.currentUser&&LST.currentUser.id) loadDailyActivityFromSupabase(LST.currentUser.id); }catch(e){}
+  /* Rifresko ajrin + burimet + ushqyerjen */
+  try{ loadAirQuality(); }catch(e){}
+  try{ updateDataSources(); }catch(e){}
+  try{ renderNutritionUI(); }catch(e){}
+  try{ updateAllVitalsUI(); }catch(e){}
+  if(!did){
+    showToast('🔄 U rifreskua. Lidh një burim (Google Fit) për sync automatik të hapave.');
+    dsExpanded = true; updateDataSources();
+  }
 }
 function updateDataSources(){
   var apps = [
