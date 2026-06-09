@@ -7705,7 +7705,20 @@ function installPWA(){
 
 
 
-function openPaymentModal(){ var m=document.getElementById('paymentModal'); if(m){m.style.display='flex';switchPayTab('card');} }
+/* Zhvendos modalet që janë ngecur brenda një ekrani te kontejneri kryesor,
+   që të shfaqen mbi çdo ekran (jo vetëm kur ai ekran është aktiv). */
+function relocateModals(){
+  var device = document.querySelector('.device') ||
+               (document.getElementById('screen-home') && document.getElementById('screen-home').parentNode);
+  if(!device) return;
+  ['paymentModal','nutritionModal','bookingModal'].forEach(function(id){
+    var m=document.getElementById(id);
+    if(m && m.parentNode !== device){ device.appendChild(m); }
+  });
+}
+document.addEventListener('DOMContentLoaded', relocateModals);
+
+function openPaymentModal(){ var m=document.getElementById('paymentModal'); if(m){ try{relocateModals();}catch(e){} m.style.display='flex'; switchPayTab('card'); } }
 function closePaymentModal(e){ var m=document.getElementById('paymentModal'); if(e&&e.target!==m)return; if(m)m.style.display='none'; }
 function switchPayTab(tab){ ['card','gpay','paypal','crypto'].forEach(function(t){ var p=document.getElementById('payPane-'+t),b=document.getElementById('payTab-'+t); if(p)p.style.display=t===tab?'block':'none'; if(b){b.style.background=t===tab?'var(--primary)':'var(--bg)';} }); }
 function detectCardBrand(num){ var n=num.replace(/\D/g,''); if(/^4/.test(n)) return 'VISA'; if(/^(5[1-5]|2(2[2-9]|[3-6]|7[01]|720))/.test(n)) return 'Mastercard'; return ''; }
