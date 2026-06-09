@@ -6348,19 +6348,88 @@ function triggerProfFile(){
     if(inp) inp.click();
   }, 50);
 }
-function handleProfFileUpload(event){
+/* ════════ DOKUMENTE REALE — Supabase Storage ════════ */
+async function uploadUserDocument(file){
+  var sb = getSupa();
+  if(!sb || !LST || !LST.currentUser || !LST.currentUser.id){
+    showToast('⚠️ Kyçu për të ruajtur dokumentet'); return null;
+  }
+  var uid  = LST.currentUser.id;
+  var safe = (file.name||'file').replace(/[^a-zA-Z0-9._-]/g,'_');
+  var path = uid + '/' + Date.now() + '_' + safe;
+  try{
+    var up = await sb.storage.from('documents').upload(path, file, {upsert:false, contentType:file.type||undefined});
+    if(up.error) throw up.error;
+    var meta = {patient_id: uid, name: file.name, path: path, size_bytes: file.size||0, created_at: new Date().toISOString()};
+    var ins = await sb.from('documents').insert(meta).select().single();
+    return (ins && ins.data) ? ins.data : meta;
+  }catch(e){ console.log('Doc upload error:', e.message); showToast('❌ Ngarkimi dështoi: '+e.message); return null; }
+}
+
+async function loadUserDocuments(){
+  var sb = getSupa();
+  if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return [];
+  try{
+    var r = await sb.from('documents').select('*').eq('patient_id', LST.currentUser.id).order('created_at',{ascending:false});
+    return r.data || [];
+  }catch(e){ return []; }
+}
+
+function renderDocItem(doc){
+  var ico = (doc.name||'').match(/\.(jpg|jpeg|png)$/i) ? '🖼️' : '📋';
+  var sz  = doc.size_bytes>1048576 ? (doc.size_bytes/1048576).toFixed(1)+'MB' : ((doc.size_bytes||0)/1024).toFixed(0)+'KB';
+  var d = document.createElement('div');
+  d.className = 'fl-item';
+  d.setAttribute('data-doc-id', doc.id||'');
+  d.setAttribute('data-doc-path', doc.path||'');
+  d.innerHTML = '<span style="font-size:16px;">'+ico+'</span>'
+    + '<span class="fl-nm" style="cursor:pointer;" onclick="openUserDocument(this)">'+esc(doc.name||'document')+'</span>'
+    + '<span class="fl-sz">'+sz+'</span>'
+    + '<span class="fl-del" onclick="deleteUserDocument(this)">×</span>';
+  return d;
+}
+
+async function refreshDocuments(){
+  var docs = await loadUserDocuments();
+  ['prof-fl-list','ds-fl-list'].forEach(function(id){
+    var list = document.getElementById(id);
+    if(!list) return;
+    list.innerHTML = '';
+    docs.forEach(function(doc){ list.appendChild(renderDocItem(doc)); });
+  });
+}
+
+async function openUserDocument(el){
+  var item = el.closest('.fl-item'); if(!item) return;
+  var path = item.getAttribute('data-doc-path');
+  var sb = getSupa(); if(!sb || !path) return;
+  try{
+    var r = await sb.storage.from('documents').createSignedUrl(path, 3600);
+    if(r.data && r.data.signedUrl) window.open(r.data.signedUrl, '_blank');
+    else showToast('❌ S\'u hap dokumenti');
+  }catch(e){ showToast('❌ S\'u hap dokumenti'); }
+}
+
+async function deleteUserDocument(el){
+  var item = el.closest('.fl-item'); if(!item) return;
+  var docId = item.getAttribute('data-doc-id');
+  var path  = item.getAttribute('data-doc-path');
+  var sb = getSupa();
+  item.remove();
+  /* hiq edhe nga lista tjetër (sinkron) */
+  setTimeout(refreshDocuments, 300);
+  if(sb && path){  try{ await sb.storage.from('documents').remove([path]); }catch(e){} }
+  if(sb && docId){ try{ await sb.from('documents').delete().eq('id', docId); }catch(e){} }
+  showToast('🗑️ Dokumenti u fshi');
+}
+
+async function handleProfFileUpload(event){
   var files = event.target.files;
   if(!files||!files.length) return;
-  var list = document.getElementById('prof-fl-list');
-  Array.from(files).forEach(function(file){
-    var ico = file.name.match(/\.(jpg|jpeg|png)$/i)?'🖼️':'📋';
-    var size = file.size>1048576?(file.size/1048576).toFixed(1)+'MB':(file.size/1024).toFixed(0)+'KB';
-    var d = document.createElement('div');
-    d.className = 'fl-item';
-    d.innerHTML = '<span style="font-size:16px;">'+ico+'</span><span class="fl-nm">'+file.name+'</span><span class="fl-sz">'+size+'</span><span class="fl-del" onclick="this.closest(\'.fl-item\').remove()">×</span>';
-    list.appendChild(d);
-  });
-  showToast('✅ File uploaded!');
+  showToast('🔄 Duke ngarkuar...');
+  for(var i=0;i<files.length;i++){ await uploadUserDocument(files[i]); }
+  await refreshDocuments();
+  showToast('✅ Dokumenti u ruajt në llogari!');
   event.target.value='';
 }
 
@@ -6821,19 +6890,13 @@ function drAddMsg(type, text){
 
 
 
-function handleDsFileUpload(event){
+async function handleDsFileUpload(event){
   var files = event.target.files;
   if(!files||!files.length) return;
-  var list = document.getElementById('ds-fl-list');
-  Array.from(files).forEach(function(file){
-    var ico = file.name.match(/\.(jpg|jpeg|png)$/i)?'🖼️':'📋';
-    var size = file.size>1048576?(file.size/1048576).toFixed(1)+'MB':(file.size/1024).toFixed(0)+'KB';
-    var d = document.createElement('div');
-    d.className='fl-item';
-    d.innerHTML='<span style="font-size:16px;">'+ico+'</span><span class="fl-nm">'+file.name+'</span><span class="fl-sz">'+size+'</span><span class="fl-del" onclick="this.closest(\'.fl-item\').remove()">×</span>';
-    list.appendChild(d);
-  });
-  showToast('✅ File uploaded!');
+  showToast('🔄 Duke ngarkuar...');
+  for(var i=0;i<files.length;i++){ await uploadUserDocument(files[i]); }
+  await refreshDocuments();
+  showToast('✅ Dokumenti u ruajt në llogari!');
   event.target.value='';
 }
 
@@ -7188,6 +7251,8 @@ async function initUserData(userId, userName, userEmail){
     /* Daily Activity e sotme (steps/calories/puls) nga llogaria */
     try{ await loadDailyActivityFromSupabase(userId); }catch(e){}
     try{ updateIndicatorBadge(); }catch(e){}
+    /* Dokumentet reale nga Storage */
+    try{ await refreshDocuments(); }catch(e){}
 
     /* Profili personal */
     var pr = await sb.from('profiles').select('*').eq('id', userId).single();
