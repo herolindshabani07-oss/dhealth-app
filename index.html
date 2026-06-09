@@ -1296,7 +1296,7 @@ select option{background:#0A1628;color:#F1F5FF;}
             <div class="av-drop-item red" onclick="closeAvDrop();doSignOut()"><div class="av-drop-ico" style="background:#FEF2F2;">🚪</div><div class="av-drop-lbl">Sign Out</div></div>
           </div>
         </div></div></div>
-        <div class="hbadge"><span class="hdot"></span> 6 indicators · D Health active</div>
+        <div class="hbadge"><span class="hdot"></span> <span id="homeIndicators">0 indicators</span> · D Health active</div>
       </div>
     </div>
     <div class="vg">
@@ -2638,10 +2638,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="divr"></div>
       <!-- DOCUMENTS -->
       <div class="pf-sec-title">📄 Documents</div>
-      <div class="fl-list" id="prof-fl-list">
-        <div class="fl-item"><span style="font-size:16px;">📋</span><span class="fl-nm">Blood_Panel_March2026.pdf</span><span class="fl-sz">2.1MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
-        <div class="fl-item"><span style="font-size:16px;">🫀</span><span class="fl-nm">ECG_Feb2026.pdf</span><span class="fl-sz">0.9MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
-      </div>
+      <div class="fl-list" id="prof-fl-list"></div>
       <label for="prof-file-input" class="upload-z" style="display:block;cursor:pointer;">
         <div style="font-size:22px;margin-bottom:5px;">📎</div>
         <div style="font-size:12px;color:rgba(255,255,255,0.5);">Upload lab results, ECG, reports</div>
@@ -2831,10 +2828,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div class="divr"></div>
         <!-- DOCUMENTS -->
         <div class="pf-sec-title">📄 Documents</div>
-        <div class="fl-list" id="ds-fl-list">
-          <div class="fl-item"><span style="font-size:16px;">📋</span><span class="fl-nm">Blood_Panel_March2026.pdf</span><span class="fl-sz">2.1MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
-          <div class="fl-item"><span style="font-size:16px;">🫀</span><span class="fl-nm">ECG_Feb2026.pdf</span><span class="fl-sz">0.9MB</span><span class="fl-del" onclick="this.closest('.fl-item').remove()">×</span></div>
-        </div>
+        <div class="fl-list" id="ds-fl-list"></div>
         <label for="ds-file-input" class="upload-z" style="display:block;cursor:pointer;">
           <div style="font-size:22px;margin-bottom:5px;">📎</div>
           <div style="font-size:12px;color:rgba(255,255,255,0.5);">Upload lab results, ECG, reports</div>
@@ -3901,6 +3895,7 @@ function addTag(listId,inpId,cls){
     if(!ex)_addTagToList(sid,txt,cls);
   });
   inp.value='';
+  try{ updateIndicatorBadge(); }catch(e){}
   /* Sync medical profile to Supabase */
   setTimeout(syncMedicalProfile, 500);
 }
@@ -3911,6 +3906,7 @@ function rmTag(listId,el){ setTimeout(function(){try{updateDiagHeader();}catch(e
     var w=document.getElementById(sid);if(!w)return;
     w.querySelectorAll('.tag2').forEach(function(t){if(t.textContent.replace('×','').trim()===txt)t.remove();});
   });
+  try{ updateIndicatorBadge(); }catch(e){}
   /* Sync medical profile to Supabase */
   setTimeout(syncMedicalProfile, 500);
 }
@@ -5092,6 +5088,7 @@ function llaunchApp() {
     refreshIntegBadges();
     /* Rikthe vlerat manuale të Daily Activity (para sync-ut) */
     try{ restoreDailyActivity(); }catch(e){}
+    try{ updateIndicatorBadge(); }catch(e){}
     /* Auto-sync nëse i lidhur */
     if(isConnected('gfit'))   syncGoogleFitData();
     if(isConnected('fitbit')) try{ loadFitbitData(); }catch(e){}
@@ -5928,6 +5925,35 @@ function updateAllVitalsUI(){
 
   /* Sinkronizo edhe ekranin Diagnostic (ds-*) — që detajet të jenë gjithmonë të njëjta me Vitals/Home */
   try{ updateDiagScreen(); }catch(e){}
+  try{ updateIndicatorBadge(); }catch(e){}
+}
+
+/* Badge "N indicators" — i lidhur me diagnoza + terapi + vitals reale */
+function updateIndicatorBadge(){
+  var el = document.getElementById('homeIndicators');
+  if(!el) return;
+  var countTags = function(ids){
+    var seen={}, n=0;
+    ids.forEach(function(id){
+      var w=document.getElementById(id); if(!w) return;
+      w.querySelectorAll('.tag2').forEach(function(t){
+        var v=t.textContent.replace('×','').trim();
+        if(v && !seen[v]){ seen[v]=1; n++; }
+      });
+    });
+    return n;
+  };
+  var dx = countTags(['diag-tags','prof-diag-tags','ds-diag-tags']);
+  var th = countTags(['therapy-tags','prof-therapy-tags','ds-therapy-tags']);
+  var vit = 0;
+  if(vitalsState.sys>0)  vit++;
+  if(vitalsState.hr>0)   vit++;
+  if(vitalsState.glu>0)  vit++;
+  if(vitalsState.spo2>0) vit++;
+  if(vitalsState.temp>0) vit++;
+  if((typeof dailyState!=='undefined' && dailyState.steps>0) || vitalsState.steps>0) vit++;
+  var total = dx + th + vit;
+  el.textContent = total + ' indicator' + (total===1 ? '' : 's');
 }
 
 
@@ -6458,6 +6484,7 @@ function addTherapyMed(){
   }
   setTimeout(renderTherapyList,100);
   showToast('✅ '+val+' added!');
+  try{ updateIndicatorBadge(); }catch(e){}
   try{ syncMedicalProfile(); }catch(e){}
 }
 
@@ -7160,6 +7187,7 @@ async function initUserData(userId, userName, userEmail){
 
     /* Daily Activity e sotme (steps/calories/puls) nga llogaria */
     try{ await loadDailyActivityFromSupabase(userId); }catch(e){}
+    try{ updateIndicatorBadge(); }catch(e){}
 
     /* Profili personal */
     var pr = await sb.from('profiles').select('*').eq('id', userId).single();
