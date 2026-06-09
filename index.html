@@ -3620,9 +3620,43 @@ function saveDailyMetric(type, val){
   }
   localStorage.setItem('da_manual_date', new Date().toDateString());
   try{ updateAllVitalsUI(); }catch(e){}   /* sinkronizon Home + Diagnostic */
-  try{ saveDailyRecord(); }catch(e){}     /* ruan në historik (për AI) */
+  try{ saveDailyRecord(); }catch(e){}     /* ruan në historik lokal (për AI) */
   try{ calcDailyScore(); }catch(e){}
+  try{ saveDailyActivityToSupabase(); }catch(e){}  /* ruan në llogari (email) */
   showToast('✅ '+(type==='steps'?'Hapat':type==='cal'?'Kaloritë':'Pulsi')+' u ruajtën: '+val.toLocaleString());
+}
+
+/* Ruaj Daily Activity te llogaria (Supabase) — një rresht për ditë */
+async function saveDailyActivityToSupabase(){
+  try{
+    var sb = getSupa();
+    if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return;
+    var num = function(id){ var e=document.getElementById(id); return e?(parseInt((e.textContent||'').replace(/[^0-9]/g,''))||0):0; };
+    var today = new Date().toISOString().split('T')[0];
+    await sb.from('daily_activity').upsert({
+      patient_id:    LST.currentUser.id,
+      activity_date: today,
+      steps:         num('da-steps'),
+      calories:      num('da-cal'),
+      hr_avg:        num('da-hr'),
+      updated_at:    new Date().toISOString()
+    }, {onConflict:'patient_id,activity_date'});
+  }catch(e){ console.log('Daily activity Supabase error:', e.message); }
+}
+
+/* Ngarko Daily Activity e sotme nga llogaria */
+async function loadDailyActivityFromSupabase(userId){
+  try{
+    var sb = getSupa();
+    if(!sb || !userId) return;
+    var today = new Date().toISOString().split('T')[0];
+    var da = await sb.from('daily_activity').select('*').eq('patient_id', userId).eq('activity_date', today).single();
+    if(da && da.data){
+      if(da.data.steps>0){ vitalsState.steps = da.data.steps; var s=document.getElementById('da-steps'); if(s) s.textContent = da.data.steps.toLocaleString(); }
+      if(da.data.calories>0){ var c=document.getElementById('da-cal'); if(c) c.textContent = da.data.calories.toLocaleString(); }
+      if(da.data.hr_avg>0){ if(!vitalsState.hr) vitalsState.hr = da.data.hr_avg; var h=document.getElementById('da-hr'); if(h) h.textContent = da.data.hr_avg; }
+    }
+  }catch(e){}
 }
 
 /* Rikthe vlerat manuale të sotme pas rifreskimit (vetëm nëse s'ka sync aktiv) */
@@ -7058,6 +7092,9 @@ async function initUserData(userId, userName, userEmail){
       if(vt.data.temperature)  { vitalsState.temp = vt.data.temperature; }
       try{ updateAllVitalsUI(); }catch(e){}
     }
+
+    /* Daily Activity e sotme (steps/calories/puls) nga llogaria */
+    try{ await loadDailyActivityFromSupabase(userId); }catch(e){}
 
     /* Profili personal */
     var pr = await sb.from('profiles').select('*').eq('id', userId).single();
