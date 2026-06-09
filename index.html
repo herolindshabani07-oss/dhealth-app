@@ -2055,17 +2055,26 @@ select option{background:#0A1628;color:#F1F5FF;}
 
       <!-- PERSONAL INFO -->
       <div id="setPane-info">
+        <!-- FOTO PROFILI -->
+        <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
+          <div onclick="document.getElementById('avatarInput').click()" style="position:relative;cursor:pointer;">
+            <div id="setEditAvatar" style="width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff;background-size:cover;background-position:center;">👤</div>
+            <div style="position:absolute;bottom:-2px;right:-2px;width:26px;height:26px;border-radius:50%;background:#3B7DD8;border:2px solid #1B2030;display:flex;align-items:center;justify-content:center;font-size:12px;">📷</div>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:7px;">Trokit për të ndryshuar foton</div>
+          <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(this)">
+        </div>
         <div style="margin-bottom:11px;">
           <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Full Name</div>
           <input id="setEditName" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
         <div style="margin-bottom:11px;">
           <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Email</div>
-          <input id="setEditEmail" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="elena@dhealth.app" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+          <input id="setEditEmail" readonly style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:rgba(255,255,255,0.6);background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="" placeholder="email@example.com"/>
         </div>
         <div style="margin-bottom:11px;">
           <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Date of Birth</div>
-          <input type="date" id="setEditDob" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="1985-06-14"/>
+          <input type="date" id="setEditDob" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value=""/>
         </div>
         <div style="margin-bottom:11px;">
           <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Phone</div>
@@ -2104,11 +2113,16 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div id="setPane-health" style="display:none;">
         <div style="margin-bottom:11px;">
           <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Height (cm)</div>
-          <input id="setHeight" type="number" placeholder="170" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+          <input id="setHeight" type="number" placeholder="170" oninput="computeBMI()" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
         <div style="margin-bottom:11px;">
           <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Weight (kg)</div>
-          <input id="setWeight" type="number" placeholder="70" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+          <input id="setWeight" type="number" placeholder="70" oninput="computeBMI()" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+        </div>
+        <!-- BMI AUTOMATIK -->
+        <div id="setBmiCard" style="margin-bottom:11px;background:rgba(45,200,160,0.08);border:0.5px solid rgba(45,200,160,0.25);border-radius:12px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;">
+          <div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;">BMI (automatik)</div><div id="setBmiCat" style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;">Fut gjatësinë dhe peshën</div></div>
+          <div id="setBmiVal" style="font-size:22px;font-weight:800;color:#2DC8A0;">--</div>
         </div>
         <div style="margin-bottom:11px;">
           <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Blood Type</div>
@@ -5197,6 +5211,7 @@ function llaunchApp() {
     try{ restoreDailyActivity(); }catch(e){}
     try{ restoreVitalDetails(); }catch(e){}
     try{ restoreHomeScore(); }catch(e){}
+    try{ applyAvatar(); }catch(e){}
     try{ updateIndicatorBadge(); }catch(e){}
     /* Auto-sync nëse i lidhur */
     if(isConnected('gfit'))   syncGoogleFitData();
@@ -5416,6 +5431,11 @@ function setShowEdit(){
   document.getElementById('setEditModal').style.display='flex';
   switchSetTab('info');
   loadSettingsData();
+  try{ applyAvatar(); }catch(e){}
+  try{ computeBMI(); }catch(e){}
+  /* Email-i nga llogaria (read-only) */
+  var em = document.getElementById('setEditEmail');
+  if(em && LST && LST.currentUser && LST.currentUser.email) em.value = LST.currentUser.email;
 }
 function setCloseEdit(e){
   if(e && e.target!==document.getElementById('setEditModal')) return;
@@ -5466,7 +5486,14 @@ async function savePersonalInfo(){
   var dsName= document.getElementById('ds-name'); if(dsName) dsName.textContent=name.split(' ')[0];
   var sb = getSupa();
   if(sb && LST.currentUser){
-    try{ await sb.from('profiles').update({full_name:name}).eq('id', LST.currentUser.id); }catch(e){}
+    try{
+      await sb.from('profiles').update({
+        full_name:     name,
+        date_of_birth: dob    || null,
+        phone:         phone  || null,
+        gender:        gender || null
+      }).eq('id', LST.currentUser.id);
+    }catch(e){ console.log('Profile save error:', e.message); }
   }
   showToast('✅ Personal info saved!');
   try{updateMoreProfile();}catch(e){}
@@ -5499,6 +5526,16 @@ async function saveHealthInfo(){
   var stored = JSON.parse(localStorage.getItem('dh_profile')||'{}');
   stored.height=height; stored.weight=weight; stored.bloodType=bloodType; stored.emergency=emergency;
   localStorage.setItem('dh_profile', JSON.stringify(stored));
+  /* Ruaj te llogaria (Supabase) */
+  var sb = getSupa();
+  if(sb && LST.currentUser){
+    try{
+      await sb.from('profiles').update({
+        height_cm: height ? parseFloat(height) : null,
+        weight_kg: weight ? parseFloat(weight) : null
+      }).eq('id', LST.currentUser.id);
+    }catch(e){ console.log('Health save error:', e.message); }
+  }
   if(height && weight){
     var bmi = (parseFloat(weight) / Math.pow(parseFloat(height)/100, 2)).toFixed(1);
     showToast('✅ Health info saved! BMI: '+bmi);
@@ -5506,6 +5543,65 @@ async function saveHealthInfo(){
     showToast('✅ Health info saved!');
   }
   document.getElementById('setEditModal').style.display='none';
+}
+
+/* BMI automatik */
+function computeBMI(){
+  var h = parseFloat((document.getElementById('setHeight')||{}).value)||0;
+  var w = parseFloat((document.getElementById('setWeight')||{}).value)||0;
+  var valEl = document.getElementById('setBmiVal');
+  var catEl = document.getElementById('setBmiCat');
+  if(!valEl) return;
+  if(h>0 && w>0){
+    var bmi = w / Math.pow(h/100, 2);
+    var b = Math.round(bmi*10)/10;
+    var cat, col;
+    if(bmi<18.5){ cat='Nënpeshë'; col='#60A5FA'; }
+    else if(bmi<25){ cat='Normal ✅'; col='#2DC8A0'; }
+    else if(bmi<30){ cat='Mbipeshë ⚠️'; col='#F97316'; }
+    else { cat='Obezitet 🚨'; col='#DC2626'; }
+    valEl.textContent = b;
+    valEl.style.color = col;
+    if(catEl) catEl.textContent = cat;
+    localStorage.setItem('dh_bmi', String(b));
+  } else {
+    valEl.textContent='--'; valEl.style.color='#2DC8A0';
+    if(catEl) catEl.textContent='Fut gjatësinë dhe peshën';
+  }
+}
+
+/* ════ FOTO PROFILI ════ */
+function handleAvatarUpload(input){
+  var file = input.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var data = e.target.result;
+    localStorage.setItem('dh_avatar', data);
+    applyAvatar();
+    /* Ruaj te llogaria (Supabase Storage), best-effort */
+    try{ uploadAvatarToSupabase(file); }catch(err){}
+    showToast('✅ Foto u ndryshua!');
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+function applyAvatar(){
+  var data = localStorage.getItem('dh_avatar');
+  if(!data) return;
+  ['setEditAvatar','moreProfileAv'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el){ el.style.backgroundImage='url('+data+')'; el.textContent=''; }
+  });
+  var pAv = document.querySelector('.profile-av');
+  if(pAv){ pAv.style.backgroundImage='url('+data+')'; pAv.style.backgroundSize='cover'; pAv.style.backgroundPosition='center'; pAv.textContent=''; }
+}
+async function uploadAvatarToSupabase(file){
+  var sb = getSupa();
+  if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return;
+  var path = LST.currentUser.id + '/avatar_' + Date.now() + '.jpg';
+  try{
+    await sb.storage.from('documents').upload(path, file, {upsert:true, contentType:file.type||'image/jpeg'});
+  }catch(e){ console.log('Avatar upload:', e.message); }
 }
 function setSaveProfile(){
   var name = document.getElementById('setEditName').value.trim();
