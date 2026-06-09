@@ -342,6 +342,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
           <div class="section-title">📅 Appointment Requests</div>
           <button onclick="loadAppointments()" style="padding:8px 14px;border-radius:11px;border:1px solid var(--border);background:var(--white);font-size:12px;cursor:pointer;font-family:var(--font);">↻ Refresh</button>
         </div>
+        <!-- Filtra sipas statusit -->
+        <div id="aptFilters" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+          <button data-f="pending" onclick="setAptFilter('pending')" style="padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:#F97316;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">⏳ Pending <span id="cnt-pending">0</span></button>
+          <button data-f="confirmed" onclick="setAptFilter('confirmed')" style="padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">✅ Confirmed <span id="cnt-confirmed">0</span></button>
+          <button data-f="rejected" onclick="setAptFilter('rejected')" style="padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">❌ Rejected <span id="cnt-rejected">0</span></button>
+          <button data-f="all" onclick="setAptFilter('all')" style="padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">📋 All <span id="cnt-all">0</span></button>
+        </div>
         <div class="patients-table" id="aptList">
           <div class="loading"><div class="spin"></div> Loading...</div>
         </div>
@@ -679,20 +686,35 @@ function invitePatient() {
 
 
 /* ── APPOINTMENTS ── */
+var _aptFilter = 'pending';
+function setAptFilter(f){
+  _aptFilter = f;
+  ['pending','confirmed','rejected','all'].forEach(function(k){
+    var b=document.querySelector('#aptFilters button[data-f="'+k+'"]');
+    if(b){ b.style.background = k===f ? (k==='pending'?'#F97316':k==='confirmed'?'#22C55E':k==='rejected'?'#EF4444':'var(--primary)') : 'var(--white)'; b.style.color = k===f?'#fff':'var(--text)'; }
+  });
+  loadAppointments();
+}
 async function loadAppointments(){
   var list = document.getElementById('aptList');
   if(list) list.innerHTML = '<div class="loading"><div class="spin"></div> Loading...</div>';
   var {data, error} = await sb.from('appointments').select('*').order('created_at',{ascending:false});
-  var count = data ? data.filter(function(a){return a.status==='pending';}).length : 0;
-  var el = document.getElementById('aptCount');
-  if(el) el.textContent = count;
-  if(!data || data.length===0){
-    if(list) list.innerHTML = '<div class="empty"><div class="empty-ico">📅</div><div class="empty-txt">No appointment requests yet</div></div>';
+  data = data || [];
+  /* Numëruesit sipas statusit */
+  var counts = {pending:0, confirmed:0, rejected:0, all:data.length};
+  data.forEach(function(a){ if(counts[a.status]!=null) counts[a.status]++; });
+  ['pending','confirmed','rejected','all'].forEach(function(k){ var e=document.getElementById('cnt-'+k); if(e) e.textContent=counts[k]; });
+  var el = document.getElementById('aptCount'); if(el) el.textContent = counts.pending;
+  /* Filtro + rendit (datat e ardhshme/recente lart) */
+  var rows = (_aptFilter==='all') ? data.slice() : data.filter(function(a){ return a.status===_aptFilter; });
+  rows.sort(function(a,b){ return new Date(b.appointment_date+'T'+(b.appointment_time||'00:00')) - new Date(a.appointment_date+'T'+(a.appointment_time||'00:00')); });
+  if(rows.length===0){
+    if(list) list.innerHTML = '<div class="empty"><div class="empty-ico">📅</div><div class="empty-txt">Asnjë termin "'+_aptFilter+'"</div></div>';
     return;
   }
   var statusColors = {pending:'#F97316', confirmed:'#22C55E', rejected:'#EF4444'};
   var statusLabels = {pending:'⏳ Pending', confirmed:'✅ Confirmed', rejected:'❌ Rejected'};
-  if(list) list.innerHTML = data.map(function(a){
+  if(list) list.innerHTML = rows.map(function(a){
     var sc = statusColors[a.status]||'#7B8BAD';
     var sl = statusLabels[a.status]||a.status;
     var dt = new Date(a.appointment_date+'T'+a.appointment_time);
@@ -786,13 +808,16 @@ async function loadChatPatients(){
     var initials = (p.full_name||'?').split(' ').map(function(n){return n[0];}).join('').slice(0,2).toUpperCase();
     var color = colors[i % colors.length];
     var lastMsg = msgs ? msgs.find(function(m){ return m.sender_id===p.id || m.receiver_id===p.id; }) : null;
-    var lastTxt = lastMsg ? lastMsg.content.substring(0,30)+'...' : 'No messages yet';
+    var raw = lastMsg ? lastMsg.content.replace(/\n/g,' ') : '';
+    var fromDoc = lastMsg && currentDoctor && lastMsg.sender_id===currentDoctor.id;
+    var lastTxt = lastMsg ? ((fromDoc?'Ti: ':'') + (raw.length>30 ? raw.substring(0,30)+'…' : raw)) : 'No messages yet';
+    var lastTime = lastMsg ? new Date(lastMsg.sent_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '';
     var unread = msgs ? msgs.filter(function(m){ return m.sender_id===p.id && !m.is_read; }).length : 0;
-    return '<div class="chat-patient-item" id="cpi-'+p.id+'" onclick="openChat(\''+p.id+'\',\''+p.full_name+'\',\''+color+'\',\''+initials+'\',\''+p.email+'\')">'
+    return '<div class="chat-patient-item'+(unread>0?' unread':'')+'" id="cpi-'+p.id+'" onclick="openChat(\''+p.id+'\',\''+(p.full_name||'').replace(/\047/g,'')+'\',\''+color+'\',\''+initials+'\',\''+(p.email||'')+'\')">'
       +'<div class="chat-p-av" style="background:'+color+';">'+initials+'</div>'
       +'<div style="flex:1;min-width:0;">'
-        +'<div class="chat-p-name">'+(p.full_name||'Unknown')+'</div>'
-        +'<div class="chat-p-last">'+lastTxt+'</div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;"><div class="chat-p-name" style="font-weight:'+(unread>0?'700':'600')+';">'+escHtml(p.full_name||'Unknown')+'</div><span style="font-size:9px;color:var(--tm);flex-shrink:0;">'+lastTime+'</span></div>'
+        +'<div class="chat-p-last" style="color:'+(unread>0?'var(--text)':'var(--tm)')+';font-weight:'+(unread>0?'600':'400')+';">'+escHtml(lastTxt)+'</div>'
       +'</div>'
       +(unread>0 ? '<div class="chat-p-badge">'+unread+'</div>' : '')
       +'</div>';
@@ -822,6 +847,7 @@ async function openChat(patientId, patientName, color, initials, email){
     +'</div>'
     +'<div class="chat-msgs" id="chatMsgs"><div class="loading"><div class="spin"></div> Loading messages...</div></div>'
     +'<div class="chat-input-bar">'
+      +'<button id="aiDraftBtn" onclick="aiDraftReply()" title="Draft përgjigjeje me AI (Claude Opus)" style="width:40px;height:40px;border-radius:50%;border:none;background:linear-gradient(135deg,#0D3B8E,#8B6FE8);color:#fff;cursor:pointer;flex-shrink:0;font-size:16px;">🤖</button>'
       +'<input class="chat-inp" id="chatInp" placeholder="Write a message to '+patientName+'..." onkeydown="if(event.key===\'Enter\')sendChatMsg()"/>'
       +'<button class="chat-send-btn" onclick="sendChatMsg()">'
         +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
@@ -844,8 +870,19 @@ async function loadMessages(patientId){
 
   /* Mark as read */
   await sb.from('messages').update({is_read:true}).eq('sender_id',patientId).eq('is_read',false);
+  try{ loadChatPatients(); }catch(e){}
 }
 
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+/* Funksion i vetëm për shfaqjen e një mesazhi — përdoret kudo (fix i bug-ut) */
+function buildMsgHTML(m){
+  var isDoctor = currentDoctor && m.sender_id === currentDoctor.id;
+  var time = new Date(m.sent_at||Date.now()).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  return '<div data-msg-id="'+(m.id||'')+'" style="display:flex;flex-direction:column;align-items:'+(isDoctor?'flex-end':'flex-start')+'">'
+    +'<div class="chat-msg '+(isDoctor?'doctor':'patient')+'">'+escHtml(m.content).replace(/\n/g,'<br>')
+      +'<div class="chat-msg-time">'+time+'</div>'
+    +'</div></div>';
+}
 function renderMessages(msgs){
   var msgEl = document.getElementById('chatMsgs');
   if(!msgEl) return;
@@ -853,16 +890,7 @@ function renderMessages(msgs){
     msgEl.innerHTML = '<div style="text-align:center;padding:30px;color:var(--tm);font-size:13px;">No messages yet. Start the conversation! 👋</div>';
     return;
   }
-  msgEl.innerHTML = msgs.map(function(m){
-    var isDoctor = currentDoctor && m.sender_id === currentDoctor.id;
-    var time = new Date(m.sent_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    return '<div data-msg-id="'+m.id+'" style="display:flex;flex-direction:column;align-items:'+(isDoctor?'flex-end':'flex-start')+'">'
-      +'<div class="chat-msg '+(isDoctor?'doctor':'patient')+'">'+m.content
-        +'<div class="chat-msg-time">'+time+'</div>'
-      +'</div>'
-      +'</div>';
-  }).join('');
-  /* Scroll to bottom */
+  msgEl.innerHTML = msgs.map(buildMsgHTML).join('');
   msgEl.scrollTop = msgEl.scrollHeight;
 }
 
@@ -906,17 +934,12 @@ function subscribeToMessages(patientId){
 function appendMessage(m, patientId){
   var msgsEl = document.getElementById('chatMsgs');
   if(!msgsEl) return;
-  var isDoctor = m.sender_id === currentDoctor.id;
-  var time = new Date(m.sent_at||Date.now()).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  var div = document.createElement('div');
-  div.className = 'msg ' + (isDoctor ? 'doctor' : 'patient');
-  div.setAttribute('data-msg-id', m.id);
-  div.innerHTML = '<div class="msg-bub">'+m.content+'<span class="msg-time">'+time+'</span></div>';
   /* Avoid duplicates */
-  if(!msgsEl.querySelector('[data-msg-id="'+m.id+'"]')){
-    msgsEl.appendChild(div);
-    msgsEl.scrollTop = 99999;
-  }
+  if(m.id && msgsEl.querySelector('[data-msg-id="'+m.id+'"]')) return;
+  /* Nëse ende tregon "No messages yet", pastroje */
+  if(msgsEl.querySelector('div[style*="text-align:center"]')) msgsEl.innerHTML='';
+  msgsEl.insertAdjacentHTML('beforeend', buildMsgHTML(m));
+  msgsEl.scrollTop = msgsEl.scrollHeight;
 }
 
 async function sendChatMsg(){
@@ -925,18 +948,10 @@ async function sendChatMsg(){
   var content = inp.value.trim();
   inp.value = '';
 
-  /* Add to UI immediately */
-  var msgsEl = document.getElementById('chatMsgs');
-  if(msgsEl){
-    var time = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    var div = document.createElement('div');
-    div.className = 'msg doctor';
-    div.innerHTML = '<div class="msg-bub">'+content+'<span class="msg-time">'+time+'</span></div>';
-    msgsEl.appendChild(div);
-    msgsEl.scrollTop = 99999;
-  }
+  /* Shfaqje e menjëhershme (UI) me të njëjtin stil */
+  appendMessage({ sender_id: currentDoctor.id, content: content, sent_at: new Date().toISOString() }, activeChatPatient.id);
 
-  /* Save to Supabase */
+  /* Ruaj te Supabase */
   var {error} = await sb.from('messages').insert({
     sender_id: currentDoctor.id,
     receiver_id: activeChatPatient.id,
@@ -944,6 +959,60 @@ async function sendChatMsg(){
     is_read: false
   });
   if(error) console.error('Send error:', error);
+}
+
+/* ════ AI DRAFT — ndihmës mjekësor (Claude Opus 4.8) ════ */
+async function aiDraftReply(){
+  if(!activeChatPatient){ return; }
+  var btn = document.getElementById('aiDraftBtn');
+  var inp = document.getElementById('chatInp');
+  if(btn){ btn.disabled=true; btn.textContent='⏳'; }
+  try{
+    var pid = activeChatPatient.id;
+    var res = await Promise.all([
+      sb.from('profiles').select('full_name,date_of_birth,gender,height_cm,weight_kg').eq('id',pid).single(),
+      sb.from('medical_profiles').select('*').eq('patient_id',pid).single(),
+      sb.from('vitals').select('*').eq('patient_id',pid).order('recorded_at',{ascending:false}).limit(5)
+    ]);
+    var p=res[0].data, mp=res[1].data, vt=res[2].data;
+    var conv = await sb.from('messages').select('*').or('sender_id.eq.'+pid+',receiver_id.eq.'+pid).order('sent_at',{ascending:true});
+    var msgs = conv.data || [];
+
+    var ctx = 'PATIENT: '+((p&&p.full_name)||'Unknown')+'\n';
+    if(p){ ctx += 'Gender: '+(p.gender||'-')+', DOB: '+(p.date_of_birth||'-')+', Height: '+(p.height_cm||'-')+'cm, Weight: '+(p.weight_kg||'-')+'kg\n'; }
+    if(mp){
+      ctx += 'Diagnoses: '+((mp.diagnoses||[]).join(', ')||'None')+'\n';
+      ctx += 'Therapy: '+((mp.therapy||[]).join(', ')||'None')+'\n';
+      ctx += 'Allergies: '+((mp.allergies||[]).join(', ')||'None')+'\n';
+      ctx += 'Lab values: '+((mp.lab_values||[]).join(' | ')||'None')+'\n';
+      if(mp.notes) ctx += 'Notes: '+mp.notes+'\n';
+    }
+    if(vt && vt.length){
+      ctx += 'Recent vitals:\n'+vt.map(function(v){ return '• '+((v.recorded_at||'')+'').substring(0,10)+': BP '+(v.systolic_bp||'--')+'/'+(v.diastolic_bp||'--')+', HR '+(v.heart_rate||'--')+', Glu '+(v.glucose||'--')+', SpO2 '+(v.spo2||'--'); }).join('\n')+'\n';
+    }
+    var convo = msgs.slice(-12).map(function(m){ var who=(currentDoctor&&m.sender_id===currentDoctor.id)?'Doctor':'Patient'; return who+': '+m.content; }).join('\n') || '(no messages yet)';
+
+    var sys = 'You are a senior clinical decision-support assistant helping Dr. Herolind Shabani (General Practitioner) draft a reply to a patient in a telemedicine chat.\n\n'
+      + 'PATIENT MEDICAL CONTEXT:\n'+ctx+'\n'
+      + 'GUIDELINES:\n'
+      + '- Write the DRAFT reply for the doctor to review, edit and send.\n'
+      + '- Be medically accurate, evidence-based, professional and empathetic.\n'
+      + '- Use the patient\'s REAL diagnoses, therapy and vital values; reference specific numbers.\n'
+      + '- Reply in the SAME language the patient uses (Albanian if they write Albanian).\n'
+      + '- Flag red flags and when to seek urgent in-person care.\n'
+      + '- Do NOT definitively prescribe new medications — suggest options and note the doctor should confirm.\n'
+      + '- Keep it concise (3-6 sentences), ready to send. Output ONLY the message text, no preamble.';
+
+    var r = await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-opus-4-8', max_tokens:800, system:sys, messages:[{role:'user', content:'Conversation so far:\n'+convo+'\n\nDraft the doctor\'s next reply now.'}] })});
+    var rawT = await r.text();
+    if(rawT.trim().startsWith('<')) throw new Error('AI server unavailable — kontrollo ANTHROPIC_API_KEY te Netlify.');
+    var d = JSON.parse(rawT); if(d.error) throw new Error(d.error.message);
+    var tx = d.content && d.content[0] && d.content[0].text;
+    if(tx && inp){ inp.value = tx.trim(); inp.focus(); }
+    else throw new Error('Empty response');
+  }catch(e){ console.error('aiDraft', e); alert('🤖 AI draft error: '+(e.message||e)); }
+  if(btn){ btn.disabled=false; btn.textContent='🤖'; }
 }
 
 /* ════ PATIENT DETAIL ════ */
