@@ -7902,6 +7902,29 @@ function collectAllData(){
   return {v, steps, cal, dist, active, sleep, aqi, aqiStatus, diags, therapy, allergies, labs, notes, ecg, history: histArr, nut: nut};
 }
 
+/* Parser JSON tolerant — rikuperon JSON të cunguar nga AI (mbyll string/kllapat e hapura) */
+function tryParseJSONLoose(txt){
+  if(!txt) return null;
+  try{ return JSON.parse(txt); }catch(e){}
+  var s = txt.indexOf('{');
+  if(s < 0) return null;
+  var str = txt.slice(s), stack = [], inStr = false, esc = false, out = '';
+  for(var i=0;i<str.length;i++){
+    var ch = str[i]; out += ch;
+    if(esc){ esc=false; continue; }
+    if(ch === '\\'){ esc=true; continue; }
+    if(ch === '"'){ inStr = !inStr; continue; }
+    if(inStr) continue;
+    if(ch === '{') stack.push('}');
+    else if(ch === '[') stack.push(']');
+    else if(ch === '}' || ch === ']') stack.pop();
+  }
+  if(inStr) out += '"';
+  while(stack.length) out += stack.pop();
+  out = out.replace(/,(\s*[}\]])/g, '$1'); // hiq presje fundore
+  try{ return JSON.parse(out); }catch(e){ return null; }
+}
+
 async function runCorrelationEngine(){
   var btn = document.getElementById('ds-analyze-btn');
   if(btn){ btn.disabled=true; btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Analyzing...'; }
@@ -7957,7 +7980,7 @@ async function runCorrelationEngine(){
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model:'claude-sonnet-4-5',
-        max_tokens:1200,
+        max_tokens:1600,
         system:'You are the D Health Correlation Engine. Respond ONLY with the requested JSON.',
         messages:[{role:'user',content:prompt}]
       })
@@ -7968,17 +7991,15 @@ async function runCorrelationEngine(){
     if(resp.error){ throw new Error(resp.error.message); }
     var txt = resp.content&&resp.content[0]&&resp.content[0].text||'{}';
     txt = txt.replace(/```json|```/g,'').trim();
-    var result;
-    try{
-      result = JSON.parse(txt);
-    }catch(pe){
-      /* AI nuk ktheu JSON — ndërtoj result nga teksti */
-      var sm = txt.match(/(\d{1,3})\s*\/\s*100/);
+    var result = tryParseJSONLoose(txt);
+    if(!result){
+      /* AI nuk ktheu JSON të vlefshëm — fallback i pastër (KURRË JSON i papërpunuar te UI) */
+      var sm = txt.match(/"score"\s*:\s*(\d{1,3})/) || txt.match(/(\d{1,3})\s*\/\s*100/);
       result = {
         score: sm ? parseInt(sm[1]) : 50,
         alarms: [],
         correlations: [],
-        recommendations: [txt],
+        recommendations: ['Analiza AI nuk u kthye plotësisht. Shtyp "Re-Analyze" për ta provuar përsëri.'],
         doctor_summary: ''
       };
     }
@@ -8012,7 +8033,9 @@ function renderEngineResult(result, data){
 
   /* ── Lidh kartën "Diagnostic AI" te Home me këtë rezultat ── */
   var hTitle = score>=75 ? 'Good health status' : score>=50 ? 'Fair health status' : 'Poor health status';
-  var hDesc  = (recs[0] || docSum || 'Tap for full AI analysis').toString().substring(0,90);
+  var hDescRaw = (recs[0] || docSum || 'Tap for full AI analysis').toString().trim();
+  if(hDescRaw.charAt(0)==='{' || hDescRaw.charAt(0)==='[') hDescRaw = 'Tap for full AI analysis';
+  var hDesc  = hDescRaw.substring(0,90);
   var hNumEl=document.getElementById('home-sc-num'); if(hNumEl){ hNumEl.textContent=score; hNumEl.style.color=scoreColor; }
   var hTitleEl=document.getElementById('home-sc-title'); if(hTitleEl) hTitleEl.textContent=hTitle;
   var hDescEl=document.getElementById('home-sc-desc'); if(hDescEl) hDescEl.textContent=hDesc;
