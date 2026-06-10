@@ -739,31 +739,39 @@ async function aptAction(id, status){
 
   try {
     var {error} = await sb.from('appointments')
-      .update({
-        status: status,
-        updated_at: new Date().toISOString()
-      })
+      .update({ status: status })
       .eq('id', id);
 
     if(error) throw error;
 
-    /* Send message to patient via messages table */
+    /* Njofto pacientin me mesazh — gjej id-në e pacientit nga emaili (appointments ka vetëm patient_email) */
     var {data: apt} = await sb.from('appointments').select('*').eq('id', id).single();
-    if(apt && apt.patient_id){
-      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      var parts  = (apt.appointment_date||'').split('-');
-      var nicDate= parts.length===3 ? parseInt(parts[2])+' '+months[parseInt(parts[1])-1]+' '+parts[0] : apt.appointment_date;
+    if(apt){
+      var patientUid = apt.patient_id || null;
+      if(!patientUid && apt.patient_email){
+        try{
+          var {data: prof} = await sb.from('profiles').select('id').eq('email', apt.patient_email).maybeSingle();
+          if(prof) patientUid = prof.id;
+        }catch(e){ console.warn('patient lookup:', e.message); }
+      }
+      if(patientUid){
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var parts  = (apt.appointment_date||'').split('-');
+        var nicDate= parts.length===3 ? parseInt(parts[2])+' '+months[parseInt(parts[1])-1]+' '+parts[0] : apt.appointment_date;
 
-      var msgText = status === 'confirmed'
-        ? '✅ Takimi juaj u konfirmua!\n\n📅 Data: '+nicDate+'\n🕐 Ora: '+(apt.appointment_time||'')+'\n👨‍⚕️ Mjeku: Dr. Herolind Shabani\n\nJu mirëpres! Sillni ilaçet dhe rezultatet e fundit të analizave.'
-        : '❌ Ju informoj se takimi i kërkuar për '+nicDate+' nuk mund të realizohet.\n\nJu lutem zgjidhni një datë tjetër nëpërmjet aplikacionit. Faleminderit për mirëkuptimin.';
+        var msgText = status === 'confirmed'
+          ? '✅ Takimi juaj u konfirmua!\n\n📅 Data: '+nicDate+'\n🕐 Ora: '+(apt.appointment_time||'')+'\n👨‍⚕️ Mjeku: Dr. Herolind Shabani\n\nJu mirëpres! Sillni ilaçet dhe rezultatet e fundit të analizave.'
+          : '❌ Ju informoj se takimi i kërkuar për '+nicDate+' nuk mund të realizohet.\n\nJu lutem zgjidhni një datë tjetër nëpërmjet aplikacionit. Faleminderit për mirëkuptimin.';
 
-      await sb.from('messages').insert({
-        sender_id:   'e4e5150d-de23-47f6-a298-b4c56e8da515',
-        receiver_id: apt.patient_id,
-        content:     msgText,
-        sent_at:     new Date().toISOString()
-      });
+        try{
+          await sb.from('messages').insert({
+            sender_id:   'e4e5150d-de23-47f6-a298-b4c56e8da515',
+            receiver_id: patientUid,
+            content:     msgText,
+            sent_at:     new Date().toISOString()
+          });
+        }catch(e){ console.warn('notify patient:', e.message); }
+      }
     }
 
     loadAppointments();
