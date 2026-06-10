@@ -6064,6 +6064,7 @@ async function bkSubmit(){
   var patientEmail = LST.currentUser ? LST.currentUser.email : '';
   var patientId    = LST.currentUser ? LST.currentUser.id   : null;
 
+  var aptOk = false, aptErr = '';
   try {
     var payload = {
       patient_name: patientName, patient_email: patientEmail,
@@ -6072,17 +6073,23 @@ async function bkSubmit(){
       status: 'pending', doctor: 'Dr. Herolind Shabani',
       created_at: new Date().toISOString()
     };
-    if(patientId) payload.patient_id = patientId;
     var {data: saved, error} = await sb.from('appointments').insert(payload).select().single();
     if(error) throw error;
+    aptOk = true;
     if(saved){
       localStorage.setItem('last_apt_id', saved.id);
       localStorage.setItem('last_apt_status', 'pending');
       _lastAptId = saved.id; _lastAptStatus = 'pending';
     }
-  } catch(e){ console.warn('Booking error:', e.message); }
+  } catch(e){ aptErr = e.message||(''+e); console.warn('Booking error:', aptErr); }
 
-  /* Trego SUCCESS gjithmonë */
+  if(!aptOk){
+    if(btn){ btn.disabled=false; btn.textContent='Provo përsëri'; }
+    showToast('❌ Rezervimi dështoi: '+(aptErr||'provo përsëri'));
+    return;
+  }
+
+  /* SUCCESS — vetëm kur u ruajt vërtet në Supabase */
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var parts = bkSelDate.split('-');
   var nicDate = parseInt(parts[2])+' '+months[parseInt(parts[1])-1]+' '+parts[0];
@@ -6291,8 +6298,8 @@ async function checkMyAppointment(){
   if(!patientId && !email) return;
   try {
     var q = sb.from('appointments').select('*').order('created_at',{ascending:false}).limit(1);
-    if(patientId) q = q.eq('patient_id', patientId);
-    else q = q.eq('patient_email', email);
+    if(email) q = q.eq('patient_email', email);
+    else if(patientId) q = q.eq('patient_id', patientId);
     var {data, error} = await q;
     if(error || !data || data.length===0) return;
     var apt = data[0];
