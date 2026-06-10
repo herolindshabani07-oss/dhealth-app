@@ -4014,18 +4014,25 @@ function syncMedicalProfile(){
     var sb = getSupa();
     if(!sb || !LST.currentUser || !LST.currentUser.id) return;
 
-    var getTags = function(id){
-      var el = document.getElementById(id);
-      if(!el) return [];
-      return Array.from(el.querySelectorAll('.tag2')).map(function(t){
-        return t.textContent.replace('×','').trim();
-      }).filter(Boolean);
+    /* Lexo nga TË GJITHA listat reale (master-at 'diag-tags'/'lab-tags' s'ekzistojnë si DOM) + dedupe */
+    var getTags = function(){
+      var ids = Array.prototype.slice.call(arguments);
+      var seen = {}, out = [];
+      ids.forEach(function(id){
+        var el = document.getElementById(id);
+        if(!el) return;
+        Array.prototype.forEach.call(el.querySelectorAll('.tag2'), function(t){
+          var v = t.textContent.replace('×','').trim();
+          if(v && !seen[v.toLowerCase()]){ seen[v.toLowerCase()]=1; out.push(v); }
+        });
+      });
+      return out;
     };
 
-    var diagnoses  = getTags('diag-tags');
-    var therapies  = getTags('therapy-tags');
-    var allergies  = getTags('allergy-tags');
-    var lab_values = getTags('lab-tags');
+    var diagnoses  = getTags('diag-tags','prof-diag-tags','ds-diag-tags');
+    var therapies  = getTags('therapy-tags','prof-therapy-tags','ds-therapy-tags');
+    var allergies  = getTags('allergy-tags','prof-allergy-tags','ds-allergy-tags');
+    var lab_values = getTags('lab-tags','prof-lab-tags','ds-lab-tags');
     var notes      = (document.getElementById('prof-notes')||{}).value || '';
 
     sb.from('medical_profiles').upsert({
@@ -6716,11 +6723,14 @@ async function deleteUserDocument(el){
 async function handleProfFileUpload(event){
   var files = event.target.files;
   if(!files||!files.length) return;
+  var arr = Array.prototype.slice.call(files);
   showToast('🔄 Duke ngarkuar...');
-  for(var i=0;i<files.length;i++){ await uploadUserDocument(files[i]); }
+  for(var i=0;i<arr.length;i++){ await uploadUserDocument(arr[i]); }
   await refreshDocuments();
   showToast('✅ Dokumenti u ruajt në llogari!');
   event.target.value='';
+  /* Lexo automatikisht parametrat laboratorikë nga dokumenti */
+  for(var j=0;j<arr.length;j++){ await extractLabsFromDocument(arr[j]); }
 }
 
 
@@ -7221,11 +7231,98 @@ function drAddMsg(type, text){
 async function handleDsFileUpload(event){
   var files = event.target.files;
   if(!files||!files.length) return;
+  var arr = Array.prototype.slice.call(files);
   showToast('🔄 Duke ngarkuar...');
-  for(var i=0;i<files.length;i++){ await uploadUserDocument(files[i]); }
+  for(var i=0;i<arr.length;i++){ await uploadUserDocument(arr[i]); }
   await refreshDocuments();
   showToast('✅ Dokumenti u ruajt në llogari!');
   event.target.value='';
+  /* Lexo automatikisht parametrat laboratorikë nga dokumenti */
+  for(var j=0;j<arr.length;j++){ await extractLabsFromDocument(arr[j]); }
+}
+
+/* ════ Lexim AI i analizave laboratorike → Lab Values (sinkron me Diagnostic + Supabase) ════ */
+function fileToBase64(file){
+  return new Promise(function(res,rej){
+    var fr = new FileReader();
+    fr.onload  = function(){ res(String(fr.result||'').split(',')[1]||''); };
+    fr.onerror = rej;
+    fr.readAsDataURL(file);
+  });
+}
+
+/* Shton një vlerë lab te Lab Values (sinkronizon ds + prof + lab + Supabase). Kthen true nëse u shtua. */
+function addLabTag(txt){
+  txt = (txt||'').trim(); if(!txt) return false;
+  var exists = Array.prototype.slice.call(document.querySelectorAll('#ds-lab-tags .tag2, #prof-lab-tags .tag2, #lab-tags .tag2'))
+    .some(function(t){ return t.textContent.replace('×','').trim().toLowerCase() === txt.toLowerCase(); });
+  if(exists) return false;
+  var inp = document.getElementById('ds-lab-inp') || document.getElementById('prof-lab-inp');
+  if(inp){
+    var listId = (inp.id==='prof-lab-inp') ? 'prof-lab-tags' : 'ds-lab-tags';
+    inp.value = txt;
+    addTag(listId, inp.id, 'l');
+  } else {
+    _addTagToList('ds-lab-tags', txt, 'l');
+    (TAG_SYNC['ds-lab-tags']||[]).forEach(function(sid){ _addTagToList(sid, txt, 'l'); });
+    setTimeout(syncMedicalProfile, 500);
+  }
+  return true;
+}
+
+async function extractLabsFromDocument(file){
+  if(!file) return;
+  var type = file.type||'';
+  var name = file.name||'';
+  var isPdf = /pdf/i.test(type) || /\.pdf$/i.test(name);
+  var isImg = /^image\//i.test(type) || /\.(jpe?g|png|webp|gif)$/i.test(name);
+  if(!isPdf && !isImg) return; /* vetëm imazhe/PDF */
+  showToast('🔬 Duke lexuar parametrat e analizave...');
+  try{
+    var b64 = await fileToBase64(file);
+    if(!b64) throw new Error('s\'u lexua skedari');
+    var block = isPdf
+      ? {type:'document', source:{type:'base64', media_type:'application/pdf', data:b64}}
+      : {type:'image',    source:{type:'base64', media_type:(type||'image/jpeg'), data:b64}};
+    var instruction = 'This is a medical laboratory results document/photo. Extract EVERY lab parameter you can read. '
+      + 'Respond ONLY with a JSON array (no markdown, no backticks): '
+      + '[{"name":"HbA1c","value":"5.9","unit":"%","flag":"normal"}]. '
+      + 'flag is one of: normal, high, low. Use the exact parameter names, numeric values and units from the document. '
+      + 'If you cannot read any lab values, return [].';
+    var r = await fetch('/.netlify/functions/claude',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-5', max_tokens:1500,
+        system:'You are a clinical laboratory data extractor. Output only valid JSON, nothing else.',
+        messages:[{role:'user', content:[block, {type:'text', text:instruction}]}]
+      })
+    });
+    var raw = await r.text();
+    if(!r.ok || raw.trim().charAt(0)==='<') throw new Error('AI s\'arriti ta lexojë dokumentin');
+    var d = JSON.parse(raw);
+    if(d.error) throw new Error(d.error.message||'AI error');
+    var txt = (d.content && d.content[0] && d.content[0].text) || '[]';
+    txt = txt.replace(/```json|```/g,'').trim();
+    var labs = tryParseJSONLoose(txt);
+    if(!Array.isArray(labs)){ labs = (labs && Array.isArray(labs.labs)) ? labs.labs : []; }
+    if(!labs.length){ showToast('ℹ️ S\'u gjetën vlera laboratorike në këtë dokument'); return; }
+    var added = 0, abnormal = 0;
+    labs.forEach(function(p){
+      if(!p || !p.name) return;
+      var hasVal = (p.value!==undefined && p.value!==null && String(p.value).trim()!=='');
+      var val  = hasVal ? (': '+String(p.value).trim()+(p.unit?(' '+String(p.unit).trim()):'')) : '';
+      var mark = (p.flag && /high|low/i.test(p.flag)) ? ' ⚠️' : '';
+      if(mark) abnormal++;
+      if(addLabTag((p.name+val+mark).trim())) added++;
+    });
+    try{ updateIndicatorBadge(); }catch(e){}
+    try{ if(typeof updateDiagScreen==='function') updateDiagScreen(); }catch(e){}
+    if(added) showToast('✅ '+added+' parametra u shtuan te Lab Values'+(abnormal?(' · '+abnormal+' jashtë normës ⚠️'):''));
+    else showToast('ℹ️ Parametrat ekzistojnë tashmë te Lab Values');
+  }catch(e){
+    console.warn('lab extract:', e);
+    showToast('⚠️ Leximi i analizave dështoi: '+(e.message||e));
+  }
 }
 
 async function analyzeDsProfile(){
@@ -7906,7 +8003,7 @@ function collectAllData(){
 function tryParseJSONLoose(txt){
   if(!txt) return null;
   try{ return JSON.parse(txt); }catch(e){}
-  var s = txt.indexOf('{');
+  var s = txt.search(/[{\[]/);
   if(s < 0) return null;
   var str = txt.slice(s), stack = [], inStr = false, esc = false, out = '';
   for(var i=0;i<str.length;i++){
