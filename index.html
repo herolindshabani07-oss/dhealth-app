@@ -5284,6 +5284,17 @@ function llaunchApp() {
   },600);
 }
 
+/* Dërgo email mirëseardhjeje (përdoruesit e rinj OAuth) — pa bllokuar UI-në */
+function sendWelcomeEmail(email, name){
+  if(!email) return;
+  try{
+    fetch('/.netlify/functions/welcome-email', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email: email, name: name || '' })
+    }).catch(function(){});
+  }catch(e){}
+}
+
 /* Aplikon një session Supabase (email/password, restore, OSE Google OAuth) te gjendja e app-it */
 var _appliedSessionUid = null;
 function applySupabaseSession(session){
@@ -5294,9 +5305,15 @@ function applySupabaseSession(session){
   var meta = session.user.user_metadata || {};
   var fallbackName = (meta.full_name || meta.name || (session.user.email||'user').split('@')[0]);
   var picture = meta.avatar_url || meta.picture || '';
-  /* Sigurohu që ekziston rreshti i profilit (për OAuth users) */
-  try{ sb.from('profiles').upsert({ id:session.user.id, email:session.user.email, full_name:fallbackName }, {onConflict:'id'}); }catch(e){}
-  sb.from('profiles').select('full_name,plan').eq('id',session.user.id).single().then(function(pr){
+  var provider = (session.user.app_metadata && session.user.app_metadata.provider) || '';
+  sb.from('profiles').select('full_name,plan').eq('id',session.user.id).maybeSingle().then(function(pr){
+    var isNew = !(pr && pr.data);
+    if(isNew){
+      /* Krijo profilin për përdoruesit e rinj (sidomos OAuth) */
+      try{ sb.from('profiles').upsert({ id:session.user.id, email:session.user.email, full_name:fallbackName, role:'patient' }, {onConflict:'id'}); }catch(e){}
+      /* Email mirëseardhjeje vetëm për Google/OAuth — email/password marrin email konfirmimi nga Supabase */
+      if(provider && provider !== 'email'){ try{ sendWelcomeEmail(session.user.email, fallbackName); }catch(e){} }
+    }
     var name = (pr.data && pr.data.full_name) ? pr.data.full_name : fallbackName;
     var plan = (pr.data && pr.data.plan) ? pr.data.plan : 'free';
     LST.currentUser = {email:session.user.email, name:name, plan:plan, id:session.user.id, picture:picture};
