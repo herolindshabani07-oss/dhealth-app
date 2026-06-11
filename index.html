@@ -5099,9 +5099,11 @@ function lselPlan(p) {
 }
 function getSupa(){
   if(!window._sbc && window.supabase){
+    var _native = (typeof isNativeApp==='function') ? isNativeApp() : false;
     window._sbc = window.supabase.createClient(
       'https://ppcvzvvlnaxiljjmdihk.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwY3Z6dnZsbmF4aWxqam1kaWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNjM1MjYsImV4cCI6MjA5MTkzOTUyNn0.iS1Fb80nxf6t5zsTk5loiNoPpg2kEj7_nCifWQZHJTo'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwY3Z6dnZsbmF4aWxqam1kaWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNjM1MjYsImV4cCI6MjA5MTkzOTUyNn0.iS1Fb80nxf6t5zsTk5loiNoPpg2kEj7_nCifWQZHJTo',
+      { auth: { flowType:'pkce', persistSession:true, autoRefreshToken:true, detectSessionInUrl: !_native } }
     );
   }
   return window._sbc || null;
@@ -5282,33 +5284,95 @@ function llaunchApp() {
   },600);
 }
 
-/* Auto-login nese session ekziston */
+/* Aplikon një session Supabase (email/password, restore, OSE Google OAuth) te gjendja e app-it */
+var _appliedSessionUid = null;
+function applySupabaseSession(session){
+  if(!session || !session.user) return;
+  var sb = getSupa(); if(!sb) return;
+  if(_appliedSessionUid === session.user.id) return; /* shmang dyfishimin */
+  _appliedSessionUid = session.user.id;
+  var meta = session.user.user_metadata || {};
+  var fallbackName = (meta.full_name || meta.name || (session.user.email||'user').split('@')[0]);
+  var picture = meta.avatar_url || meta.picture || '';
+  /* Sigurohu që ekziston rreshti i profilit (për OAuth users) */
+  try{ sb.from('profiles').upsert({ id:session.user.id, email:session.user.email, full_name:fallbackName }, {onConflict:'id'}); }catch(e){}
+  sb.from('profiles').select('full_name,plan').eq('id',session.user.id).single().then(function(pr){
+    var name = (pr.data && pr.data.full_name) ? pr.data.full_name : fallbackName;
+    var plan = (pr.data && pr.data.plan) ? pr.data.plan : 'free';
+    LST.currentUser = {email:session.user.email, name:name, plan:plan, id:session.user.id, picture:picture};
+    ACCESS.currentPlan = plan;
+    var ov=document.getElementById('login-overlay'); if(ov) ov.style.display='none';
+    try{renderCal();}catch(e){}
+    try{updatePlanUI();}catch(e){}
+    try{switchScreen('home');}catch(e){}
+    try{initECGCards();}catch(e){}
+    try{initUserData(session.user.id, name, session.user.email);}catch(e){console.log('initUserData err:',e);}
+    try{setTimeout(calcDailyScore,2000);}catch(e){}
+    try{updateMoreProfile();}catch(e){}
+    setTimeout(function(){try{checkMyAppointment();}catch(e){}},1500);
+  });
+}
+
+/* Auto-login nese session ekziston + dëgjo ndryshimet (OAuth) */
 (function(){
   setTimeout(function(){
     var sb=getSupa();
     if(!sb) return;
     sb.auth.getSession().then(function(res){
       var session = res.data ? res.data.session : null;
-      if(session&&session.user){
-        sb.from('profiles').select('full_name,plan').eq('id',session.user.id).single().then(function(pr){
-          var name = pr.data ? pr.data.full_name : session.user.email.split('@')[0];
-          var plan = pr.data ? pr.data.plan : 'free';
-          LST.currentUser = {email:session.user.email, name:name, plan:plan, id:session.user.id};
-          ACCESS.currentPlan = plan;
-          document.getElementById('login-overlay').style.display='none';
-          try{renderCal();}catch(e){}
-          try{updatePlanUI();}catch(e){}
-          try{switchScreen('home');}catch(e){}
-          try{initECGCards();}catch(e){}
-          try{initUserData(session.user.id, name, session.user.email);}catch(e){console.log('initUserData err:',e);}
-          try{setTimeout(calcDailyScore,2000);}catch(e){}
-          try{updateMoreProfile();}catch(e){}
-          setTimeout(function(){try{checkMyAppointment();}catch(e){}},1500);
-        });
-      }
+      if(session && session.user) applySupabaseSession(session);
     });
+    /* Dëgjo SIGNED_IN (mbulon kthimin nga Google OAuth në web + native) */
+    try{
+      sb.auth.onAuthStateChange(function(event, session){
+        if((event==='SIGNED_IN' || event==='INITIAL_SESSION' || event==='TOKEN_REFRESHED') && session && session.user){
+          applySupabaseSession(session);
+        }
+        if(event==='SIGNED_OUT'){ _appliedSessionUid = null; }
+      });
+    }catch(e){}
+    /* Deep-link handler për app-in native (Capacitor) */
+    try{ setupOAuthDeepLink(); }catch(e){}
   }, 500);
 })();
+
+/* Capacitor plugin helper + deep-link i Google OAuth (vetëm native) */
+function capPlugin(name){
+  return (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins[name]) || null;
+}
+function setupOAuthDeepLink(){
+  var App = capPlugin('App');
+  if(!App || !App.addListener) return;
+  App.addListener('appUrlOpen', async function(ev){
+    try{
+      var url = (ev && ev.url) || '';
+      if(url.indexOf('login-callback') === -1) return;
+      var sb = getSupa(); if(!sb) return;
+      var Browser = capPlugin('Browser');
+      if(Browser && Browser.close){ try{ await Browser.close(); }catch(e){} }
+      var qIndex = url.indexOf('?');
+      var code = null;
+      if(qIndex !== -1){
+        var params = new URLSearchParams(url.substring(qIndex+1));
+        code = params.get('code');
+      }
+      if(code){
+        var ex = await sb.auth.exchangeCodeForSession(code);
+        if(ex.error){ showToast('❌ Google login dështoi: '+ex.error.message); return; }
+        if(ex.data && ex.data.session) applySupabaseSession(ex.data.session);
+      } else {
+        /* fragment me token (rast i rrallë) */
+        var h = url.split('#')[1] || '';
+        if(h){
+          var p = new URLSearchParams(h);
+          var at = p.get('access_token'), rt = p.get('refresh_token');
+          if(at){ var sr = await sb.auth.setSession({access_token:at, refresh_token:rt||''});
+            if(sr.data && sr.data.session) applySupabaseSession(sr.data.session); }
+        }
+      }
+    }catch(e){ console.warn('oauth deeplink:', e); showToast('❌ Login dështoi'); }
+  });
+}
 
 
 
@@ -7749,27 +7813,28 @@ async function initUserData(userId, userName, userEmail){
 
 
 /* ════ GOOGLE SIGN-IN ════ */
-function signInWithGoogle(){
-  if(typeof google !== 'undefined' && google.accounts){
-    google.accounts.id.initialize({
-      client_id: '695949615023-sbc9lhr6dp7iik90qe9m1g7372ecgkfv.apps.googleusercontent.com',
-      callback: handleGoogleSignIn
-    });
-    google.accounts.id.prompt();
-  } else {
-    /* Fallback OAuth redirect */
-    var clientId = '695949615023-sbc9lhr6dp7iik90qe9m1g7372ecgkfv.apps.googleusercontent.com';
-    var redirect  = encodeURIComponent(window.location.href.split('?')[0]);
-    var scope     = encodeURIComponent('openid email profile');
-    var nonce     = Math.random().toString(36).substring(2);
-    var url = 'https://accounts.google.com/o/oauth2/v2/auth'
-      + '?client_id=' + clientId
-      + '&redirect_uri=' + redirect
-      + '&response_type=token id_token'
-      + '&scope=' + scope
-      + '&nonce=' + nonce;
-    window.location.href = url;
-  }
+/* Login me Google — Supabase OAuth (punon në web me redirect + në Android me system browser + deep link) */
+async function signInWithGoogle(){
+  var sb = getSupa();
+  if(!sb){ showToast('⚠️ Lidhja me serverin mungon'); return; }
+  try{
+    if(typeof isNativeApp==='function' && isNativeApp()){
+      /* App-i Android: skipBrowserRedirect → hap URL-në në system browser, kthehet via deep link */
+      var resN = await sb.auth.signInWithOAuth({
+        provider:'google',
+        options:{ redirectTo:'app.dhealth.mobile://login-callback', skipBrowserRedirect:true }
+      });
+      if(resN.error || !resN.data || !resN.data.url){ showToast('❌ Google login dështoi'); return; }
+      var Browser = capPlugin('Browser');
+      if(Browser && Browser.open){ await Browser.open({ url: resN.data.url, presentationStyle:'popover' }); }
+      else { window.open(resN.data.url, '_system'); }
+    } else {
+      /* Web: redirect standard te faqja aktuale */
+      var redirectTo = window.location.origin + window.location.pathname;
+      var resW = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: redirectTo } });
+      if(resW.error){ showToast('❌ Google login dështoi: '+resW.error.message); }
+    }
+  }catch(e){ console.warn('signInWithGoogle:', e); showToast('❌ Google login dështoi'); }
 }
 
 async function handleGoogleSignIn(response){
