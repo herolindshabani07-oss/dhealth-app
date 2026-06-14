@@ -7727,11 +7727,17 @@ async function initUserData(userId, userName, userEmail){
     var mp = await sb.from('medical_profiles').select('*').eq('patient_id', userId).single();
     if(mp.data){
       var loadTags = function(tagIds, items, cls){
-        if(!items||!items.length) return;
+        /* Dedupe (case-insensitive) — burimi i vërtetë është DB */
+        var seen = {}, uniq = [];
+        (items||[]).forEach(function(it){
+          var key = String(it).trim().toLowerCase();
+          if(it && !seen[key]){ seen[key]=1; uniq.push(it); }
+        });
         tagIds.forEach(function(id){
           var wrap = document.getElementById(id);
           if(!wrap) return;
-          items.forEach(function(item){
+          wrap.innerHTML = '';  /* pastro para mbushjes → idempotent, pa dyfishim kur rihyn */
+          uniq.forEach(function(item){
             var sp = document.createElement('span');
             sp.className = 'tag2 '+cls;
             sp.innerHTML = item + ' <span class="tx" onclick="rmTag(\''+id+'\',this)">×</span>';
@@ -7802,12 +7808,12 @@ async function initUserData(userId, userName, userEmail){
           date:    m.meal_date || today
         };
       });
-      /* Merge me çfarë ka ne localStorage (nëse ka) */
+      /* Merge me localStorage — dedup sipas PËRMBAJTJES (jo id, sepse DB jep uuid të ri) → pa dyfishim kur rihyn */
       var localMeals = JSON.parse(localStorage.getItem('dh_meals')||'[]');
-      var allIds = {};
-      var merged = [];
-      appMeals.forEach(function(m){ allIds[m.id]=1; merged.push(m); });
-      localMeals.forEach(function(m){ if(!allIds[m.id]) merged.push(m); });
+      var sig = function(m){ return (m.name||'').toLowerCase().trim()+'|'+(m.date||'')+'|'+(m.time||'')+'|'+(m.cal||0); };
+      var seen = {}, merged = [];
+      appMeals.forEach(function(m){ var s=sig(m); if(!seen[s]){ seen[s]=1; merged.push(m); } });
+      localMeals.forEach(function(m){ var s=sig(m); if(!seen[s]){ seen[s]=1; merged.push(m); } });
       localStorage.setItem('dh_meals', JSON.stringify(merged));
       try{ renderNutritionUI(); }catch(e){}
       console.log('✅ Meals loaded from Supabase:', dbMeals.length);
