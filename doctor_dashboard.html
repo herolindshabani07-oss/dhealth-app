@@ -393,6 +393,26 @@ const SUPA_URL = 'https://ppcvzvvlnaxiljjmdihk.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwY3Z6dnZsbmF4aWxqam1kaWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNjM1MjYsImV4cCI6MjA5MTkzOTUyNn0.iS1Fb80nxf6t5zsTk5loiNoPpg2kEj7_nCifWQZHJTo';
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
+/* SIGURI: shto automatikisht token-in te thirrjet AI (/claude) — vetëm mjeku i kyçur */
+(function(){
+  if(window._dhFetchPatched) return; window._dhFetchPatched = true;
+  var _origFetch = window.fetch.bind(window);
+  window.fetch = async function(url, opts){
+    try{
+      var u = (typeof url === 'string') ? url : (url && url.url) || '';
+      if(u.indexOf('/.netlify/functions/claude') !== -1){
+        opts = opts || {};
+        var h = {}; if(opts.headers){ for(var k in opts.headers){ h[k]=opts.headers[k]; } }
+        var s = await sb.auth.getSession();
+        var tok = s && s.data && s.data.session && s.data.session.access_token;
+        if(tok) h['Authorization'] = 'Bearer ' + tok;
+        opts.headers = h;
+      }
+    }catch(e){}
+    return _origFetch(url, opts);
+  };
+})();
+
 var allPatients = [];
 var currentDoctor = null;
 

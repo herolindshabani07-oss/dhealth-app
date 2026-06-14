@@ -5109,6 +5109,30 @@ function getSupa(){
   return window._sbc || null;
 }
 
+/* ════ SIGURI: shto automatikisht token-in e Supabase te çdo thirrje AI (/claude) ════
+   Funksioni në server e refuzon kërkesën pa token të vlefshëm → vetëm user-at e kyçur përdorin AI-në. */
+(function(){
+  if(window._dhFetchPatched) return; window._dhFetchPatched = true;
+  var _origFetch = window.fetch.bind(window);
+  window.fetch = async function(url, opts){
+    try{
+      var u = (typeof url === 'string') ? url : (url && url.url) || '';
+      if(u.indexOf('/.netlify/functions/claude') !== -1){
+        opts = opts || {};
+        var h = {}; if(opts.headers){ for(var k in opts.headers){ h[k]=opts.headers[k]; } }
+        var sb = getSupa();
+        if(sb){
+          var s = await sb.auth.getSession();
+          var tok = s && s.data && s.data.session && s.data.session.access_token;
+          if(tok) h['Authorization'] = 'Bearer ' + tok;
+        }
+        opts.headers = h;
+      }
+    }catch(e){}
+    return _origFetch(url, opts);
+  };
+})();
+
 function ldoLogin() {
   lclrErr();
   var email=document.getElementById('lem').value.trim();
