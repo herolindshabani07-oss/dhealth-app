@@ -1364,6 +1364,12 @@ select option{background:#0A1628;color:#F1F5FF;}
 #notifSheet .notif-title-txt{color:#1f2c44!important}
 #notifSheet .notif-msg{color:#5d7290!important}
 #notifSheet .notif-time-txt{color:#9aabc4!important}
+/* Alarmet e terapisë te fleta (ishin tekst i bardhë) */
+#notifSheet .nalarm-item{background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(255,255,255,.7))!important;border:1px solid rgba(120,150,190,.16)!important}
+#notifSheet .nalarm-name{color:#1f2c44!important}
+#notifSheet .nalarm-time{color:#5d7290!important}
+/* Catch-all: empty states inline (p.sh. "No alarms today") → i lexueshëm. NUK prek kartat blu (0.55/0.6/0.65/0.7). */
+#notifSheet .nalarm-info+*,#notifSheet #notifAlarmList>div[style*="rgba(255,255,255,0.5)"],#notifSheet #recentAlertsList>div[style*="rgba(255,255,255,0.5)"]{color:#7387a4!important}
 /* === Nav i ri (light glass) në TË GJITHA dritaret përveç Home === */
 .bn:not(.v7-nav){position:absolute!important;bottom:18px!important;left:50%!important;transform:translateX(-50%)!important;width:344px!important;max-width:calc(100% - 28px)!important;height:66px!important;border-radius:25px!important;background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.62))!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;border:1px solid rgba(255,255,255,.92)!important;border-top:1px solid rgba(255,255,255,.92)!important;box-shadow:0 14px 36px rgba(70,120,190,.22)!important;padding:0 20px!important;z-index:60!important}
 .bn:not(.v7-nav) .nic{filter:none!important;width:24px!important;height:24px!important;opacity:.9}
@@ -7210,16 +7216,18 @@ function removeTherapyMed(btn){
     });
   });
   renderTherapyList();
+  try{ unlinkTherapyAlarm(med); }catch(e){}   /* heq edhe alarmin e lidhur */
   try{ updateIndicatorBadge(); }catch(e){}
   try{ syncMedicalProfile(); }catch(e){}
-  showToast('🗑️ Terapia u hoq');
+  showToast('🗑️ Terapia u hoq (edhe nga Kalendari & Njoftimet)');
 }
 
 function addTherapyMed(){
   var inp = document.getElementById('therapy-med-inp');
   var sel = document.getElementById('therapy-time-sel');
   if(!inp||!inp.value.trim()){ showToast('⚠️ Enter medication name'); return; }
-  var val = inp.value.trim()+' · '+(sel?sel.value:'Morning');
+  var slot = sel?sel.value:'Morning';
+  var val = inp.value.trim()+' · '+slot;
   inp.value='';
   /* Shto te ds-therapy-tags */
   var el = document.getElementById('ds-therapy-tags');
@@ -7230,9 +7238,47 @@ function addTherapyMed(){
     el.appendChild(span);
   }
   setTimeout(renderTherapyList,100);
-  showToast('✅ '+val+' added!');
+  try{ linkTherapyToAlarm(val, slot); }catch(e){}   /* → Kalendar + Njoftime */
+  showToast('💊 '+val+' — u shtua te Kalendari & Njoftimet');
   try{ updateIndicatorBadge(); }catch(e){}
   try{ syncMedicalProfile(); }catch(e){}
+}
+
+/* Lidh terapinë e shtuar me një alarm te Kalendari + Njoftimet (sipas slotit të kohës) */
+function linkTherapyToAlarm(label, slot){
+  var timeMap  = {'Morning':'08:00','Lunch':'13:00','Evening':'19:00','Night':'22:00','As needed':'09:00'};
+  var colorMap = {'Morning':'amber','Lunch':'green','Evening':'purple','Night':'purple','As needed':'orange'};
+  var t = timeMap[slot] || '08:00';
+  var col = colorMap[slot] || 'purple';
+  var k = dk(sY, sM, sD);                         /* i njëjti çelës që lexojnë renderCal & renderNotifAlarms */
+  if(!alarms[k]) alarms[k] = [];
+  var exists = alarms[k].some(function(a){ return (a.name||'').toLowerCase() === String(label).toLowerCase(); });
+  if(!exists){
+    alarms[k].push({name:label, time:t, color:col, on:true, therapy:true});
+    var sb = getSupa();
+    if(sb && LST.currentUser && LST.currentUser.id){
+      sb.from('therapy_alarms').insert({patient_id:LST.currentUser.id, name:label, time:t, color:col, active:true, alarm_date:k})
+        .then(function(res){ if(res.error) console.warn('therapy alarm save:', res.error.message); });
+    }
+  }
+  try{ renderCal(); }catch(e){}
+  try{ renderNotifAlarms(); }catch(e){}
+  try{ updateNotifBadge(); }catch(e){}
+}
+/* Heq alarmin përkatës kur hiqet terapia (lidhje e dyanshme) */
+function unlinkTherapyAlarm(label){
+  var lo = String(label||'').toLowerCase();
+  Object.keys(alarms).forEach(function(k){
+    alarms[k] = (alarms[k]||[]).filter(function(a){ return (a.name||'').toLowerCase() !== lo; });
+    if(!alarms[k].length) delete alarms[k];
+  });
+  var sb = getSupa();
+  if(sb && LST.currentUser && LST.currentUser.id){
+    try{ sb.from('therapy_alarms').delete().eq('patient_id',LST.currentUser.id).eq('name',label); }catch(e){}
+  }
+  try{ renderCal(); }catch(e){}
+  try{ renderNotifAlarms(); }catch(e){}
+  try{ updateNotifBadge(); }catch(e){}
 }
 
 async function analyzeTherapy(){
@@ -7253,6 +7299,17 @@ async function analyzeTherapy(){
   btn.disabled=false; btn.textContent='🤖 AI Therapy Analysis';
 }
 
+/* Normalizon vitals_daily_history (ruhet si OBJEKT i çelësuar me datë) → ARRAY (më e reja e para),
+   që raporti & lexuesit e tjerë të mos prishen. Rekordet kanë fushën .date. */
+function _vitalsHistArr(){
+  var raw; try{ raw = JSON.parse(localStorage.getItem('vitals_daily_history')||'[]'); }catch(e){ return []; }
+  if(Array.isArray(raw)){
+    return raw.slice().sort(function(a,b){ return String(b&&b.date||'').localeCompare(String(a&&a.date||'')); });
+  }
+  return Object.keys(raw).map(function(k){ var r=raw[k]||{}; if(!r.date) r.date=k; return r; })
+    .sort(function(a,b){ return String(b.date||'').localeCompare(String(a.date||'')); });
+}
+
 var dsChartInst = null;
 function loadDiagScreenChart(){
   /* Load real vitals into report table */
@@ -7263,7 +7320,7 @@ function loadDiagScreenChart(){
   var dateTag = document.getElementById('rpt-date-tag');
   if(!body) return;
 
-  var history = JSON.parse(localStorage.getItem('vitals_daily_history')||'[]');
+  var history = _vitalsHistArr();
   var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   var now = new Date();
   var weekStart = new Date(now); weekStart.setDate(now.getDate() - now.getDay() + 1);
@@ -7300,7 +7357,7 @@ function loadDiagScreenChart(){
 function renderReportReadings(){
   var body = document.getElementById('rpt-readings-body');
   if(!body) return;
-  var history = JSON.parse(localStorage.getItem('vitals_daily_history')||'[]');
+  var history = _vitalsHistArr();
   var rows = history.slice(0,7);
   try{
     var vs = window.vitalsState||{};
@@ -7370,7 +7427,7 @@ async function generateWeeklyReport(btn){
   textEl.innerHTML = '<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
 
   try{ renderReportReadings(); }catch(e){}
-  var history = JSON.parse(localStorage.getItem('vitals_daily_history')||'[]');
+  var history = _vitalsHistArr();
   var weekData = history.length > 0
     ? 'VITALS (last '+Math.min(history.length,7)+' readings):\n' + history.slice(0,7).map(function(v){
         return (v.date||'') + ' BP:'+(v.sys||'--')+'/'+(v.dia||'--')+' HR:'+(v.hr||'--')+' Glu:'+(v.glu||'--');
@@ -10681,7 +10738,7 @@ async function runDeepProfileAnalysis(){
   var aqi = parseInt((document.getElementById('aqiVal')||{}).textContent||'0')||0;
 
   /* Vitals history */
-  var history = JSON.parse(localStorage.getItem('vitals_daily_history')||'[]').slice(0,7);
+  var history = _vitalsHistArr().slice(0,7);
 
   /* Profile info */
   var stored = JSON.parse(localStorage.getItem('dh_profile')||'{}');
