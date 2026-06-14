@@ -5853,6 +5853,9 @@ function setCloseEdit(e){
 }
 function openNotifSheet(){
   var s=document.getElementById('notifSheet'); if(!s) return;
+  /* Move into the active full-size screen so position:absolute resolves correctly */
+  var active=document.querySelector('.screen.active');
+  if(active && s.parentElement!==active) active.appendChild(s);
   s.style.display='flex';
   try{ initNotifications(); }catch(e){}
   try{ checkEmptyNotifications(); }catch(e){}
