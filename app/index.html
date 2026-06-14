@@ -6,7 +6,7 @@
 <title>Health BOT — Complete App</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
   --primary:#60A5FA;--pl:rgba(96,165,250,0.15);
@@ -710,8 +710,7 @@ select option{background:#0A1628;color:#F1F5FF;}
 .ntgl.on{background:var(--primary);}
 .ntgl.off{background:#D1D5DB;}
 .ntgl.on .ntgl-thumb{left:22px;}
-.nsch-pill{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font);transition:all 0.2s;}
-.nsch-pill.on{border-color:#60A5FA;background:var(--pl);color:#60A5FA;}
+/* (.nsch-pill u hoq — Reminder Schedule i prishur u pastrua me fletën e re te Notifications) */
 .nalarm-item{display:flex;align-items:center;gap:11px;padding:11px 14px;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;margin-bottom:7px;border:0.5px solid rgba(255,255,255,0.12);}
 .nalarm-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .nalarm-info{flex:1;}
@@ -1269,20 +1268,137 @@ select option{background:#0A1628;color:#F1F5FF;}
 <div class="toast" id="toast">✅ Updated!</div>
 
 <!-- ══════════ HOME ══════════ -->
+<style id="v7theme">
+#screen-home{background:linear-gradient(165deg,#f2f7fd 0%,#dde9f7 50%,#eaf2fb 100%)!important;}
+.v7home{padding:8px 20px 120px!important;}
+.v7home::-webkit-scrollbar{display:none}
+.v7home .av-drop{color:#1f2c44}
+.v7gl{position:relative;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.55));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 30px rgba(70,120,190,.15),inset 0 1px 1px rgba(255,255,255,.9)}
+
+.v7-top{display:flex;align-items:center;justify-content:space-between;margin:6px 0 18px}
+.v7-loc{display:flex;align-items:center;gap:11px}
+.v7-av{width:46px!important;height:46px!important;border-radius:15px!important;background:linear-gradient(135deg,#6cb2ff,#3b82f6)!important;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 8px 18px rgba(59,130,246,.4)}
+.v7-greet{font-size:12px;color:#7387a4;font-weight:600}
+.v7-name{font-size:15.5px;color:#1f2c44;font-weight:800}
+.v7-bell{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;background:linear-gradient(160deg,rgba(255,255,255,.85),rgba(255,255,255,.55));border:1px solid rgba(255,255,255,.9);box-shadow:0 8px 20px rgba(70,120,190,.14)}
+.v7-bell svg{width:21px;height:21px;stroke:#3b6ea5;fill:none;stroke-width:2}
+.v7-bdot{position:absolute;top:9px;right:10px;min-width:16px;height:16px;padding:0 4px;background:#ff5b6e;border-radius:9px;border:2px solid #fff;color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
+
+.v7-secrow{display:flex;align-items:center;justify-content:space-between;margin:8px 2px 12px}
+.v7-stitle{font-size:16.5px;font-weight:800;color:#1f2c44}
+.v7-see{font-size:12px;font-weight:700;color:#3b82f6;cursor:pointer}
+
+.v7-vgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px}
+.v7-vc{border-radius:21px;padding:14px 15px 13px;cursor:pointer;position:relative;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.55));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 28px rgba(70,120,190,.14),inset 0 1px 1px rgba(255,255,255,.9)}
+.v7-vtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.v7-vico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.v7-vico.bp{background:linear-gradient(135deg,#ffd9e1,#ff9fb3)}.v7-vico.hr{background:linear-gradient(135deg,#ffded0,#ffb597)}.v7-vico.gl{background:linear-gradient(135deg,#d3f3e3,#9fe4c1)}.v7-vico.sp{background:linear-gradient(135deg,#d6e8ff,#a9ccff)}
+.v7-vdot{width:9px;height:9px;border-radius:50%;background:#1fbf78;box-shadow:0 0 0 4px rgba(31,191,120,.16);font-size:0;overflow:hidden;flex-shrink:0}
+.v7-vval{font-size:24px;font-weight:800;color:#1f2c44;line-height:1}
+.v7-vlbl{font-size:12px;color:#7387a4;font-weight:600;margin-top:5px}
+
+.v7-score{border-radius:25px;padding:18px 19px;margin-bottom:18px;background:linear-gradient(135deg,#7fbcff 0%,#4a90f0 55%,#3576e0 100%);position:relative;overflow:hidden;box-shadow:0 18px 38px rgba(74,144,240,.42),inset 0 1px 1px rgba(255,255,255,.5);cursor:pointer}
+.v7-score::before{content:"";position:absolute;top:-60px;left:-30px;width:200px;height:200px;background:linear-gradient(135deg,rgba(255,255,255,.32),transparent 60%);transform:rotate(20deg);border-radius:50%}
+.v7-sctop{display:flex;align-items:center;gap:11px;margin-bottom:14px;position:relative;z-index:1}
+.v7-sclogo{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:21px}
+.v7-scname{font-size:14.5px;font-weight:800;color:#fff}.v7-scsub{font-size:11px;color:rgba(255,255,255,.88)}
+.v7-scbk{margin-left:auto;color:#fff;font-size:17px;opacity:.9}
+.v7-scmid{display:flex;align-items:center;gap:16px;position:relative;z-index:1}
+.v7-ring{width:74px;height:74px;border-radius:50%;background:conic-gradient(#fff 0 75%,rgba(255,255,255,.32) 75% 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.v7-rin{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#5fa0f5,#3576e0);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}
+.v7-rin b{font-size:22px;font-weight:800;line-height:1}.v7-rin span{font-size:9px;opacity:.85}
+.v7-sch{font-size:17px;font-weight:800;color:#fff;margin-bottom:3px}
+.v7-scp{font-size:12px;color:rgba(255,255,255,.92);line-height:1.4}
+.v7-scbtn{margin-top:14px;background:#fff;color:#2b6cd4;border:none;border-radius:13px;padding:12px;width:100%;font-size:13px;font-weight:800;font-family:var(--font);position:relative;z-index:1;box-shadow:0 8px 16px rgba(0,0,0,.13);cursor:pointer}
+
+.v7-daily{border-radius:21px;padding:14px 16px;display:flex;justify-content:space-around;margin-bottom:10px;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.55));backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 28px rgba(70,120,190,.14)}
+.v7-da{display:flex;flex-direction:column;align-items:center;gap:3px}
+.v7-da b{font-size:18px;font-weight:800;color:#1f2c44}.v7-da span{font-size:11px;color:#7387a4;font-weight:600}
+.v7-dai{font-size:18px;margin-bottom:2px}
+.v7-dadiv{width:1px;background:rgba(120,150,190,.2)}
+.v7-actline{font-size:11px;color:#7387a4;text-align:center;margin-bottom:18px}
+.v7-actline strong{color:#1f2c44}
+
+.v7-wide{border-radius:19px;padding:13px 15px;margin-bottom:11px;display:flex;align-items:center;gap:13px;cursor:pointer;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.55));backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.9);box-shadow:0 10px 24px rgba(70,120,190,.13)}
+.v7-wico{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#2b6cd4;flex-shrink:0}
+.v7-wico.ds{background:linear-gradient(135deg,#ede4ff,#d6c4ff);color:#7c4dff}.v7-wico.air{background:linear-gradient(135deg,#d6f5e8,#aee9cf);color:#11a06a;font-size:15px}.v7-wico.ring2{background:linear-gradient(135deg,#dbe7ff,#b9d2ff)}.v7-wico.gfit{background:linear-gradient(135deg,#e3f7e6,#c3edc8)}
+.v7-wt1{font-size:14px;font-weight:800;color:#1f2c44}
+.v7-wt2{font-size:11.5px;color:#7387a4;margin-top:2px}
+.v7-wr{margin-left:auto;text-align:right;flex-shrink:0}
+.v7-wbadge{font-size:11px;font-weight:800;padding:5px 11px;border-radius:20px;white-space:nowrap}
+.wb-green{background:#e2f7ec;color:#15a06a}.wb-blue{background:#e3effd;color:#2f6cd4}
+.v7-sync{padding:6px 13px;border-radius:11px;border:none;background:linear-gradient(135deg,#5ca8ff,#3b82f6);color:#fff;font-size:11px;font-weight:800;cursor:pointer;font-family:var(--font);box-shadow:0 6px 14px rgba(59,130,246,.3)}
+.v7-morebtn{margin:4px 0 0;padding:11px;width:100%;border-radius:14px;border:1px dashed rgba(120,150,190,.4);background:rgba(255,255,255,.4);color:#5d7290;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)}
+
+.v7-nav{position:absolute!important;bottom:18px;left:50%;transform:translateX(-50%);width:344px!important;max-width:calc(100% - 28px);height:66px!important;border-radius:25px!important;display:flex;align-items:center;justify-content:space-between;padding:0 24px!important;background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.62))!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 14px 36px rgba(70,120,190,.22)!important;z-index:50}
+.v7-ni{flex:0 0 auto!important;width:46px!important;display:flex;flex-direction:column;align-items:center;gap:4px;background:transparent!important;border:none;cursor:pointer;padding:0!important}
+.v7-ni svg{width:24px;height:24px;fill:none;stroke:#9aabc4;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.v7-ni span{font-size:9px;font-weight:700;color:#9aabc4}
+.v7-ni.on svg{stroke:#3b82f6}.v7-ni.on span{color:#3b82f6}
+.v7-fab{width:60px;height:60px;border-radius:20px;background:linear-gradient(135deg,#6cb2ff,#3b82f6);display:flex;align-items:center;justify-content:center;margin-top:-28px;box-shadow:0 14px 30px rgba(59,130,246,.55);cursor:pointer;flex-shrink:0}
+.v7-fab svg{width:27px;height:27px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.v7-fabwrap{display:flex;flex-direction:column;align-items:center;cursor:pointer;flex-shrink:0}
+.v7-fablbl{font-size:9px;font-weight:700;color:#3b82f6;margin-top:1px}
+#screen-home .v7-vico,#screen-vitals .v7-vico{width:46px!important;height:46px!important;border-radius:14px!important;background:#fff!important;box-shadow:inset 0 1px 2px rgba(255,255,255,.9),0 5px 12px rgba(40,80,140,.1)!important}
+.v7-vico svg{width:30px!important;height:30px!important}
+/* Daily strip + air card: white tiles for colorful illustration icons */
+#screen-home .v7-daico{background:#fff!important;width:44px!important;height:44px!important;border-radius:14px!important}
+#screen-home .v7-daico svg{width:31px!important;height:31px!important}
+#screen-home .v7-daico svg path,#screen-home .v7-daico svg circle,#screen-home .v7-daico svg rect,#screen-home .v7-daico svg ellipse,#screen-home .v7-daico svg text{stroke:none!important}
+#screen-home .v7-daico svg .pulse{stroke:#46E0A0!important;stroke-width:26!important;fill:none!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+#screen-home .v7-wico.ds,#screen-home .v7-wico.air{background:#fff!important}
+#screen-home .v7-wico.air svg path,#screen-home .v7-wico.air svg circle,#screen-home .v7-wico.air svg rect,#screen-home .v7-wico.air svg ellipse,#screen-home .v7-wico.air svg text{stroke:none!important}
+#screen-home .v7-wico.air svg .tube{fill:none!important;stroke:#FFB23A!important;stroke-width:18!important;stroke-linecap:round!important}
+/* Titujt/etiketat e zgjedhura në ngjyrën e logos SpO2 */
+#screen-home .v7-vc .v7-vlbl{color:#4db6e8!important}
+#screen-home .v7-name,#screen-home .v7-vc .v7-vval,#screen-home .v7-da b{color:#4db6e8!important}
+/* === Nav i ri (light glass) në TË GJITHA dritaret përveç Home === */
+.bn:not(.v7-nav){position:absolute!important;bottom:18px!important;left:50%!important;transform:translateX(-50%)!important;width:344px!important;max-width:calc(100% - 28px)!important;height:66px!important;border-radius:25px!important;background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.62))!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;border:1px solid rgba(255,255,255,.92)!important;border-top:1px solid rgba(255,255,255,.92)!important;box-shadow:0 14px 36px rgba(70,120,190,.22)!important;padding:0 20px!important;z-index:60!important}
+.bn:not(.v7-nav) .nic{filter:none!important;width:24px!important;height:24px!important;opacity:.9}
+.bn:not(.v7-nav) .ni.active .nic{opacity:1}
+.bn:not(.v7-nav) .nl{color:#9aabc4!important;font-weight:700!important}
+.bn:not(.v7-nav) .ni.active .nl{color:#3b82f6!important}
+.bn:not(.v7-nav) .nvb{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;border-radius:20px!important;box-shadow:0 14px 30px rgba(59,130,246,.55)!important}
+.bn:not(.v7-nav) .nvl{color:#3b82f6!important}
+/* hapësirë poshtë që përmbajtja të mos fshihet pas nav-it notues */
+.screen:not(#screen-home) .sa{padding-bottom:108px!important}
+/* === RAFINIME: font premium + shkëlqim === */
+.v7home, .v7home *, .v7-nav, .v7-nav *{font-family:'Outfit','Plus Jakarta Sans',sans-serif}
+.v7-name,.v7-stitle,.v7-vval,.v7-sch,.v7-scname,.v7-rin b,.v7-wt1,.v7-da b,.v7-scbtn,.v7-wbadge,.v7-sync{font-weight:700!important}
+.v7-greet,.v7-vlbl,.v7-scsub,.v7-scp,.v7-da span,.v7-wt2,.v7-see{font-weight:500!important}
+.v7-name,.v7-stitle,.v7-vval,.v7-sch,.v7-rin b,.v7-scname{letter-spacing:-0.3px}
+/* ikona vitals — glossy + SVG */
+.v7-vico{position:relative;overflow:hidden;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(40,80,140,.07),0 6px 13px rgba(40,80,140,.14)}
+.v7-vico::after{content:"";position:absolute;top:0;left:0;right:0;height:52%;background:linear-gradient(180deg,rgba(255,255,255,.6),transparent);pointer-events:none}
+.v7-vico svg{width:21px;height:21px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1}
+.v7-vico.bp svg{stroke:#e0436a}.v7-vico.hr svg{stroke:#f0712f}.v7-vico.gl svg{stroke:#12a06a}.v7-vico.sp svg{stroke:#2f74d4}
+/* katroret vitals — më glossy + glow me ngjyrë (per-vital) */
+.v7-vc{overflow:hidden}
+.v7-vc::after{content:"";position:absolute;top:-1px;left:-1px;right:-1px;height:54%;background:linear-gradient(180deg,rgba(255,255,255,.72),transparent);border-radius:21px 21px 50% 50%/21px 21px 14px 14px;pointer-events:none}
+.v7-vc:has(.v7-vico.bp){box-shadow:0 14px 30px rgba(224,67,106,.17),inset 0 1px 1px rgba(255,255,255,.95)}
+.v7-vc:has(.v7-vico.hr){box-shadow:0 14px 30px rgba(240,113,47,.17),inset 0 1px 1px rgba(255,255,255,.95)}
+.v7-vc:has(.v7-vico.gl){box-shadow:0 14px 30px rgba(18,160,106,.17),inset 0 1px 1px rgba(255,255,255,.95)}
+.v7-vc:has(.v7-vico.sp){box-shadow:0 14px 30px rgba(47,116,212,.17),inset 0 1px 1px rgba(255,255,255,.95)}
+/* daily activity — ikona në pllaka glossy */
+.v7-daico{width:38px;height:38px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 5px;position:relative;overflow:hidden;box-shadow:inset 0 2px 3px rgba(255,255,255,.85),0 6px 13px rgba(40,80,140,.16)}
+.v7-daico::after{content:"";position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,.55),transparent)}
+.v7-daico svg{width:19px;height:19px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1}
+.v7-daico.steps{background:linear-gradient(135deg,#cfe2ff,#9cc3ff)}.v7-daico.steps svg{stroke:#2f6cd4}
+.v7-daico.cal{background:linear-gradient(135deg,#ffe0cc,#ffbd8f)}.v7-daico.cal svg{stroke:#e8722a}
+.v7-daico.puls{background:linear-gradient(135deg,#ffd6dd,#ff9fb0)}.v7-daico.puls svg{stroke:#e0436a}
+/* logot e wide cards — glossy */
+.v7-wico{position:relative;overflow:hidden;box-shadow:inset 0 2px 3px rgba(255,255,255,.8),0 6px 13px rgba(40,80,140,.13)}
+.v7-wico::after{content:"";position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,.5),transparent)}
+.v7-sclogo{box-shadow:0 6px 14px rgba(0,0,0,.16),inset 0 1px 2px rgba(255,255,255,.9)}
+</style>
+
 <div class="screen active" id="screen-home">
   <div class="sb"><span>9:41</span><svg width="24" height="11" viewBox="0 0 26 12" fill="none"><rect x=".5" y=".5" width="22" height="11" rx="3.5" stroke="#1A2340" stroke-opacity=".35"/><rect x="2" y="2" width="17" height="8" rx="2" fill="#1A2340"/></svg></div>
-  <div class="sa">
-    <div class="hero">
-      <div class="hg">
-        <div class="hr2"><div><div class="htxt">Good morning ☀️</div><div class="hname">Hello!</div></div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <!-- NOTIFICATION BELL -->
-          <div style="position:relative;cursor:pointer;" onclick="switchScreen('notifications');initNotifications()">
-            <div style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;border:2px solid rgba(255,255,255,0.35);">🔔</div>
-            <div id="notifDot" style="position:absolute;top:0;right:0;width:14px;height:14px;border-radius:50%;background:#EF4444;border:2px solid transparent;display:none;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;">0</div>
-          </div>
-          <div class="av-wrap" id="avWrap" onclick="toggleAvDrop()">
-          <div class="hav" id="avBtn">👩‍⚕️</div>
+  <div class="sa v7home">
+    <div class="v7-top">
+      <div class="v7-loc">
+        <div class="av-wrap" id="avWrap" onclick="toggleAvDrop()">
+          <div class="hav v7-av" id="avBtn">👩‍⚕️</div>
           <div class="av-drop" id="avDrop">
             <div class="av-drop-hdr">
               <div class="av-drop-av">👩‍⚕️</div>
@@ -1290,179 +1406,156 @@ select option{background:#0A1628;color:#F1F5FF;}
             </div>
             <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(function(){initSettings();applyProfileMode('profile');},100)"><div class="av-drop-ico" style="background:var(--bg);">👤</div><div class="av-drop-lbl">My Profile</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();switchScreen('subscription')"><div class="av-drop-ico" style="background:var(--ambl);">⭐</div><div class="av-drop-lbl">Subscription</div></div>
-            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('notifications');initNotifications()"><div class="av-drop-ico" style="background:var(--pul);">🔔</div><div class="av-drop-lbl">Notifications</div></div>
+            <div class="av-drop-item" onclick="closeAvDrop();openNotifSheet()"><div class="av-drop-ico" style="background:var(--pul);">🔔</div><div class="av-drop-lbl">Notifications</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(function(){initSettings();applyProfileMode('settings');},100)"><div class="av-drop-ico" style="background:var(--bg);">⚙️</div><div class="av-drop-lbl">Settings</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();gatedAction('private')"><div class="av-drop-ico" style="background:#EBF3FF;">🔒</div><div class="av-drop-lbl">Dr. Shabani</div></div>
             <div class="av-drop-item red" onclick="closeAvDrop();doSignOut()"><div class="av-drop-ico" style="background:#FEF2F2;">🚪</div><div class="av-drop-lbl">Sign Out</div></div>
           </div>
-        </div></div></div>
-        <div class="hbadge"><span class="hdot"></span> <span id="homeIndicators">0 indicators</span> · D Health active</div>
+        </div>
+        <div>
+          <div class="v7-greet">Mirëmëngjes 👋</div>
+          <div class="v7-name" id="v7HomeName">Përshëndetje</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="v7-bell" onclick="switchScreen('more');setTimeout(function(){try{initSettings();}catch(e){}try{applyProfileMode('settings');}catch(e){}},100)">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+        <div class="v7-bell" onclick="openNotifSheet()">
+          <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <div id="notifDot" class="v7-bdot">0</div>
+        </div>
       </div>
     </div>
-    <div class="vg">
-      <div class="vc"><div class="vir"><div class="vic" style="background:var(--hl);">❤️</div><span class="vs2 sn" id="home-hr-status">--</span></div><div class="vlbl">Heart Rate</div><div class="vv" id="home-hr">-- <span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.5)">bpm</span></div></div>
-      <div class="vc"><div class="vir"><div class="vic" style="background:var(--pl);">🫧</div><span class="vs2 sg" id="home-spo2-status">--</span></div><div class="vlbl">Oxygen</div><div class="vv" id="home-spo2">-- <span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.5)">%</span></div></div>
-      <div class="vc" style="border:1px solid rgba(249,115,22,0.2);"><div class="vir"><div class="vic" style="background:var(--ol);">🩸</div><span class="vs2 sw" id="home-bp-status">--</span></div><div class="vlbl">Blood Pressure</div><div class="vv" style="font-size:16px;color:var(--orange);" id="home-bp">--</div><div class="vsb" id="home-bp-sub">mmHg</div></div>
-      <div class="vc" style="border:1px solid rgba(13,148,136,0.2);"><div class="vir"><div class="vic" style="background:var(--tl);">🍬</div><span class="vs2 sg" id="home-glu-status">--</span></div><div class="vlbl">Glucose</div><div class="vv" style="font-size:16px;color:var(--teal);" id="home-glu">--</div><div class="vsb">mmol/L</div></div>
-    </div>
-    <div class="hs">
-      <div class="sh"><div class="st">Diagnostic AI</div><span style="font-size:12px;color:#60A5FA;font-weight:500;cursor:pointer;" onclick="switchScreen('diagnostic');">See full →</span></div>
-      <div class="score-card" onclick="switchScreen('diagnostic');">
-        <div class="sc-row">
-          <div class="sc-circle"><div class="sc-n" id="home-sc-num">--</div><div class="sc-l">/100</div></div>
-          <div>
-            <div class="sc-title" id="home-sc-title">No analysis yet</div>
-            <div class="sc-desc" id="home-sc-desc">Run Re-Analyze to get your health score</div>
-            <div class="sc-tap">Tap for full AI analysis →</div>
-          </div>
-        </div>
 
+    <div class="v7-secrow"><div class="v7-stitle">Shenjat vitale</div><span class="v7-see" onclick="switchScreen('vitals')">Të gjitha ›</span></div>
+    <div class="v7-vgrid">
+      <div class="v7-vc" onclick="switchScreen('vitals')">
+        <div class="v7-vtop"><div class="v7-vico bp"><svg viewBox="0 0 24 24"><path d="M12 21S3 14.5 3 8.8C3 5.6 5.4 3.5 8 3.5c1.7 0 3.1 1 4 2.3.9-1.3 2.3-2.3 4-2.3 2.6 0 5 2.1 5 5.3C21 14.5 12 21 12 21Z" fill="#f76b7a" stroke="none"/></svg></div><span class="v7-vdot sw" id="home-bp-status"></span></div>
+        <div class="v7-vval" style="font-size:21px;" id="home-bp">--</div>
+        <div class="v7-vlbl">Tensioni <span id="home-bp-sub" style="opacity:.7">mmHg</span></div>
+      </div>
+      <div class="v7-vc" onclick="switchScreen('vitals')">
+        <div class="v7-vtop"><div class="v7-vico hr"><svg viewBox="0 0 24 24"><path d="M12 21S3 14.5 3 8.8C3 5.6 5.4 3.5 8 3.5c1.7 0 3.1 1 4 2.3.9-1.3 2.3-2.3 4-2.3 2.6 0 5 2.1 5 5.3C21 14.5 12 21 12 21Z" fill="#ff5b8a" stroke="none"/><path d="M5.5 12.5h3l1.2-2.5L12 14.5l1.3-2.5H18.5" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="v7-vdot sn" id="home-hr-status"></span></div>
+        <div class="v7-vval" id="home-hr">--</div>
+        <div class="v7-vlbl">Pulsi · bpm</div>
+      </div>
+      <div class="v7-vc" onclick="switchScreen('vitals')">
+        <div class="v7-vtop"><div class="v7-vico gl"><svg viewBox="0 0 24 24"><path d="M12 2.5S5 10 5 15a7 7 0 0 0 14 0c0-5-7-12.5-7-12.5Z" fill="#f76b7a" stroke="none"/><path d="M9 11.3 12 9.6l3 1.7v3.4l-3 1.7-3-1.7z" fill="none" stroke="#fff" stroke-width="1.3"/></svg></div><span class="v7-vdot sg" id="home-glu-status"></span></div>
+        <div class="v7-vval" style="font-size:21px;" id="home-glu">--</div>
+        <div class="v7-vlbl">Glukoza · mmol/L</div>
+      </div>
+      <div class="v7-vc" onclick="switchScreen('vitals')">
+        <div class="v7-vtop"><div class="v7-vico sp"><svg viewBox="0 0 24 24"><path d="M11 3.5h2v8h-2z" fill="#4db6e8" stroke="none"/><path d="M11 11.5c0 4-2.3 8-5 8-1.7 0-2-2.3-2-5 0-2.6 1-5 3.5-5.4 1.8-.3 3.5.6 3.5 2.4z" fill="#4db6e8" stroke="none"/><path d="M13 11.5c0 4 2.3 8 5 8 1.7 0 2-2.3 2-5 0-2.6-1-5-3.5-5.4-1.8-.3-3.5.6-3.5 2.4z" fill="#5ec9a0" stroke="none"/></svg></div><span class="v7-vdot sg" id="home-spo2-status"></span></div>
+        <div class="v7-vval" id="home-spo2">--</div>
+        <div class="v7-vlbl">SpO2 · %</div>
       </div>
     </div>
-    <div class="hs">
-      <div class="sh"><div class="st">🌍 Air Quality — <span id="aqiCityLbl">Skopje</span></div><span style="font-size:11px;color:rgba(255,255,255,0.5);" id="aqiTime">Loading...</span></div>
-      <div id="aqiCard" style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;padding:14px 16px;border:0.5px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:14px;">
-        <div id="aqiCircle" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">
-          <div id="aqiVal" style="font-size:20px;font-weight:700;color:#fff;">—</div>
-          <div style="font-size:8px;color:rgba(255,255,255,0.8);">AQI</div>
-        </div>
-        <div style="flex:1;">
-          <div id="aqiStatus" style="font-size:14px;font-weight:700;color:#F1F5FF;">Checking...</div>
-          <div id="aqiDesc" style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;line-height:1.5;">Connecting to IQAir...</div>
-        </div>
-        <div style="text-align:center;">
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);">PM2.5</div>
-          <div id="aqiPm" style="font-size:16px;font-weight:700;color:#F1F5FF;">—</div>
-          <div style="font-size:9px;color:rgba(255,255,255,0.5);">μg/m³</div>
-        </div>
-      </div>
-    </div>
-    <div class="hs">
-      <!-- DAILY HEALTH SCORE -->
-      <div id="dailyScoreCard" style="background:linear-gradient(135deg,#1A0A2E,#2D1B69);border-radius:16px;padding:14px;margin-top:10px;cursor:pointer;" onclick="calcDailyScore()">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.5px;">⚡ Daily Health Score</div>
-          <div id="dailyScoreRefresh" style="font-size:10px;color:rgba(255,255,255,0.5);">Tap to calculate</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="position:relative;flex-shrink:0;">
-            <div id="dailyScoreCircle" style="width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,0.2);">
-              <div id="dailyScoreNum" style="font-size:24px;font-weight:700;color:#fff;line-height:1;">--</div>
-              <div style="font-size:9px;color:rgba(255,255,255,0.6);">/100</div>
-            </div>
-            <div id="dailyScoreEmoji" style="position:absolute;bottom:-4px;right:-4px;font-size:18px;"></div>
-          </div>
-          <div style="flex:1;">
-            <div id="dailyScoreMain" style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;">Calculate your daily score</div>
-            <div id="dailyScoreBadge" style="display:none;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;display:inline-block;margin-bottom:4px;"></div>
-            <div id="dailyScoreDetails" style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5;">Based on steps, vitals, activity & diagnoses</div>
-          </div>
-        </div>
-        <div id="dailyScoreBarWrap" style="display:none;margin-top:10px;">
-          <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
-            <div id="dailyScoreBar" style="height:100%;border-radius:4px;transition:width 0.8s ease;width:0%;"></div>
-          </div>
-        </div>
-        <div id="dailyScoreBenefits" style="margin-top:10px;display:none;">
-          <div style="height:0.5px;background:rgba(255,255,255,0.1);margin-bottom:8px;"></div>
-          <div id="dailyScoreBenefitsList" style="font-size:11px;color:rgba(255,255,255,0.8);line-height:1.8;"></div>
-        </div>
-      </div>
 
+    <div class="v7-secrow"><div class="v7-stitle">Health Score</div><span class="v7-see" onclick="switchScreen('diagnostic')">Shiko ›</span></div>
+    <div class="v7-score" onclick="switchScreen('diagnostic')">
+      <div class="v7-sctop">
+        <div class="v7-sclogo"><svg viewBox="0 0 512 512" width="31" height="31" xmlns="http://www.w3.org/2000/svg"><path d="M100 180 A200 200 0 0 0 205 478" fill="none" stroke="#4F86B8" stroke-width="22" stroke-linecap="round"/><path d="M224 478 200 462 200 494 Z" fill="#4F86B8"/><path d="M412 180 A200 200 0 0 1 307 478" fill="none" stroke="#4F86B8" stroke-width="22" stroke-linecap="round"/><path d="M288 478 312 462 312 494 Z" fill="#4F86B8"/><path d="M256 212 C236 205 214 206 200 218 C176 214 156 230 160 254 C142 260 136 282 150 300 C138 314 142 338 162 348 C166 372 192 384 216 374 C230 388 246 386 256 376 Z" fill="#F5A623"/><path d="M256 212 C276 205 298 206 312 218 C336 214 356 230 352 254 C370 260 376 282 362 300 C374 314 370 338 350 348 C346 372 320 384 296 374 C282 388 266 386 256 376 Z" fill="#6BB6E8"/><path d="M226 300 H196 M196 300 l-14 -11 M196 300 l-14 11 M286 300 H316 M316 300 l14 -11 M316 300 l14 11" stroke="#2E7AA8" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="256" cy="300" r="30" fill="#2E7AA8"/><path d="M118 46 H226 a20 20 0 0 1 20 20 V104 a20 20 0 0 1 -20 20 H160 l-20 26 v-26 H118 a20 20 0 0 1 -20 -20 V66 a20 20 0 0 1 20 -20 Z" fill="#FBC02D"/><rect x="136" y="70" width="92" height="11" rx="5" fill="#4A90D2"/><rect x="136" y="92" width="68" height="11" rx="5" fill="#4A90D2"/><path d="M286 46 H394 a20 20 0 0 1 20 20 V104 a20 20 0 0 1 -20 20 H352 v26 l-20 -26 H286 a20 20 0 0 1 -20 -20 V66 a20 20 0 0 1 20 -20 Z" fill="#5B9BD5"/><rect x="300" y="70" width="92" height="11" rx="5" fill="#2E5F8F"/><rect x="300" y="92" width="68" height="11" rx="5" fill="#2E5F8F"/></svg></div>
+        <div><div class="v7-scname">D Health AI</div><div class="v7-scsub">Daily Score · Diagnostic AI</div></div>
+        <div class="v7-scbk">🔖</div>
+      </div>
+      <div class="v7-scmid">
+        <div class="v7-ring"><div class="v7-rin"><b id="home-sc-num">--</b><span>/100</span></div></div>
+        <div class="v7-scinfo">
+          <div class="v7-sch" id="home-sc-title">No analysis yet</div>
+          <div class="v7-scp" id="home-sc-desc">Trokit për analizën e plotë me AI</div>
+        </div>
+      </div>
+      <button class="v7-scbtn" onclick="event.stopPropagation();switchScreen('diagnostic')">Shiko analizën e plotë →</button>
     </div>
-    <div class="hs">
-      <div class="sh"><div class="st">Daily Activity</div><span style="font-size:12px;color:#60A5FA;font-weight:500;">Today</span></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
-          <div style="font-size:22px;margin-bottom:4px;">👟</div>
-          <div style="font-size:18px;font-weight:700;color:#60A5FA;" id="da-steps">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Steps</div>
-          <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--primary);"></div></div>
-        </div>
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
-          <div style="font-size:22px;margin-bottom:4px;">🔥</div>
-          <div style="font-size:18px;font-weight:700;color:var(--orange);" id="da-cal">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Calories</div>
-          <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--orange);"></div></div>
-        </div>
-        <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:11px;border:0.5px solid rgba(255,255,255,0.12);text-align:center;">
-          <div style="font-size:22px;margin-bottom:4px;">❤️</div>
-          <div style="font-size:18px;font-weight:700;color:var(--heart);" id="da-hr">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Puls avg</div>
-          <div style="height:3px;border-radius:2px;background:var(--border);margin-top:6px;"><div style="height:100%;width:0%;border-radius:2px;background:var(--heart);"></div></div>
-        </div>
-      </div>
-      <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:10px 13px;border:0.5px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:8px;">
-        <div style="font-size:18px;">🏃</div>
-        <div style="flex:1;font-size:11px;color:rgba(255,255,255,0.5);">Distance: <strong id="da-dist" style="color:#F1F5FF;">--</strong> &nbsp;·&nbsp; Active: <strong id="da-active" style="color:#F1F5FF;">--</strong> &nbsp;·&nbsp; Sleep: <strong id="da-sleep" style="color:#F1F5FF;">--</strong></div>
-      </div>
 
+    <div class="v7-daily">
+      <div class="v7-da"><div class="v7-daico steps"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="fpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E9BE6"/><stop offset="1" stop-color="#6A2DD6"/></linearGradient></defs><path d="M150 70 C110 70 85 110 85 165 C85 215 110 250 155 250 C195 250 215 215 210 165 C205 110 190 70 150 70 Z" fill="url(#fpg)"/><path d="M120 282 C100 282 92 302 95 324 C98 347 120 360 145 354 C165 350 172 327 168 307 C164 290 145 282 120 282 Z" fill="url(#fpg)"/><path d="M362 152 C322 152 298 196 302 251 C306 301 332 336 374 336 C412 336 432 296 428 246 C422 191 402 152 362 152 Z" fill="url(#fpg)"/><path d="M337 366 C317 366 308 389 312 411 C316 436 340 449 364 443 C384 438 390 415 386 395 C382 376 362 366 337 366 Z" fill="url(#fpg)"/></svg></div><b id="da-steps">--</b><span>Hapa</span></div>
+      <div class="v7-dadiv"></div>
+      <div class="v7-da"><div class="v7-daico cal"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M256 50 C272 130 352 150 360 248 C372 360 318 462 256 462 C194 462 138 360 152 254 C159 205 198 188 208 234 C214 152 235 100 256 50 Z" fill="#FFD24D"/><path d="M168 120 C150 150 150 185 175 192 C160 165 175 140 168 120 Z" fill="#FFE082"/><ellipse cx="256" cy="322" rx="92" ry="104" fill="#FF6B7A"/><text x="256" y="352" font-family="Arial,Helvetica,sans-serif" font-size="74" font-weight="800" fill="#FFFFFF" text-anchor="middle">kcal</text></svg></div><b id="da-cal">--</b><span>Kalori</span></div>
+      <div class="v7-dadiv"></div>
+      <div class="v7-da"><div class="v7-daico puls"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M256 440 C120 340 60 250 60 175 C60 120 105 80 160 80 C200 80 235 105 256 140 L256 440 Z" fill="#FF5A7E"/><path d="M256 440 C392 340 452 250 452 175 C452 120 407 80 352 80 C312 80 277 105 256 140 L256 440 Z" fill="#E91E8C"/><path class="pulse" d="M92 272 H178 L206 214 L246 330 L276 262 H406" fill="none" stroke="#46E0A0" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><b id="da-hr">--</b><span>Puls avg</span></div>
     </div>
-    <div class="hs" style="padding-bottom:18px;">
-      <div class="sh"><div class="st">🔗 Data Sources</div><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;color:rgba(255,255,255,0.5);" id="dataSourcesCount">Loading...</span><button onclick="syncNow()" id="homeSyncBtn" style="padding:5px 11px;border-radius:9px;border:none;background:linear-gradient(135deg,#0D3B8E,#3B7DD8);color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:4px;">🔄 Sync</button></div></div>
-      <!-- Platform Banner — Android/iOS auto-detect -->
-      <div id="platformBanner"></div>
-      <!-- Integration Cards -->
-      <div style="display:flex;flex-direction:column;gap:7px;">
-        <!-- D Health Ring (pajisja jonë) -->
-        <div id="home-int-ring" onclick="ringConnect()" style="background:linear-gradient(135deg,rgba(13,59,142,0.25),rgba(139,111,232,0.15));border:0.5px solid rgba(139,111,232,0.35);border-radius:14px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;">
-          <div style="width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#0D3B8E,#8B6FE8);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💍</div>
-          <div style="flex:1;">
-            <div style="font-size:12px;font-weight:700;color:#F1F5FF;">D Health Ring</div>
-            <div class="int-status" id="ds-ring-status" style="font-size:10px;color:rgba(255,255,255,0.4);">Trokit për t'u lidhur</div>
-          </div>
-          <span style="font-size:12px;color:rgba(255,255,255,0.3);">›</span>
-        </div>
-        <!-- Google Fit -->
-        <div id="home-int-gfit" onclick="connectGoogleFit()" style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;">
-          <div style="width:36px;height:36px;border-radius:11px;background:#E8F5E9;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💚</div>
-          <div style="flex:1;">
-            <div style="font-size:12px;font-weight:700;color:#F1F5FF;">Google Fit</div>
-            <div class="int-status" id="ds-gfit-status" style="font-size:10px;color:rgba(255,255,255,0.4);">Tap to connect</div>
-          </div>
-          <span style="font-size:12px;color:rgba(255,255,255,0.3);">›</span>
-        </div>
-        <!-- Apple Health -->
-        <div id="home-int-apple" onclick="connectAppleHealth()" style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;">
-          <div style="width:36px;height:36px;border-radius:11px;background:#FFF0F3;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">❤️</div>
-          <div style="flex:1;">
-            <div style="font-size:12px;font-weight:700;color:#F1F5FF;">Apple Health</div>
-            <div class="int-status" id="ds-apple-status" style="font-size:10px;color:rgba(255,255,255,0.4);">Tap to connect</div>
-          </div>
-          <span style="font-size:12px;color:rgba(255,255,255,0.3);">›</span>
-        </div>
-        <!-- Fitbit -->
-        <div id="home-int-fitbit" onclick="connectFitbit()" style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:11px 13px;cursor:pointer;display:flex;align-items:center;gap:10px;">
-          <div style="width:36px;height:36px;border-radius:11px;background:#E0F7FA;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">⏱</div>
-          <div style="flex:1;">
-            <div style="font-size:12px;font-weight:700;color:#F1F5FF;">Fitbit</div>
-            <div class="int-status" id="ds-fitbit-status" style="font-size:10px;color:rgba(255,255,255,0.4);">Tap to connect</div>
-          </div>
-          <span style="font-size:12px;color:rgba(255,255,255,0.3);">›</span>
-        </div>
-        <!-- Manual — always active, no disconnect -->
-        <div style="background:rgba(45,200,160,0.07);border:0.5px solid rgba(45,200,160,0.2);border-radius:14px;padding:11px 13px;display:flex;align-items:center;gap:10px;">
-          <div style="width:36px;height:36px;border-radius:11px;background:rgba(45,200,160,0.15);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📝</div>
-          <div style="flex:1;">
-            <div style="font-size:12px;font-weight:700;color:#F1F5FF;">Manual Input</div>
-            <div style="font-size:10px;color:#4ADE80;font-weight:600;">Always active ✓</div>
-          </div>
-          <div style="font-size:10px;font-weight:700;color:#4ADE80;background:rgba(45,200,160,0.2);padding:3px 9px;border-radius:8px;">Active</div>
-        </div>
-        <button id="ds-toggle-btn" onclick="toggleDataSources()" style="margin-top:2px;padding:9px;border-radius:12px;border:0.5px dashed rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.6);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">➕ Shfaq burimet e tjera</button>
-      </div>
+    <div class="v7-actline">🏃 Distanca: <strong id="da-dist">--</strong> · Aktiv: <strong id="da-active">--</strong> · Gjumi: <strong id="da-sleep">--</strong></div>
+
+    <div class="v7-secrow"><div class="v7-stitle">Përmbledhje</div></div>
+    <div class="v7-wide" onclick="calcDailyScore()">
+      <div class="v7-wico ds"><svg viewBox="0 0 512 300" width="33" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M56 270 A200 200 0 0 1 94.2 152.4 L171.9 208.9 A104 104 0 0 0 152 270 Z" fill="#FF5A2E"/><path d="M94.2 152.4 A200 200 0 0 1 194.2 79.8 L223.9 171.1 A104 104 0 0 0 171.9 208.9 Z" fill="#FF9A33"/><path d="M194.2 79.8 A200 200 0 0 1 317.8 79.8 L288.1 171.1 A104 104 0 0 0 223.9 171.1 Z" fill="#FFD22E"/><path d="M317.8 79.8 A200 200 0 0 1 417.8 152.4 L340.1 208.9 A104 104 0 0 0 288.1 171.1 Z" fill="#8DC63F"/><path d="M417.8 152.4 A200 200 0 0 1 456 270 L360 270 A104 104 0 0 0 340.1 208.9 Z" fill="#14A07A"/><path d="M256 150 C232 205 216 235 216 262 A40 40 0 0 0 256 302 Z" fill="#FF6A2D"/><path d="M256 150 C280 205 296 235 296 262 A40 40 0 0 1 256 302 Z" fill="#E81E5C"/></svg><span id="dailyScoreEmoji" style="display:none"></span></div>
+      <div><div class="v7-wt1" style="color:#4db6e8;">Daily Health Score</div><div class="v7-wt2" id="dailyScoreDetails">Bazuar te hapat, vitalet & diagnoza</div></div>
+      <div class="v7-wr"><span class="v7-wbadge wb-blue"><span id="dailyScoreNum">--</span>/100</span><div id="dailyScoreRefresh" style="font-size:9px;color:#9aa9c0;margin-top:3px;">Trokit</div></div>
     </div>
+    <div class="v7-wide" onclick="loadAirQuality&&loadAirQuality()">
+      <div class="v7-wico air"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path class="tube" d="M300 150 C360 150 378 220 360 300 C345 365 300 410 250 440" fill="none" stroke="#FFB23A" stroke-width="18" stroke-linecap="round"/><path d="M180 130 H300 a30 30 0 0 1 30 30 V452 a30 30 0 0 1 -30 30 H180 a30 30 0 0 1 -30 -30 V160 a30 30 0 0 1 30 -30 Z" fill="#D4EAF7"/><rect x="150" y="240" width="180" height="150" fill="#5FCB92"/><text x="240" y="345" font-family="Arial,Helvetica,sans-serif" font-size="90" font-weight="800" fill="#EAF8F0" text-anchor="middle">O2</text><rect x="212" y="96" width="56" height="40" rx="6" fill="#B8D8F0"/><rect x="228" y="56" width="24" height="46" rx="6" fill="#5A5A5A"/><rect x="196" y="44" width="88" height="20" rx="10" fill="#5A5A5A"/><circle cx="196" cy="54" r="16" fill="#5A5A5A"/><circle cx="284" cy="54" r="16" fill="#5A5A5A"/><circle cx="120" cy="92" r="30" fill="#5A5A5A"/><circle cx="120" cy="92" r="17" fill="#CDE7FA"/><rect x="138" y="84" width="44" height="16" rx="6" fill="#5A5A5A"/><path d="M395 175 C345 185 326 245 342 305 C353 352 392 380 416 372 C462 378 478 312 472 250 C466 190 440 175 395 175 Z" fill="#C2DEF7"/></svg><span id="aqiVal" style="display:none">—</span></div>
+      <div><div class="v7-wt1" style="color:#4db6e8;">Cilësia e ajrit · <span id="aqiCityLbl">—</span></div><div class="v7-wt2" id="aqiStatus">Duke kontrolluar...</div></div>
+      <div class="v7-wr"><span class="v7-wbadge wb-green">PM2.5 <span id="aqiPm">—</span></span><div id="aqiTime" style="font-size:9px;color:#9aa9c0;margin-top:3px;">—</div></div>
+    </div>
+    <div style="display:none">
+      <span id="aqiCircle"></span><span id="aqiDesc"></span><span id="dailyScoreCircle"></span><span id="dailyScoreMain"></span><span id="dailyScoreBadge"></span><span id="dailyScoreBarWrap"><span id="dailyScoreBar"></span></span><span id="dailyScoreBenefits"><span id="dailyScoreBenefitsList"></span></span><span id="homeIndicators"></span><span id="platformBanner"></span><span id="dataSourcesCount"></span>
+    </div>
+
+    <div class="v7-secrow"><div class="v7-stitle">🔗 Burimet</div><button onclick="syncNow()" id="homeSyncBtn" class="v7-sync">🔄 Sync</button></div>
+    <div class="v7-wide" id="home-int-ring" onclick="ringConnect()">
+      <div class="v7-wico ring2">💍</div>
+      <div><div class="v7-wt1" style="color:#4db6e8;">D Health Ring</div><div class="v7-wt2" id="ds-ring-status">Trokit për t'u lidhur</div></div>
+      <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">›</span></div>
+    </div>
+    <div class="v7-wide" id="home-int-gfit" onclick="connectGoogleFit()">
+      <div class="v7-wico gfit">💚</div>
+      <div><div class="v7-wt1">Google Fit</div><div class="v7-wt2" id="ds-gfit-status">Trokit për t'u lidhur</div></div>
+      <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">›</span></div>
+    </div>
+    <div id="home-int-apple" style="display:none"><span id="ds-apple-status"></span></div>
+    <div id="home-int-fitbit" style="display:none"><span id="ds-fitbit-status"></span></div>
+    <button id="ds-toggle-btn" onclick="toggleDataSources()" class="v7-morebtn">➕ Shfaq burimet e tjera</button>
+
+    <div style="height:30px;"></div>
   </div>
-  <div class="bn">
-    <button class="ni active" onclick="switchScreen('home')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" fill="#3B7DD8"/></svg><span class="nl" style="color:#60A5FA">Home</span></button>
-    <button class="ni" onclick="switchScreen('chat')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Chat</span></button>
-    <div class="nvw" onclick="switchScreen('vitals')"><button class="nvb"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M2 12H4L7 6L10 18L13 10L15 14H17L20 8L22 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="nvl">Vitals</span></div>
-    <button class="ni" onclick="switchScreen('calendar')"><svg class="nic" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="3" stroke="#7B8BAD" stroke-width="2"/><path d="M3 9H21" stroke="#7B8BAD" stroke-width="2"/><path d="M8 2V6M16 2V6" stroke="#7B8BAD" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="14" r="1" fill="#7B8BAD"/><circle cx="12" cy="14" r="1" fill="#7B8BAD"/><circle cx="16" cy="14" r="1" fill="#7B8BAD"/></svg><span class="nl">Calendar</span></button>
-    <button class="ni" onclick="switchScreen('diagnostic')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M19 3H5C3.9 3 3 3.9 3 5V15C3 16.1 3.9 17 5 17H8L12 21L16 17H19C20.1 17 21 16.1 21 15V5C21 3.9 20.1 3 19 3Z" stroke="#7B8BAD" stroke-width="2" fill="none"/><circle cx="8.5" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="12" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="15.5" cy="10" r="1.1" fill="#7B8BAD"/></svg><span class="nl">Diagnosis</span></button>
+  <div class="bn v7-nav">
+    <button class="ni v7-ni on" onclick="switchScreen('home')"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg><span>Home</span></button>
+    <button class="ni v7-ni" onclick="switchScreen('chat')"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4l-5 1 1-4a8.4 8.4 0 1 1 13-5.4Z"/></svg><span>Chat</span></button>
+    <div class="v7-fabwrap" onclick="switchScreen('vitals')"><div class="v7-fab"><svg viewBox="0 0 24 24"><path d="M2 12h4l2 5 4-12 2 7h6"/></svg></div><span class="v7-fablbl">Vitals</span></div>
+    <button class="ni v7-ni" onclick="switchScreen('calendar')"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span>Calendar</span></button>
+    <button class="ni v7-ni" onclick="switchScreen('diagnostic')"><svg viewBox="0 0 24 24"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg><span>Diagnosis</span></button>
   </div>
+
 </div>
 
 <!-- ══════════ CHAT ══════════ -->
+<style id="v7chat">
+#screen-chat{background:linear-gradient(165deg,#f2f7fd 0%,#dde9f7 50%,#eaf2fb 100%)!important}
+#screen-chat,#screen-chat *{font-family:'Outfit','Plus Jakarta Sans',sans-serif!important}
+#screen-chat .sb span{color:#1f2c44!important}
+#screen-chat .ch-hdr{background:linear-gradient(160deg,rgba(255,255,255,.85),rgba(255,255,255,.55))!important;border-bottom:1px solid rgba(120,150,190,.15)!important;backdrop-filter:blur(18px)!important}
+#screen-chat .ch-dn{color:#1f2c44!important}
+#screen-chat .ch-dav{display:none!important}
+#screen-chat .tabs{border-top:none!important;gap:9px!important;padding:2px 16px 12px!important}
+#screen-chat .tab{background:rgba(255,255,255,.6)!important;color:#5d7290!important;border:1px solid rgba(255,255,255,.88)!important;border-bottom:none!important;border-radius:14px!important;padding:11px 6px!important;font-weight:700!important;box-shadow:0 6px 16px rgba(70,120,190,.1)!important}
+#screen-chat .tab.active{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;color:#fff!important;border:1px solid transparent!important;border-bottom:none!important;box-shadow:0 8px 18px rgba(59,130,246,.32)!important}
+#screen-chat .dots-btn{color:#7387a4!important}
+#screen-chat .bb{color:#1f2c44!important}
+#screen-chat .bb.ai{background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.62))!important;border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 6px 16px rgba(70,120,190,.1)!important}
+#screen-chat .bbl{color:#1f2c44!important}
+#screen-chat .bbl.bot{background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.62))!important;border:1px solid rgba(255,255,255,.92)!important;color:#1f2c44!important;box-shadow:0 6px 16px rgba(70,120,190,.1)!important}
+#screen-chat .bbl.me,#screen-chat .bb.me{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;color:#fff!important}
+#screen-chat .bbl.me *,#screen-chat .bb.me *{color:#fff!important}
+#screen-chat .ci-bar{background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.62))!important;border-top:1px solid rgba(120,150,190,.15)!important;margin-bottom:86px!important;border-radius:18px!important;margin-left:14px!important;margin-right:14px!important;box-shadow:0 8px 24px rgba(70,120,190,.14)!important}
+#screen-chat .ci{background:rgba(255,255,255,.8)!important;border:1px solid rgba(120,150,190,.3)!important;color:#1f2c44!important}
+#screen-chat .ci::placeholder{color:#9aa9c0!important}
+#screen-chat .csb{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;box-shadow:0 6px 14px rgba(59,130,246,.35)!important}
+#screen-chat .bib{background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.62))!important;border-top:1px solid rgba(120,150,190,.15)!important;margin:0 14px 86px!important;border-radius:18px!important;box-shadow:0 8px 24px rgba(70,120,190,.14)!important}
+#screen-chat .btw{background:rgba(255,255,255,.8)!important;border:1px solid rgba(120,150,190,.3)!important}
+#screen-chat .binp{color:#1f2c44!important}
+#screen-chat .binp::placeholder{color:#9aa9c0!important}
+#screen-chat .bsb{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;box-shadow:0 6px 14px rgba(59,130,246,.35)!important}
+#screen-chat [onclick*="drQuick"]{background:rgba(255,255,255,.72)!important;color:#2f6cd4!important;border:1px solid rgba(120,150,190,.25)!important}
+#screen-chat #panel-bot>div[style*="padding:8px 12px"]{margin-bottom:0!important;border-top:1px solid rgba(120,150,190,.15)!important}
+#screen-chat [style*="color:#F1F5FF"]{color:#1f2c44!important}
+#screen-chat [style*="rgba(255,255,255,0.45)"],#screen-chat [style*="rgba(255,255,255,0.5)"],#screen-chat [style*="rgba(255,255,255,0.6)"]{color:#7387a4!important}
+#screen-chat [style*="rgba(255,255,255,0.7)"],#screen-chat [style*="rgba(255,255,255,0.8)"]{color:#3a4a63!important}
+#screen-chat [onclick*="aiQuick"]{background:rgba(255,255,255,.72)!important;color:#2f6cd4!important;border:1px solid rgba(120,150,190,.25)!important}
+#screen-chat [style*="#0D1B4B,#1565C0"]{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important}
+#screen-chat [style*="background:var(--white)"]{background:linear-gradient(160deg,rgba(255,255,255,.85),rgba(255,255,255,.55))!important}
+</style>
 <div class="screen" id="screen-chat">
   <div class="sb"><span>9:41</span></div>
   <div class="ch-hdr">
@@ -1568,28 +1661,103 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div>
   </div>
 
-  <div class="bn">
-    <button class="ni" onclick="switchScreen('home')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Home</span></button>
-    <button class="ni active" onclick="switchScreen('chat')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="#3B7DD8"/></svg><span class="nl" style="color:#60A5FA">Chat</span></button>
-    <div class="nvw" onclick="switchScreen('vitals')"><button class="nvb"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M2 12H4L7 6L10 18L13 10L15 14H17L20 8L22 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="nvl">Vitals</span></div>
-    <button class="ni" onclick="switchScreen('calendar')"><svg class="nic" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="3" stroke="#7B8BAD" stroke-width="2"/><path d="M3 9H21" stroke="#7B8BAD" stroke-width="2"/><path d="M8 2V6M16 2V6" stroke="#7B8BAD" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="14" r="1" fill="#7B8BAD"/><circle cx="12" cy="14" r="1" fill="#7B8BAD"/><circle cx="16" cy="14" r="1" fill="#7B8BAD"/></svg><span class="nl">Calendar</span></button>
-    <button class="ni" onclick="switchScreen('diagnostic')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M19 3H5C3.9 3 3 3.9 3 5V15C3 16.1 3.9 17 5 17H8L12 21L16 17H19C20.1 17 21 16.1 21 15V5C21 3.9 20.1 3 19 3Z" stroke="#7B8BAD" stroke-width="2" fill="none"/><circle cx="8.5" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="12" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="15.5" cy="10" r="1.1" fill="#7B8BAD"/></svg><span class="nl">Diagnosis</span></button>
+  <div class="bn v7-nav">
+    <button class="ni v7-ni" onclick="switchScreen('home')"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg><span>Home</span></button>
+    <button class="ni v7-ni on" onclick="switchScreen('chat')"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4l-5 1 1-4a8.4 8.4 0 1 1 13-5.4Z"/></svg><span>Chat</span></button>
+    <div class="v7-fabwrap" onclick="switchScreen('vitals')"><div class="v7-fab"><svg viewBox="0 0 24 24"><path d="M2 12h4l2 5 4-12 2 7h6"/></svg></div><span class="v7-fablbl">Vitals</span></div>
+    <button class="ni v7-ni" onclick="switchScreen('calendar')"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span>Calendar</span></button>
+    <button class="ni v7-ni" onclick="switchScreen('diagnostic')"><svg viewBox="0 0 24 24"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg><span>Diagnosis</span></button>
   </div>
 </div>
 
 <!-- ══════════ VITALS ══════════ -->
+<style id="v7vitals">
+#screen-vitals{background:linear-gradient(165deg,#f2f7fd 0%,#dde9f7 50%,#eaf2fb 100%)!important}
+#screen-vitals .sb svg rect{fill:#1f2c44!important;stroke:#1f2c44!important}
+#screen-vitals .vh-title{color:#1f2c44!important}
+#screen-vitals .vh-sub{color:#7387a4!important}
+#screen-vitals .vbig-card{background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.55))!important;border:1px solid rgba(255,255,255,.9)!important;box-shadow:0 10px 24px rgba(70,120,190,.13),inset 0 1px 1px rgba(255,255,255,.9)!important}
+#screen-vitals .vbig-lbl{color:#7387a4!important}
+#screen-vitals .vbig-unit{color:#8b9bb5!important}
+#screen-vitals .vbig-inp,#screen-vitals input{color:#1f2c44!important}
+#screen-vitals input::placeholder{color:#aab6c8!important}
+#screen-vitals [style*="color:#F1F5FF"],#screen-vitals [style*="color:#fff"]:not(.enter-trig):not([class*="trig"]){color:#1f2c44!important}
+#screen-vitals [style*="rgba(255,255,255,0.45)"],#screen-vitals [style*="rgba(255,255,255,0.5)"],#screen-vitals [style*="rgba(255,255,255,0.6)"]{color:#7387a4!important}
+#screen-vitals [style*="rgba(255,255,255,0.4)"]{color:#9aa9c0!important}
+#screen-vitals [style*="rgba(255,255,255,0.7)"]{color:#5d7290!important}
+#screen-vitals [style*="rgba(255,255,255,0.8)"],#screen-vitals [style*="rgba(255,255,255,0.9)"]{color:#3a4a63!important}
+#screen-vitals [style*="background:rgba(255,255,255,0.04)"],#screen-vitals [style*="background:rgba(255,255,255,0.05)"],#screen-vitals [style*="background:rgba(255,255,255,0.06)"],#screen-vitals [style*="background:rgba(255,255,255,0.07)"],#screen-vitals [style*="background:rgba(255,255,255,0.08)"]{background:linear-gradient(160deg,rgba(255,255,255,.85),rgba(255,255,255,.55))!important;border-color:rgba(120,150,190,.18)!important;box-shadow:0 8px 20px rgba(70,120,190,.1)!important}
+#screen-vitals [style*="solid var(--border)"],#screen-vitals [style*="1.5px solid"]{border-color:rgba(120,150,190,.25)!important}
+#screen-vitals [onclick*="vitals-history"]{background:rgba(59,130,246,.12)!important;color:#2f6cd4!important;border-color:rgba(59,130,246,.28)!important}
+#screen-vitals .bn{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.62))!important;border:1px solid rgba(255,255,255,.9)!important;box-shadow:0 14px 36px rgba(70,120,190,.2)!important;backdrop-filter:blur(20px)!important}
+#screen-vitals .nl{color:#9aabc4!important}
+#screen-vitals,#screen-vitals *{font-family:'Outfit','Plus Jakarta Sans',sans-serif!important}
+#screen-vitals .v7-vinp{width:100%;border:none;background:transparent;outline:none;font-size:24px;font-weight:700;color:#1f2c44;padding:0}
+#screen-vitals .v7-vinp::placeholder{color:#c2cdde}
+#screen-vitals .v7-vstat{font-size:10px;font-weight:700;color:#15a06a;background:#e2f7ec;padding:3px 9px;border-radius:20px;border:none}
+#screen-vitals .v7-vico.steps2{background:linear-gradient(135deg,#cfe2ff,#9cc3ff)}
+#screen-vitals .v7-vico.steps2 svg{stroke:#2f6cd4;width:21px;height:21px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#screen-vitals .v7-vlbl{color:#7387a4!important;font-weight:500!important;font-size:11px!important;margin-top:4px!important}
+#screen-vitals .v7-vgrid{gap:10px}
+#screen-vitals .v7-vc{padding:11px 13px!important}
+#screen-vitals .v7-vico{width:34px!important;height:34px!important;border-radius:10px!important}
+#screen-vitals .v7-vico svg{width:18px!important;height:18px!important}
+#screen-vitals .v7-vinp{font-size:20px!important}
+#screen-vitals .v7-vtop{margin-bottom:8px!important}
+#screen-vitals .hta-detail,#screen-vitals .glu-detail{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.92)!important;border-radius:20px!important;box-shadow:0 10px 24px rgba(70,120,190,.12),inset 0 1px 1px rgba(255,255,255,.9)!important;margin:12px 16px 0!important;padding:14px!important}
+#screen-vitals .det-title{color:#1f2c44!important}
+#screen-vitals .gauge-box{background:rgba(255,255,255,.62)!important;border:1px solid rgba(120,150,190,.16)!important;border-radius:14px!important;box-shadow:inset 0 1px 1px rgba(255,255,255,.85)!important}
+#screen-vitals .gauge-lbl{color:#5d7290!important;font-weight:700!important}
+#screen-vitals .gauge-sub{color:#9aa9c0!important}
+#screen-vitals .prog-bar{background:rgba(120,150,190,.18)!important}
+#screen-vitals .prog-lbl{color:#7387a4!important}
+#screen-vitals .prog-lbl span{color:#7387a4!important}
+#screen-vitals .hrv-row{margin:12px 16px 0!important}
+#screen-vitals .hrv-card{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.92)!important;border-radius:16px!important;box-shadow:0 8px 20px rgba(70,120,190,.1),inset 0 1px 1px rgba(255,255,255,.85)!important}
+#screen-vitals .hrv-lbl{color:#7387a4!important;font-weight:600!important}
+#screen-vitals [style*="rgba(255,255,255,0.15)"],#screen-vitals [style*="rgba(255,255,255,0.18)"]{background:rgba(59,130,246,.1)!important;color:#2f6cd4!important}
+#screen-vitals .v7-vgrid{margin:0 18px 10px!important}
+#screen-vitals .v7-secrow{margin:6px 20px 12px!important}
+#screen-vitals .enter-trig{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;box-shadow:0 10px 24px rgba(59,130,246,.34)!important;border-radius:18px!important}
+#screen-vitals #vitAiAnalyzeBtn{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;box-shadow:0 10px 24px rgba(59,130,246,.34)!important;border-radius:14px!important}
+</style>
 <div class="screen" id="screen-vitals">
   <div class="sb"><span>9:41</span></div>
   <div class="sa">
-    <div class="vitals-hdr" style="display:flex;align-items:flex-end;justify-content:space-between;"><div><div class="vh-title">Today's Vitals</div><div class="vh-sub">Thursday, April 9 · 6 indicators</div></div><button onclick="switchScreen('vitals-history');initVitalsHistory();" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:11px;color:#fff;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer;font-family:var(--font);white-space:nowrap;">&#128200; History</button></div>
-    <div class="vbig-grid">
-      <div class="vbig-card"><div class="vbig-lbl">Heart Rate</div><input class="vbig-inp" id="v-hr" type="number" placeholder="--" oninput="updateV('hr',this.value)"/><div class="vbig-unit">bpm</div><span class="vbig-status" id="v-hr-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
-      <div class="vbig-card"><div class="vbig-lbl">Oxygen SpO2</div><input class="vbig-inp" id="v-spo2" type="number" value="97" oninput="updateV('spo2',this.value)"/><div class="vbig-unit">%</div><span class="vbig-status" style="background:var(--al);color:#059669;">GOOD</span></div>
-      <div class="vbig-card" style="border-color:rgba(249,115,22,0.25);"><div class="vbig-lbl">Systolic BP</div><input class="vbig-inp" id="v-sys" type="number" placeholder="--" style="color:var(--orange);" oninput="updateV('sys',this.value)"/><div class="vbig-unit">mmHg</div><span class="vbig-status" id="v-sys-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
-      <div class="vbig-card" style="border-color:rgba(249,115,22,0.25);"><div class="vbig-lbl">Diastolic BP</div><input class="vbig-inp" id="v-dia" type="number" placeholder="--" style="color:var(--orange);" oninput="updateV('dia',this.value)"/><div class="vbig-unit">mmHg</div><span class="vbig-status" id="v-dia-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
-      <div class="vbig-card" style="border-color:rgba(13,148,136,0.25);"><div class="vbig-lbl">Blood Glucose</div><input class="vbig-inp" id="v-glu" type="number" placeholder="--" step="0.1" style="color:var(--teal);" oninput="updateV('glu',this.value)"/><div class="vbig-unit">mmol/L</div><span class="vbig-status" id="v-glu-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
-      <div class="vbig-card"><div class="vbig-lbl">Steps Today</div><input class="vbig-inp" id="v-steps" type="number" placeholder="--" oninput="updateV('steps',this.value)"/><div class="vbig-unit">steps</div><span class="vbig-status" id="v-steps-status" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);">--</span></div>
+    <div class="v7-secrow" style="margin-top:6px;"><div class="v7-stitle">Shenjat vitale</div></div>
+    <div class="v7-vgrid">
+      <div class="v7-vc">
+        <div class="v7-vtop"><div class="v7-vico hr"><svg viewBox="0 0 24 24"><path d="M12 21S3 14.5 3 8.8C3 5.6 5.4 3.5 8 3.5c1.7 0 3.1 1 4 2.3.9-1.3 2.3-2.3 4-2.3 2.6 0 5 2.1 5 5.3C21 14.5 12 21 12 21Z" fill="#ff5b8a" stroke="none"/><path d="M5.5 12.5h3l1.2-2.5L12 14.5l1.3-2.5H18.5" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="v7-vstat" id="v-hr-status">--</span></div>
+        <input class="v7-vinp" id="v-hr" type="number" placeholder="--" oninput="updateV('hr',this.value)"/>
+        <div class="v7-vlbl">Pulsi · bpm</div>
+      </div>
+      <div class="v7-vc">
+        <div class="v7-vtop"><div class="v7-vico sp"><svg viewBox="0 0 24 24"><path d="M11 3.5h2v8h-2z" fill="#4db6e8" stroke="none"/><path d="M11 11.5c0 4-2.3 8-5 8-1.7 0-2-2.3-2-5 0-2.6 1-5 3.5-5.4 1.8-.3 3.5.6 3.5 2.4z" fill="#4db6e8" stroke="none"/><path d="M13 11.5c0 4 2.3 8 5 8 1.7 0 2-2.3 2-5 0-2.6-1-5-3.5-5.4-1.8-.3-3.5.6-3.5 2.4z" fill="#5ec9a0" stroke="none"/></svg></div><span class="v7-vstat" id="v-spo2-status">--</span></div>
+        <input class="v7-vinp" id="v-spo2" type="number" value="97" oninput="updateV('spo2',this.value)"/>
+        <div class="v7-vlbl">SpO2 · %</div>
+      </div>
+      <div class="v7-vc">
+        <div class="v7-vtop"><div class="v7-vico bp"><svg viewBox="0 0 24 24"><path d="M12 21S3 14.5 3 8.8C3 5.6 5.4 3.5 8 3.5c1.7 0 3.1 1 4 2.3.9-1.3 2.3-2.3 4-2.3 2.6 0 5 2.1 5 5.3C21 14.5 12 21 12 21Z" fill="#f76b7a" stroke="none"/></svg></div><span class="v7-vstat" id="v-sys-status">--</span></div>
+        <input class="v7-vinp" id="v-sys" type="number" placeholder="--" oninput="updateV('sys',this.value)"/>
+        <div class="v7-vlbl">Sistolik · mmHg</div>
+      </div>
+      <div class="v7-vc">
+        <div class="v7-vtop"><div class="v7-vico bp"><svg viewBox="0 0 24 24"><path d="M12 21S3 14.5 3 8.8C3 5.6 5.4 3.5 8 3.5c1.7 0 3.1 1 4 2.3.9-1.3 2.3-2.3 4-2.3 2.6 0 5 2.1 5 5.3C21 14.5 12 21 12 21Z" fill="#f76b7a" stroke="none"/></svg></div><span class="v7-vstat" id="v-dia-status">--</span></div>
+        <input class="v7-vinp" id="v-dia" type="number" placeholder="--" oninput="updateV('dia',this.value)"/>
+        <div class="v7-vlbl">Diastolik · mmHg</div>
+      </div>
+      <div class="v7-vc">
+        <div class="v7-vtop"><div class="v7-vico gl"><svg viewBox="0 0 24 24"><path d="M12 2.5S5 10 5 15a7 7 0 0 0 14 0c0-5-7-12.5-7-12.5Z" fill="#f76b7a" stroke="none"/><path d="M9 11.3 12 9.6l3 1.7v3.4l-3 1.7-3-1.7z" fill="none" stroke="#fff" stroke-width="1.3"/></svg></div><span class="v7-vstat" id="v-glu-status">--</span></div>
+        <input class="v7-vinp" id="v-glu" type="number" step="0.1" placeholder="--" oninput="updateV('glu',this.value)"/>
+        <div class="v7-vlbl">Glukoza · mmol/L</div>
+      </div>
+      <div class="v7-vc">
+        <div class="v7-vtop"><div class="v7-vico steps2"><svg viewBox="0 0 24 24"><path d="M9 5c1.4 0 2 1.8 2 4.5S10 16 8.5 16 6 13.5 6 11s1.6-6 3-6ZM7 18c1.8 0 2.7 1 2.7 2.6M16 7c1.2 0 1.8 1.4 1.8 3.4S17 16 15.8 16s-1.8-2-1.8-3.7S14.8 7 16 7ZM14.5 18.7c1.6 0 2.4.9 2.4 2.3"/></svg></div><span class="v7-vstat" id="v-steps-status">--</span></div>
+        <input class="v7-vinp" id="v-steps" type="number" placeholder="--" oninput="updateV('steps',this.value)"/>
+        <div class="v7-vlbl">Hapa sot</div>
+      </div>
     </div>
+
     <button class="enter-trig" id="vitTrig" onclick="toggleVI()">
       <div style="display:flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>Enter Vital Signs</div>
       <span class="trig-arr" id="trigArr">▼</span>
@@ -1797,16 +1965,41 @@ select option{background:#0A1628;color:#F1F5FF;}
 
     <div style="height:20px;"></div>
   </div>
-  <div class="bn">
-    <button class="ni" onclick="switchScreen('home')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Home</span></button>
-    <button class="ni" onclick="switchScreen('chat')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Chat</span></button>
-    <button class="ni active" onclick="switchScreen('vitals')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M2 12H4L7 6L10 18L13 10L15 14H17L20 8L22 12" stroke="#3B7DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nl" style="color:#60A5FA">Vitals</span></button>
-    <button class="ni" onclick="switchScreen('calendar')"><svg class="nic" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="3" stroke="#7B8BAD" stroke-width="2"/><path d="M3 9H21" stroke="#7B8BAD" stroke-width="2"/><path d="M8 2V6M16 2V6" stroke="#7B8BAD" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="14" r="1" fill="#7B8BAD"/><circle cx="12" cy="14" r="1" fill="#7B8BAD"/><circle cx="16" cy="14" r="1" fill="#7B8BAD"/></svg><span class="nl">Calendar</span></button>
-    <button class="ni" onclick="switchScreen('diagnostic')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M19 3H5C3.9 3 3 3.9 3 5V15C3 16.1 3.9 17 5 17H8L12 21L16 17H19C20.1 17 21 16.1 21 15V5C21 3.9 20.1 3 19 3Z" stroke="#7B8BAD" stroke-width="2" fill="none"/><circle cx="8.5" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="12" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="15.5" cy="10" r="1.1" fill="#7B8BAD"/></svg><span class="nl">Diagnosis</span></button>
+  <div class="bn v7-nav">
+    <button class="ni v7-ni" onclick="switchScreen('home')"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg><span>Home</span></button>
+    <button class="ni v7-ni" onclick="switchScreen('chat')"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4l-5 1 1-4a8.4 8.4 0 1 1 13-5.4Z"/></svg><span>Chat</span></button>
+    <div class="v7-fabwrap" onclick="switchScreen('vitals')"><div class="v7-fab"><svg viewBox="0 0 24 24"><path d="M2 12h4l2 5 4-12 2 7h6"/></svg></div><span class="v7-fablbl">Vitals</span></div>
+    <button class="ni v7-ni" onclick="switchScreen('calendar')"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span>Calendar</span></button>
+    <button class="ni v7-ni" onclick="switchScreen('diagnostic')"><svg viewBox="0 0 24 24"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg><span>Diagnosis</span></button>
   </div>
 </div>
 
 <!-- ══════════ CALENDAR ══════════ -->
+<style id="v7cal">
+#screen-calendar{background:linear-gradient(165deg,#f2f7fd 0%,#dde9f7 50%,#eaf2fb 100%)!important}
+#screen-calendar,#screen-calendar *{font-family:'Outfit','Plus Jakarta Sans',sans-serif!important}
+#screen-calendar .sb span{color:#1f2c44!important}
+#screen-calendar .cal-hdr{background:transparent!important}
+#screen-calendar .cal-hdr-t{color:#1f2c44!important}
+#screen-calendar .cal-hdr-s{color:#7387a4!important}
+#screen-calendar .cal-card{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 12px 30px rgba(70,120,190,.14),inset 0 1px 1px rgba(255,255,255,.9)!important}
+#screen-calendar .cal-m{color:#1f2c44!important}
+#screen-calendar .cal-nb{background:rgba(59,130,246,.12)!important;color:#2f6cd4!important}
+#screen-calendar .cdn{color:#9aa9c0!important}
+#screen-calendar .cdn2{color:#1f2c44!important}
+#screen-calendar .cd.tod{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;box-shadow:0 6px 14px rgba(59,130,246,.35)!important}
+#screen-calendar .cd.tod .cdn2{color:#fff!important}
+#screen-calendar .cd.om .cdn2{color:#c2cdde!important}
+#screen-calendar .cd.sel{background:rgba(59,130,246,.12)!important;border:2px solid #3b82f6!important}
+#screen-calendar .cd.sel .cdn2{color:#2f6cd4!important}
+#screen-calendar .alt{color:#7387a4!important}
+#screen-calendar .ali{background:rgba(255,255,255,.65)!important;border:1px solid rgba(120,150,190,.14)!important;box-shadow:inset 0 1px 1px rgba(255,255,255,.8)!important}
+#screen-calendar .alnm{color:#1f2c44!important}
+#screen-calendar .altm{color:#7387a4!important}
+#screen-calendar .addab{border:1.5px dashed rgba(59,130,246,.4)!important;color:#2f6cd4!important;background:rgba(255,255,255,.4)!important}
+#screen-calendar [style*="rgba(255,255,255,0.5)"],#screen-calendar [style*="rgba(255,255,255,0.6)"]{color:#7387a4!important}
+#screen-calendar [style*="color:#F1F5FF"]{color:#1f2c44!important}
+</style>
 <div class="screen" id="screen-calendar">
   <div class="sb"><span>9:41</span></div>
   <div class="sa">
@@ -1864,12 +2057,12 @@ select option{background:#0A1628;color:#F1F5FF;}
   </div>
 
   </div>
-  <div class="bn">
-    <button class="ni" onclick="switchScreen('home')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Home</span></button>
-    <button class="ni" onclick="switchScreen('chat')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Chat</span></button>
-    <div class="nvw" onclick="switchScreen('vitals')"><button class="nvb"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M2 12H4L7 6L10 18L13 10L15 14H17L20 8L22 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="nvl">Vitals</span></div>
-    <button class="ni active" onclick="switchScreen('calendar')"><svg class="nic" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="3" stroke="#3B7DD8" stroke-width="2"/><path d="M3 9H21" stroke="#3B7DD8" stroke-width="2"/><path d="M8 2V6M16 2V6" stroke="#3B7DD8" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="14" r="1" fill="#3B7DD8"/><circle cx="12" cy="14" r="1" fill="#3B7DD8"/><circle cx="16" cy="14" r="1" fill="#3B7DD8"/></svg><span class="nl" style="color:#60A5FA">Calendar</span></button>
-    <button class="ni" onclick="switchScreen('diagnostic')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M19 3H5C3.9 3 3 3.9 3 5V15C3 16.1 3.9 17 5 17H8L12 21L16 17H19C20.1 17 21 16.1 21 15V5C21 3.9 20.1 3 19 3Z" stroke="#7B8BAD" stroke-width="2" fill="none"/><circle cx="8.5" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="12" cy="10" r="1.1" fill="#7B8BAD"/><circle cx="15.5" cy="10" r="1.1" fill="#7B8BAD"/></svg><span class="nl">Diagnosis</span></button>
+  <div class="bn v7-nav">
+    <button class="ni v7-ni" onclick="switchScreen('home')"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg><span>Home</span></button>
+    <button class="ni v7-ni" onclick="switchScreen('chat')"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4l-5 1 1-4a8.4 8.4 0 1 1 13-5.4Z"/></svg><span>Chat</span></button>
+    <div class="v7-fabwrap" onclick="switchScreen('vitals')"><div class="v7-fab"><svg viewBox="0 0 24 24"><path d="M2 12h4l2 5 4-12 2 7h6"/></svg></div><span class="v7-fablbl">Vitals</span></div>
+    <button class="ni v7-ni on" onclick="switchScreen('calendar')"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span>Calendar</span></button>
+    <button class="ni v7-ni" onclick="switchScreen('diagnostic')"><svg viewBox="0 0 24 24"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg><span>Diagnosis</span></button>
   </div>
   <div class="mo" id="modOv">
     <div class="ms">
@@ -1885,7 +2078,54 @@ select option{background:#0A1628;color:#F1F5FF;}
 </div>
 
 <!-- ══════════ MORE ══════════ -->
-<!-- ══════════ MORE ══════════ -->
+<style id="v7more">
+#screen-more{background:linear-gradient(165deg,#f2f7fd 0%,#dde9f7 50%,#eaf2fb 100%)!important;}
+#screen-more .sa{padding-bottom:108px!important}
+#screen-more .sa::-webkit-scrollbar{display:none}
+/* header */
+#screen-more #moreScreenTitle{color:#1f2c44!important}
+#screen-more button[onclick="goBack()"]{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.6))!important;border:1px solid rgba(255,255,255,.9)!important;color:#3b6ea5!important;box-shadow:0 6px 14px rgba(70,120,190,.14)!important}
+/* profile card */
+#screen-more .profile-c{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.9)!important;box-shadow:0 12px 28px rgba(70,120,190,.14),inset 0 1px 1px rgba(255,255,255,.9)!important}
+#screen-more .profile-name{color:#1f2c44!important;font-weight:700!important}
+#screen-more .profile-email{color:#7387a4!important}
+#screen-more .profile-av{box-shadow:0 8px 18px rgba(59,130,246,.32)!important}
+/* plan banner */
+#screen-more #planBanner{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.9)!important;box-shadow:0 10px 24px rgba(70,120,190,.13)!important}
+#screen-more #planName{color:#1f2c44!important}
+#screen-more #planDesc{color:#7387a4!important}
+#screen-more #planIcon{background:linear-gradient(135deg,#ffe9b8,#ffd479)!important}
+/* section cards */
+#screen-more .set-sec-title{color:#8094b3!important}
+#screen-more .set-card{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.55))!important;border:1px solid rgba(255,255,255,.9)!important;box-shadow:0 10px 24px rgba(70,120,190,.13),inset 0 1px 1px rgba(255,255,255,.9)!important}
+#screen-more .set-row{border-bottom:0.5px solid rgba(120,150,190,.16)!important}
+#screen-more .set-row:active{background:rgba(120,160,220,.08)!important}
+#screen-more .set-row-title{color:#1f2c44!important;font-weight:700!important}
+#screen-more .set-row-sub{color:#7387a4!important}
+#screen-more .set-row-arr{color:#aab8cf!important}
+/* dark icon tiles -> light */
+#screen-more .set-row-ico[style*="#1A1A2E"]{background:#e2e8fb!important}
+#screen-more .set-row-ico[style*="rgba(255,255,255,0.05)"]{background:#eef2fa!important}
+/* toggles */
+#screen-more .set-tgl.off{background:rgba(120,150,190,.28)!important}
+/* version text */
+#screen-more .set-version{color:#9aabc4!important}
+/* === Edit Profile modal -> light === */
+#setEditModal>div{background:linear-gradient(160deg,#ffffff,#eaf1fb)!important;border:1px solid rgba(255,255,255,.9)!important}
+#setEditModal [style*="color:#F1F5FF"]{color:#1f2c44!important}
+#setEditModal [style*="rgba(255,255,255,0.5)"]{color:#7387a4!important}
+#setEditModal [style*="rgba(255,255,255,0.6)"]{color:#8094b3!important}
+#setEditModal input,#setEditModal select,#setEditModal textarea{background:#f1f6fc!important;color:#1f2c44!important;border-color:rgba(120,150,190,.3)!important}
+#setEditModal [style*="border-bottom:0.5px solid var(--border)"]{border-color:rgba(120,150,190,.16)!important}
+#setEditModal button[id^="setTab-"]{color:#5d7290!important}
+#setEditModal button[id^="setTab-"][style*="var(--bg)"]{background:#e8eef8!important;color:#5d7290!important}
+#setEditModal button[id^="setTab-"][style*="var(--primary)"]{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;color:#fff!important}
+#setEditModal button[onclick="setCloseEdit(null)"]{background:#e8eef8!important;color:#7387a4!important}
+/* Bulletproof: asnjë tekst i bardhë te modali (titulli + panelet) */
+#setEditModal [id^="setPane-"] div,#setEditModal [id^="setPane-"] label,#setEditModal [id^="setPane-"] p,#setEditModal [id^="setPane-"] span{color:#1f2c44!important}
+#setEditModal [id^="setPane-"] input,#setEditModal [id^="setPane-"] select,#setEditModal [id^="setPane-"] textarea{color:#1f2c44!important;background:#f1f6fc!important}
+#setEditModal>div>div:first-child div{color:#1f2c44!important}
+</style>
 <div class="screen" id="screen-more">
   <div class="sb"><span>9:41</span></div>
 
@@ -1897,12 +2137,14 @@ select option{background:#0A1628;color:#F1F5FF;}
 
   <div class="sa">
     <!-- PROFILE CARD -->
-    <div class="profile-c">
+    <div class="profile-c" onclick="setShowEdit()" style="cursor:pointer;">
       <div class="profile-av" id="moreProfileAv">👤</div>
       <div style="flex:1;">
         <div class="profile-name" id="moreProfileName">Herolind Shabani</div>
         <div class="profile-email" id="moreProfileEmail"></div>
+        <div style="font-size:11px;color:#3b82f6;font-weight:700;margin-top:3px;">Ndrysho të dhënat & fjalëkalimin ›</div>
       </div>
+      <span class="set-row-arr" style="font-size:22px;">&#8250;</span>
     </div>
 
     <!-- PLAN BANNER -->
@@ -1970,7 +2212,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="set-sec" id="sec-notifications">
       <div class="set-sec-title">Notifications &amp; Privacy</div>
       <div class="set-card">
-        <div class="set-row" onclick="switchScreen('notifications');initNotifications();">
+        <div class="set-row" onclick="openNotifSheet();">
           <div class="set-row-ico" style="background:var(--pl);">&#128276;</div>
           <div class="set-row-info"><div class="set-row-title">Notifications</div><div class="set-row-sub">Alarms, alerts &amp; reminders</div></div>
           <span class="set-row-arr">&#8250;</span>
@@ -2165,6 +2407,18 @@ select option{background:#0A1628;color:#F1F5FF;}
 </div>
 
 <!-- ══════════ PRIVATE ══════════ -->
+<style id="v7sub">
+#screen-subscription{background:linear-gradient(165deg,#f2f7fd 0%,#dde9f7 50%,#eaf2fb 100%)!important}
+#screen-subscription [style*="color:#F1F5FF"]{color:#1f2c44!important}
+#screen-subscription [style*="rgba(255,255,255,0.5)"]{color:#7387a4!important}
+#screen-subscription [style*="rgba(255,255,255,0.3)"]{color:#b3c0d6!important}
+#screen-subscription [style*="background:rgba(255,255,255,0.07)"]{background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.6))!important;border:1px solid rgba(255,255,255,.9)!important;box-shadow:0 10px 24px rgba(70,120,190,.12)!important}
+#screen-subscription [style*="background:rgba(255,255,255,0.04)"]{background:rgba(255,255,255,.55)!important;border:1px solid rgba(255,255,255,.85)!important}
+#screen-subscription [style*="background:var(--bg)"]{background:#e9eefb!important}
+#screen-subscription [style*="background:var(--white)"]{background:#ffffff!important;box-shadow:0 2px 8px rgba(70,120,190,.14)!important}
+#screen-subscription [style*="border:1.5px solid var(--border)"]{border-color:rgba(120,150,190,.32)!important}
+#screen-subscription [style*="border-top:0.5px solid var(--border)"]{border-color:rgba(120,150,190,.16)!important}
+</style>
 <div class="screen" id="screen-subscription">
   <div class="sb"><span>9:41</span></div>
   <div style="display:flex;align-items:center;padding:10px 16px 6px;gap:10px;">
@@ -2296,68 +2550,7 @@ select option{background:#0A1628;color:#F1F5FF;}
 </div>
 
 <!-- NOTIFICATIONS SCREEN -->
-<div class="screen" id="screen-notifications">
-  <div style="display:flex;align-items:center;padding:10px 16px 6px;gap:10px;">
-    <button onclick="switchScreen('more')" style="width:32px;height:32px;border-radius:10px;border:none;background:var(--bg);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">‹</button>
-    <div style="font-size:16px;font-weight:700;color:#F1F5FF;">Notifications</div>
-  </div>
-  <div class="notif-hdr">
-    <button class="notif-back" onclick="switchScreen('home')">&#8249;</button>
-    <div class="notif-hdr-inner">
-      <div class="notif-hdr-title">&#128276; Notifications</div>
-      <div class="notif-hdr-sub">Health alerts &amp; therapy reminders</div>
-      <div class="notif-badge" id="notifBadge">0 unread</div>
-    </div>
-  </div>
-  <div class="sa">
-    <div class="notif-upcoming">
-      <div class="notif-up-label">Next alarm today</div>
-      <div class="notif-up-next">
-        <div><div class="notif-up-time" id="nextAlarmTime">--:--</div><div style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:1px;">Evening reminder</div></div>
-        <div style="flex:1;padding:0 10px;"><div class="notif-up-name" id="nextAlarmName">--</div><div class="notif-up-sub">Evening therapy &middot; Reminder set</div></div>
-        <div style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:22px;">&#128138;</div>
-      </div>
-      <!-- APPOINTMENT UPCOMING -->
-      <div id="aptUpcoming" style="display:none;margin-top:10px;background:rgba(255,255,255,0.12);border-radius:14px;padding:12px 14px;">
-        <div style="font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">📅 Upcoming Appointment</div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div id="aptUpIco" style="font-size:22px;">⏳</div>
-          <div style="flex:1;">
-            <div id="aptUpTitle" style="font-size:13px;font-weight:700;color:#fff;">Pret konfirmim...</div>
-            <div id="aptUpSub" style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px;">Dr. Herolind Shabani</div>
-          </div>
-          <div id="aptUpStatus" style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:8px;background:rgba(249,115,22,0.3);color:#FED7AA;">Pending</div>
-        </div>
-      </div>
-    </div>
-    <div class="notif-section">
-      <div class="notif-sec-title">Recent Alerts</div>
-      <div id="recentAlertsList">
-        <div style="text-align:center;padding:20px 0;font-size:12px;color:rgba(255,255,255,0.5);">No recent alerts</div>
-      </div>
-    </div>
-    <div class="notif-section" style="margin-top:6px;">
-      <div class="notif-sec-title">Today's Therapy Schedule</div>
-      <div id="notifAlarmList"></div>
-      <button onclick="switchScreen('calendar')" style="width:100%;padding:10px;border-radius:14px;border:1.5px dashed rgba(59,125,216,0.3);background:transparent;color:#60A5FA;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:12px;">+ Add Alarm in Calendar ›</button>
-    </div>
-    <div style="height:16px;"></div>
-        <button class="nsch-pill" onclick="setSchedule(this)">Weekends</button>
-        <button class="nsch-pill" onclick="setSchedule(this)">Custom</button>
-      </div>
-      <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px 14px;border:0.5px solid rgba(255,255,255,0.12);margin-bottom:8px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><div style="font-size:13px;font-weight:600;color:#F1F5FF;">&#128274; Quiet Hours</div><button class="ntgl on" onclick="toggleNotif('Quiet',this)"><div class="ntgl-thumb"></div></button></div>
-        <div style="display:flex;gap:10px;">
-          <div style="flex:1;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;margin-bottom:4px;">FROM</div><div style="font-size:18px;font-weight:700;color:#F1F5FF;">22:00</div></div>
-          <div style="display:flex;align-items:center;font-size:12px;color:rgba(255,255,255,0.3);">to</div>
-          <div style="flex:1;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;margin-bottom:4px;">UNTIL</div><div style="font-size:18px;font-weight:700;color:#F1F5FF;">07:00</div>
-        </div>
-      </div>
-    </div>
-    <div style="padding:8px 14px 24px;">
-      <button onclick="clearAllNotifs()" style="width:100%;padding:12px;border-radius:14px;border:0.5px solid rgba(255,255,255,0.12);background:var(--white);font-size:13px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font);">&#128465; Clear All Notifications</button>
-    </div>
-</div>
+<!-- (Notifications now live in #notifSheet bottom-sheet, see end of .device) -->
 <!-- VITALS HISTORY SCREEN -->
 <div class="screen" id="screen-vitals-history">
   <div style="display:flex;align-items:center;padding:10px 16px 6px;gap:10px;">
@@ -2690,15 +2883,51 @@ select option{background:#0A1628;color:#F1F5FF;}
 
 
 <!-- ══ SCREEN DIAGNOSTIC ══ -->
+<style id="v7diag">
+#screen-diagnostic{background:linear-gradient(165deg,#f2f7fd 0%,#dde9f7 50%,#eaf2fb 100%)!important}
+#screen-diagnostic,#screen-diagnostic *{font-family:'Outfit','Plus Jakarta Sans',sans-serif!important}
+#screen-diagnostic .sb{background:transparent!important;color:#1f2c44!important}
+#screen-diagnostic .sb span{color:#1f2c44!important}
+#screen-diagnostic .diag-screen-hdr{background:transparent!important;border:none!important;box-shadow:none!important;padding:6px 18px 0!important}
+#screen-diagnostic .diag-top-row{margin-bottom:12px!important}
+#screen-diagnostic .v7-stitle{color:#1f2c44!important;font-weight:700!important}
+#screen-diagnostic .diag-score-row{gap:12px!important;margin:4px 0 14px!important}
+#screen-diagnostic .diag-score-box{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.92)!important;border-radius:18px!important;box-shadow:0 10px 24px rgba(70,120,190,.13),inset 0 1px 1px rgba(255,255,255,.9)!important;padding:14px 16px!important}
+#screen-diagnostic .diag-score-box [style*="rgba(255,255,255,0.6)"]{color:#7387a4!important}
+#screen-diagnostic #diagHeaderScore{color:#e8902a!important}
+#screen-diagnostic #diagHeaderTherapy{color:#1f2c44!important}
+#screen-diagnostic .diag-body-s{padding-bottom:112px!important}
+#screen-diagnostic .diag-tabs-row{gap:8px!important;margin-top:2px!important}
+#screen-diagnostic .diag-tab-s{background:rgba(255,255,255,.6)!important;color:#5d7290!important;border:1px solid rgba(255,255,255,.85)!important;border-radius:13px!important;font-weight:700!important}
+#screen-diagnostic .diag-tab-s.active{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;color:#fff!important;border:1px solid transparent!important;box-shadow:0 8px 18px rgba(59,130,246,.32)!important}
+#screen-diagnostic [style*="color:#F1F5FF"]{color:#1f2c44!important}
+#screen-diagnostic [style*="rgba(255,255,255,0.45)"],#screen-diagnostic [style*="rgba(255,255,255,0.5)"],#screen-diagnostic [style*="rgba(255,255,255,0.6)"]{color:#7387a4!important}
+#screen-diagnostic [style*="rgba(255,255,255,0.3)"],#screen-diagnostic [style*="rgba(255,255,255,0.4)"]{color:#9aa9c0!important}
+#screen-diagnostic [style*="rgba(255,255,255,0.7)"],#screen-diagnostic [style*="rgba(255,255,255,0.8)"],#screen-diagnostic [style*="rgba(255,255,255,0.85)"],#screen-diagnostic [style*="rgba(255,255,255,0.9)"]{color:#3a4a63!important}
+#screen-diagnostic [style*="background:rgba(255,255,255,0.04)"],#screen-diagnostic [style*="background:rgba(255,255,255,0.05)"],#screen-diagnostic [style*="background:rgba(255,255,255,0.06)"],#screen-diagnostic [style*="background:rgba(255,255,255,0.07)"],#screen-diagnostic [style*="background:rgba(255,255,255,0.08)"]{background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.55))!important;border-color:rgba(120,150,190,.16)!important;box-shadow:0 8px 20px rgba(70,120,190,.1)!important}
+#screen-diagnostic [style*="solid var(--border)"],#screen-diagnostic [style*="1.5px solid"]{border-color:rgba(120,150,190,.2)!important}
+#screen-diagnostic input,#screen-diagnostic textarea{color:#1f2c44!important}
+#screen-diagnostic input::placeholder,#screen-diagnostic textarea::placeholder{color:#aab6c8!important}
+#screen-diagnostic .tag2{background:rgba(59,130,246,.1)!important;color:#2f6cd4!important;border-color:rgba(59,130,246,.2)!important}
+#screen-diagnostic [style*="rgba(255,255,255,0.15)"],#screen-diagnostic [style*="rgba(255,255,255,0.18)"]{background:rgba(59,130,246,.1)!important;color:#2f6cd4!important}
+#screen-diagnostic [style*="#1A0A2E,#2D1B69"]{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 10px 24px rgba(70,120,190,.12)!important}
+#screen-diagnostic [style*="#0D3B8E,#1E5FBA"]{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important}
+#screen-diagnostic [style*="#3B7DD8,#8B6FE8"],#screen-diagnostic [style*="#0D3B8E,#7C3AED"]{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;box-shadow:0 10px 24px rgba(59,130,246,.34)!important}
+#screen-diagnostic .pf-sec-title{color:#5d7290!important}
+#screen-diagnostic .ti{background:rgba(255,255,255,.75)!important;border:1px solid rgba(120,150,190,.32)!important;color:#1f2c44!important;border-radius:11px!important;padding:9px 12px!important;font-size:13px!important}
+#screen-diagnostic .ti::placeholder{color:#9aa9c0!important}
+#screen-diagnostic .divr{background:rgba(120,150,190,.18)!important}
+#screen-diagnostic textarea{background:rgba(255,255,255,.75)!important;border:1px solid rgba(120,150,190,.32)!important;border-radius:11px!important}
+</style>
 <div class="screen" id="screen-diagnostic">
   <div class="sb" style="background:linear-gradient(160deg,#0D1B4B,#1565C0);color:rgba(255,255,255,0.85);"><span>9:41</span></div>
   <div class="diag-screen-hdr">
     <!-- Top row -->
     <div class="diag-top-row">
-      <div class="diag-av-s">🏥</div>
+      
       <div style="flex:1;">
-        <div style="font-size:13px;font-weight:700;color:#fff;" id="ds-name">--</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.65);">Diagnostics · Vitals · Therapy · Reports</div>
+        <div id="ds-name" style="display:none;">--</div>
+        <div class="v7-stitle" style="font-size:23px;">Diagnosis</div>
       </div>
     </div>
     <!-- Score + Therapy -->
@@ -2953,13 +3182,13 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div></div>
 
   <!-- Nav -->
-  <div class="bn">
-    <button class="ni" onclick="switchScreen('home')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Home</span></button>
-    <button class="ni" onclick="switchScreen('chat')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" stroke="#7B8BAD" stroke-width="2" fill="none"/></svg><span class="nl">Chat</span></button>
-    <div class="nvw" onclick="switchScreen('vitals')"><button class="nvb"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M2 12H4L7 6L10 18L13 10L15 14H17L20 8L22 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="nvl">Vitals</span></div>
-    <button class="ni" onclick="switchScreen('calendar')"><svg class="nic" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="3" stroke="#7B8BAD" stroke-width="2"/><path d="M3 9H21" stroke="#7B8BAD" stroke-width="2"/><path d="M8 2V6M16 2V6" stroke="#7B8BAD" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="14" r="1" fill="#7B8BAD"/><circle cx="12" cy="14" r="1" fill="#7B8BAD"/><circle cx="16" cy="14" r="1" fill="#7B8BAD"/></svg><span class="nl">Calendar</span></button>
-    <button class="ni active" onclick="switchScreen('diagnostic')"><svg class="nic" viewBox="0 0 24 24" fill="none"><path d="M19 3H5C3.9 3 3 3.9 3 5V15C3 16.1 3.9 17 5 17H8L12 21L16 17H19C20.1 17 21 16.1 21 15V5C21 3.9 20.1 3 19 3Z" stroke="#3B7DD8" stroke-width="2" fill="none"/><circle cx="8.5" cy="10" r="1.1" fill="#3B7DD8"/><circle cx="12" cy="10" r="1.1" fill="#3B7DD8"/><circle cx="15.5" cy="10" r="1.1" fill="#3B7DD8"/></svg><span class="nl" style="color:#60A5FA">Diagnosis</span></button>
-</div>
+  <div class="bn v7-nav">
+    <button class="ni v7-ni" onclick="switchScreen('home')"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg><span>Home</span></button>
+    <button class="ni v7-ni" onclick="switchScreen('chat')"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4l-5 1 1-4a8.4 8.4 0 1 1 13-5.4Z"/></svg><span>Chat</span></button>
+    <div class="v7-fabwrap" onclick="switchScreen('vitals')"><div class="v7-fab"><svg viewBox="0 0 24 24"><path d="M2 12h4l2 5 4-12 2 7h6"/></svg></div><span class="v7-fablbl">Vitals</span></div>
+    <button class="ni v7-ni" onclick="switchScreen('calendar')"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span>Calendar</span></button>
+    <button class="ni v7-ni on" onclick="switchScreen('diagnostic')"><svg viewBox="0 0 24 24"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg><span>Diagnosis</span></button>
+  </div>
 
 
 
@@ -3261,6 +3490,53 @@ select option{background:#0A1628;color:#F1F5FF;}
         </div>
         <button onclick="addManualMeal()" style="width:100%;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#F97316,#FB923C);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">✓ Add Meal</button>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- NOTIFICATIONS BOTTOM SHEET -->
+<div id="notifSheet" style="display:none;position:absolute;inset:0;background:rgba(20,40,80,0.4);z-index:850;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);" onclick="closeNotifSheet(event)">
+  <div style="background:linear-gradient(160deg,#ffffff,#eef4fc);border-radius:26px 26px 44px 44px;width:100%;max-height:90%;display:flex;flex-direction:column;animation:slideUp 0.3s ease;box-shadow:0 -10px 40px rgba(40,80,140,.25);">
+    <div style="flex-shrink:0;padding:10px 0 0;"><div style="width:42px;height:5px;border-radius:3px;background:rgba(120,150,190,.35);margin:0 auto 10px;"></div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 20px 12px;flex-shrink:0;border-bottom:1px solid rgba(120,150,190,.14);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#6cb2ff,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 6px 14px rgba(59,130,246,.35);">&#128276;</div>
+        <div><div style="font-size:16px;font-weight:700;color:#1f2c44;">Notifications</div><div id="notifBadge" style="font-size:11px;color:#7387a4;font-weight:600;">0 unread</div></div>
+      </div>
+      <button onclick="closeNotifSheet(null)" style="width:30px;height:30px;border-radius:10px;border:none;background:#eef2fa;color:#7387a4;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#10005;</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:14px 16px 22px;scrollbar-width:none;">
+      <div style="background:linear-gradient(135deg,#0D3B8E,#1E5FBA);border-radius:18px;padding:14px 16px;margin-bottom:14px;box-shadow:0 12px 28px rgba(30,95,186,.3);">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.65);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Next alarm today</div>
+        <div style="display:flex;align-items:center;">
+          <div><div style="font-size:26px;font-weight:700;color:#fff;" id="nextAlarmTime">--:--</div><div style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:1px;">Evening reminder</div></div>
+          <div style="flex:1;padding:0 12px;"><div style="font-size:14px;font-weight:700;color:#fff;" id="nextAlarmName">--</div><div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px;">Therapy reminder set</div></div>
+          <div style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:22px;">&#128138;</div>
+        </div>
+        <div id="aptUpcoming" style="display:none;margin-top:10px;background:rgba(255,255,255,0.12);border-radius:14px;padding:12px 14px;">
+          <div style="font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">&#128197; Upcoming Appointment</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div id="aptUpIco" style="font-size:22px;">&#9203;</div>
+            <div style="flex:1;"><div id="aptUpTitle" style="font-size:13px;font-weight:700;color:#fff;">Pret konfirmim...</div><div id="aptUpSub" style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px;">Dr. Herolind Shabani</div></div>
+            <div id="aptUpStatus" style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:8px;background:rgba(249,115,22,0.3);color:#FED7AA;">Pending</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:10px;font-weight:700;color:#8094b3;text-transform:uppercase;letter-spacing:0.8px;margin:0 2px 8px;">Recent Alerts</div>
+      <div id="recentAlertsList" style="margin-bottom:16px;"><div style="text-align:center;padding:18px 0;font-size:12px;color:#7387a4;">No recent alerts</div></div>
+      <div style="font-size:10px;font-weight:700;color:#8094b3;text-transform:uppercase;letter-spacing:0.8px;margin:0 2px 8px;">Today's Therapy Schedule</div>
+      <div id="notifAlarmList"></div>
+      <button onclick="closeNotifSheet(null);switchScreen('calendar')" style="width:100%;padding:10px;border-radius:14px;border:1.5px dashed rgba(59,125,216,0.4);background:rgba(255,255,255,.5);color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:16px;">+ Add Alarm in Calendar &#8250;</button>
+      <div style="background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.6));border:1px solid rgba(255,255,255,.9);box-shadow:0 8px 20px rgba(70,120,190,.1);border-radius:16px;padding:14px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">&#128277; Quiet Hours</div><button class="ntgl on" onclick="toggleNotif('Quiet',this)"><div class="ntgl-thumb"></div></button></div>
+        <div style="display:flex;gap:10px;">
+          <div style="flex:1;background:#eef3fb;border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:#7387a4;font-weight:600;margin-bottom:4px;">FROM</div><div style="font-size:18px;font-weight:700;color:#1f2c44;">22:00</div></div>
+          <div style="display:flex;align-items:center;font-size:12px;color:#aab8cf;">to</div>
+          <div style="flex:1;background:#eef3fb;border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:#7387a4;font-weight:600;margin-bottom:4px;">UNTIL</div><div style="font-size:18px;font-weight:700;color:#1f2c44;">07:00</div></div>
+        </div>
+      </div>
+      <button onclick="clearAllNotifs()" style="width:100%;padding:12px;border-radius:14px;border:1px solid rgba(120,150,190,.25);background:#fff;font-size:13px;font-weight:600;color:#e0436a;cursor:pointer;font-family:var(--font);">&#128465; Clear All Notifications</button>
     </div>
   </div>
 </div>
@@ -5466,18 +5742,15 @@ function markTaken(el){
   updateNotifBadge();showToast('\u2713 Marked as taken!');
 }
 function updateNotifBadge(){
-  var n=document.querySelectorAll('#screen-notifications .notif-item.unread').length;
+  var n=document.querySelectorAll('#notifSheet .notif-item.unread').length;
   var b=document.getElementById('notifBadge');if(b)b.textContent=n>0?n+' unread':'All read';
   var m=document.getElementById('notifMitsText');if(m)m.textContent=n>0?n+' unread alerts':'All caught up';
 }
 function clearAllNotifs(){
-  document.querySelectorAll('#screen-notifications .notif-item').forEach(function(el){el.classList.remove('unread');});
+  document.querySelectorAll('#notifSheet .notif-item').forEach(function(el){el.classList.remove('unread');});
   updateNotifBadge();showToast('\u2713 All notifications cleared');
 }
-function setSchedule(btn){
-  document.querySelectorAll('.nsch-pill').forEach(function(b){b.classList.remove('on');});
-  btn.classList.add('on');showToast('\u{1F4CB} Schedule: '+btn.textContent);
-}
+/* (funksioni setSchedule u hoq — nuk thirret më pas pastrimit të Reminder Schedule) */
 
 
 
@@ -5598,6 +5871,19 @@ function setShowEdit(){
 function setCloseEdit(e){
   if(e && e.target!==document.getElementById('setEditModal')) return;
   document.getElementById('setEditModal').style.display='none';
+}
+function openNotifSheet(){
+  var s=document.getElementById('notifSheet'); if(!s) return;
+  /* Move into the active full-size screen so position:absolute resolves correctly */
+  var active=document.querySelector('.screen.active');
+  if(active && s.parentElement!==active) active.appendChild(s);
+  s.style.display='flex';
+  try{ initNotifications(); }catch(e){}
+  try{ checkEmptyNotifications(); }catch(e){}
+}
+function closeNotifSheet(e){
+  if(e && e.target!==document.getElementById('notifSheet')) return;
+  document.getElementById('notifSheet').style.display='none';
 }
 function switchSetTab(tab){
   ['info','pwd','health','integ'].forEach(function(t){
@@ -5973,7 +6259,7 @@ function checkEmptyVitals(){
 
 /* --- Empty Notifications --- */
 function checkEmptyNotifications(){
-  var unread = document.querySelectorAll('#screen-notifications .notif-item.unread').length;
+  var unread = document.querySelectorAll('#notifSheet .notif-item.unread').length;
   if(unread === 0){
     var badge = document.getElementById('notifBadge');
     if(badge) badge.textContent = 'All caught up \u2713';
@@ -6039,7 +6325,6 @@ switchScreen = function(n){
   _baseSwitchScreen(n);
   setTimeout(function(){
     if(n === 'calendar') checkEmptyAlarms();
-    if(n === 'notifications') checkEmptyNotifications();
   }, 100);
 };
 
@@ -6219,7 +6504,7 @@ async function bkSubmit(){
 
   if(btn){ btn.disabled=false; btn.textContent='✓ Mbyll'; btn.onclick=closeBkModal; }
 
-  addRecentAlert('📅','#EBF3FF','Booking Sent','Kërkesë: '+nicDate+' ora '+bkSelTime+' — pret konfirmimin.','Tani', function(){ switchScreen('notifications'); });
+  addRecentAlert('📅','#EBF3FF','Booking Sent','Kërkesë: '+nicDate+' ora '+bkSelTime+' — pret konfirmimin.','Tani', function(){ openNotifSheet(); });
   showToast('📅 Kërkesa u dërgua! Dr. Shabani do konfirmojë brenda 24h.');
 }
 
@@ -6381,7 +6666,7 @@ document.addEventListener('click', function(e){
 
 /* ══ NOTIFICATION BADGE ══ */
 function updateNotifBadge(){
-  var unread = document.querySelectorAll('#screen-notifications .notif-item.unread').length;
+  var unread = document.querySelectorAll('#notifSheet .notif-item.unread').length;
   var dot = document.getElementById('notifDot');
   if(dot){
     if(unread > 0){
