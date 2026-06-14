@@ -43,7 +43,7 @@ exports.handler = async function(event){
       </div>
     </div>
     <div style="text-align:center;margin:0 0 22px;">
-      <a href="https://relaxed-pegasus-1e887c.netlify.app" style="display:inline-block;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 34px;border-radius:14px;">Hap D Health &#8594;</a>
+      <a href="https://dhealth.app/app" style="display:inline-block;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 34px;border-radius:14px;">Hap D Health &#8594;</a>
     </div>
     <p style="font-size:12px;color:rgba(232,237,247,0.45);margin:0;line-height:1.6;">
       Ke nevoj&euml; p&euml;r ndihm&euml;? Thjesht p&euml;rgjigju k&euml;tij email-i.
