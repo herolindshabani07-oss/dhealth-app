@@ -1350,6 +1350,8 @@ select option{background:#0A1628;color:#F1F5FF;}
 #screen-home .v7-wico.ds,#screen-home .v7-wico.air{background:#fff!important}
 #screen-home .v7-wico.air svg path,#screen-home .v7-wico.air svg circle,#screen-home .v7-wico.air svg rect,#screen-home .v7-wico.air svg ellipse,#screen-home .v7-wico.air svg text{stroke:none!important}
 #screen-home .v7-wico.air svg .tube{fill:none!important;stroke:#FFB23A!important;stroke-width:18!important;stroke-linecap:round!important}
+/* Titujt/etiketat e zgjedhura në ngjyrën e logos SpO2 */
+#screen-home .v7-vc .v7-vlbl{color:#4db6e8!important}
 /* === Nav i ri (light glass) në TË GJITHA dritaret përveç Home === */
 .bn:not(.v7-nav){position:absolute!important;bottom:18px!important;left:50%!important;transform:translateX(-50%)!important;width:344px!important;max-width:calc(100% - 28px)!important;height:66px!important;border-radius:25px!important;background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.62))!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;border:1px solid rgba(255,255,255,.92)!important;border-top:1px solid rgba(255,255,255,.92)!important;box-shadow:0 14px 36px rgba(70,120,190,.22)!important;padding:0 20px!important;z-index:60!important}
 .bn:not(.v7-nav) .nic{filter:none!important;width:24px!important;height:24px!important;opacity:.9}
@@ -1479,12 +1481,12 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="v7-secrow"><div class="v7-stitle">Përmbledhje</div></div>
     <div class="v7-wide" onclick="calcDailyScore()">
       <div class="v7-wico ds"><svg viewBox="0 0 512 300" width="33" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M56 270 A200 200 0 0 1 94.2 152.4 L171.9 208.9 A104 104 0 0 0 152 270 Z" fill="#FF5A2E"/><path d="M94.2 152.4 A200 200 0 0 1 194.2 79.8 L223.9 171.1 A104 104 0 0 0 171.9 208.9 Z" fill="#FF9A33"/><path d="M194.2 79.8 A200 200 0 0 1 317.8 79.8 L288.1 171.1 A104 104 0 0 0 223.9 171.1 Z" fill="#FFD22E"/><path d="M317.8 79.8 A200 200 0 0 1 417.8 152.4 L340.1 208.9 A104 104 0 0 0 288.1 171.1 Z" fill="#8DC63F"/><path d="M417.8 152.4 A200 200 0 0 1 456 270 L360 270 A104 104 0 0 0 340.1 208.9 Z" fill="#14A07A"/><path d="M256 150 C232 205 216 235 216 262 A40 40 0 0 0 256 302 Z" fill="#FF6A2D"/><path d="M256 150 C280 205 296 235 296 262 A40 40 0 0 1 256 302 Z" fill="#E81E5C"/></svg><span id="dailyScoreEmoji" style="display:none"></span></div>
-      <div><div class="v7-wt1">Daily Health Score</div><div class="v7-wt2" id="dailyScoreDetails">Bazuar te hapat, vitalet & diagnoza</div></div>
+      <div><div class="v7-wt1" style="color:#4db6e8;">Daily Health Score</div><div class="v7-wt2" id="dailyScoreDetails">Bazuar te hapat, vitalet & diagnoza</div></div>
       <div class="v7-wr"><span class="v7-wbadge wb-blue"><span id="dailyScoreNum">--</span>/100</span><div id="dailyScoreRefresh" style="font-size:9px;color:#9aa9c0;margin-top:3px;">Trokit</div></div>
     </div>
     <div class="v7-wide" onclick="loadAirQuality&&loadAirQuality()">
       <div class="v7-wico air"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path class="tube" d="M300 150 C360 150 378 220 360 300 C345 365 300 410 250 440" fill="none" stroke="#FFB23A" stroke-width="18" stroke-linecap="round"/><path d="M180 130 H300 a30 30 0 0 1 30 30 V452 a30 30 0 0 1 -30 30 H180 a30 30 0 0 1 -30 -30 V160 a30 30 0 0 1 30 -30 Z" fill="#D4EAF7"/><rect x="150" y="240" width="180" height="150" fill="#5FCB92"/><text x="240" y="345" font-family="Arial,Helvetica,sans-serif" font-size="90" font-weight="800" fill="#EAF8F0" text-anchor="middle">O2</text><rect x="212" y="96" width="56" height="40" rx="6" fill="#B8D8F0"/><rect x="228" y="56" width="24" height="46" rx="6" fill="#5A5A5A"/><rect x="196" y="44" width="88" height="20" rx="10" fill="#5A5A5A"/><circle cx="196" cy="54" r="16" fill="#5A5A5A"/><circle cx="284" cy="54" r="16" fill="#5A5A5A"/><circle cx="120" cy="92" r="30" fill="#5A5A5A"/><circle cx="120" cy="92" r="17" fill="#CDE7FA"/><rect x="138" y="84" width="44" height="16" rx="6" fill="#5A5A5A"/><path d="M395 175 C345 185 326 245 342 305 C353 352 392 380 416 372 C462 378 478 312 472 250 C466 190 440 175 395 175 Z" fill="#C2DEF7"/></svg><span id="aqiVal" style="display:none">—</span></div>
-      <div><div class="v7-wt1">Cilësia e ajrit · <span id="aqiCityLbl">—</span></div><div class="v7-wt2" id="aqiStatus">Duke kontrolluar...</div></div>
+      <div><div class="v7-wt1" style="color:#4db6e8;">Cilësia e ajrit · <span id="aqiCityLbl">—</span></div><div class="v7-wt2" id="aqiStatus">Duke kontrolluar...</div></div>
       <div class="v7-wr"><span class="v7-wbadge wb-green">PM2.5 <span id="aqiPm">—</span></span><div id="aqiTime" style="font-size:9px;color:#9aa9c0;margin-top:3px;">—</div></div>
     </div>
     <div style="display:none">
@@ -1494,7 +1496,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="v7-secrow"><div class="v7-stitle">🔗 Burimet</div><button onclick="syncNow()" id="homeSyncBtn" class="v7-sync">🔄 Sync</button></div>
     <div class="v7-wide" id="home-int-ring" onclick="ringConnect()">
       <div class="v7-wico ring2">💍</div>
-      <div><div class="v7-wt1">D Health Ring</div><div class="v7-wt2" id="ds-ring-status">Trokit për t'u lidhur</div></div>
+      <div><div class="v7-wt1" style="color:#4db6e8;">D Health Ring</div><div class="v7-wt2" id="ds-ring-status">Trokit për t'u lidhur</div></div>
       <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">›</span></div>
     </div>
     <div class="v7-wide" id="home-int-gfit" onclick="connectGoogleFit()">
