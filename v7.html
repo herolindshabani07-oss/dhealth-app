@@ -2806,15 +2806,45 @@ select option{background:#0A1628;color:#F1F5FF;}
 
 
 <!-- ══ SCREEN DIAGNOSTIC ══ -->
+<style id="v7diag">
+#screen-diagnostic{background:linear-gradient(165deg,#f2f7fd 0%,#dde9f7 50%,#eaf2fb 100%)!important}
+#screen-diagnostic,#screen-diagnostic *{font-family:'Outfit','Plus Jakarta Sans',sans-serif!important}
+#screen-diagnostic .sb{background:transparent!important;color:#1f2c44!important}
+#screen-diagnostic .sb span{color:#1f2c44!important}
+#screen-diagnostic .diag-screen-hdr{background:transparent!important;border:none!important;box-shadow:none!important;padding:6px 18px 0!important}
+#screen-diagnostic .diag-top-row{margin-bottom:12px!important}
+#screen-diagnostic .v7-stitle{color:#1f2c44!important;font-weight:700!important}
+#screen-diagnostic .diag-score-row{gap:12px!important;margin:4px 0 14px!important}
+#screen-diagnostic .diag-score-box{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.92)!important;border-radius:18px!important;box-shadow:0 10px 24px rgba(70,120,190,.13),inset 0 1px 1px rgba(255,255,255,.9)!important;padding:14px 16px!important}
+#screen-diagnostic .diag-score-box [style*="rgba(255,255,255,0.6)"]{color:#7387a4!important}
+#screen-diagnostic #diagHeaderScore{color:#e8902a!important}
+#screen-diagnostic #diagHeaderTherapy{color:#1f2c44!important}
+#screen-diagnostic .diag-tabs-row{gap:8px!important;margin-top:2px!important}
+#screen-diagnostic .diag-tab-s{background:rgba(255,255,255,.6)!important;color:#5d7290!important;border:1px solid rgba(255,255,255,.85)!important;border-radius:13px!important;font-weight:700!important}
+#screen-diagnostic .diag-tab-s.active{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;color:#fff!important;border:1px solid transparent!important;box-shadow:0 8px 18px rgba(59,130,246,.32)!important}
+#screen-diagnostic [style*="color:#F1F5FF"]{color:#1f2c44!important}
+#screen-diagnostic [style*="rgba(255,255,255,0.45)"],#screen-diagnostic [style*="rgba(255,255,255,0.5)"],#screen-diagnostic [style*="rgba(255,255,255,0.6)"]{color:#7387a4!important}
+#screen-diagnostic [style*="rgba(255,255,255,0.3)"],#screen-diagnostic [style*="rgba(255,255,255,0.4)"]{color:#9aa9c0!important}
+#screen-diagnostic [style*="rgba(255,255,255,0.7)"],#screen-diagnostic [style*="rgba(255,255,255,0.8)"],#screen-diagnostic [style*="rgba(255,255,255,0.85)"],#screen-diagnostic [style*="rgba(255,255,255,0.9)"]{color:#3a4a63!important}
+#screen-diagnostic [style*="background:rgba(255,255,255,0.04)"],#screen-diagnostic [style*="background:rgba(255,255,255,0.05)"],#screen-diagnostic [style*="background:rgba(255,255,255,0.06)"],#screen-diagnostic [style*="background:rgba(255,255,255,0.07)"],#screen-diagnostic [style*="background:rgba(255,255,255,0.08)"]{background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.55))!important;border-color:rgba(120,150,190,.16)!important;box-shadow:0 8px 20px rgba(70,120,190,.1)!important}
+#screen-diagnostic [style*="solid var(--border)"],#screen-diagnostic [style*="1.5px solid"]{border-color:rgba(120,150,190,.2)!important}
+#screen-diagnostic input,#screen-diagnostic textarea{color:#1f2c44!important}
+#screen-diagnostic input::placeholder,#screen-diagnostic textarea::placeholder{color:#aab6c8!important}
+#screen-diagnostic .tag2{background:rgba(59,130,246,.1)!important;color:#2f6cd4!important;border-color:rgba(59,130,246,.2)!important}
+#screen-diagnostic [style*="rgba(255,255,255,0.15)"],#screen-diagnostic [style*="rgba(255,255,255,0.18)"]{background:rgba(59,130,246,.1)!important;color:#2f6cd4!important}
+#screen-diagnostic [style*="#1A0A2E,#2D1B69"]{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 10px 24px rgba(70,120,190,.12)!important}
+#screen-diagnostic [style*="#0D3B8E,#1E5FBA"]{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important}
+#screen-diagnostic [style*="#3B7DD8,#8B6FE8"],#screen-diagnostic [style*="#0D3B8E,#7C3AED"]{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important;box-shadow:0 10px 24px rgba(59,130,246,.34)!important}
+</style>
 <div class="screen" id="screen-diagnostic">
   <div class="sb" style="background:linear-gradient(160deg,#0D1B4B,#1565C0);color:rgba(255,255,255,0.85);"><span>9:41</span></div>
   <div class="diag-screen-hdr">
     <!-- Top row -->
     <div class="diag-top-row">
-      <div class="diag-av-s">🏥</div>
+      
       <div style="flex:1;">
-        <div style="font-size:13px;font-weight:700;color:#fff;" id="ds-name">--</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.65);">Diagnostics · Vitals · Therapy · Reports</div>
+        <div id="ds-name" style="display:none;">--</div>
+        <div class="v7-stitle" style="font-size:23px;">Diagnosis</div>
       </div>
     </div>
     <!-- Score + Therapy -->
