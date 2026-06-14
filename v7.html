@@ -1342,6 +1342,14 @@ select option{background:#0A1628;color:#F1F5FF;}
 .v7-fablbl{font-size:9px;font-weight:700;color:#3b82f6;margin-top:1px}
 #screen-home .v7-vico,#screen-vitals .v7-vico{width:46px!important;height:46px!important;border-radius:14px!important;background:#fff!important;box-shadow:inset 0 1px 2px rgba(255,255,255,.9),0 5px 12px rgba(40,80,140,.1)!important}
 .v7-vico svg{width:30px!important;height:30px!important}
+/* Daily strip + air card: white tiles for colorful illustration icons */
+#screen-home .v7-daico{background:#fff!important;width:44px!important;height:44px!important;border-radius:14px!important}
+#screen-home .v7-daico svg{width:31px!important;height:31px!important}
+#screen-home .v7-daico svg path,#screen-home .v7-daico svg circle,#screen-home .v7-daico svg rect,#screen-home .v7-daico svg ellipse,#screen-home .v7-daico svg text{stroke:none!important}
+#screen-home .v7-daico svg .pulse{stroke:#46E0A0!important;stroke-width:26!important;fill:none!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+#screen-home .v7-wico.ds,#screen-home .v7-wico.air{background:#fff!important}
+#screen-home .v7-wico.air svg path,#screen-home .v7-wico.air svg circle,#screen-home .v7-wico.air svg rect,#screen-home .v7-wico.air svg ellipse,#screen-home .v7-wico.air svg text{stroke:none!important}
+#screen-home .v7-wico.air svg .tube{fill:none!important;stroke:#FFB23A!important;stroke-width:18!important;stroke-linecap:round!important}
 /* === Nav i ri (light glass) në TË GJITHA dritaret përveç Home === */
 .bn:not(.v7-nav){position:absolute!important;bottom:18px!important;left:50%!important;transform:translateX(-50%)!important;width:344px!important;max-width:calc(100% - 28px)!important;height:66px!important;border-radius:25px!important;background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.62))!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;border:1px solid rgba(255,255,255,.92)!important;border-top:1px solid rgba(255,255,255,.92)!important;box-shadow:0 14px 36px rgba(70,120,190,.22)!important;padding:0 20px!important;z-index:60!important}
 .bn:not(.v7-nav) .nic{filter:none!important;width:24px!important;height:24px!important;opacity:.9}
@@ -1460,11 +1468,11 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div>
 
     <div class="v7-daily">
-      <div class="v7-da"><div class="v7-daico steps"><svg viewBox="0 0 24 24"><path d="M9 5c1.4 0 2 1.8 2 4.5S10 16 8.5 16 6 13.5 6 11s1.6-6 3-6ZM7 18c1.8 0 2.7 1 2.7 2.6M16 7c1.2 0 1.8 1.4 1.8 3.4S17 16 15.8 16s-1.8-2-1.8-3.7S14.8 7 16 7ZM14.5 18.7c1.6 0 2.4.9 2.4 2.3"/></svg></div><b id="da-steps">--</b><span>Hapa</span></div>
+      <div class="v7-da"><div class="v7-daico steps"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="fpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E9BE6"/><stop offset="1" stop-color="#6A2DD6"/></linearGradient></defs><path d="M150 70 C110 70 85 110 85 165 C85 215 110 250 155 250 C195 250 215 215 210 165 C205 110 190 70 150 70 Z" fill="url(#fpg)"/><path d="M120 282 C100 282 92 302 95 324 C98 347 120 360 145 354 C165 350 172 327 168 307 C164 290 145 282 120 282 Z" fill="url(#fpg)"/><path d="M362 152 C322 152 298 196 302 251 C306 301 332 336 374 336 C412 336 432 296 428 246 C422 191 402 152 362 152 Z" fill="url(#fpg)"/><path d="M337 366 C317 366 308 389 312 411 C316 436 340 449 364 443 C384 438 390 415 386 395 C382 376 362 366 337 366 Z" fill="url(#fpg)"/></svg></div><b id="da-steps">--</b><span>Hapa</span></div>
       <div class="v7-dadiv"></div>
-      <div class="v7-da"><div class="v7-daico cal"><svg viewBox="0 0 24 24"><path d="M12 3c1 4-2 5-2 8a3 3 0 0 0 6 0c0-1 0-2-1-3 2 1 3 3 3 6a6 6 0 0 1-12 0c0-5 4-7 6-11Z"/></svg></div><b id="da-cal">--</b><span>Kalori</span></div>
+      <div class="v7-da"><div class="v7-daico cal"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M256 50 C272 130 352 150 360 248 C372 360 318 462 256 462 C194 462 138 360 152 254 C159 205 198 188 208 234 C214 152 235 100 256 50 Z" fill="#FFD24D"/><path d="M168 120 C150 150 150 185 175 192 C160 165 175 140 168 120 Z" fill="#FFE082"/><ellipse cx="256" cy="322" rx="92" ry="104" fill="#FF6B7A"/><text x="256" y="352" font-family="Arial,Helvetica,sans-serif" font-size="74" font-weight="800" fill="#FFFFFF" text-anchor="middle">kcal</text></svg></div><b id="da-cal">--</b><span>Kalori</span></div>
       <div class="v7-dadiv"></div>
-      <div class="v7-da"><div class="v7-daico puls"><svg viewBox="0 0 24 24"><path d="M3 12h4l2 5 4-12 2 7h6"/></svg></div><b id="da-hr">--</b><span>Puls avg</span></div>
+      <div class="v7-da"><div class="v7-daico puls"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M256 440 C120 340 60 250 60 175 C60 120 105 80 160 80 C200 80 235 105 256 140 L256 440 Z" fill="#FF5A7E"/><path d="M256 440 C392 340 452 250 452 175 C452 120 407 80 352 80 C312 80 277 105 256 140 L256 440 Z" fill="#E91E8C"/><path class="pulse" d="M92 272 H178 L206 214 L246 330 L276 262 H406" fill="none" stroke="#46E0A0" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><b id="da-hr">--</b><span>Puls avg</span></div>
     </div>
     <div class="v7-actline">🏃 Distanca: <strong id="da-dist">--</strong> · Aktiv: <strong id="da-active">--</strong> · Gjumi: <strong id="da-sleep">--</strong></div>
 
@@ -1475,7 +1483,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="v7-wr"><span class="v7-wbadge wb-blue"><span id="dailyScoreNum">--</span>/100</span><div id="dailyScoreRefresh" style="font-size:9px;color:#9aa9c0;margin-top:3px;">Trokit</div></div>
     </div>
     <div class="v7-wide" onclick="loadAirQuality&&loadAirQuality()">
-      <div class="v7-wico air"><span id="aqiVal">—</span></div>
+      <div class="v7-wico air"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path class="tube" d="M300 150 C360 150 378 220 360 300 C345 365 300 410 250 440" fill="none" stroke="#FFB23A" stroke-width="18" stroke-linecap="round"/><path d="M180 130 H300 a30 30 0 0 1 30 30 V452 a30 30 0 0 1 -30 30 H180 a30 30 0 0 1 -30 -30 V160 a30 30 0 0 1 30 -30 Z" fill="#D4EAF7"/><rect x="150" y="240" width="180" height="150" fill="#5FCB92"/><text x="240" y="345" font-family="Arial,Helvetica,sans-serif" font-size="90" font-weight="800" fill="#EAF8F0" text-anchor="middle">O2</text><rect x="212" y="96" width="56" height="40" rx="6" fill="#B8D8F0"/><rect x="228" y="56" width="24" height="46" rx="6" fill="#5A5A5A"/><rect x="196" y="44" width="88" height="20" rx="10" fill="#5A5A5A"/><circle cx="196" cy="54" r="16" fill="#5A5A5A"/><circle cx="284" cy="54" r="16" fill="#5A5A5A"/><circle cx="120" cy="92" r="30" fill="#5A5A5A"/><circle cx="120" cy="92" r="17" fill="#CDE7FA"/><rect x="138" y="84" width="44" height="16" rx="6" fill="#5A5A5A"/><path d="M395 175 C345 185 326 245 342 305 C353 352 392 380 416 372 C462 378 478 312 472 250 C466 190 440 175 395 175 Z" fill="#C2DEF7"/></svg><span id="aqiVal" style="display:none">—</span></div>
       <div><div class="v7-wt1">Cilësia e ajrit · <span id="aqiCityLbl">—</span></div><div class="v7-wt2" id="aqiStatus">Duke kontrolluar...</div></div>
       <div class="v7-wr"><span class="v7-wbadge wb-green">PM2.5 <span id="aqiPm">—</span></span><div id="aqiTime" style="font-size:9px;color:#9aa9c0;margin-top:3px;">—</div></div>
     </div>
