@@ -7397,7 +7397,7 @@ async function extractLabsFromDocument(file){
     var r = await fetch('/.netlify/functions/claude',{
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        model:'claude-sonnet-4-5', max_tokens:1500,
+        model:'claude-sonnet-4-5', max_tokens:1100,
         system:'You are a clinical laboratory data extractor. Output only valid JSON, nothing else.',
         messages:[{role:'user', content:[block, {type:'text', text:instruction}]}]
       })
@@ -8183,7 +8183,7 @@ async function runCorrelationEngine(){
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model:'claude-sonnet-4-5',
-        max_tokens:1600,
+        max_tokens:1000,
         system:'You are the D Health Correlation Engine. Respond ONLY with the requested JSON.',
         messages:[{role:'user',content:prompt}]
       })
