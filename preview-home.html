@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D Health — Redesign Home (interaktiv)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'DM Sans',sans-serif;-webkit-tap-highlight-color:transparent}
+  body{background:#d4e0ee;display:flex;justify-content:center;align-items:flex-start;padding:24px 0;min-height:100vh}
+  .phone{width:390px;height:844px;max-width:100vw;background:linear-gradient(165deg,#f2f7fd 0%,#dde9f7 50%,#eaf2fb 100%);border-radius:48px;position:relative;overflow:hidden;box-shadow:0 34px 90px rgba(40,70,120,.32),inset 0 1px 0 rgba(255,255,255,.9)}
+  @media(max-width:430px){.phone{width:100vw;height:100vh;border-radius:0}body{padding:0}}
+  .phone::before{content:"";position:absolute;top:-130px;right:-90px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(110,170,255,.45),transparent 68%);pointer-events:none;z-index:0}
+  .phone::after{content:"";position:absolute;bottom:40px;left:-100px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(150,205,255,.35),transparent 70%);pointer-events:none;z-index:0}
+  .statusbar{display:flex;justify-content:space-between;align-items:center;padding:16px 28px 4px;font-size:14px;font-weight:700;color:#1f2c44;position:relative;z-index:3}
+  .scroll{position:absolute;top:44px;left:0;right:0;bottom:0;overflow-y:auto;overflow-x:hidden;padding:10px 20px 110px;z-index:1;-webkit-overflow-scrolling:touch}
+  .scroll::-webkit-scrollbar{display:none}
+
+  .glass{position:relative;background:linear-gradient(160deg,rgba(255,255,255,.85),rgba(255,255,255,.5));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 32px rgba(70,120,190,.16),inset 0 1px 1px rgba(255,255,255,.95)}
+  .glass::before{content:"";position:absolute;top:0;left:0;right:0;height:45%;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.55),transparent);pointer-events:none}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .loc{display:flex;align-items:center;gap:11px}
+  .avatar{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,#6cb2ff,#3b82f6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;box-shadow:0 8px 18px rgba(59,130,246,.45),inset 0 1px 1px rgba(255,255,255,.5)}
+  .loc-t1{font-size:12px;color:#7387a4;font-weight:600}
+  .loc-t2{font-size:15.5px;color:#1f2c44;font-weight:800}
+  .bell{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;cursor:pointer}
+  .bell svg{width:21px;height:21px;stroke:#3b6ea5;fill:none;stroke-width:2}
+  .bell .dot{position:absolute;top:12px;right:13px;width:8px;height:8px;background:#ff5b6e;border-radius:50%;border:2px solid #fff}
+
+  .secrow{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 13px}
+  .sectitle{font-size:17px;font-weight:800;color:#1f2c44}
+  .seeall{font-size:12px;font-weight:700;color:#3b82f6;cursor:pointer}
+
+  .vgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:22px}
+  .vc{border-radius:22px;padding:15px 15px 14px;z-index:1;cursor:pointer;transition:transform .15s}
+  .vc:active{transform:scale(.97)}
+  .vc .vtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+  .vc .vico{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 2px rgba(255,255,255,.7)}
+  .vc .vico svg{width:21px;height:21px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .vico.bp{background:linear-gradient(135deg,#ffd9e1,#ff9fb3)}.vico.bp svg{stroke:#d33b5e}
+  .vico.hr{background:linear-gradient(135deg,#ffded0,#ffb597)}.vico.hr svg{stroke:#e0662e}
+  .vico.gl{background:linear-gradient(135deg,#d3f3e3,#9fe4c1)}.vico.gl svg{stroke:#149c63}
+  .vico.sp{background:linear-gradient(135deg,#d6e8ff,#a9ccff)}.vico.sp svg{stroke:#2f74d4}
+  .vc .vdot{width:9px;height:9px;border-radius:50%;background:#1fbf78;box-shadow:0 0 0 4px rgba(31,191,120,.16)}
+  .vc .vval{font-size:25px;font-weight:800;color:#1f2c44;line-height:1}
+  .vc .vval small{font-size:12px;font-weight:700;color:#8b9bb5}
+  .vc .vlbl{font-size:12.5px;color:#7387a4;font-weight:600;margin-top:5px}
+
+  .score-card{border-radius:26px;padding:19px 20px;margin-bottom:22px;background:linear-gradient(135deg,#7fbcff 0%,#4a90f0 55%,#3576e0 100%);position:relative;overflow:hidden;box-shadow:0 20px 40px rgba(74,144,240,.45),inset 0 1px 1px rgba(255,255,255,.5);z-index:1}
+  .score-card::before{content:"";position:absolute;top:-60px;left:-30px;width:200px;height:200px;background:linear-gradient(135deg,rgba(255,255,255,.35),transparent 60%);transform:rotate(20deg);border-radius:50%}
+  .score-card::after{content:"";position:absolute;bottom:-50px;right:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.14)}
+  .sc-top{display:flex;align-items:center;gap:11px;margin-bottom:15px;position:relative;z-index:1}
+  .sc-logo{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 4px 10px rgba(0,0,0,.12)}
+  .sc-name{font-size:14.5px;font-weight:800;color:#fff}.sc-sub{font-size:11px;color:rgba(255,255,255,.88)}
+  .sc-bk{margin-left:auto;color:#fff;font-size:17px;opacity:.9}
+  .sc-mid{display:flex;align-items:center;gap:16px;position:relative;z-index:1}
+  .ring{width:76px;height:76px;border-radius:50%;background:conic-gradient(#fff 0 75%,rgba(255,255,255,.32) 75% 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 16px rgba(0,0,0,.15)}
+  .ring .rin{width:61px;height:61px;border-radius:50%;background:linear-gradient(135deg,#5fa0f5,#3576e0);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}
+  .ring .rin b{font-size:23px;font-weight:800;line-height:1}.ring .rin span{font-size:9px;opacity:.85}
+  .sc-info .h{font-size:18px;font-weight:800;color:#fff;margin-bottom:3px}
+  .sc-info .p{font-size:12px;color:rgba(255,255,255,.92);line-height:1.45}
+  .sc-btn{margin-top:15px;background:#fff;color:#2b6cd4;border:none;border-radius:14px;padding:12px;width:100%;font-size:13px;font-weight:800;font-family:inherit;position:relative;z-index:1;box-shadow:0 8px 16px rgba(0,0,0,.14);cursor:pointer}
+
+  .daily{border-radius:22px;padding:15px 17px;display:flex;justify-content:space-around;margin-bottom:22px;z-index:1}
+  .da{display:flex;flex-direction:column;align-items:center;gap:3px}
+  .da b{font-size:18px;font-weight:800;color:#1f2c44}.da span{font-size:11px;color:#7387a4;font-weight:600}
+  .da .dai{width:22px;height:22px;margin-bottom:3px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .da-div{width:1px;background:rgba(120,150,190,.22)}
+
+  .wide{border-radius:22px;padding:15px 17px;margin-bottom:14px;display:flex;align-items:center;gap:14px;z-index:1;cursor:pointer}
+  .wide .wico{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .wide .wico svg{width:23px;height:23px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .wico.apt{background:linear-gradient(135deg,#dbe7ff,#b9d2ff)}.wico.apt svg{stroke:#2f6cd4}
+  .wico.air{background:linear-gradient(135deg,#d6f5e8,#aee9cf)}.wico.air svg{stroke:#11a06a}
+  .wico.nut{background:linear-gradient(135deg,#fff0d6,#ffe0a8)}.wico.nut svg{stroke:#d98a16}
+  .wide .wt1{font-size:14px;font-weight:800;color:#1f2c44}
+  .wide .wt2{font-size:12px;color:#7387a4;margin-top:2px}
+  .wide .wr{margin-left:auto;text-align:right;flex-shrink:0}
+  .wide .wbadge{font-size:11px;font-weight:800;padding:5px 11px;border-radius:20px}
+  .wb-green{background:#e2f7ec;color:#15a06a}.wb-blue{background:#e3effd;color:#2f6cd4}
+
+  .navbar{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:344px;max-width:calc(100% - 32px);height:68px;border-radius:26px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;z-index:5}
+  .ni{display:flex;flex-direction:column;align-items:center;gap:4px;width:46px;cursor:pointer}
+  .ni svg{width:24px;height:24px;fill:none;stroke:#9aabc4;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+  .ni span{font-size:9px;font-weight:700;color:#9aabc4;transition:color .2s}
+  .ni.on svg{stroke:#3b82f6}.ni.on span{color:#3b82f6}
+  .fab{width:62px;height:62px;border-radius:21px;background:linear-gradient(135deg,#6cb2ff,#3b82f6);display:flex;align-items:center;justify-content:center;margin-top:-30px;box-shadow:0 14px 30px rgba(59,130,246,.6),inset 0 1px 1px rgba(255,255,255,.5);cursor:pointer}
+  .fab svg{width:27px;height:27px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .toast{position:absolute;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:#1f2c44;color:#fff;font-size:12.5px;font-weight:700;padding:10px 18px;border-radius:14px;opacity:0;transition:.3s;z-index:9;white-space:nowrap}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+  <div class="scroll">
+    <div class="topbar">
+      <div class="loc">
+        <div class="avatar">H</div>
+        <div><div class="loc-t1">Mirëmëngjes 👋</div><div class="loc-t2">Herolind Shabani</div></div>
+      </div>
+      <div class="bell glass">
+        <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="dot"></span>
+      </div>
+    </div>
+
+    <div class="secrow"><div class="sectitle">Shenjat vitale</div><div class="seeall">Të gjitha ›</div></div>
+    <div class="vgrid">
+      <div class="vc glass"><div class="vtop"><div class="vico bp"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></div><div class="vdot"></div></div><div class="vval">120/80 <small>mmHg</small></div><div class="vlbl">Tensioni</div></div>
+      <div class="vc glass"><div class="vtop"><div class="vico hr"><svg viewBox="0 0 24 24"><path d="M3 12h4l2 6 4-12 2 6h6"/></svg></div><div class="vdot"></div></div><div class="vval">72 <small>bpm</small></div><div class="vlbl">Pulsi</div></div>
+      <div class="vc glass"><div class="vtop"><div class="vico gl"><svg viewBox="0 0 24 24"><path d="M12 2.7 6 9.5a6 6 0 1 0 12 0Z"/></svg></div><div class="vdot"></div></div><div class="vval">95 <small>mg/dL</small></div><div class="vlbl">Glukoza</div></div>
+      <div class="vc glass"><div class="vtop"><div class="vico sp"><svg viewBox="0 0 24 24"><path d="M12 3v9m0 0c0 4-3 9-6 9-2 0-2-3-2-6m8-3c0 4 3 9 6 9 2 0 2-3 2-6"/></svg></div><div class="vdot"></div></div><div class="vval">98 <small>%</small></div><div class="vlbl">SpO2</div></div>
+    </div>
+
+    <div class="secrow"><div class="sectitle">Health Score</div><div class="seeall">Shiko ›</div></div>
+    <div class="score-card">
+      <div class="sc-top"><div class="sc-logo">🤖</div><div><div class="sc-name">D Health AI</div><div class="sc-sub">Analizë e plotë · ✓ Sot</div></div><div class="sc-bk">🔖</div></div>
+      <div class="sc-mid"><div class="ring"><div class="rin"><b>75</b><span>/100</span></div></div><div class="sc-info"><div class="h">Fair health status</div><div class="p">Treguesit në normë. Vazhdo terapinë dhe 30 min aktivitet ditor.</div></div></div>
+      <button class="sc-btn" onclick="toast('Hapet analiza e plotë AI')">Shiko analizën e plotë →</button>
+    </div>
+
+    <div class="daily glass">
+      <div class="da"><svg class="dai" viewBox="0 0 24 24" stroke="#3b82f6"><path d="M5 19c2-1 3-3 3-6 0-2 1-3 2-3s2 1 2 3M13 5c-1 1-2 2-2 5 0 3 1 5 3 6"/></svg><b>7,420</b><span>Hapa</span></div>
+      <div class="da-div"></div>
+      <div class="da"><svg class="dai" viewBox="0 0 24 24" stroke="#ff8a3d"><path d="M12 3c1 4-2 5-2 8a3 3 0 0 0 6 0c0-1 0-2-1-3 2 1 3 3 3 6a6 6 0 0 1-12 0c0-5 4-7 6-11Z"/></svg><b>540</b><span>Kalori</span></div>
+      <div class="da-div"></div>
+      <div class="da"><svg class="dai" viewBox="0 0 24 24" stroke="#11a06a"><path d="M12 21s7-5 7-11a7 7 0 0 0-14 0c0 6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><b>5.2</b><span>km</span></div>
+    </div>
+
+    <div class="secrow"><div class="sectitle">Përmbledhje</div></div>
+    <div class="wide glass" onclick="toast('Hapet termini')"><div class="wico apt"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div><div><div class="wt1">Termini i ardhshëm</div><div class="wt2">Dr. Shabani · 18 Qer, 10:00</div></div><div class="wr"><span class="wbadge wb-green">Konfirmuar</span></div></div>
+    <div class="wide glass" onclick="toast('Cilësia e ajrit')"><div class="wico air"><svg viewBox="0 0 24 24"><path d="M4 9h11a3 3 0 1 0-3-3M4 15h15a3 3 0 1 1-3 3"/></svg></div><div><div class="wt1">Cilësia e ajrit</div><div class="wt2">AQI 42 · E mirë</div></div><div class="wr"><span class="wbadge wb-green">E mirë</span></div></div>
+    <div class="wide glass" onclick="toast('Ushqimi sot')"><div class="wico nut"><svg viewBox="0 0 24 24"><path d="M6 3v8a3 3 0 0 0 6 0V3M9 3v18M17 3c-1.5 0-2.5 2-2.5 5s1 4 2.5 4 2.5-1 2.5-4-1-5-2.5-5ZM17 16v5"/></svg></div><div><div class="wt1">Ushqimi sot</div><div class="wt2">1,240 kcal · 3 vakte</div></div><div class="wr"><span class="wbadge wb-blue">62%</span></div></div>
+
+    <div style="height:20px;"></div>
+  </div>
+
+  <div class="navbar glass">
+    <div class="ni on" data-n="Home"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg><span>Home</span></div>
+    <div class="ni" data-n="Diagnoza"><svg viewBox="0 0 24 24"><path d="M3 12h4l2 5 4-12 2 7h6"/></svg><span>Diagnoza</span></div>
+    <div class="fab" onclick="toast('Mat shenjat vitale')"><svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/></svg></div>
+    <div class="ni" data-n="Chat"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4l-5 1 1-4a8.4 8.4 0 1 1 13-5.4Z"/></svg><span>Chat</span></div>
+    <div class="ni" data-n="Profili"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg><span>Profili</span></div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+  var nis=document.querySelectorAll('.ni');
+  nis.forEach(function(n){ n.addEventListener('click',function(){ nis.forEach(function(x){x.classList.remove('on');}); n.classList.add('on'); toast(n.getAttribute('data-n')); }); });
+  var tt=document.getElementById('toast'),tm;
+  function toast(m){ tt.textContent=m; tt.classList.add('show'); clearTimeout(tm); tm=setTimeout(function(){tt.classList.remove('show');},1400); }
+</script>
+</body>
+</html>
