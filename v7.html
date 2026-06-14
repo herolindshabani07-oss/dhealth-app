@@ -1633,12 +1633,30 @@ select option{background:#0A1628;color:#F1F5FF;}
 #screen-vitals .v7-vstat{font-size:10px;font-weight:700;color:#15a06a;background:#e2f7ec;padding:3px 9px;border-radius:20px;border:none}
 #screen-vitals .v7-vico.steps2{background:linear-gradient(135deg,#cfe2ff,#9cc3ff)}
 #screen-vitals .v7-vico.steps2 svg{stroke:#2f6cd4;width:21px;height:21px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-#screen-vitals .v7-vlbl{color:#7387a4!important;font-weight:500!important}
+#screen-vitals .v7-vlbl{color:#7387a4!important;font-weight:500!important;font-size:11px!important;margin-top:4px!important}
+#screen-vitals .v7-vgrid{gap:10px}
+#screen-vitals .v7-vc{padding:11px 13px!important}
+#screen-vitals .v7-vico{width:34px!important;height:34px!important;border-radius:10px!important}
+#screen-vitals .v7-vico svg{width:18px!important;height:18px!important}
+#screen-vitals .v7-vinp{font-size:20px!important}
+#screen-vitals .v7-vtop{margin-bottom:8px!important}
+#screen-vitals .hta-detail,#screen-vitals .glu-detail{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.92)!important;border-radius:20px!important;box-shadow:0 10px 24px rgba(70,120,190,.12),inset 0 1px 1px rgba(255,255,255,.9)!important;margin:12px 16px 0!important;padding:14px!important}
+#screen-vitals .det-title{color:#1f2c44!important}
+#screen-vitals .gauge-box{background:rgba(255,255,255,.62)!important;border:1px solid rgba(120,150,190,.16)!important;border-radius:14px!important;box-shadow:inset 0 1px 1px rgba(255,255,255,.85)!important}
+#screen-vitals .gauge-lbl{color:#5d7290!important;font-weight:700!important}
+#screen-vitals .gauge-sub{color:#9aa9c0!important}
+#screen-vitals .prog-bar{background:rgba(120,150,190,.18)!important}
+#screen-vitals .prog-lbl{color:#7387a4!important}
+#screen-vitals .prog-lbl span{color:#7387a4!important}
+#screen-vitals .hrv-row{margin:12px 16px 0!important}
+#screen-vitals .hrv-card{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.92)!important;border-radius:16px!important;box-shadow:0 8px 20px rgba(70,120,190,.1),inset 0 1px 1px rgba(255,255,255,.85)!important}
+#screen-vitals .hrv-lbl{color:#7387a4!important;font-weight:600!important}
+#screen-vitals [style*="rgba(255,255,255,0.15)"],#screen-vitals [style*="rgba(255,255,255,0.18)"]{background:rgba(59,130,246,.1)!important;color:#2f6cd4!important}
 </style>
 <div class="screen" id="screen-vitals">
   <div class="sb"><span>9:41</span></div>
   <div class="sa">
-    <div class="v7-secrow" style="margin-top:6px;"><div class="v7-stitle">Shenjat vitale</div><span class="v7-see" onclick="switchScreen('vitals-history');initVitalsHistory();">📈 Historik ›</span></div>
+    <div class="v7-secrow" style="margin-top:6px;"><div class="v7-stitle">Shenjat vitale</div></div>
     <div class="v7-vgrid">
       <div class="v7-vc">
         <div class="v7-vtop"><div class="v7-vico hr"><svg viewBox="0 0 24 24"><path d="M3 12h4l2 6 4-12 2 6h6"/></svg></div><span class="v7-vstat" id="v-hr-status">--</span></div>
