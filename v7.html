@@ -1396,7 +1396,7 @@ select option{background:#0A1628;color:#F1F5FF;}
             </div>
             <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(function(){initSettings();applyProfileMode('profile');},100)"><div class="av-drop-ico" style="background:var(--bg);">👤</div><div class="av-drop-lbl">My Profile</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();switchScreen('subscription')"><div class="av-drop-ico" style="background:var(--ambl);">⭐</div><div class="av-drop-lbl">Subscription</div></div>
-            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('notifications');initNotifications()"><div class="av-drop-ico" style="background:var(--pul);">🔔</div><div class="av-drop-lbl">Notifications</div></div>
+            <div class="av-drop-item" onclick="closeAvDrop();openNotifSheet()"><div class="av-drop-ico" style="background:var(--pul);">🔔</div><div class="av-drop-lbl">Notifications</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(function(){initSettings();applyProfileMode('settings');},100)"><div class="av-drop-ico" style="background:var(--bg);">⚙️</div><div class="av-drop-lbl">Settings</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();gatedAction('private')"><div class="av-drop-ico" style="background:#EBF3FF;">🔒</div><div class="av-drop-lbl">Dr. Shabani</div></div>
             <div class="av-drop-item red" onclick="closeAvDrop();doSignOut()"><div class="av-drop-ico" style="background:#FEF2F2;">🚪</div><div class="av-drop-lbl">Sign Out</div></div>
@@ -1407,7 +1407,7 @@ select option{background:#0A1628;color:#F1F5FF;}
           <div class="v7-name" id="v7HomeName">Përshëndetje</div>
         </div>
       </div>
-      <div class="v7-bell" onclick="switchScreen('notifications');initNotifications()">
+      <div class="v7-bell" onclick="openNotifSheet()">
         <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
         <div id="notifDot" class="v7-bdot">0</div>
       </div>
@@ -2189,7 +2189,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="set-sec" id="sec-notifications">
       <div class="set-sec-title">Notifications &amp; Privacy</div>
       <div class="set-card">
-        <div class="set-row" onclick="switchScreen('notifications');initNotifications();">
+        <div class="set-row" onclick="openNotifSheet();">
           <div class="set-row-ico" style="background:var(--pl);">&#128276;</div>
           <div class="set-row-info"><div class="set-row-title">Notifications</div><div class="set-row-sub">Alarms, alerts &amp; reminders</div></div>
           <span class="set-row-arr">&#8250;</span>
@@ -2527,82 +2527,7 @@ select option{background:#0A1628;color:#F1F5FF;}
 </div>
 
 <!-- NOTIFICATIONS SCREEN -->
-<style id="v7notif">
-#screen-notifications{background:linear-gradient(165deg,#f2f7fd 0%,#dde9f7 50%,#eaf2fb 100%)!important}
-#screen-notifications .sa{padding-bottom:24px!important}
-#screen-notifications [style*="color:#F1F5FF"]{color:#1f2c44!important}
-#screen-notifications [style*="rgba(255,255,255,0.5)"]{color:#7387a4!important}
-#screen-notifications [style*="rgba(255,255,255,0.3)"]{color:#aab8cf!important}
-#screen-notifications [style*="background:rgba(255,255,255,0.07)"]{background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.6))!important;border:1px solid rgba(255,255,255,.9)!important;box-shadow:0 8px 20px rgba(70,120,190,.12)!important}
-#screen-notifications [style*="background:rgba(255,255,255,0.04)"]{background:#eef3fb!important}
-#screen-notifications [style*="background:var(--bg)"]{background:#e9eefb!important;box-shadow:0 4px 10px rgba(70,120,190,.12)!important}
-#screen-notifications [style*="background:var(--white)"]{background:#ffffff!important}
-#screen-notifications [style*="border:0.5px solid rgba(255,255,255,0.12)"]{border-color:rgba(120,150,190,.22)!important}
-#screen-notifications .notif-sec-title{color:#8094b3!important}
-#screen-notifications .nsch-pill{background:#ffffff!important;color:#7387a4!important;border-color:rgba(120,150,190,.3)!important}
-</style>
-<div class="screen" id="screen-notifications">
-  <div style="display:flex;align-items:center;padding:10px 16px 6px;gap:10px;">
-    <button onclick="switchScreen('more')" style="width:32px;height:32px;border-radius:10px;border:none;background:var(--bg);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">‹</button>
-    <div style="font-size:16px;font-weight:700;color:#F1F5FF;">Notifications</div>
-  </div>
-  <div class="notif-hdr">
-    <button class="notif-back" onclick="switchScreen('home')">&#8249;</button>
-    <div class="notif-hdr-inner">
-      <div class="notif-hdr-title">&#128276; Notifications</div>
-      <div class="notif-hdr-sub">Health alerts &amp; therapy reminders</div>
-      <div class="notif-badge" id="notifBadge">0 unread</div>
-    </div>
-  </div>
-  <div class="sa">
-    <div class="notif-upcoming">
-      <div class="notif-up-label">Next alarm today</div>
-      <div class="notif-up-next">
-        <div><div class="notif-up-time" id="nextAlarmTime">--:--</div><div style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:1px;">Evening reminder</div></div>
-        <div style="flex:1;padding:0 10px;"><div class="notif-up-name" id="nextAlarmName">--</div><div class="notif-up-sub">Evening therapy &middot; Reminder set</div></div>
-        <div style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:22px;">&#128138;</div>
-      </div>
-      <!-- APPOINTMENT UPCOMING -->
-      <div id="aptUpcoming" style="display:none;margin-top:10px;background:rgba(255,255,255,0.12);border-radius:14px;padding:12px 14px;">
-        <div style="font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">📅 Upcoming Appointment</div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div id="aptUpIco" style="font-size:22px;">⏳</div>
-          <div style="flex:1;">
-            <div id="aptUpTitle" style="font-size:13px;font-weight:700;color:#fff;">Pret konfirmim...</div>
-            <div id="aptUpSub" style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px;">Dr. Herolind Shabani</div>
-          </div>
-          <div id="aptUpStatus" style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:8px;background:rgba(249,115,22,0.3);color:#FED7AA;">Pending</div>
-        </div>
-      </div>
-    </div>
-    <div class="notif-section">
-      <div class="notif-sec-title">Recent Alerts</div>
-      <div id="recentAlertsList">
-        <div style="text-align:center;padding:20px 0;font-size:12px;color:rgba(255,255,255,0.5);">No recent alerts</div>
-      </div>
-    </div>
-    <div class="notif-section" style="margin-top:6px;">
-      <div class="notif-sec-title">Today's Therapy Schedule</div>
-      <div id="notifAlarmList"></div>
-      <button onclick="switchScreen('calendar')" style="width:100%;padding:10px;border-radius:14px;border:1.5px dashed rgba(59,125,216,0.3);background:transparent;color:#60A5FA;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:12px;">+ Add Alarm in Calendar ›</button>
-    </div>
-    <div style="height:16px;"></div>
-        <button class="nsch-pill" onclick="setSchedule(this)">Weekends</button>
-        <button class="nsch-pill" onclick="setSchedule(this)">Custom</button>
-      </div>
-      <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px 14px;border:0.5px solid rgba(255,255,255,0.12);margin-bottom:8px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><div style="font-size:13px;font-weight:600;color:#F1F5FF;">&#128274; Quiet Hours</div><button class="ntgl on" onclick="toggleNotif('Quiet',this)"><div class="ntgl-thumb"></div></button></div>
-        <div style="display:flex;gap:10px;">
-          <div style="flex:1;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;margin-bottom:4px;">FROM</div><div style="font-size:18px;font-weight:700;color:#F1F5FF;">22:00</div></div>
-          <div style="display:flex;align-items:center;font-size:12px;color:rgba(255,255,255,0.3);">to</div>
-          <div style="flex:1;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;margin-bottom:4px;">UNTIL</div><div style="font-size:18px;font-weight:700;color:#F1F5FF;">07:00</div>
-        </div>
-      </div>
-    </div>
-    <div style="padding:8px 14px 24px;">
-      <button onclick="clearAllNotifs()" style="width:100%;padding:12px;border-radius:14px;border:0.5px solid rgba(255,255,255,0.12);background:var(--white);font-size:13px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font);">&#128465; Clear All Notifications</button>
-    </div>
-</div>
+<!-- (Notifications now live in #notifSheet bottom-sheet, see end of .device) -->
 <!-- VITALS HISTORY SCREEN -->
 <div class="screen" id="screen-vitals-history">
   <div style="display:flex;align-items:center;padding:10px 16px 6px;gap:10px;">
@@ -3541,6 +3466,53 @@ select option{background:#0A1628;color:#F1F5FF;}
         </div>
         <button onclick="addManualMeal()" style="width:100%;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#F97316,#FB923C);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">✓ Add Meal</button>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- NOTIFICATIONS BOTTOM SHEET -->
+<div id="notifSheet" style="display:none;position:absolute;inset:0;background:rgba(20,40,80,0.4);z-index:850;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);" onclick="closeNotifSheet(event)">
+  <div style="background:linear-gradient(160deg,#ffffff,#eef4fc);border-radius:26px 26px 44px 44px;width:100%;max-height:90%;display:flex;flex-direction:column;animation:slideUp 0.3s ease;box-shadow:0 -10px 40px rgba(40,80,140,.25);">
+    <div style="flex-shrink:0;padding:10px 0 0;"><div style="width:42px;height:5px;border-radius:3px;background:rgba(120,150,190,.35);margin:0 auto 10px;"></div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 20px 12px;flex-shrink:0;border-bottom:1px solid rgba(120,150,190,.14);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#6cb2ff,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 6px 14px rgba(59,130,246,.35);">&#128276;</div>
+        <div><div style="font-size:16px;font-weight:700;color:#1f2c44;">Notifications</div><div id="notifBadge" style="font-size:11px;color:#7387a4;font-weight:600;">0 unread</div></div>
+      </div>
+      <button onclick="closeNotifSheet(null)" style="width:30px;height:30px;border-radius:10px;border:none;background:#eef2fa;color:#7387a4;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#10005;</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:14px 16px 22px;scrollbar-width:none;">
+      <div style="background:linear-gradient(135deg,#0D3B8E,#1E5FBA);border-radius:18px;padding:14px 16px;margin-bottom:14px;box-shadow:0 12px 28px rgba(30,95,186,.3);">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.65);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Next alarm today</div>
+        <div style="display:flex;align-items:center;">
+          <div><div style="font-size:26px;font-weight:700;color:#fff;" id="nextAlarmTime">--:--</div><div style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:1px;">Evening reminder</div></div>
+          <div style="flex:1;padding:0 12px;"><div style="font-size:14px;font-weight:700;color:#fff;" id="nextAlarmName">--</div><div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px;">Therapy reminder set</div></div>
+          <div style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:22px;">&#128138;</div>
+        </div>
+        <div id="aptUpcoming" style="display:none;margin-top:10px;background:rgba(255,255,255,0.12);border-radius:14px;padding:12px 14px;">
+          <div style="font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">&#128197; Upcoming Appointment</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div id="aptUpIco" style="font-size:22px;">&#9203;</div>
+            <div style="flex:1;"><div id="aptUpTitle" style="font-size:13px;font-weight:700;color:#fff;">Pret konfirmim...</div><div id="aptUpSub" style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px;">Dr. Herolind Shabani</div></div>
+            <div id="aptUpStatus" style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:8px;background:rgba(249,115,22,0.3);color:#FED7AA;">Pending</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:10px;font-weight:700;color:#8094b3;text-transform:uppercase;letter-spacing:0.8px;margin:0 2px 8px;">Recent Alerts</div>
+      <div id="recentAlertsList" style="margin-bottom:16px;"><div style="text-align:center;padding:18px 0;font-size:12px;color:#7387a4;">No recent alerts</div></div>
+      <div style="font-size:10px;font-weight:700;color:#8094b3;text-transform:uppercase;letter-spacing:0.8px;margin:0 2px 8px;">Today's Therapy Schedule</div>
+      <div id="notifAlarmList"></div>
+      <button onclick="closeNotifSheet(null);switchScreen('calendar')" style="width:100%;padding:10px;border-radius:14px;border:1.5px dashed rgba(59,125,216,0.4);background:rgba(255,255,255,.5);color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:16px;">+ Add Alarm in Calendar &#8250;</button>
+      <div style="background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.6));border:1px solid rgba(255,255,255,.9);box-shadow:0 8px 20px rgba(70,120,190,.1);border-radius:16px;padding:14px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">&#128277; Quiet Hours</div><button class="ntgl on" onclick="toggleNotif('Quiet',this)"><div class="ntgl-thumb"></div></button></div>
+        <div style="display:flex;gap:10px;">
+          <div style="flex:1;background:#eef3fb;border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:#7387a4;font-weight:600;margin-bottom:4px;">FROM</div><div style="font-size:18px;font-weight:700;color:#1f2c44;">22:00</div></div>
+          <div style="display:flex;align-items:center;font-size:12px;color:#aab8cf;">to</div>
+          <div style="flex:1;background:#eef3fb;border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:#7387a4;font-weight:600;margin-bottom:4px;">UNTIL</div><div style="font-size:18px;font-weight:700;color:#1f2c44;">07:00</div></div>
+        </div>
+      </div>
+      <button onclick="clearAllNotifs()" style="width:100%;padding:12px;border-radius:14px;border:1px solid rgba(120,150,190,.25);background:#fff;font-size:13px;font-weight:600;color:#e0436a;cursor:pointer;font-family:var(--font);">&#128465; Clear All Notifications</button>
     </div>
   </div>
 </div>
@@ -5746,12 +5718,12 @@ function markTaken(el){
   updateNotifBadge();showToast('\u2713 Marked as taken!');
 }
 function updateNotifBadge(){
-  var n=document.querySelectorAll('#screen-notifications .notif-item.unread').length;
+  var n=document.querySelectorAll('#notifSheet .notif-item.unread').length;
   var b=document.getElementById('notifBadge');if(b)b.textContent=n>0?n+' unread':'All read';
   var m=document.getElementById('notifMitsText');if(m)m.textContent=n>0?n+' unread alerts':'All caught up';
 }
 function clearAllNotifs(){
-  document.querySelectorAll('#screen-notifications .notif-item').forEach(function(el){el.classList.remove('unread');});
+  document.querySelectorAll('#notifSheet .notif-item').forEach(function(el){el.classList.remove('unread');});
   updateNotifBadge();showToast('\u2713 All notifications cleared');
 }
 function setSchedule(btn){
@@ -5878,6 +5850,16 @@ function setShowEdit(){
 function setCloseEdit(e){
   if(e && e.target!==document.getElementById('setEditModal')) return;
   document.getElementById('setEditModal').style.display='none';
+}
+function openNotifSheet(){
+  var s=document.getElementById('notifSheet'); if(!s) return;
+  s.style.display='flex';
+  try{ initNotifications(); }catch(e){}
+  try{ checkEmptyNotifications(); }catch(e){}
+}
+function closeNotifSheet(e){
+  if(e && e.target!==document.getElementById('notifSheet')) return;
+  document.getElementById('notifSheet').style.display='none';
 }
 function switchSetTab(tab){
   ['info','pwd','health','integ'].forEach(function(t){
@@ -6253,7 +6235,7 @@ function checkEmptyVitals(){
 
 /* --- Empty Notifications --- */
 function checkEmptyNotifications(){
-  var unread = document.querySelectorAll('#screen-notifications .notif-item.unread').length;
+  var unread = document.querySelectorAll('#notifSheet .notif-item.unread').length;
   if(unread === 0){
     var badge = document.getElementById('notifBadge');
     if(badge) badge.textContent = 'All caught up \u2713';
@@ -6499,7 +6481,7 @@ async function bkSubmit(){
 
   if(btn){ btn.disabled=false; btn.textContent='✓ Mbyll'; btn.onclick=closeBkModal; }
 
-  addRecentAlert('📅','#EBF3FF','Booking Sent','Kërkesë: '+nicDate+' ora '+bkSelTime+' — pret konfirmimin.','Tani', function(){ switchScreen('notifications'); });
+  addRecentAlert('📅','#EBF3FF','Booking Sent','Kërkesë: '+nicDate+' ora '+bkSelTime+' — pret konfirmimin.','Tani', function(){ openNotifSheet(); });
   showToast('📅 Kërkesa u dërgua! Dr. Shabani do konfirmojë brenda 24h.');
 }
 
@@ -6661,7 +6643,7 @@ document.addEventListener('click', function(e){
 
 /* ══ NOTIFICATION BADGE ══ */
 function updateNotifBadge(){
-  var unread = document.querySelectorAll('#screen-notifications .notif-item.unread').length;
+  var unread = document.querySelectorAll('#notifSheet .notif-item.unread').length;
   var dot = document.getElementById('notifDot');
   if(dot){
     if(unread > 0){
