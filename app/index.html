@@ -3803,10 +3803,13 @@ function restoreVitalDetails(){
 function restoreHomeScore(){
   var s = localStorage.getItem('dh_last_score');
   if(!s) return;
+  /* Rezistent: nëse është vlerë e vjetër JSON {"score":65}, nxirr numrin */
+  var num = s;
+  try{ if(String(s).trim().charAt(0)==='{'){ num = String(JSON.parse(s).score); localStorage.setItem('dh_last_score', num); } }catch(e){}
   var n=document.getElementById('home-sc-num');
   var t=document.getElementById('home-sc-title');
   var d=document.getElementById('home-sc-desc');
-  if(n){ n.textContent=s; var c=localStorage.getItem('dh_last_score_color'); if(c) n.style.color=c; }
+  if(n){ n.textContent=num; var c=localStorage.getItem('dh_last_score_color'); if(c) n.style.color=c; }
   if(t) t.textContent=localStorage.getItem('dh_last_score_title')||t.textContent;
   if(d) d.textContent=localStorage.getItem('dh_last_score_desc')||d.textContent;
 }
@@ -8317,7 +8320,7 @@ function renderEngineResult(result, data){
   /* Update Home badge */
   var critical = alarms.filter(function(a){return a.level==='critical';}).length;
   if(critical>0) showToast('🚨 '+critical+' critical alert'+(critical>1?'s':'')+' found!');
-  try{localStorage.setItem('dh_last_score', JSON.stringify({score:score}));updateDiagHeader();}catch(e){}
+  try{localStorage.setItem('dh_last_score', String(score));updateDiagHeader();}catch(e){}
 }
 
 function saveAlarmsToNotifications(alarms){
@@ -9581,9 +9584,8 @@ function updateDiagHeader(){
   var thEl = document.getElementById('diagHeaderTherapy');
   if(thEl) thEl.textContent = count + ' active';
 
-  /* Score from last engine result */
-  var stored = JSON.parse(localStorage.getItem('dh_last_score')||'{}');
-  var score = stored.score || '--';
+  /* Score from last engine result (numër i thjeshtë) */
+  var score = parseInt(localStorage.getItem('dh_last_score')||'') || '--';
   var scEl = document.getElementById('diagHeaderScore');
   if(scEl){
     scEl.textContent = score + '/100';
@@ -10196,7 +10198,7 @@ async function runVitalIntelligence(){
 
     /* Update Daily Score on Home */
     try{
-      localStorage.setItem('dh_last_score', JSON.stringify({score:res.score||0}));
+      localStorage.setItem('dh_last_score', String(res.score||0));
       updateDiagHeader();
     }catch(e){}
 
