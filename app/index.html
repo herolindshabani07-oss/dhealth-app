@@ -6325,6 +6325,10 @@ switchScreen = function(n){
   _baseSwitchScreen(n);
   setTimeout(function(){
     if(n === 'calendar') checkEmptyAlarms();
+    if(n === 'home'){
+      try{ restoreHomeScore(); }catch(e){}        /* karta D Health AI nga score-i i fundit */
+      try{ calcDailyScore(true); }catch(e){}        /* Daily Health Score lokalisht, pa AI */
+    }
   }, 100);
 };
 
@@ -8422,6 +8426,48 @@ function tryParseJSONLoose(txt){
   try{ return JSON.parse(out); }catch(e){ return null; }
 }
 
+/* Llogaritje lokale evidence-based — fallback kur motori AI dështon (timeout/rrjet),
+   që karta "D Health AI" te Home të marrë gjithmonë një rezultat. */
+function computeLocalEngineScore(data){
+  var d = data||{}; var v = d.v||{};
+  var sys=parseFloat(v.sys)||0, dia=parseFloat(v.dia)||0, hr=parseInt(v.hr)||0,
+      glu=parseFloat(v.glu)||0, spo2=parseInt(v.spo2)||0, steps=parseInt(d.steps)||0;
+  var score=50, warnings=[], benefits=[];
+  if(steps>=10000){score+=20;benefits.push('✅ Aktivitet i shkëlqyer — '+steps.toLocaleString()+' hapa');}
+  else if(steps>=7500){score+=15;benefits.push('✅ '+steps.toLocaleString()+' hapa — rrezik HTA i ulur');}
+  else if(steps>=5000){score+=8;benefits.push('⚠️ '+steps.toLocaleString()+' hapa — aktivitet i moderuar');}
+  else if(steps>0){score+=2;warnings.push('🔴 Aktivitet i ulët sot — ec më shumë');}
+  if(hr>=60&&hr<=80){score+=10;benefits.push('✅ Puls '+hr+' bpm — optimal');}
+  else if(hr>80&&hr<=100){score+=5;}
+  else if(hr>100){score-=5;warnings.push('⚠️ Puls i lartë '+hr+' bpm — monitoro');}
+  if(sys>0&&dia>0){
+    if(sys<120&&dia<80){score+=15;benefits.push('✅ Tensioni '+sys+'/'+dia+' — optimal');}
+    else if(sys<130&&dia<85){score+=10;benefits.push('✅ Tensioni '+sys+'/'+dia+' — normal');}
+    else if(sys<140){score+=3;warnings.push('⚠️ Tensioni '+sys+'/'+dia+' — HTA Stage 1');}
+    else{score-=10;warnings.push('🔴 Tensioni '+sys+'/'+dia+' — i lartë, pusho');}
+  }
+  if(glu>0){
+    if(glu<5.6){score+=10;benefits.push('✅ Glukoza '+glu+' — kontroll i mirë metabolik');}
+    else if(glu<7.0){score+=5;warnings.push('⚠️ Glukoza '+glu+' — pak e lartë');}
+    else{score-=5;warnings.push('🔴 Glukoza '+glu+' — e lartë');}
+  }
+  if(spo2>0){
+    if(spo2>=97){score+=5;benefits.push('✅ SpO2 '+spo2+'% — saturim i shkëlqyer');}
+    else if(spo2>=94){score+=2;}
+    else{score-=8;warnings.push('🚨 SpO2 '+spo2+'% — i ulët, monitoro frymëmarrjen');}
+  }
+  score=Math.max(10,Math.min(100,score));
+  var recs=benefits.concat(warnings);
+  recs.push('ℹ️ Llogaritje lokale — analiza e plotë AI s\'u arrit (lidhja/koha). Shtyp "Re-Analyze" për detaje me AI.');
+  return {
+    score:score,
+    alarms:warnings.map(function(w){return {level:'warning',title:'Kujdes',message:w,action:''};}),
+    correlations:[],
+    recommendations:recs,
+    doctor_summary:''
+  };
+}
+
 async function runCorrelationEngine(){
   var btn = document.getElementById('ds-analyze-btn');
   if(btn){ btn.disabled=true; btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Analyzing...'; }
@@ -8502,7 +8548,16 @@ async function runCorrelationEngine(){
     }
     renderEngineResult(result, data);
   }catch(e){
-    document.getElementById('eng-rec-content').innerHTML = '❌ Error: '+e.message;
+    /* Motori AI dështoi (timeout/rrjet) → llogaritje lokale që Home të marrë rezultat */
+    try{
+      var lf = computeLocalEngineScore(data);
+      renderEngineResult(lf, data);
+      var rc = document.getElementById('eng-rec-content');
+      if(rc) rc.innerHTML = lf.recommendations.map(function(r){return '• '+r;}).join('<br>');
+    }catch(e2){
+      var rc2 = document.getElementById('eng-rec-content');
+      if(rc2) rc2.innerHTML = '❌ Error: '+e.message;
+    }
   }
 
   if(btn){ btn.disabled=false; btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="white"/></svg> Re-Analyze'; }
@@ -8626,7 +8681,7 @@ function saveAlarmsToNotifications(alarms){
 
 
 /* ════ DAILY HEALTH SCORE ENGINE ════ */
-async function calcDailyScore(){
+async function calcDailyScore(silent){
   var refreshEl = document.getElementById('dailyScoreRefresh');
   if(refreshEl) refreshEl.textContent = '⏳ Calculating...';
 
@@ -8732,8 +8787,8 @@ async function calcDailyScore(){
   /* Render local score immediately */
   renderDailyScore(score, allMessages);
 
-  /* Claude AI per konkluzione me te mira */
-  try{
+  /* Claude AI per konkluzione me te mira (kapërcehet kur thirret 'silent' nga navigimi te Home) */
+  if(!silent) try{
     var prompt = 'Patient daily health data:\n'
       + 'Steps: '+steps+', Calories: '+cal+', HR avg: '+hr+' bpm\n'
       + 'BP: '+sys+'/'+dia+', Glucose: '+glu+', SpO2: '+spo2+'%\n'
