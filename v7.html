@@ -4252,6 +4252,27 @@ async function saveVitalsToSupabase(){
   }catch(e){ console.log('Vitals Supabase error:', e.message); showToast('⚠️ Vitals: '+e.message); }
 }
 
+/* Ruajtje e medical_profiles e pavarur nga unique-constraint: lexo → update ose insert.
+   Punon edhe nëse tabela s'ka unique index te patient_id (që e bllokon upsert+onConflict). */
+async function _upsertMedicalProfile(payload){
+  var sb = getSupa();
+  if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return;
+  var uid = LST.currentUser.id;
+  payload.patient_id = uid;
+  payload.updated_at = new Date().toISOString();
+  try{
+    var ex = await sb.from('medical_profiles').select('patient_id').eq('patient_id', uid).limit(1);
+    if(ex.error){ console.warn('medprofile check:', ex.error.message); showToast('⚠️ Profili (lexim): '+ex.error.message); return; }
+    var res;
+    if(ex.data && ex.data.length){
+      res = await sb.from('medical_profiles').update(payload).eq('patient_id', uid);
+    }else{
+      res = await sb.from('medical_profiles').insert(payload);
+    }
+    if(res && res.error){ console.warn('medprofile save:', res.error.message); showToast('⚠️ Ruajtja e profilit: '+res.error.message); }
+  }catch(e){ console.warn('medprofile exc:', e.message); }
+}
+
 async function saveMedicalProfileToSupabase(){
   try{
     var sb = getSupa();
@@ -4263,17 +4284,8 @@ async function saveMedicalProfileToSupabase(){
     var labs     = get(['lab-tags','prof-lab-tags','ds-lab-tags']);
     var notes    = (document.getElementById('prof-notes')||{}).value || (document.getElementById('ds-notes')||{}).value || '';
     if(!diags.length && !therapy.length && !allergies.length && !labs.length) return;
-    var res = await sb.from('medical_profiles').upsert({
-      patient_id: LST.currentUser.id,
-      diagnoses:  diags,
-      therapy:    therapy,
-      allergies:  allergies,
-      lab_values: labs,
-      notes:      notes,
-      updated_at: new Date().toISOString()
-    }, {onConflict:'patient_id'});
-    if(res && res.error){ console.warn('Medical profile save FAILED:', res.error.message); showToast('⚠️ Ruajtja e profilit dështoi: '+res.error.message); }
-  }catch(e){ console.log('Medical profile Supabase error:', e.message); showToast('⚠️ Profili: '+e.message); }
+    await _upsertMedicalProfile({ diagnoses:diags, therapy:therapy, allergies:allergies, lab_values:labs, notes:notes });
+  }catch(e){ console.log('Medical profile Supabase error:', e.message); }
 }
 
 /* Voice */
@@ -4334,18 +4346,7 @@ function syncMedicalProfile(){
     var lab_values = getTags('lab-tags','prof-lab-tags','ds-lab-tags');
     var notes      = (document.getElementById('prof-notes')||{}).value || '';
 
-    sb.from('medical_profiles').upsert({
-      patient_id: LST.currentUser.id,
-      diagnoses:  diagnoses,
-      therapy:    therapies,
-      allergies:  allergies,
-      lab_values: lab_values,
-      notes:      notes,
-      updated_at: new Date().toISOString()
-    }, {onConflict: 'patient_id'}).then(function(res){
-      if(res.error){ console.warn('Profile sync error:', res.error.message); showToast('⚠️ Sinkronizimi i profilit dështoi: '+res.error.message); }
-      else console.log('✅ Medical profile synced to Supabase');
-    });
+    _upsertMedicalProfile({ diagnoses:diagnoses, therapy:therapies, allergies:allergies, lab_values:lab_values, notes:notes });
   }, 1000);
 }
 
@@ -4437,7 +4438,7 @@ function saveAlarm(){
       active:     true,
       alarm_date: k
     }).then(function(res){
-      if(res.error) console.warn('Alarm save error:', res.error.message);
+      if(res.error){ console.warn('Alarm save error:', res.error.message); showToast('⚠️ Ruajtja e alarmit dështoi: '+res.error.message); }
       else console.log('✅ Alarm saved to Supabase:', n);
     });
   }
@@ -7263,7 +7264,7 @@ function linkTherapyToAlarm(label, slot){
     var sb = getSupa();
     if(sb && LST.currentUser && LST.currentUser.id){
       sb.from('therapy_alarms').insert({patient_id:LST.currentUser.id, name:label, time:t, color:col, active:true, alarm_date:k})
-        .then(function(res){ if(res.error) console.warn('therapy alarm save:', res.error.message); });
+        .then(function(res){ if(res.error){ console.warn('therapy alarm save:', res.error.message); showToast('⚠️ Ruajtja e alarmit dështoi: '+res.error.message); } });
     }
   }
   try{ renderCal(); }catch(e){}
@@ -8089,8 +8090,10 @@ async function initUserData(userId, userName, userEmail){
   if(!sb || !userId) return;
 
   try{
-    /* Profili mjekesor */
-    var mp = await sb.from('medical_profiles').select('*').eq('patient_id', userId).single();
+    /* Profili mjekesor — robust ndaj 0/shumë rreshtave (mos përdor .single() që hedh gabim) */
+    var mpRes = await sb.from('medical_profiles').select('*').eq('patient_id', userId).order('updated_at',{ascending:false}).limit(1);
+    if(mpRes.error){ console.warn('medical_profiles LOAD error:', mpRes.error.message); showToast('⚠️ Leximi i profilit: '+mpRes.error.message); }
+    var mp = { data: (mpRes.data && mpRes.data[0]) || null };
     if(mp.data){
       var loadTags = function(tagIds, items, cls){
         /* Dedupe (case-insensitive) — burimi i vërtetë është DB */
