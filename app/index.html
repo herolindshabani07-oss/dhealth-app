@@ -5439,6 +5439,10 @@ function getSupa(){
   window.fetch = async function(url, opts){
     try{
       var u = (typeof url === 'string') ? url : (url && url.url) || '';
+      /* Native (APK): s'ka server lokal → ridrejto thirrjet relative te funksionet në domenin absolut */
+      if(typeof url === 'string' && url.indexOf('/.netlify/functions/') === 0 && typeof isNativeApp==='function' && isNativeApp()){
+        url = 'https://dhealth.app' + url; u = url;
+      }
       if(u.indexOf('/.netlify/functions/claude') !== -1){
         opts = opts || {};
         var h = {}; if(opts.headers){ for(var k in opts.headers){ h[k]=opts.headers[k]; } }
