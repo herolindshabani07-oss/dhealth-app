@@ -4110,21 +4110,32 @@ function restoreHomeScore(){
 
 /* Ruaj Daily Activity te llogaria (Supabase) — një rresht për ditë */
 async function saveDailyActivityToSupabase(){
+  var sb = getSupa();
+  if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return;
+  var uid = LST.currentUser.id;
+  var today = new Date().toISOString().split('T')[0];
+  var payload = {
+    patient_id:    uid,
+    activity_date: today,
+    steps:         dailyState.steps  || 0,
+    calories:      dailyState.cal    || 0,
+    hr_avg:        dailyState.hr     || 0,
+    distance_km:   dailyState.dist   || 0,
+    active_min:    dailyState.active || 0,
+    sleep_h:       dailyState.sleep  || 0,
+    updated_at:    new Date().toISOString()
+  };
   try{
-    var sb = getSupa();
-    if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return;
-    var today = new Date().toISOString().split('T')[0];
-    await sb.from('daily_activity').upsert({
-      patient_id:    LST.currentUser.id,
-      activity_date: today,
-      steps:         dailyState.steps,
-      calories:      dailyState.cal,
-      hr_avg:        dailyState.hr,
-      distance_km:   dailyState.dist,
-      active_min:    dailyState.active,
-      sleep_h:       dailyState.sleep,
-      updated_at:    new Date().toISOString()
-    }, {onConflict:'patient_id,activity_date'});
+    /* I pavarur nga composite unique-constraint: lexo → update ose insert */
+    var ex = await sb.from('daily_activity').select('patient_id').eq('patient_id', uid).eq('activity_date', today).limit(1);
+    if(ex.error){ console.warn('daily_activity check:', ex.error.message); showToast('⚠️ Aktiviteti (lexim): '+ex.error.message); return; }
+    var res;
+    if(ex.data && ex.data.length){
+      res = await sb.from('daily_activity').update(payload).eq('patient_id', uid).eq('activity_date', today);
+    }else{
+      res = await sb.from('daily_activity').insert(payload);
+    }
+    if(res && res.error){ console.warn('daily_activity save:', res.error.message); showToast('⚠️ Ruajtja e aktivitetit dështoi: '+res.error.message); }
   }catch(e){ console.log('Daily activity Supabase error:', e.message); }
 }
 
@@ -4134,7 +4145,8 @@ async function loadDailyActivityFromSupabase(userId){
     var sb = getSupa();
     if(!sb || !userId) return;
     var today = new Date().toISOString().split('T')[0];
-    var da = await sb.from('daily_activity').select('*').eq('patient_id', userId).eq('activity_date', today).single();
+    var daRes = await sb.from('daily_activity').select('*').eq('patient_id', userId).eq('activity_date', today).order('updated_at',{ascending:false}).limit(1);
+    var da = { data: (daRes.data && daRes.data[0]) || null };
     if(da && da.data){
       var map = {steps:'steps', cal:'calories', hr:'hr_avg', dist:'distance_km', active:'active_min', sleep:'sleep_h'};
       Object.keys(map).forEach(function(k){
