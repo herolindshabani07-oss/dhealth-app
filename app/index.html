@@ -4114,28 +4114,28 @@ async function saveDailyActivityToSupabase(){
   if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return;
   var uid = LST.currentUser.id;
   var today = new Date().toISOString().split('T')[0];
-  var payload = {
-    patient_id:    uid,
-    activity_date: today,
-    steps:         dailyState.steps  || 0,
-    calories:      dailyState.cal    || 0,
-    hr_avg:        dailyState.hr     || 0,
-    distance_km:   dailyState.dist   || 0,
-    active_min:    dailyState.active || 0,
-    sleep_h:       dailyState.sleep  || 0,
-    updated_at:    new Date().toISOString()
-  };
-  try{
+  var nowIso = new Date().toISOString();
+  /* Payload i plotë + bazë (nëse tabelës i mungojnë distance_km/active_min/sleep_h, ruajmë bazat) */
+  var full = { patient_id:uid, activity_date:today, steps:dailyState.steps||0, calories:dailyState.cal||0,
+               hr_avg:dailyState.hr||0, distance_km:dailyState.dist||0, active_min:dailyState.active||0,
+               sleep_h:dailyState.sleep||0, updated_at:nowIso };
+  var core = { patient_id:uid, activity_date:today, steps:dailyState.steps||0, calories:dailyState.cal||0,
+               hr_avg:dailyState.hr||0, updated_at:nowIso };
+  async function doSave(payload){
     /* I pavarur nga composite unique-constraint: lexo → update ose insert */
     var ex = await sb.from('daily_activity').select('patient_id').eq('patient_id', uid).eq('activity_date', today).limit(1);
-    if(ex.error){ console.warn('daily_activity check:', ex.error.message); showToast('⚠️ Aktiviteti (lexim): '+ex.error.message); return; }
-    var res;
-    if(ex.data && ex.data.length){
-      res = await sb.from('daily_activity').update(payload).eq('patient_id', uid).eq('activity_date', today);
-    }else{
-      res = await sb.from('daily_activity').insert(payload);
+    if(ex.error) return ex;
+    if(ex.data && ex.data.length) return await sb.from('daily_activity').update(payload).eq('patient_id', uid).eq('activity_date', today);
+    return await sb.from('daily_activity').insert(payload);
+  }
+  try{
+    var res = await doSave(full);
+    if(res && res.error && res.error.code === '42703'){
+      /* mungon ndonjë kolonë shtesë (distance_km/active_min/sleep_h) → ruaj bazat që steps/calories të ruhen gjithsesi */
+      console.warn('daily_activity: kolona shtesë mungojnë → ruaj bazat. ('+res.error.message+')');
+      res = await doSave(core);
     }
-    if(res && res.error){ console.warn('daily_activity save:', res.error.message); showToast('⚠️ Ruajtja e aktivitetit dështoi: '+res.error.message); }
+    if(res && res.error){ console.warn('daily_activity save:', res.error.message); showToast('⚠️ Ruajtja e aktivitetit: '+res.error.message); }
   }catch(e){ console.log('Daily activity Supabase error:', e.message); }
 }
 
