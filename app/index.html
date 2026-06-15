@@ -8154,6 +8154,11 @@ async function initUserData(userId, userName, userEmail){
       if(vt.data.glucose)      { vitalsState.glu  = vt.data.glucose;      updateV('glu',  vt.data.glucose); }
       if(vt.data.spo2)         { vitalsState.spo2 = vt.data.spo2; }
       if(vt.data.temperature)  { vitalsState.temp = vt.data.temperature; }
+      /* Mbush fushat input te ekrani Vitals (updateV s'i prek inputet) */
+      var setVInp = function(id, v){ var e=document.getElementById(id); if(e && v) e.value = v; };
+      setVInp('v-sys', vt.data.systolic_bp);  setVInp('v-dia', vt.data.diastolic_bp);
+      setVInp('v-hr',  vt.data.heart_rate);    setVInp('v-glu', vt.data.glucose);
+      setVInp('v-spo2',vt.data.spo2);          setVInp('v-temp',vt.data.temperature);
       try{ updateAllVitalsUI(); }catch(e){}
     }
 
@@ -8161,6 +8166,7 @@ async function initUserData(userId, userName, userEmail){
 
     /* Daily Activity e sotme (steps/calories/puls) nga llogaria */
     try{ await loadDailyActivityFromSupabase(userId); }catch(e){}
+    try{ updateAllVitalsUI(); }catch(e){}   /* sinkronizo vit-* (Vitals) nga dailyState i ngarkuar */
     try{ updateIndicatorBadge(); }catch(e){}
     /* Dokumentet reale nga Storage */
     try{ await refreshDocuments(); }catch(e){}
