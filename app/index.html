@@ -4260,6 +4260,12 @@ async function _upsertMedicalProfile(payload){
   var uid = LST.currentUser.id;
   payload.patient_id = uid;
   payload.updated_at = new Date().toISOString();
+  /* MBROJTJE: mos ruaj profil krejt bosh (shmang mbishkrimin e të dhënave reale gjatë dritares clear→load në login) */
+  var pp = payload || {};
+  var allEmpty = !(pp.diagnoses&&pp.diagnoses.length) && !(pp.therapy&&pp.therapy.length)
+              && !(pp.allergies&&pp.allergies.length) && !(pp.lab_values&&pp.lab_values.length)
+              && !(pp.notes && String(pp.notes).trim());
+  if(allEmpty){ console.log('skip medical_profiles save (krejt bosh) — mbrojtje nga mbishkrimi'); return; }
   try{
     var ex = await sb.from('medical_profiles').select('patient_id').eq('patient_id', uid).limit(1);
     if(ex.error){ console.warn('medprofile check:', ex.error.message); showToast('⚠️ Profili (lexim): '+ex.error.message); return; }
@@ -8124,7 +8130,10 @@ async function initUserData(userId, userName, userEmail){
       });
     }
 
+    }catch(e){ console.warn('load medical_profiles:', e.message); }
+
     /* Vitalet e fundit */
+    try{
     var vt = await sb.from('vitals').select('*').eq('patient_id', userId).order('recorded_at', {ascending:false}).limit(1).single();
     if(vt.data){
       if(vt.data.systolic_bp)  { vitalsState.sys  = vt.data.systolic_bp;  updateV('sys',  vt.data.systolic_bp); }
@@ -8136,6 +8145,8 @@ async function initUserData(userId, userName, userEmail){
       try{ updateAllVitalsUI(); }catch(e){}
     }
 
+    }catch(e){ console.warn('load vitals:', e.message); }
+
     /* Daily Activity e sotme (steps/calories/puls) nga llogaria */
     try{ await loadDailyActivityFromSupabase(userId); }catch(e){}
     try{ updateIndicatorBadge(); }catch(e){}
@@ -8143,6 +8154,7 @@ async function initUserData(userId, userName, userEmail){
     try{ await refreshDocuments(); }catch(e){}
 
     /* Profili personal */
+    try{
     var pr = await sb.from('profiles').select('*').eq('id', userId).single();
     if(pr.data){
       var setInp = function(id, val){ var el=document.getElementById(id); if(el&&val) el.value=val; };
@@ -8155,7 +8167,10 @@ async function initUserData(userId, userName, userEmail){
       setInp('setWeight',     pr.data.weight_kg);
     }
 
+    }catch(e){ console.warn('load profile:', e.message); }
+
     /* ── MEALS nga Supabase ── */
+    try{
     var today = new Date().toISOString().split('T')[0];
     var {data: dbMeals} = await sb.from('meals')
       .select('*').eq('patient_id', userId)
@@ -8188,7 +8203,10 @@ async function initUserData(userId, userName, userEmail){
       console.log('✅ Meals loaded from Supabase:', dbMeals.length);
     }
 
+    }catch(e){ console.warn('load meals:', e.message); }
+
     /* ── ALARMS nga Supabase ── */
+    try{
     var {data: dbAlarms} = await sb.from('therapy_alarms')
       .select('*').eq('patient_id', userId)
       .order('created_at', {ascending: true});
@@ -8212,7 +8230,10 @@ async function initUserData(userId, userName, userEmail){
       console.log('✅ Alarms loaded from Supabase:', dbAlarms.length);
     }
 
+    }catch(e){ console.warn('load alarms:', e.message); }
+
     /* ── DAILY SCORE impact nga Supabase ── */
+    try{
     var {data: scoreData} = await sb.from('daily_scores')
       .select('*').eq('patient_id', userId)
       .eq('score_date', today).single();
@@ -8222,8 +8243,7 @@ async function initUserData(userId, userName, userEmail){
       localStorage.setItem('dh_meal_impact_day', today);
       console.log('✅ Daily score loaded:', scoreData.score);
     }
-
-  }catch(e){ console.log('initUserData error:', e.message); }
+    }catch(e){ console.warn('load daily_score:', e.message); }
 }
 
 
