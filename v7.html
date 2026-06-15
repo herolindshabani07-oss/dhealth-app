@@ -4414,6 +4414,10 @@ var cY=2026,cM=3,sD=9,sY=2026,sM=3,pC='red';
 var alarms={};var cMap={red:'#FF6B8A',amber:'#F5A623',green:'#2DC8A0',purple:'#8B6FE8',orange:'#F97316'};
 var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
 function dk(y,m,d){return y+'-'+m+'-'+d;}
+/* Çelësi i brendshëm i alarmeve përdor muaj 0-indexed pa zero ("2026-3-9"=9 Prill).
+   Për Supabase (kolona date e normalizon) ruajmë/lexojmë në ISO të vërtetë YYYY-MM-DD. */
+function _dkToISO(k){ var p=String(k).split('-'); if(p.length<3) return k; var y=+p[0],m=+p[1]+1,d=+p[2]; return y+'-'+(m<10?'0':'')+m+'-'+(d<10?'0':'')+d; }
+function _isoToDk(iso){ var p=String(iso).split('T')[0].split('-'); if(p.length<3) return iso; var y=+p[0],m=+p[1]-1,d=+p[2]; return y+'-'+m+'-'+d; }
 function gPer(t){var h=parseInt(t.split(':')[0]);if(h>=5&&h<12)return{l:'Morning',c:'pm'};if(h>=12&&h<18)return{l:'Daytime',c:'pd'};return{l:'Evening',c:'pe'};}
 function renderCal(){document.getElementById('calTitle').textContent=months[cM]+' '+cY;var g=document.getElementById('calGrid');g.innerHTML='';var first=new Date(cY,cM,1).getDay(),days=new Date(cY,cM+1,0).getDate(),prev=new Date(cY,cM,0).getDate();for(var i=0;i<first;i++){var d=document.createElement('div');d.className='cd om';d.innerHTML='<span class="cdn2">'+(prev-first+1+i)+'</span>';g.appendChild(d);}for(var d=1;d<=days;d++){var el=document.createElement('div');el.className='cd';if(d===9&&cM===3&&cY===2026)el.className+=' tod';else if(d===sD&&cM===sM&&cY===sY)el.className+=' sel';var k=dk(cY,cM,d);if(alarms[k]&&alarms[k].length)el.className+=' ha';el.innerHTML='<span class="cdn2">'+d+'</span>';(function(day){el.onclick=function(){sD=day;sM=cM;sY=cY;renderCal();};})(d);g.appendChild(el);}renderAlarms();}
 function renderAlarms(){var k=dk(sY,sM,sD);document.getElementById('alTitle').textContent='Alarms — '+months[sM].slice(0,3)+' '+sD;var list=document.getElementById('alList');list.innerHTML='';var arr=alarms[k]||[];if(!arr.length){var e=document.createElement('div');e.style='text-align:center;padding:10px 0;font-size:12px;color:rgba(255,255,255,0.5);';e.textContent='No alarms for this day';list.appendChild(e);return;}arr.forEach(function(a,i){var p=gPer(a.time);var item=document.createElement('div');item.className='ali';item.innerHTML='<div class="ald" style="background:'+cMap[a.color]+';"></div><div class="alf"><div class="alnm">'+a.name+'</div><div class="altr"><span class="altm">'+ft(a.time)+'</span><span class="alpb '+p.c+'">'+p.l+'</span></div></div><div style="display:flex;align-items:center;gap:6px;"><button class="altg '+(a.on?'on':'off')+'" onclick="togA(\''+k+'\','+i+',this)"></button><button onclick="removeAlarm(\''+k+'\','+i+')" style="width:24px;height:24px;border-radius:8px;border:none;background:rgba(239,68,68,0.1);color:#DC2626;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Remove">×</button></div>';list.appendChild(item);});}
@@ -4454,7 +4458,7 @@ function saveAlarm(){
       time:       t,
       color:      pC || 'blue',
       active:     true,
-      alarm_date: k
+      alarm_date: _dkToISO(k)
     }).then(function(res){
       if(res.error){ console.warn('Alarm save error:', res.error.message); showToast('⚠️ Ruajtja e alarmit dështoi: '+res.error.message); }
       else console.log('✅ Alarm saved to Supabase:', n);
@@ -7281,7 +7285,7 @@ function linkTherapyToAlarm(label, slot){
     alarms[k].push({name:label, time:t, color:col, on:true, therapy:true});
     var sb = getSupa();
     if(sb && LST.currentUser && LST.currentUser.id){
-      sb.from('therapy_alarms').insert({patient_id:LST.currentUser.id, name:label, time:t, color:col, active:true, alarm_date:k})
+      sb.from('therapy_alarms').insert({patient_id:LST.currentUser.id, name:label, time:t, color:col, active:true, alarm_date:_dkToISO(k)})
         .then(function(res){ if(res.error){ console.warn('therapy alarm save:', res.error.message); showToast('⚠️ Ruajtja e alarmit dështoi: '+res.error.message); } });
     }
   }
@@ -8225,12 +8229,14 @@ async function initUserData(userId, userName, userEmail){
 
     /* ── ALARMS nga Supabase ── */
     try{
-    var {data: dbAlarms} = await sb.from('therapy_alarms')
+    var alRes = await sb.from('therapy_alarms')
       .select('*').eq('patient_id', userId)
       .order('created_at', {ascending: true});
+    if(alRes.error){ console.warn('therapy_alarms LOAD error:', alRes.error.message); showToast('⚠️ Leximi i alarmeve: '+alRes.error.message); }
+    var dbAlarms = alRes.data;
     if(dbAlarms && dbAlarms.length > 0){
       dbAlarms.forEach(function(a){
-        var dateKey = a.alarm_date || today;
+        var dateKey = a.alarm_date ? _isoToDk(a.alarm_date) : _isoToDk(today);
         if(!alarms[dateKey]) alarms[dateKey] = [];
         /* Mos shto duplicate */
         var exists = alarms[dateKey].some(function(ex){ return ex.supaId === a.id; });
