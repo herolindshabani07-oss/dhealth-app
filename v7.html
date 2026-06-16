@@ -7084,6 +7084,17 @@ document.addEventListener('DOMContentLoaded', function(){
 /* ════ ECG ANALYSIS SYSTEM ════ */
 var ecgHistory = JSON.parse(localStorage.getItem('ecg_history') || '[]');
 
+/* Vetëm 1 ngarkesë ECG në 24 orë */
+function ecgUploadedWithin24h(){
+  try{
+    var arr = JSON.parse(localStorage.getItem('ecg_history') || '[]');
+    for(var i=arr.length-1; i>=0; i--){
+      if(arr[i] && arr[i].ts && (Date.now() - arr[i].ts) < 24*60*60*1000) return true;
+    }
+  }catch(e){}
+  return false;
+}
+
 function triggerECGUpload(){
   if(ACCESS && ACCESS.currentPlan && ACCESS.currentPlan !== 'clinic'){
     showToast('🔒 ECG Analysis — Clinic Plan required (€9.99/muaj)');
@@ -7102,6 +7113,13 @@ async function handleECGUpload(event){
 
   if(ACCESS && ACCESS.currentPlan !== 'clinic'){
     showToast('🔒 Clinic Plan required');
+    return;
+  }
+
+  /* Limit: vetëm 1 ECG në 24 orë */
+  if(ecgUploadedWithin24h()){
+    showToast('⏳ Vetëm 1 ECG në 24 orë — provo sërish nesër.');
+    try{ event.target.value=''; }catch(e){}
     return;
   }
 
@@ -7159,10 +7177,18 @@ async function handleECGUpload(event){
     /* Save to history */
     var now = new Date();
     var dateStr = now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-    ecgHistory.push({date:dateStr, summary:result.replace(/\s+/g,' ').substring(0,400), status:status});
+    ecgHistory.push({date:dateStr, ts:Date.now(), summary:result.replace(/\s+/g,' ').substring(0,400), status:status});
     if(ecgHistory.length > 10) ecgHistory.shift();
     localStorage.setItem('ecg_history', JSON.stringify(ecgHistory));
     renderECGHistory();
+
+    /* Ruaj ECG-në në Supabase si dokument të user-it (bucket + tabela documents) */
+    try{
+      var ext = (file.name && file.name.indexOf('.')>-1) ? file.name.split('.').pop() : (mediaType.includes('pdf')?'pdf':'jpg');
+      var ecgNamed = new File([file], 'ECG_'+now.toISOString().slice(0,10)+'_'+now.getTime()+'.'+ext, {type:file.type});
+      var savedDoc = await uploadUserDocument(ecgNamed);
+      if(savedDoc){ try{ refreshDocuments(); }catch(e){} }
+    }catch(e){ console.log('ECG doc save skip:', e.message); }
 
     /* Toast */
     if(status==='urgent') showToast('🚨 ECG kritike! Konsultohuni me Dr. Shabani!');
