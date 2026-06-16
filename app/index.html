@@ -10951,9 +10951,9 @@ async function runDeepProfileAnalysis(){
     + '5. Long-term cardiovascular, metabolic, respiratory risks\n'
     + '6. Specific action plan with timeline\n'
     + '7. Clinical summary for the treating physician\n\n'
-    + 'Respond ONLY in this exact JSON (no markdown, no backticks):\n'
+    + 'Keep EVERY field CONCISE (max 2 short sentences; action_plan max 4 short items) to fit a fast response. Respond ONLY in this exact JSON (no markdown, no backticks):\n'
     + '{'
-    + '"overall_verdict":"Comprehensive 3-4 sentence overall assessment",'
+    + '"overall_verdict":"Concise 2-3 sentence overall assessment",'
     + '"diagnoses_analysis":"Detailed analysis of each diagnosis with vitals correlation",'
     + '"therapy_analysis":"Assessment of current therapy effectiveness and interactions",'
     + '"lab_analysis":"Lab values interpretation and what they indicate",'
@@ -10965,7 +10965,7 @@ async function runDeepProfileAnalysis(){
   try{
     var d = await claudeFetch({
       model:'claude-sonnet-4-5',
-      max_tokens:1800,
+      max_tokens:1000,
       messages:[{role:'user', content:prompt}]
     });
 
@@ -10975,7 +10975,29 @@ async function runDeepProfileAnalysis(){
     renderDeepAnalysis(res, labs.length > 0);
 
   }catch(e){
-    document.getElementById('deepOverallVerdict').textContent = '❌ Error: '+e.message;
+    /* AI s'u arrit (timeout/504) → analizë bazë lokale që butoni të mos mbetet me error */
+    try{
+      var bpTxt = (v.sys&&v.dia) ? v.sys+'/'+v.dia+' mmHg' : 'pa regjistruar';
+      var risks=[];
+      if(v.sys>=140) risks.push('tension i lartë (rrezik kardiovaskular)');
+      else if(v.sys>=130) risks.push('tension kufitar (HTA Stage 1)');
+      if(v.glu>=7) risks.push('glukozë e ngritur (rrezik metabolik)');
+      if(v.spo2 && v.spo2<95) risks.push('SpO2 i ulët (rrezik respirator)');
+      if(v.hr>100) risks.push('puls i shpejtë');
+      var fb = {
+        overall_verdict: 'Vlerësim lokal (AI s\'u arrit për momentin). BP '+bpTxt+', HR '+(v.hr||'--')+' bpm, glukozë '+(v.glu||'--')+', SpO2 '+(v.spo2||'--')+'%. '+(risks.length?'Kujdes: '+risks.join('; ')+'.':'Treguesit brenda kufijve të pranueshëm.'),
+        diagnoses_analysis: diags.length? 'Diagnozat: '+diags.join(', ')+'. Ndiqi me monitorim të rregullt të vitaleve.' : 'Asnjë diagnozë e regjistruar.',
+        therapy_analysis: therapy.length? 'Terapia aktuale: '+therapy.join(', ')+'. Merri sipas orarit të caktuar.' : 'Asnjë terapi e regjistruar.',
+        lab_analysis: labs.length? 'Vlerat laboratorike: '+labs.join(', ')+'.' : 'Asnjë vlerë laboratorike e regjistruar.',
+        long_term_risks: risks.length? 'Rreziqe potenciale: '+risks.join('; ')+'. Kontroll i rregullt rekomandohet.' : 'Pa rreziqe të theksuara nga të dhënat aktuale.',
+        action_plan: ['Ndiq terapinë sipas orarit','Monitoro vitalet çdo ditë','Ec të paktën 7,500 hapa','Shtyp "Re-Run Deep Analysis" për analizën e plotë me AI'],
+        doctor_summary: 'Përmbledhje lokale: BP '+bpTxt+', HR '+(v.hr||'--')+', glukozë '+(v.glu||'--')+'. Diagnoza: '+(diags.join(', ')||'asnjë')+'. Terapi: '+(therapy.join(', ')||'asnjë')+'.'
+      };
+      renderDeepAnalysis(fb, labs.length > 0);
+      showToast('ℹ️ Analiza AI ngeci (504) — u shfaq vlerësimi lokal. Provo përsëri për detaje të plota.');
+    }catch(e2){
+      var dv=document.getElementById('deepOverallVerdict'); if(dv) dv.textContent = '❌ '+e.message;
+    }
   }
 
   if(btn){ btn.disabled=false; btn.innerHTML='Re-Run Deep Analysis'; }
