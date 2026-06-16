@@ -1112,6 +1112,15 @@ select option{background:#0A1628;color:#F1F5FF;}
           <button class="lfgtbtn" onclick="lshow('lfgt')">Forgot password?</button>
         </div>
         <button class="lsubbtn" id="lbtn-li" onclick="ldoLogin()">Sign In to D Health</button>
+        <div style="display:flex;align-items:center;gap:10px;margin:12px 0 8px;">
+          <div style="flex:1;height:0.5px;background:var(--border);"></div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);">or sign in with</div>
+          <div style="flex:1;height:0.5px;background:var(--border);"></div>
+        </div>
+        <button onclick="signInWithGoogle()" style="width:100%;padding:12px;background:#ffffff;border-radius:14px;border:1px solid rgba(0,0,0,0.12);box-shadow:0 2px 8px rgba(0,0,0,0.18);color:#3c4043;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7z"/></svg>
+          Continue with Google
+        </button>
         <div class="lterms">Secured with end-to-end encryption &#128274;<br><a href="#">Terms</a> &middot; <a href="#">Privacy</a></div>
       </div>
 
@@ -1164,7 +1173,7 @@ select option{background:#0A1628;color:#F1F5FF;}
           <div style="font-size:11px;color:rgba(255,255,255,0.5);">or sign up with</div>
           <div style="flex:1;height:0.5px;background:var(--border);"></div>
         </div>
-        <button onclick="signInWithGoogle()" style="width:100%;padding:12px;background:rgba(255,255,255,0.07);backdrop-filter:blur(8px);border-radius:14px;border:1px solid var(--border);background:var(--white);color:#3c4043;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
+        <button onclick="signInWithGoogle()" style="width:100%;padding:12px;background:#ffffff;border-radius:14px;border:1px solid rgba(0,0,0,0.12);box-shadow:0 2px 8px rgba(0,0,0,0.18);color:#3c4043;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
           <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7z"/></svg>
           Continue with Google
         </button>
@@ -1224,14 +1233,14 @@ select option{background:#0A1628;color:#F1F5FF;}
         </div>
       </div>
 
-      <!-- Google Fit -->
-      <div id="int-card-gfit" style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;" onclick="connectGoogleFit()">
-        <div style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">&#127939;</div>
+      <!-- Health Connect (Android) — lexon edhe Google Fit/Samsung Health -->
+      <div id="int-card-gfit" style="width:100%;background:rgba(52,168,83,0.14);border:1px solid rgba(52,168,83,0.4);border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;" onclick="connectGoogleFit()">
+        <div style="width:38px;height:38px;border-radius:11px;background:rgba(52,168,83,0.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">&#10084;&#65039;</div>
         <div style="flex:1;">
-          <div style="font-size:13px;font-weight:600;color:#fff;">Google Fit</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.6);" id="gfit-welcome-status">Steps · Calories · Activity</div>
+          <div style="font-size:13px;font-weight:700;color:#fff;">Health Connect</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.7);" id="gfit-welcome-status">Hapa · Kalori · Puls · Gjumë</div>
         </div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.4);">&#8250;</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5);">&#8250;</div>
       </div>
 
       <!-- Apple Health -->
