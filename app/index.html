@@ -8795,6 +8795,22 @@ function computeLocalEngineScore(data){
   };
 }
 
+/* Teksti i fundit i vlerësimit AI nga Profile (butoni Diagnostics) — që Verdict/Deep ta lexojnë */
+function _profileAssessmentText(){
+  var el = document.getElementById('ds-prof-text');
+  var t = el ? (el.textContent||'').replace(/\s+/g,' ').trim() : '';
+  if(!t || t.length < 25) return '';
+  return t.slice(0,1200);
+}
+/* ECG e fundit nga historiku (i njëjti burim si Profile) */
+function _latestEcgText(){
+  try{
+    var a = JSON.parse(localStorage.getItem('ecg_history')||'[]');
+    if(a.length){ var e=a[a.length-1]; return (e.date||'?')+' ['+(e.status||'')+']: '+(e.summary||''); }
+  }catch(e){}
+  return '';
+}
+
 async function runCorrelationEngine(){
   var btn = document.getElementById('ds-analyze-btn');
   if(btn && btn.disabled) return;                       /* tashmë po punon */
@@ -8805,6 +8821,7 @@ async function runCorrelationEngine(){
 
   var data = collectAllData();
   var d = data;
+  var profAssess = _profileAssessmentText();
 
   /* Build prompt */
   var prompt =
@@ -8833,7 +8850,8 @@ async function runCorrelationEngine(){
   + '- Allergies: '+(d.allergies.join(', ')||'None')+'\n'
   + '- Lab Values: '+(d.labs.join(', ')||'None')+'\n'
   + (d.notes ? '- Notes: '+d.notes+'\n' : '')
-  + (d.ecg ? '\nLATEST ECG:\n- '+d.ecg+'\n' : '')
+  + (d.ecg ? '\nLATEST ECG (from Profile):\n- '+d.ecg+'\n' : '')
+  + (profAssess ? '\nPROFILE DIAGNOSTICS RESULT (prior AI assessment from the Profile tab):\n'+profAssess+'\n' : '')
   + (d.history && d.history.length
       ? '\n7-DAY VITALS HISTORY:\n'+d.history.slice(0,7).map(function(h){
           return '- '+(h.date||'?')+': BP '+(h.sys||'--')+'/'+(h.dia||'--')+', HR '+(h.hr||'--')+', Glu '+(h.glu||'--')+(h.steps?(', Steps '+h.steps):'');
@@ -11019,6 +11037,8 @@ async function runDeepProfileAnalysis(){
   var allergies= getTags(['allergy-tags','prof-allergy-tags','ds-allergy-tags']);
   var labs     = getTags(['lab-tags','prof-lab-tags','ds-lab-tags']);
   var notes    = (document.getElementById('prof-notes')||{}).value || '';
+  var ecg      = _latestEcgText();
+  var profAssess = _profileAssessmentText();
 
   var v = vitalsState;
   var steps = parseInt((document.getElementById('da-steps')||{}).textContent||'0')||0;
@@ -11050,12 +11070,15 @@ async function runDeepProfileAnalysis(){
     + 'ALLERGIES: '+(allergies.join(', ')||'None')+'\n'
     + 'LAB VALUES: '+(labs.join(', ')||'None')+'\n'
     + (notes?'CLINICAL NOTES: '+notes+'\n':'')
+    + (ecg?'LATEST ECG (from Profile): '+ecg+'\n':'')
+    + (profAssess?'PROFILE DIAGNOSTICS RESULT (prior AI assessment): '+profAssess+'\n':'')
     + 'AIR QUALITY: AQI '+aqi+'\n'
     + (history.length?'VITALS TREND (last '+history.length+' days): '+JSON.stringify(history.slice(0,3))+'\n':'')
-    + '\nPerform a COMPREHENSIVE DEEP ANALYSIS covering:\n'
-    + '1. Overall health verdict based on ALL data\n'
-    + '2. Each diagnosis analyzed with current vitals correlation\n'
-    + '3. Therapy effectiveness and potential interactions\n'
+    + '\nThis is the FINAL verdict — integrate EVERYTHING above (vitals, ECG, therapy, labs, profile result).\n'
+    + 'Perform a COMPREHENSIVE DEEP ANALYSIS covering:\n'
+    + '1. Overall health verdict based on ALL data, explicitly incorporating the LATEST ECG finding\n'
+    + '2. Each diagnosis analyzed with current vitals AND ECG correlation\n'
+    + '3. Therapy effectiveness, how it fits the ECG finding, and potential interactions\n'
     + '4. Lab values interpretation if available\n'
     + '5. Long-term cardiovascular, metabolic, respiratory risks\n'
     + '6. Specific action plan with timeline\n'
