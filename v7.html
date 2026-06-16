@@ -10198,6 +10198,7 @@ function showManualEntry(){
 async function handleMealPhoto(input){
   var file = input.files[0];
   if(!file) return;
+  if(mealsTodayCount() >= MEALS_DAILY_LIMIT){ input.value=''; showToast('⚠️ Limit: '+MEALS_DAILY_LIMIT+' racione në 24h. Fshi një për të shtuar të ri.'); return; }
 
   /* Convert to base64 */
   var reader = new FileReader();
@@ -10326,10 +10327,18 @@ function confirmAddMeal(){
   setTimeout(function(){ try{ aiMealSuggestion(meal); }catch(e){} }, 700);
 }
 
+/* Sa racione (vakte) janë shtuar sot — limit 5 në 24h */
+function mealsTodayCount(){
+  var today = new Date().toISOString().split('T')[0];
+  try{ return JSON.parse(localStorage.getItem('dh_meals')||'[]').filter(function(m){return m.date===today;}).length; }catch(e){ return 0; }
+}
+var MEALS_DAILY_LIMIT = 5;
+
 function addManualMeal(){
   var name = document.getElementById('nutrManualName').value.trim();
   var cal  = parseInt(document.getElementById('nutrManualCal').value)||0;
   if(!name){ showToast('⚠️ Please enter meal name'); return; }
+  if(mealsTodayCount() >= MEALS_DAILY_LIMIT){ showToast('⚠️ Limit: '+MEALS_DAILY_LIMIT+' racione në 24h. Fshi një për të shtuar të ri.'); return; }
   var meal = {
     id: Date.now(),
     name: name,
@@ -10372,7 +10381,7 @@ function saveMeal(meal){
       meal_date:  meal.date    || new Date().toISOString().split('T')[0],
       meal_time:  meal.time    || ''
     }).then(function(res){
-      if(res.error) console.warn('Meal save error:', res.error.message);
+      if(res.error){ console.warn('Meal save error:', res.error.message); showToast('⚠️ Ruajtja e vaktit dështoi: '+res.error.message); }
       else console.log('✅ Meal saved to Supabase:', meal.name);
     });
   }
@@ -10593,10 +10602,18 @@ function renderNutritionUI(){
 
 function removeMeal(id){
   var meals = JSON.parse(localStorage.getItem('dh_meals')||'[]');
-  meals = meals.filter(function(m){return m.id!==id;});
+  var m = meals.filter(function(x){return x.id===id;})[0];
+  meals = meals.filter(function(x){return x.id!==id;});
   localStorage.setItem('dh_meals', JSON.stringify(meals));
   renderNutritionUI();
-  showToast('🗑 Meal removed');
+  /* Fshi edhe nga Supabase (që të mos rikthehet në login) — me përputhje përmbajtjeje */
+  var sb = getSupa();
+  if(sb && m && LST.currentUser && LST.currentUser.id){
+    var q = sb.from('meals').delete().eq('patient_id', LST.currentUser.id).eq('name', m.name).eq('meal_date', m.date || new Date().toISOString().split('T')[0]);
+    if(m.time) q = q.eq('meal_time', m.time);
+    q.then(function(res){ if(res.error) console.warn('meal delete:', res.error.message); else console.log('🗑 Meal deleted from Supabase'); });
+  }
+  showToast('🗑 Vakti u fshi (lokal + cloud)');
 }
 
 /* Auto-render on load */
