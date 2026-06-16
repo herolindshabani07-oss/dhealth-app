@@ -1533,21 +1533,21 @@ select option{background:#0A1628;color:#F1F5FF;}
 
     <!-- Health Connect (primar) -->
     <div class="v7-wide" id="home-int-gfit" onclick="connectGoogleFit()">
-      <div class="v7-wico" style="background:linear-gradient(135deg,#d6f5e8,#9fe4c1)!important;color:#11a06a;">&#10084;&#65039;</div>
+      <div class="v7-wico" style="background:#fff!important;"><svg viewBox="0 0 512 512" width="33" height="33" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ghL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EA4335"/><stop offset="1" stop-color="#FBBC04"/></linearGradient><linearGradient id="ghR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4285F4"/><stop offset="1" stop-color="#34A853"/></linearGradient></defs><path d="M256 396 C140 312 86 246 86 184 C86 140 120 110 160 110 C195 110 230 130 256 168 L256 396 Z" fill="url(#ghL)"/><path d="M256 396 C372 312 426 246 426 184 C426 140 392 110 352 110 C317 110 282 130 256 168 L256 396 Z" fill="url(#ghR)"/><path d="M194 232 L240 278 L324 194" fill="none" stroke="#fff" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div style="flex:1;min-width:0;"><div class="v7-wt1">Health Connect</div><div class="v7-wt2" id="ds-gfit-status">Not connected</div></div>
       <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">&#8250;</span></div>
     </div>
 
     <!-- Apple Health -->
     <div class="v7-wide" id="home-int-apple" onclick="connectAppleHealth()">
-      <div class="v7-wico" style="background:linear-gradient(135deg,#ffe0e6,#ffb1c2)!important;color:#e0436a;">&#127822;</div>
+      <div class="v7-wico" style="background:#fff!important;"><svg viewBox="0 0 512 512" width="38" height="38" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ahg" x1="0" y1="0" x2="1" y2="0"><stop offset="0.5" stop-color="#F3F3F5"/><stop offset="0.5" stop-color="#E7E7EA"/></linearGradient></defs><rect x="40" y="40" width="432" height="432" rx="112" fill="url(#ahg)"/><path d="M256 388 C180 334 148 282 148 233 C148 198 175 174 206 174 C228 174 246 187 256 208 C266 187 284 174 306 174 C337 174 364 198 364 233 C364 282 332 334 256 388 Z" fill="#E63950"/></svg></div>
       <div style="flex:1;min-width:0;"><div class="v7-wt1">Apple Health</div><div class="v7-wt2" id="ds-apple-status">iOS only</div></div>
       <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">&#8250;</span></div>
     </div>
 
     <!-- Fitbit -->
     <div class="v7-wide" id="home-int-fitbit" onclick="connectFitbit()">
-      <div class="v7-wico" style="background:linear-gradient(135deg,#d6f0f3,#a6dfe5)!important;color:#00a3ad;">&#8987;</div>
+      <div class="v7-wico" style="background:#fff!important;"><svg viewBox="0 0 512 512" width="35" height="35" xmlns="http://www.w3.org/2000/svg"><rect x="188" y="34" width="136" height="152" rx="46" fill="#EFA63C"/><rect x="188" y="326" width="136" height="152" rx="46" fill="#EFA63C"/><rect x="146" y="120" width="220" height="272" rx="52" fill="#2E3A54" stroke="#E2E8F2" stroke-width="14"/><rect x="360" y="232" width="22" height="48" rx="9" fill="#3C4C68"/><text x="250" y="276" font-family="Arial,Helvetica,sans-serif" font-size="58" font-weight="700" fill="#FFFFFF" text-anchor="middle">12:10</text></svg></div>
       <div style="flex:1;min-width:0;"><div class="v7-wt1">Fitbit</div><div class="v7-wt2" id="ds-fitbit-status">Not connected</div></div>
       <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">&#8250;</span></div>
     </div>
@@ -1558,6 +1558,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div style="flex:1;min-width:0;"><div class="v7-wt1" style="color:#4db6e8;">D Health Ring</div><div class="v7-wt2" id="ds-ring-status">Trokit për t'u lidhur</div></div>
       <div class="v7-wr"><span style="background:#ede4ff;color:#7c4dff;font-size:9px;font-weight:700;padding:3px 9px;border-radius:9px;white-space:nowrap;">Së shpejti</span></div>
     </div>
+    <button id="ds-toggle-btn" onclick="toggleDataSources()" class="v7-morebtn">➕ Shto burim</button>
 
     <div style="height:30px;"></div>
   </div>
@@ -9998,10 +9999,17 @@ function updateDataSources(){
         el.style.color = 'var(--tm)';
       }
     }
-    /* Të 4 kartat gjithmonë të dukshme (Health Connect, Apple, Fitbit, Ring) */
+    /* Shfaq vetëm burimet aktive; të tjerat fshihen pas butonit "➕ Shto burim" */
     var card = document.getElementById('home-int-'+a.key);
-    if(card){ card.style.display = 'flex'; }
+    if(card){
+      card.style.display = (isConn || dsExpanded) ? 'flex' : 'none';
+      if(!isConn) hiddenCount++;
+    }
   });
+  /* D Health Ring — trajtohet si burim (fshihet po s'është aktiv) */
+  var ringConn = (typeof DHRING!=='undefined' && DHRING.connected) || localStorage.getItem('connect_ring')==='true';
+  var ringCard = document.getElementById('home-int-ring');
+  if(ringCard){ ringCard.style.display = (ringConn || dsExpanded) ? 'flex' : 'none'; if(!ringConn) hiddenCount++; }
   /* Manual is always active */
   connected++;
   var countEl = document.getElementById('dataSourcesCount');
