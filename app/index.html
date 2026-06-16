@@ -9309,7 +9309,7 @@ async function connectHealthConnect(){
       return;
     }
     await Health.requestHealthPermissions({
-      permissions: ['READ_STEPS','READ_HEART_RATE','READ_CALORIES','READ_DISTANCE']
+      permissions: ['READ_STEPS','READ_ACTIVE_CALORIES','READ_HEART_RATE','READ_WORKOUTS','READ_DISTANCE']
     });
     setConnected('gfit', true);
     localStorage.setItem('connect_gfit','true');
@@ -9343,9 +9343,9 @@ async function syncHealthConnect(){
 
   try{
     var steps     = Math.round(await agg('steps'));
-    var calories  = Math.round(await agg('calories'));
-    var distanceM = await agg('distance');
-    var distance  = Math.round(distanceM / 1000 * 10) / 10;
+    var calories  = Math.round(await agg('active-calories'));   /* plugin: 'active-calories', jo 'calories' */
+    /* Distanca s'mbështetet nga queryAggregated i këtij plugin-i → e marrim nga workouts (poshtë) ose unaza/manual */
+    var distance  = 0;
 
     /* HR mesatar nga workouts (nëse ka) */
     var hr = 0;
