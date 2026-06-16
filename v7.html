@@ -1892,7 +1892,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;margin:10px 16px 0;border:1px solid rgba(255,107,138,0.25);padding:14px;position:relative;overflow:hidden;">
       <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF6B8A,#8B6FE8);"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div style="font-size:13px;font-weight:700;color:#F1F5FF;">🫀 ECG Analysis</div>
+        <div style="font-size:13px;font-weight:700;color:#F1F5FF;">🫀 ECG Smart Analysis</div>
         <span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(139,111,232,0.1);color:var(--purple);">Clinic Only</span>
       </div>
       <div id="ecgVitalsArea">
@@ -3144,6 +3144,10 @@ select option{background:#0A1628;color:#F1F5FF;}
               Upload & Analyze ECG
               <input type="file" id="ecgFileInputProfile" accept="image/*,.pdf" style="display:none;" onchange="handleECGUpload(event)"/>
             </label>
+            <div id="ecgResultAreaProfile" style="display:none;margin-top:10px;background:linear-gradient(135deg,#1A0A2E,#2D1B69);border-radius:12px;padding:12px;">
+              <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">🤖 Claude AI — ECG Analysis</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.9);line-height:1.7;" id="ecgResultTextProfile"></div>
+            </div>
             <div id="ecgHistoryProfile" style="margin-top:8px;"></div>
           </div>
         </div>
@@ -7093,14 +7097,16 @@ function triggerECGUpload(){
 async function handleECGUpload(event){
   var file = event.target.files[0];
   if(!file) return;
+  /* Cili input e nisi — Profile apo Vitals — që rezultati të shfaqet te ekrani i duhur */
+  var fromProfile = event.target && event.target.id === 'ecgFileInputProfile';
 
   if(ACCESS && ACCESS.currentPlan !== 'clinic'){
     showToast('🔒 Clinic Plan required');
     return;
   }
 
-  var resultArea = document.getElementById('ecgResultArea');
-  var resultText = document.getElementById('ecgResultText');
+  var resultArea = document.getElementById(fromProfile ? 'ecgResultAreaProfile' : 'ecgResultArea');
+  var resultText = document.getElementById(fromProfile ? 'ecgResultTextProfile' : 'ecgResultText');
   if(!resultArea || !resultText) return;
 
   resultArea.style.display = 'block';
@@ -7968,8 +7974,15 @@ async function extractLabsFromDocument(file){
 }
 
 async function analyzeDsProfile(){
-  return aiPanel({btn:event.target, resp:'ds-prof-resp', text:'ds-prof-text', label:'Diagnostics', maxTokens:700,
-    prompt:'Analyze my complete patient profile above. Assess: 1) condition relationships, 2) therapy effectiveness, 3) drug-allergy conflicts, 4) my TODAY\'S ACTIVITY (steps + calories burned) and NUTRITION — are they enough for my conditions and what to change, 5) top 3 risks, 6) recommendations. Reference my real numbers. Use bullets. Be concise.'});
+  return aiPanel({btn:event.target, resp:'ds-prof-resp', text:'ds-prof-text', label:'Diagnostics', maxTokens:1000,
+    prompt:'Analyze my complete patient profile above. Cover ALL points using my REAL data:\n'
+      +'1) **LATEST ECG ANALYSIS** — interpret the finding (rhythm, rate, any anomaly), what it means for my heart, and how it relates to my diagnoses and vitals. If no ECG is recorded yet, say so in one line.\n'
+      +'2) **Therapy review** — go through EACH current medication: does it fit my diagnoses + ECG finding? Flag any drug-allergy conflict or gap (a diagnosis with no matching therapy).\n'
+      +'3) Condition relationships.\n'
+      +'4) My TODAY\'S ACTIVITY (steps + calories) and NUTRITION — are they enough for my conditions and what to change.\n'
+      +'5) Top 3 risks.\n'
+      +'6) Recommendations.\n'
+      +'Use bold for the section headers and key values. Use bullets. Be concise.'});
 }
 
 
