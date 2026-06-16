@@ -1986,9 +1986,9 @@ select option{background:#0A1628;color:#F1F5FF;}
           </div>
 
           <!-- Verdikt -->
-          <div id="vieVerdict" style="background:linear-gradient(135deg,#1A0A2E,#2D1B69);border-radius:14px;padding:13px;margin-bottom:10px;">
-            <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🧠 AI Verdict</div>
-            <div id="vieVerdictText" style="font-size:12px;color:rgba(255,255,255,0.9);line-height:1.7;"></div>
+          <div id="vieVerdict" style="background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.6));border:1px solid rgba(120,150,190,.18);box-shadow:0 8px 20px rgba(70,120,190,.1);border-radius:14px;padding:13px;margin-bottom:10px;">
+            <div style="font-size:10px;font-weight:700;color:#7387a4;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🧠 AI Verdict</div>
+            <div id="vieVerdictText" style="font-size:12px;color:#1f2c44;line-height:1.7;"></div>
           </div>
 
           <!-- Stili Ditor -->
@@ -10817,13 +10817,13 @@ function renderVIE(res){
   if(res.nutrition_impact || res.compensation){
     var nutrDiv = document.createElement('div');
     nutrDiv.id = 'vieNutrImpact';
-    nutrDiv.style.cssText = 'background:linear-gradient(135deg,rgba(249,115,22,0.15),rgba(220,38,38,0.1));border-radius:14px;padding:13px;margin-bottom:10px;border:1px solid rgba(249,115,22,0.3);';
+    nutrDiv.style.cssText = 'background:linear-gradient(135deg,rgba(249,115,22,0.12),rgba(255,255,255,0.7));border-radius:14px;padding:13px;margin-bottom:10px;border:1px solid rgba(249,115,22,0.3);';
     var mealImpact = window._mealScoreImpact || 0;
-    var impactColor = mealImpact < 0 ? '#FCA5A5' : '#6EE7B7';
-    nutrDiv.innerHTML = '<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🍽️ Nutrition Impact Today</div>'
+    var impactColor = mealImpact < 0 ? '#DC2626' : '#0E9F6E';
+    nutrDiv.innerHTML = '<div style="font-size:11px;font-weight:700;color:#92580f;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🍽️ Nutrition Impact Today</div>'
       +(mealImpact !== 0 ? '<div style="font-size:11px;font-weight:700;color:'+impactColor+';margin-bottom:6px;">Meal score impact: '+mealImpact+' pts</div>' : '')
-      +(res.nutrition_impact ? '<div style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:8px;">'+res.nutrition_impact+'</div>' : '')
-      +(res.compensation ? '<div style="background:rgba(255,255,255,0.1);border-radius:10px;padding:9px 11px;font-size:12px;color:rgba(255,255,255,0.9);line-height:1.6;">💪 '+res.compensation+'</div>' : '');
+      +(res.nutrition_impact ? '<div style="font-size:12px;color:#1f2c44;line-height:1.6;margin-bottom:8px;">'+res.nutrition_impact+'</div>' : '')
+      +(res.compensation ? '<div style="background:rgba(255,255,255,0.85);border:1px solid rgba(120,150,190,.18);border-radius:10px;padding:9px 11px;font-size:12px;color:#1f2c44;line-height:1.6;">💪 '+res.compensation+'</div>' : '');
     var vieVerdict = document.getElementById('vieVerdict');
     if(vieVerdict && vieVerdict.nextSibling){
       vieVerdict.parentNode.insertBefore(nutrDiv, vieVerdict.nextSibling);
