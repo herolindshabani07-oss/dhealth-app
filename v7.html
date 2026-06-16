@@ -4433,19 +4433,74 @@ function renderAlarms(){var k=dk(sY,sM,sD);document.getElementById('alTitle').te
 
 function removeAlarm(key, idx){
   if(!alarms[key]) return;
-  var name = alarms[key][idx] ? alarms[key][idx].name : 'alarm';
+  var _a = alarms[key][idx];
+  var name = _a ? _a.name : 'alarm';
+  if(_a){ try{ cancelTherapyNotif(_a.name, _a.time); }catch(e){} }
   alarms[key].splice(idx, 1);
   if(alarms[key].length === 0) delete alarms[key];
   renderCal();
   showToast('🗑 ' + name + ' removed');
 }
 function ft(t){var p=t.split(':');var h=parseInt(p[0]);var ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+p[1]+' '+ap;}
-function togA(k,i,b){alarms[k][i].on=!alarms[k][i].on;b.className='altg '+(alarms[k][i].on?'on':'off');}
+function togA(k,i,b){alarms[k][i].on=!alarms[k][i].on;b.className='altg '+(alarms[k][i].on?'on':'off');var a=alarms[k][i];try{a.on?scheduleTherapyNotif(a.name,a.time):cancelTherapyNotif(a.name,a.time);}catch(e){}}
 function prevM(){cM--;if(cM<0){cM=11;cY--;}renderCal();}
 function nextM(){cM++;if(cM>11){cM=0;cY++;}renderCal();}
 function openMod(){document.getElementById('modOv').classList.add('open');}
 function closeMod(){document.getElementById('modOv').classList.remove('open');}
 function selClr(el,c){document.querySelectorAll('.cp').forEach(function(x){x.classList.remove('sel');});el.classList.add('sel');pC=c;}
+/* ═══════════ ZILE REALE TË TERAPISË — Local Notifications (vetëm native APK) ═══════════ */
+function getLocalNotif(){
+  if(!window.Capacitor) return null;
+  if(window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) return window.Capacitor.Plugins.LocalNotifications;
+  if(window.Capacitor.registerPlugin) return window.Capacitor.registerPlugin('LocalNotifications');
+  return null;
+}
+function _notifId(name, time){
+  var s = String(name)+'|'+String(time), h=0;
+  for(var i=0;i<s.length;i++){ h=((h<<5)-h+s.charCodeAt(i))|0; }
+  return Math.abs(h)%2000000000 + 1;
+}
+async function ensureNotifPermission(){
+  if(!isNativeApp()) return false;
+  var LN=getLocalNotif(); if(!LN) return false;
+  try{
+    var p = await LN.checkPermissions();
+    if(p.display!=='granted'){ p = await LN.requestPermissions(); }
+    return p.display==='granted';
+  }catch(e){ return false; }
+}
+async function scheduleTherapyNotif(name, time){
+  if(!isNativeApp()) return;
+  var LN=getLocalNotif(); if(!LN || !time) return;
+  var p=String(time).split(':'); var hour=parseInt(p[0]), minute=parseInt(p[1])||0;
+  if(isNaN(hour)) return;
+  try{
+    await LN.schedule({ notifications:[{
+      id:_notifId(name,time),
+      title:'💊 Koha e terapisë',
+      body:String(name)+' — ora '+time,
+      schedule:{ on:{ hour:hour, minute:minute }, allowWhileIdle:true },
+      smallIcon:'ic_launcher'
+    }]});
+  }catch(e){ console.warn('scheduleTherapyNotif', e); }
+}
+async function cancelTherapyNotif(name, time){
+  if(!isNativeApp()) return;
+  var LN=getLocalNotif(); if(!LN) return;
+  try{ await LN.cancel({ notifications:[{ id:_notifId(name,time) }] }); }catch(e){}
+}
+async function rescheduleAllTherapyNotifs(){
+  if(!isNativeApp()) return;
+  var ok=await ensureNotifPermission(); if(!ok) return;
+  Object.keys(alarms).forEach(function(k){
+    (alarms[k]||[]).forEach(function(a){
+      if(!a || !a.time) return;
+      if(a.on!==false) scheduleTherapyNotif(a.name, a.time);
+      else cancelTherapyNotif(a.name, a.time);
+    });
+  });
+}
+
 function saveAlarm(){
   var n = document.getElementById('alNm').value || 'Therapy';
   var t = document.getElementById('alTm').value || '08:00';
@@ -4453,6 +4508,7 @@ function saveAlarm(){
   if(!alarms[k]) alarms[k] = [];
   var newAlarm = {name:n, time:t, color:pC, on:true};
   alarms[k].push(newAlarm);
+  try{ scheduleTherapyNotif(n, t); }catch(e){}   /* zile reale native */
   document.getElementById('calGrid').innerHTML = '';
   renderCal();
   closeMod();
@@ -5788,6 +5844,8 @@ function togNAl(i,btn){
   if(alarms[today]&&alarms[today][i]){
     alarms[today][i].on=!alarms[today][i].on;
     btn.className='altg '+(alarms[today][i].on?'on':'off');
+    var a=alarms[today][i];
+    try{ a.on?scheduleTherapyNotif(a.name,a.time):cancelTherapyNotif(a.name,a.time); }catch(e){}
   }
 }
 function toggleNotif(type,btn){
@@ -7296,6 +7354,7 @@ function linkTherapyToAlarm(label, slot){
   var exists = alarms[k].some(function(a){ return (a.name||'').toLowerCase() === String(label).toLowerCase(); });
   if(!exists){
     alarms[k].push({name:label, time:t, color:col, on:true, therapy:true});
+    try{ scheduleTherapyNotif(label, t); }catch(e){}   /* zile reale native */
     var sb = getSupa();
     if(sb && LST.currentUser && LST.currentUser.id){
       sb.from('therapy_alarms').insert({patient_id:LST.currentUser.id, name:label, time:t, color:col, active:true, alarm_date:_dkToISO(k)})
@@ -7310,6 +7369,7 @@ function linkTherapyToAlarm(label, slot){
 function unlinkTherapyAlarm(label){
   var lo = String(label||'').toLowerCase();
   Object.keys(alarms).forEach(function(k){
+    (alarms[k]||[]).forEach(function(a){ if((a.name||'').toLowerCase()===lo){ try{ cancelTherapyNotif(a.name, a.time); }catch(e){} } });
     alarms[k] = (alarms[k]||[]).filter(function(a){ return (a.name||'').toLowerCase() !== lo; });
     if(!alarms[k].length) delete alarms[k];
   });
@@ -8264,6 +8324,7 @@ async function initUserData(userId, userName, userEmail){
         }
       });
       try{ renderCal(); renderNotifAlarms(); }catch(e){}
+      try{ rescheduleAllTherapyNotifs(); }catch(e){}   /* ri-planifiko zilet native */
       console.log('✅ Alarms loaded from Supabase:', dbAlarms.length);
     }
 
