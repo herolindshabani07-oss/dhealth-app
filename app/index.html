@@ -8688,7 +8688,11 @@ function computeLocalEngineScore(data){
 
 async function runCorrelationEngine(){
   var btn = document.getElementById('ds-analyze-btn');
+  if(btn && btn.disabled) return;                       /* tashmë po punon */
+  var _otherBtn = document.getElementById('deepAnalyzeBtn');
+  if(_otherBtn && _otherBtn.disabled) return;            /* Deep po punon → bllokoje */
   if(btn){ btn.disabled=true; btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Analyzing...'; }
+  if(_otherBtn){ _otherBtn.disabled=true; _otherBtn.style.opacity='0.5'; }
 
   var data = collectAllData();
   var d = data;
@@ -8779,6 +8783,7 @@ async function runCorrelationEngine(){
   }
 
   if(btn){ btn.disabled=false; btn.innerHTML='Re-Analyze'; }
+  if(_otherBtn){ _otherBtn.disabled=false; _otherBtn.style.opacity=''; }
 }
 
 function renderEngineResult(result, data){
@@ -10880,7 +10885,11 @@ async function claudeFetch(body){
 async function runDeepProfileAnalysis(){
   var btn = document.getElementById('deepAnalyzeBtn');
   var result = document.getElementById('deepAnalysisResult');
+  if(btn && btn.disabled) return;                        /* tashmë po punon */
+  var _otherBtn = document.getElementById('ds-analyze-btn');
+  if(_otherBtn && _otherBtn.disabled) return;             /* Re-Analyze po punon → bllokoje */
   if(btn){ btn.disabled=true; btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Deep analyzing...'; }
+  if(_otherBtn){ _otherBtn.disabled=true; _otherBtn.style.opacity='0.5'; }
   if(result) result.style.display='block';
 
   /* Collect ALL profile data */
@@ -10970,6 +10979,7 @@ async function runDeepProfileAnalysis(){
   }
 
   if(btn){ btn.disabled=false; btn.innerHTML='Re-Run Deep Analysis'; }
+  if(_otherBtn){ _otherBtn.disabled=false; _otherBtn.style.opacity=''; }
 }
 
 function renderDeepAnalysis(res, hasLabs){
