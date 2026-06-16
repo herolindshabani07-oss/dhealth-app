@@ -3727,24 +3727,49 @@ function openPriv(){
   setTimeout(initDrShabaniChat, 100);
 }
 
-function addRecentAlert(icon, iconBg, title, msg, timeStr, actionFn){
+/* ===== Recent Alerts — të persistuara në localStorage ===== */
+function _getRecentAlerts(){ try{ return JSON.parse(localStorage.getItem('dh_recent_alerts')||'[]'); }catch(e){ return []; } }
+function _saveRecentAlerts(a){ try{ localStorage.setItem('dh_recent_alerts', JSON.stringify(a.slice(0,20))); }catch(e){} }
+function _relTime(ts){
+  var d=Math.floor((Date.now()-ts)/1000);
+  if(d<60) return 'Tani';
+  if(d<3600) return Math.floor(d/60)+' min më parë';
+  if(d<86400) return Math.floor(d/3600)+' orë më parë';
+  if(d<172800) return 'Dje';
+  return Math.floor(d/86400)+' ditë më parë';
+}
+function _updateNotifDot(){
+  var nb=document.getElementById('notifDot'); if(!nb) return;
+  var n=_getRecentAlerts().length;
+  if(n>0){ nb.style.display='flex'; nb.textContent=n; } else { nb.style.display='none'; nb.textContent='0'; }
+}
+function pushRecentAlert(icon, iconBg, title, msg){
+  var a=_getRecentAlerts();
+  a.unshift({icon:icon||'🔔', iconBg:iconBg||'#EBF3FF', title:title, msg:msg, ts:Date.now()});
+  _saveRecentAlerts(a);
+  renderRecentAlerts();
+  _updateNotifDot();
+}
+function renderRecentAlerts(){
   var list = document.getElementById('recentAlertsList');
-  var empty = document.getElementById('recentAlertsEmpty');
   if(!list) return;
-  if(empty) empty.style.display = 'none';
-  var item = document.createElement('div');
-  item.className = 'notif-item unread';
-  item.innerHTML = '<div class="notif-ico-wrap" style="background:'+iconBg+';">'+icon+'</div>'
-    +'<div class="notif-body">'
-    +'<div class="notif-title-txt">'+title+'</div>'
-    +'<div class="notif-msg">'+msg+'</div>'
-    +'<div class="notif-time-txt">'+timeStr+'</div>'
-    +(actionFn ? '<div class="notif-action" style="cursor:pointer;">View &rsaquo;</div>' : '')
-    +'</div>';
-  if(actionFn) item.querySelector('.notif-action').onclick = actionFn;
-  list.insertBefore(item, list.firstChild);
-  var nb = document.getElementById('notifDot');
-  if(nb){ nb.style.display='flex'; nb.textContent=parseInt(nb.textContent||'0')+1; }
+  var a=_getRecentAlerts();
+  if(!a.length){ list.innerHTML='<div style="text-align:center;padding:18px 0;font-size:12px;color:#7387a4;">No recent alerts</div>'; return; }
+  var h='';
+  a.forEach(function(it){
+    h+='<div class="notif-item unread">'
+      +'<div class="notif-ico-wrap" style="background:'+(it.iconBg||'#EBF3FF')+';">'+(it.icon||'🔔')+'</div>'
+      +'<div class="notif-body">'
+      +'<div class="notif-title-txt">'+it.title+'</div>'
+      +'<div class="notif-msg">'+it.msg+'</div>'
+      +'<div class="notif-time-txt">'+_relTime(it.ts)+'</div>'
+      +'</div></div>';
+  });
+  list.innerHTML=h;
+}
+/* Mbahet për pajtueshmëri me thirrjet ekzistuese (p.sh. booking) — tani persiston */
+function addRecentAlert(icon, iconBg, title, msg, timeStr, actionFn){
+  pushRecentAlert(icon, iconBg, title, msg);
 }
 function toggleDrop(){document.getElementById('dropMenu').classList.toggle('open');}
 function closeDrop(){var m=document.getElementById('dropMenu');if(m)m.classList.remove('open');}
@@ -4531,6 +4556,7 @@ function saveAlarm(){
   renderCal();
   closeMod();
   showToast('✅ '+n+' alarm saved at '+t+'!');
+  try{ pushRecentAlert('💊','#EBF3FF','Alarm i ri u vendos', n+' — çdo ditë në orën '+ft(t)); }catch(e){}
 
   /* Supabase save */
   var sb = getSupa();
@@ -5830,11 +5856,27 @@ function setupOAuthDeepLink(){
 
 
 /* ════ NOTIFICATIONS ════ */
-function initNotifications(){renderNotifAlarms();updateNotifBadge();}
+function initNotifications(){renderNotifAlarms();renderRecentAlerts();updateNotifBadge();}
 function renderNotifAlarms(){
   var list=document.getElementById('notifAlarmList');if(!list)return;
   var today=dk(sY,sM,sD);var arr=alarms[today]||[];
   var cols={red:'#FF6B8A',amber:'#F5A623',green:'#2DC8A0',purple:'#8B6FE8',orange:'#F97316'};
+
+  /* ── Next alarm today (gjithmonë rifreskohet) ── */
+  var e1=document.getElementById('nextAlarmTime');
+  var e2=document.getElementById('nextAlarmName');
+  var now=new Date();var found=null;
+  for(var j=0;j<arr.length;j++){
+    var pt=arr[j].time.split(':');
+    var ah=parseInt(pt[0]),am=parseInt(pt[1]);
+    if(arr[j].on&&(ah>now.getHours()||(ah===now.getHours()&&am>now.getMinutes()))){found=arr[j];break;}
+  }
+  if(e1&&e2){
+    if(found){ e1.textContent=ft(found.time); e2.textContent=found.name; }
+    else { e1.textContent='--:--'; e2.textContent=arr.length?'Asnjë alarm i mbetur sot':'Asnjë alarm i vendosur'; }
+  }
+
+  /* ── Today's Therapy Schedule ── */
   if(!arr.length){list.innerHTML='<div style="text-align:center;padding:10px 0;font-size:12px;color:rgba(255,255,255,0.5);">No alarms today</div>';return;}
   var h='';
   arr.forEach(function(a,i){
@@ -5847,15 +5889,6 @@ function renderNotifAlarms(){
       +'</div>';
   });
   list.innerHTML=h;
-  var now=new Date();
-  for(var j=0;j<arr.length;j++){
-    var pt=arr[j].time.split(':');
-    var ah=parseInt(pt[0]),am=parseInt(pt[1]);
-    if(arr[j].on&&(ah>now.getHours()||(ah===now.getHours()&&am>now.getMinutes()))){
-      var e1=document.getElementById('nextAlarmTime');var e2=document.getElementById('nextAlarmName');
-      if(e1)e1.textContent=ft(arr[j].time);if(e2)e2.textContent=arr[j].name;break;
-    }
-  }
 }
 function togNAl(i,btn){
   var today=dk(sY,sM,sD);
@@ -5882,8 +5915,12 @@ function updateNotifBadge(){
   var m=document.getElementById('notifMitsText');if(m)m.textContent=n>0?n+' unread alerts':'All caught up';
 }
 function clearAllNotifs(){
-  document.querySelectorAll('#notifSheet .notif-item').forEach(function(el){el.classList.remove('unread');});
-  updateNotifBadge();showToast('\u2713 All notifications cleared');
+  _saveRecentAlerts([]);
+  renderRecentAlerts();
+  _updateNotifDot();
+  var b=document.getElementById('notifBadge'); if(b) b.textContent='All caught up \u2713';
+  updateNotifBadge();
+  showToast('\u2713 All notifications cleared');
 }
 /* (funksioni setSchedule u hoq — nuk thirret më pas pastrimit të Reminder Schedule) */
 
@@ -8204,6 +8241,7 @@ async function initUserData(userId, userName, userEmail){
   if(profName) profName.textContent = userName || firstName;
   var v7hn = document.getElementById('v7HomeName');
   if(v7hn) v7hn.textContent = userName || firstName;
+  try{ renderRecentAlerts(); _updateNotifDot(); }catch(e){}
   var profEmail = document.getElementById('moreProfileEmail');
   if(profEmail) profEmail.textContent = userEmail || '';
 
