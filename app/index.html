@@ -1811,7 +1811,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div>
 
     <button class="enter-trig" id="vitTrig" onclick="toggleVI()">
-      <div style="display:flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>Enter Vital Signs</div>
+      <div style="display:flex;align-items:center;gap:8px;">Enter Vital Signs</div>
       <span class="trig-arr" id="trigArr">▼</span>
     </button>
     <div class="vi-panel" id="viPanel">
@@ -1967,8 +1967,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       <!-- VITAL INTELLIGENCE ENGINE -->
       <div style="padding:10px 14px;">
         <button id="vitAiAnalyzeBtn" onclick="runVitalIntelligence()" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#0D3B8E,#1E5FBA,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(59,125,216,0.4);">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="white"/></svg>
-          ⚡ Run Vital
+          Run Vital
         </button>
 
         <!-- Engine Result -->
@@ -3036,13 +3035,12 @@ select option{background:#0A1628;color:#F1F5FF;}
         </div>
       </div>
       <button onclick="runCorrelationEngine()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;" id="ds-analyze-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="white"/></svg>
         Re-Analyze
       </button>
 
       <!-- DEEP PROFILE ANALYSIS -->
       <button onclick="runDeepProfileAnalysis()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#0D3B8E,#7C3AED);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;" id="deepAnalyzeBtn">
-        🔬 Deep Profile Analysis
+        Deep Profile Analysis
       </button>
 
       <!-- Deep Analysis Result -->
@@ -3849,7 +3847,7 @@ async function callClaude(systemExtra, userMsg, onSuccess, onError, loadingEl, r
     if(!text)throw new Error();
     onSuccess(text);
   }catch(e){if(onError)onError();}
-  if(loadingEl){loadingEl.disabled=false;loadingEl.innerHTML='🔄 Re-Analyze';}
+  if(loadingEl){loadingEl.disabled=false;loadingEl.innerHTML='Re-Analyze';}
 }
 
 function fmt(t){return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');}
@@ -3900,7 +3898,7 @@ async function runVerdictAI(){
     var tx=d.content&&d.content[0]&&d.content[0].text;if(!tx)throw new Error();
     text.innerHTML=fmt(tx);
   }catch(e){resp.style.display='none';err.classList.add('vis');}
-  btn.disabled=false;btn.innerHTML='🔄 Re-Analyze';
+  btn.disabled=false;btn.innerHTML='Re-Analyze';
 }
 
 /* PROFILE */
@@ -7664,7 +7662,7 @@ async function runDiagnosticAI(){
     rec.innerHTML='❌ Error: ' + (e.message||'Connection failed') + '<br><small>Make sure app is running on HTTPS (Replit/Netlify)</small>'; 
   }
   btn.disabled=false;
-  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="white"/></svg> Re-Analyze';
+  btn.innerHTML='Re-Analyze';
 }
 
 /* Hook switchScreen to update diagnostic screen */
@@ -8780,7 +8778,7 @@ async function runCorrelationEngine(){
     }
   }
 
-  if(btn){ btn.disabled=false; btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="white"/></svg> Re-Analyze'; }
+  if(btn){ btn.disabled=false; btn.innerHTML='Re-Analyze'; }
 }
 
 function renderEngineResult(result, data){
@@ -10789,7 +10787,7 @@ async function runVitalIntelligence(){
     if(verdictEl) verdictEl.textContent = 'Please check your connection and try again.';
   }
 
-  if(btn){ btn.disabled=false; btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="white"/></svg> ⚡ Re-Run Vital'; }
+  if(btn){ btn.disabled=false; btn.innerHTML='Re-Run Vital'; }
 }
 
 function renderVIE(res){
@@ -10971,7 +10969,7 @@ async function runDeepProfileAnalysis(){
     document.getElementById('deepOverallVerdict').textContent = '❌ Error: '+e.message;
   }
 
-  if(btn){ btn.disabled=false; btn.innerHTML='🔬 Re-Run Deep Analysis'; }
+  if(btn){ btn.disabled=false; btn.innerHTML='Re-Run Deep Analysis'; }
 }
 
 function renderDeepAnalysis(res, hasLabs){
