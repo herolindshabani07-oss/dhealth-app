@@ -1520,20 +1520,35 @@ select option{background:#0A1628;color:#F1F5FF;}
       <span id="aqiCircle"></span><span id="aqiDesc"></span><span id="dailyScoreCircle"></span><span id="dailyScoreMain"></span><span id="dailyScoreBadge"></span><span id="dailyScoreBarWrap"><span id="dailyScoreBar"></span></span><span id="dailyScoreBenefits"><span id="dailyScoreBenefitsList"></span></span><span id="homeIndicators"></span><span id="platformBanner"></span><span id="dataSourcesCount"></span>
     </div>
 
-    <div class="v7-secrow"><div class="v7-stitle">🔗 Burimet</div><button onclick="syncNow()" id="homeSyncBtn" class="v7-sync">🔄 Sync</button></div>
-    <div class="v7-wide" id="home-int-ring" onclick="ringConnect()">
-      <div class="v7-wico ring2">💍</div>
-      <div><div class="v7-wt1" style="color:#4db6e8;">D Health Ring</div><div class="v7-wt2" id="ds-ring-status">Trokit për t'u lidhur</div></div>
-      <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">›</span></div>
-    </div>
+    <div class="v7-secrow"><div class="v7-stitle">🔗 Burimet e të dhënave</div><button onclick="syncNow()" id="homeSyncBtn" class="v7-sync">🔄 Sync</button></div>
+
+    <!-- Health Connect (primar) -->
     <div class="v7-wide" id="home-int-gfit" onclick="connectGoogleFit()">
-      <div class="v7-wico gfit">💚</div>
-      <div><div class="v7-wt1">Google Fit</div><div class="v7-wt2" id="ds-gfit-status">Trokit për t'u lidhur</div></div>
-      <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">›</span></div>
+      <div class="v7-wico" style="background:linear-gradient(135deg,#d6f5e8,#9fe4c1)!important;color:#11a06a;">&#10084;&#65039;</div>
+      <div style="flex:1;min-width:0;"><div class="v7-wt1">Health Connect</div><div class="v7-wt2" id="ds-gfit-status">Not connected</div></div>
+      <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">&#8250;</span></div>
     </div>
-    <div id="home-int-apple" style="display:none"><span id="ds-apple-status"></span></div>
-    <div id="home-int-fitbit" style="display:none"><span id="ds-fitbit-status"></span></div>
-    <button id="ds-toggle-btn" onclick="toggleDataSources()" class="v7-morebtn">➕ Shfaq burimet e tjera</button>
+
+    <!-- Apple Health -->
+    <div class="v7-wide" id="home-int-apple" onclick="connectAppleHealth()">
+      <div class="v7-wico" style="background:linear-gradient(135deg,#ffe0e6,#ffb1c2)!important;color:#e0436a;">&#127822;</div>
+      <div style="flex:1;min-width:0;"><div class="v7-wt1">Apple Health</div><div class="v7-wt2" id="ds-apple-status">iOS only</div></div>
+      <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">&#8250;</span></div>
+    </div>
+
+    <!-- Fitbit -->
+    <div class="v7-wide" id="home-int-fitbit" onclick="connectFitbit()">
+      <div class="v7-wico" style="background:linear-gradient(135deg,#d6f0f3,#a6dfe5)!important;color:#00a3ad;">&#8987;</div>
+      <div style="flex:1;min-width:0;"><div class="v7-wt1">Fitbit</div><div class="v7-wt2" id="ds-fitbit-status">Not connected</div></div>
+      <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">&#8250;</span></div>
+    </div>
+
+    <!-- D Health Ring (së shpejti) -->
+    <div class="v7-wide" id="home-int-ring" onclick="ringConnect()">
+      <div class="v7-wico ring2">&#128141;</div>
+      <div style="flex:1;min-width:0;"><div class="v7-wt1" style="color:#4db6e8;">D Health Ring</div><div class="v7-wt2" id="ds-ring-status">Trokit për t'u lidhur</div></div>
+      <div class="v7-wr"><span style="background:#ede4ff;color:#7c4dff;font-size:9px;font-weight:700;padding:3px 9px;border-radius:9px;white-space:nowrap;">Së shpejti</span></div>
+    </div>
 
     <div style="height:30px;"></div>
   </div>
@@ -9974,13 +9989,9 @@ function updateDataSources(){
         el.style.color = 'var(--tm)';
       }
     }
-    /* Shfaq vetëm aktivin; të paaktivizuarit fshihen derisa të shtypet butoni */
+    /* Të 4 kartat gjithmonë të dukshme (Health Connect, Apple, Fitbit, Ring) */
     var card = document.getElementById('home-int-'+a.key);
-    if(card){
-      var show = isConn || dsExpanded;
-      card.style.display = show ? 'flex' : 'none';
-      if(!isConn) hiddenCount++;
-    }
+    if(card){ card.style.display = 'flex'; }
   });
   /* Manual is always active */
   connected++;
