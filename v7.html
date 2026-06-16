@@ -7172,7 +7172,8 @@ async function handleECGUpload(event){
     /* Save to history */
     var now = new Date();
     var dateStr = now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-    ecgHistory.push({date:dateStr, ts:Date.now(), summary:result.replace(/\s+/g,' ').substring(0,400), status:status});
+    var ecgEntry = {date:dateStr, ts:Date.now(), summary:result.replace(/\s+/g,' ').substring(0,400), status:status, path:''};
+    ecgHistory.push(ecgEntry);
     if(ecgHistory.length > 10) ecgHistory.shift();
     localStorage.setItem('ecg_history', JSON.stringify(ecgHistory));
     renderECGHistory();
@@ -7182,7 +7183,13 @@ async function handleECGUpload(event){
       var ext = (file.name && file.name.indexOf('.')>-1) ? file.name.split('.').pop() : (mediaType.includes('pdf')?'pdf':'jpg');
       var ecgNamed = new File([file], 'ECG_'+now.toISOString().slice(0,10)+'_'+now.getTime()+'.'+ext, {type:file.type});
       var savedDoc = await uploadUserDocument(ecgNamed);
-      if(savedDoc){ try{ refreshDocuments(); }catch(e){} }
+      if(savedDoc){
+        /* lidh path-in e dokumentit me entry-n e historikut → klikimi e hap ECG-në */
+        ecgEntry.path = savedDoc.path || '';
+        localStorage.setItem('ecg_history', JSON.stringify(ecgHistory));
+        renderECGHistory();
+        try{ refreshDocuments(); }catch(e){}
+      }
     }catch(e){ console.log('ECG doc save skip:', e.message); }
 
     /* Toast */
@@ -7217,16 +7224,29 @@ function renderECGHistory(){
     list.innerHTML = hdr
       + ecgHistory.slice(-5).reverse().map(function(e){
         var c = colors[e.status]||'var(--accent)';
-        return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid '+cBorder+';">'
+        return '<div onclick="openEcgFromHistory(\''+(e.path||'')+'\')" style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid '+cBorder+';cursor:pointer;">'
           +'<div style="width:8px;height:8px;border-radius:50%;background:'+c+';flex-shrink:0;"></div>'
           +'<div style="flex:1;min-width:0;"><div style="font-size:11px;font-weight:600;color:'+cName+';">'+e.date+'</div>'
           +'<div style="font-size:10px;color:'+cSub+';">'+e.summary.substring(0,80)+'...</div></div>'
+          +'<div style="font-size:15px;color:'+cSub+';flex-shrink:0;">›</div>'
           +'</div>';
       }).join('');
   });
 }
 /* Renderon historikun e ECG-së në ngarkim (thirret nga login/init) */
 function initECGCards(){ try{ renderECGHistory(); }catch(e){} }
+
+/* Klikim mbi një ECG te History → hap skedarin e ngarkuar (signed URL nga Supabase) */
+async function openEcgFromHistory(path){
+  if(!path){ showToast('ℹ️ Kjo ECG nuk u ruajt si dokument (e vjetër).'); return; }
+  var sb = getSupa();
+  if(!sb){ showToast('⚠️ Kyçu për ta parë ECG-në'); return; }
+  try{
+    var r = await sb.storage.from('documents').createSignedUrl(path, 3600);
+    if(r.data && r.data.signedUrl){ window.open(r.data.signedUrl, '_blank'); }
+    else showToast('❌ S\'u hap ECG-ja');
+  }catch(e){ showToast('❌ S\'u hap ECG-ja'); }
+}
 
 function shareECGWithDoctor(){
   showToast('📤 ECG sent to Dr. Herolind Shabani!');
