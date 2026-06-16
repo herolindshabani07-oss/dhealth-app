@@ -3102,10 +3102,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div class="pf-sec-title">💊 Current Therapy</div>
         <div class="tag-wrap2" id="ds-therapy-tags">
           </div>
-        <div class="tadd-row">
-          <input class="ti" id="ds-therapy-inp" placeholder="Add medication..." onkeydown="if(event.key==='Enter')addTag('ds-therapy-tags','ds-therapy-inp','t')"/>
-          <button class="tb" style="background:var(--purple);" onclick="addTag('ds-therapy-tags','ds-therapy-inp','t')">+ Add</button>
-        </div>
+        <div style="font-size:11px;color:#7387a4;padding:2px 2px 6px;line-height:1.5;">ℹ️ Medikamentet shtohen te tab-i <strong style="color:#3b82f6;">Therapy</strong> dhe shfaqen automatikisht këtu.</div>
         <div class="divr"></div>
         <!-- ALLERGIES -->
         <div class="pf-sec-title">⚠️ Allergies</div>
@@ -3150,10 +3147,7 @@ select option{background:#0A1628;color:#F1F5FF;}
           </div>
         </div>
         <div class="divr"></div>
-        <!-- NOTES -->
-        <div class="pf-sec-title">📝 Notes</div>
-        <textarea class="pf-ta" id="ds-notes">Family history of hypertension. Non-smoker. Light exercise 2x/week.</textarea>
-        <button class="pf-ai-btn" onclick="analyzeDsProfile()">Diagnostics</button>
+        <button class="pf-ai-btn" onclick="syncTherapyToProfile();analyzeDsProfile()">Diagnostics</button>
         <div class="ai-resp" id="ds-prof-resp" style="display:none;">
           <div class="ar-hdr"><div class="ar-av">🤖</div><div style="font-size:12px;font-weight:700;color:#fff;">Claude AI — Profile Assessment</div></div>
           <div class="ar-txt" id="ds-prof-text"></div>
@@ -7342,6 +7336,27 @@ function removeTherapyMed(btn){
   try{ updateIndicatorBadge(); }catch(e){}
   try{ syncMedicalProfile(); }catch(e){}
   showToast('🗑️ Terapia u hoq (edhe nga Kalendari & Njoftimet)');
+}
+
+/* Sinkronizon TË GJITHA medikamentet nga listat e Therapy → ds-therapy-tags (Profili) — deduped */
+function syncTherapyToProfile(){
+  var wrap = document.getElementById('ds-therapy-tags');
+  if(!wrap) return;
+  var seen={}, meds=[];
+  ['ds-therapy-tags','therapy-tags','prof-therapy-tags'].forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    el.querySelectorAll('.tag2').forEach(function(t){
+      var v=t.textContent.replace('×','').trim();
+      if(v && !seen[v.toLowerCase()]){ seen[v.toLowerCase()]=1; meds.push(v); }
+    });
+  });
+  wrap.innerHTML='';
+  meds.forEach(function(v){
+    var sp=document.createElement('span');
+    sp.className='tag2 t';
+    sp.innerHTML=v+' <span class="tx" onclick="rmTag(\'ds-therapy-tags\',this)">×</span>';
+    wrap.appendChild(sp);
+  });
 }
 
 function addTherapyMed(){
