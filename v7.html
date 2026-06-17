@@ -9566,10 +9566,18 @@ function isNativeApp(){
   return !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function'
             && window.Capacitor.isNativePlatform());
 }
-function getHealthPlugin(){
-  if(!window.Capacitor || !window.Capacitor.registerPlugin) return null;
-  return window.Capacitor.registerPlugin('HealthPlugin');
+/* Live-shell remote page: ura native injekton window.Capacitor por NJË HERË pa registerPlugin
+   (ai vjen nga @capacitor/core që s'është bundle-uar). Bie në window.Capacitor.Plugins[...] proxy. */
+function getNativePlugin(name){
+  var C = window.Capacitor;
+  if(!C) return null;
+  try{
+    if(typeof C.registerPlugin === 'function'){ var p = C.registerPlugin(name); if(p) return p; }
+    if(C.Plugins && C.Plugins[name]) return C.Plugins[name];
+  }catch(e){}
+  return null;
 }
+function getHealthPlugin(){ return getNativePlugin('HealthPlugin'); }
 
 /* Diagnostikë e lidhjes së pajisjeve — tregon ku ndërpritet zinxhiri (alert i dukshëm) */
 async function diagDevices(){
@@ -9577,6 +9585,8 @@ async function diagDevices(){
   L.push('Capacitor: ' + (window.Capacitor ? 'PO' : 'JO ❌'));
   L.push('isNativeApp: ' + (isNativeApp() ? 'PO ✅' : 'JO ❌ (po sillet si web)'));
   try{ L.push('Platform: ' + ((window.Capacitor && window.Capacitor.getPlatform) ? window.Capacitor.getPlatform() : '?')); }catch(e){}
+  L.push('registerPlugin: ' + (window.Capacitor && typeof window.Capacitor.registerPlugin==='function' ? 'PO' : 'JO'));
+  try{ L.push('Plugins: ' + (window.Capacitor && window.Capacitor.Plugins ? Object.keys(window.Capacitor.Plugins).join(',') : '-')); }catch(e){ L.push('Plugins: err'); }
   var Health = getHealthPlugin();
   L.push('HealthPlugin: ' + (Health ? 'i regjistruar ✅' : 'MUNGON ❌'));
   if(Health){
@@ -9606,10 +9616,7 @@ var DHRING = {
   deviceId:null, connected:false, battery:0,
   steps:0, calories:0, distance:0
 };
-function getBle(){
-  if(!window.Capacitor || !window.Capacitor.registerPlugin) return null;
-  return window.Capacitor.registerPlugin('BluetoothLe');
-}
+function getBle(){ return getNativePlugin('BluetoothLe'); }
 function ringChecksum(b){ var s=0; for(var i=0;i<15;i++) s+=b[i]; return s & 255; }
 function ringPacket(cmd, payload){
   var b=[]; for(var i=0;i<16;i++) b.push(0);
