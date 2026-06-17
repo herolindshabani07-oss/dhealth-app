@@ -9810,7 +9810,7 @@ async function syncHealthConnect(){
 
     var msg = '✅ Sync: ' + steps.toLocaleString() + ' hapa · ' + hr + ' HR · ' + calories + ' kcal';
     if(steps===0 && hr===0 && calories===0)
-      msg = '⚠️ Health Connect: 0 të dhëna sot. Ec pak me telefonin dhe provo prapë.';
+      msg = '⚠️ 0 të dhëna. Samsung Health → Settings → Health Connect → lejo ndarjen e HAPAVE.';
     showToast(msg);
   }catch(e){
     console.error('Health Connect sync error:', e);
