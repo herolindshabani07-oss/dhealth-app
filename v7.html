@@ -2343,7 +2343,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div>
 
     <div class="set-version">
-      D Health v2.0.3 &middot; build 17 Jun<br>
+      D Health v2.0.4 &middot; build 17 Jun<br>
       Powered by Claude AI &middot; Anthropic<br>
       &#169; 2026 D Health. All rights reserved.
     </div>
@@ -6345,7 +6345,7 @@ function applyProfileMode(mode){
   var others = ['sec-appearance','sec-notifications','sec-support'].map(function(id){ return document.getElementById(id); });
   var title = document.getElementById('moreScreenTitle');
   if(mode==='settings'){
-    if(acct) acct.style.display='none';
+    if(acct) acct.style.display='';   /* trego Account-in edhe te Settings (Payments/Devices/Emergency) */
     others.forEach(function(e){ if(e) e.style.display=''; });
     if(title) title.textContent='Settings';
   } else {
