@@ -3441,6 +3441,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">D Health Ring</div><div style="font-size:11px;color:#7387a4;">Së shpejti — COLMI R02</div></div>
         <span style="background:#ede4ff;color:#7c4dff;font-size:9px;font-weight:700;padding:3px 9px;border-radius:9px;white-space:nowrap;">Së shpejti</span>
       </div>
+      <button onclick="diagDevices()" style="width:100%;margin-top:14px;padding:11px;border-radius:12px;border:1px dashed rgba(120,150,190,.4);background:rgba(255,255,255,.6);color:#5d7290;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">🔍 Diagnostikë lidhjeje</button>
     </div>
   </div>
 </div>
@@ -9568,6 +9569,31 @@ function isNativeApp(){
 function getHealthPlugin(){
   if(!window.Capacitor || !window.Capacitor.registerPlugin) return null;
   return window.Capacitor.registerPlugin('HealthPlugin');
+}
+
+/* Diagnostikë e lidhjes së pajisjeve — tregon ku ndërpritet zinxhiri (alert i dukshëm) */
+async function diagDevices(){
+  var L = [];
+  L.push('Capacitor: ' + (window.Capacitor ? 'PO' : 'JO ❌'));
+  L.push('isNativeApp: ' + (isNativeApp() ? 'PO ✅' : 'JO ❌ (po sillet si web)'));
+  try{ L.push('Platform: ' + ((window.Capacitor && window.Capacitor.getPlatform) ? window.Capacitor.getPlatform() : '?')); }catch(e){}
+  var Health = getHealthPlugin();
+  L.push('HealthPlugin: ' + (Health ? 'i regjistruar ✅' : 'MUNGON ❌'));
+  if(Health){
+    try{
+      var avail = await Health.isHealthAvailable();
+      L.push('Health available: ' + JSON.stringify(avail));
+    }catch(e){ L.push('isHealthAvailable ERROR: ' + (e.message||e)); }
+    try{
+      if(Health.checkHealthPermissions){
+        var pp = await Health.checkHealthPermissions({ permissions:['READ_STEPS','READ_ACTIVE_CALORIES','READ_HEART_RATE'] });
+        L.push('Permissions: ' + JSON.stringify(pp));
+      }
+    }catch(e){ L.push('checkPermissions: ' + (e.message||e)); }
+  }
+  var Ble = (typeof getBle==='function') ? getBle() : null;
+  L.push('BLE plugin: ' + (Ble ? 'i regjistruar ✅' : 'MUNGON ❌'));
+  alert('🔍 DIAGNOSTIKË PAJISJESH\n\n' + L.join('\n') + '\n\n(Dërgoja këtë tekst Claude-it)');
 }
 
 /* ═══════════════ D HEALTH RING — COLMI R02 (Bluetooth LE) ═══════════════
