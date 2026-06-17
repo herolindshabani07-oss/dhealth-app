@@ -8772,9 +8772,11 @@ function connectStripe(){ localStorage.setItem('dh_payment',JSON.stringify({type
 /* ═══ CONNECTED DEVICES ═══ */
 function openDevicesModal(){ var m=document.getElementById('devicesModal'); if(!m) return; try{relocateModals();}catch(e){} try{updateDeviceStatuses();}catch(e){} m.style.display='flex'; }
 function closeDevicesModal(e){ if(e && e.target!==document.getElementById('devicesModal')) return; var m=document.getElementById('devicesModal'); if(m) m.style.display='none'; }
+function _devConn(key){ var v=localStorage.getItem(key); return v==='true'||v==='1'; }
 function updateDeviceStatuses(){
-  var g=document.getElementById('dev-gfit-status'); if(g) g.textContent = localStorage.getItem('connect_gfit')==='1' ? 'Connected ✓' : 'Not connected';
-  var f=document.getElementById('dev-fitbit-status'); if(f) f.textContent = localStorage.getItem('connect_fitbit')==='1' ? 'Connected ✓' : 'Not connected';
+  var set=function(id,on){ var el=document.getElementById(id); if(!el) return; el.textContent=on?'Connected ✓':'Not connected'; el.style.color=on?'#15a06a':'#7387a4'; };
+  set('dev-gfit-status',   _devConn('connect_gfit'));
+  set('dev-fitbit-status', _devConn('connect_fitbit'));
 }
 
 /* ═══ EMERGENCY CONTACT ═══ */
@@ -9789,7 +9791,11 @@ async function syncHealthConnect(){
     localStorage.setItem('gfit_cal',    String(calories));
     localStorage.setItem('gfit_dist',   String(distance));
     localStorage.setItem('gfit_synced', new Date().toLocaleTimeString());
-    try{ updateConnectCards(); updateDataSources(); calcDailyScore(); }catch(e){}
+    try{ updateConnectCards(); updateDataSources(); }catch(e){}
+    try{ updateAllVitalsUI(); }catch(e){}            /* sinkronizon Home + Diagnostic */
+    try{ saveDailyRecord(); }catch(e){}              /* ruan në historik lokal (për AI) */
+    try{ saveDailyActivityToSupabase(); }catch(e){}  /* ruan steps/cal/dist në llogari */
+    try{ calcDailyScore(); }catch(e){}
 
     /* Ruaj në Supabase */
     try{
