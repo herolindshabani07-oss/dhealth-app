@@ -2960,6 +2960,10 @@ select option{background:#0A1628;color:#F1F5FF;}
 #screen-diagnostic input,#screen-diagnostic textarea{color:#1f2c44!important}
 #screen-diagnostic input::placeholder,#screen-diagnostic textarea::placeholder{color:#aab6c8!important}
 #screen-diagnostic .tag2{background:rgba(59,130,246,.1)!important;color:#2f6cd4!important;border-color:rgba(59,130,246,.2)!important}
+/* Daily Readings table — temë e çelët (teksti i qelizave ishte i bardhë nga klasa) */
+#screen-diagnostic .wt{background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.62))!important;border-color:rgba(120,150,190,.2)!important}
+#screen-diagnostic .wt-cell{color:#3a4a63}
+#screen-diagnostic .wt-row.hdr .wt-cell{color:#ffffff}
 #screen-diagnostic [style*="rgba(255,255,255,0.15)"],#screen-diagnostic [style*="rgba(255,255,255,0.18)"]{background:rgba(59,130,246,.1)!important;color:#2f6cd4!important}
 #screen-diagnostic [style*="#1A0A2E,#2D1B69"]{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 10px 24px rgba(70,120,190,.12)!important}
 #screen-diagnostic [style*="#0D3B8E,#1E5FBA"]{background:linear-gradient(135deg,#5ca8ff,#3b82f6)!important}
@@ -3439,6 +3443,20 @@ select option{background:#0A1628;color:#F1F5FF;}
 
 
 <!-- NUTRITION MODAL -->
+<style id="nutritionModalLight">
+/* Nutrition modal → temë e çelët glassmorphic (ishte tekst i bardhë mbi sfond gri) */
+#nutritionModal > div{background:linear-gradient(160deg,#ffffff,#eef4fc)!important;box-shadow:0 -10px 40px rgba(40,80,140,.25)!important}
+#nutritionModal [style*="color:#F1F5FF"]{color:#1f2c44!important}
+#nutritionModal [style*="rgba(255,255,255,0.9)"]{color:#3a4a63!important}
+#nutritionModal [style*="rgba(255,255,255,0.45)"],#nutritionModal [style*="rgba(255,255,255,0.5)"],#nutritionModal [style*="rgba(255,255,255,0.6)"]{color:#7387a4!important}
+#nutritionModal [style*="rgba(255,255,255,0.3)"],#nutritionModal [style*="rgba(255,255,255,0.4)"]{color:#9aa9c0!important}
+#nutritionModal [style*="background:rgba(255,255,255,0.04)"],#nutritionModal [style*="background:rgba(255,255,255,0.05)"],#nutritionModal [style*="background:rgba(255,255,255,0.06)"],#nutritionModal [style*="background:rgba(255,255,255,0.07)"]{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.62))!important;border:1px solid rgba(120,150,190,.16)!important;box-shadow:0 6px 16px rgba(70,120,190,.08)!important}
+#nutritionModal [style*="background:var(--white)"]{background:#ffffff!important;border:1px solid rgba(120,150,190,.16)!important;box-shadow:0 2px 8px rgba(70,120,190,.1)!important}
+#nutritionModal [style*="background:var(--bg)"]{background:#eef2fa!important;color:#5d7290!important}
+#nutritionModal [style*="solid var(--border)"]{border-color:rgba(120,150,190,.16)!important}
+#nutritionModal input,#nutritionModal textarea,#nutritionModal select{color:#1f2c44!important;background:#f1f6fc!important;border:1px solid rgba(120,150,190,.25)!important}
+#nutritionModal input::placeholder{color:#aab6c8!important}
+</style>
 <div id="nutritionModal" style="display:none;position:absolute;inset:0;background:rgba(10,15,35,0.55);z-index:9000;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);" onclick="closeNutritionModal(event)">
   <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:24px 24px 44px 44px;width:100%;max-height:92%;display:flex;flex-direction:column;animation:slideUp 0.3s ease;">
     <div style="padding:12px 18px;border-bottom:0.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;">
@@ -4856,11 +4874,11 @@ function setBilling(type){
   var btnM = document.getElementById('btn-monthly');
   var btnA = document.getElementById('btn-annual');
   if(type==='monthly'){
-    btnM.style.background='var(--white)';btnM.style.color='var(--text)';btnM.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)';
-    btnA.style.background='transparent';btnA.style.color='var(--tm)';btnA.style.boxShadow='none';
+    btnM.style.background='#ffffff';btnM.style.color='#1f2c44';btnM.style.boxShadow='0 2px 8px rgba(70,120,190,0.14)';
+    btnA.style.background='transparent';btnA.style.color='#7387a4';btnA.style.boxShadow='none';
   } else {
-    btnA.style.background='var(--white)';btnA.style.color='var(--text)';btnA.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)';
-    btnM.style.background='transparent';btnM.style.color='var(--tm)';btnM.style.boxShadow='none';
+    btnA.style.background='#ffffff';btnA.style.color='#1f2c44';btnA.style.boxShadow='0 2px 8px rgba(70,120,190,0.14)';
+    btnM.style.background='transparent';btnM.style.color='#7387a4';btnM.style.boxShadow='none';
   }
 }
 
