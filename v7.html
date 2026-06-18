@@ -3428,7 +3428,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       </div>
       <div onclick="closeDevicesModal(null);connectAppleHealth();" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(120,150,190,.16);box-shadow:0 2px 8px rgba(70,120,190,.08);margin-bottom:10px;cursor:pointer;">
         <div style="width:42px;height:42px;border-radius:12px;background:#fff;border:1px solid rgba(120,150,190,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 512 512" width="30" height="30"><defs><linearGradient id="ahg2" x1="0" y1="0" x2="1" y2="0"><stop offset="0.5" stop-color="#F3F3F5"/><stop offset="0.5" stop-color="#E7E7EA"/></linearGradient></defs><rect x="40" y="40" width="432" height="432" rx="112" fill="url(#ahg2)"/><path d="M256 388 C180 334 148 282 148 233 C148 198 175 174 206 174 C228 174 246 187 256 208 C266 187 284 174 306 174 C337 174 364 198 364 233 C364 282 332 334 256 388 Z" fill="#E63950"/></svg></div>
-        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">Apple Health</div><div style="font-size:11px;color:#7387a4;">iOS only</div></div>
+        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">Apple Health</div><div style="font-size:11px;color:#7387a4;" id="dev-apple-status">iOS only</div></div>
         <span style="color:#aab8cf;font-size:18px;">&#8250;</span>
       </div>
       <div onclick="closeDevicesModal(null);connectFitbit();" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(120,150,190,.16);box-shadow:0 2px 8px rgba(70,120,190,.08);margin-bottom:10px;cursor:pointer;">
@@ -8777,6 +8777,8 @@ function updateDeviceStatuses(){
   var set=function(id,on){ var el=document.getElementById(id); if(!el) return; el.textContent=on?'Connected ✓':'Not connected'; el.style.color=on?'#15a06a':'#7387a4'; };
   set('dev-gfit-status',   _devConn('connect_gfit'));
   set('dev-fitbit-status', _devConn('connect_fitbit'));
+  var a=document.getElementById('dev-apple-status');
+  if(a){ if(_devConn('connect_apple')){ a.textContent='Connected ✓'; a.style.color='#15a06a'; } else { a.textContent='iOS only'; a.style.color='#7387a4'; } }
 }
 
 /* ═══ EMERGENCY CONTACT ═══ */
@@ -9733,7 +9735,10 @@ async function connectHealthConnect(){
   }
 }
 
-async function syncHealthConnect(){
+async function syncHealthConnect(opts){
+  opts = (opts && typeof opts==='object') ? opts : {};
+  var CONN_KEY = opts.connKey || 'connect_gfit';   /* iOS → 'connect_apple' */
+  var SRC      = opts.source  || 'health_connect';  /* iOS → 'apple_health' */
   var Health = getHealthPlugin();
   if(!Health) return;
   showToast('🔄 Duke lexuar Health Connect...');
@@ -9785,7 +9790,7 @@ async function syncHealthConnect(){
     el=document.getElementById('da-hr');    if(el) el.textContent = hr>0 ? hr : '--';
     el=document.getElementById('da-dist');  if(el && distance>0) el.textContent = distance + ' km';
 
-    localStorage.setItem('connect_gfit','true');
+    localStorage.setItem(CONN_KEY,'true');
     localStorage.setItem('gfit_steps',  String(steps));
     localStorage.setItem('gfit_hr',     String(hr));
     localStorage.setItem('gfit_cal',    String(calories));
@@ -9803,7 +9808,7 @@ async function syncHealthConnect(){
       if(sb && LST.currentUser && LST.currentUser.id){
         sb.from('vitals').insert({
           patient_id: LST.currentUser.id, hr: hr||null, steps: steps||null,
-          source: 'health_connect', recorded_at: new Date().toISOString()
+          source: SRC, recorded_at: new Date().toISOString()
         });
       }
     }catch(se){}
@@ -10114,9 +10119,35 @@ document.addEventListener('DOMContentLoaded', function(){
   ['gfit','fitbit'].forEach(updateIntegrationCard);
 });
 
-function connectAppleHealth(){
-  showToast('&#63743; Apple Health — Coming soon in the app!');
-  setTimeout(function(){ llaunchApp(); }, 1200);
+/* Apple Health (HealthKit) — punon VETËM në app-in native iOS (i njëjti plugin capacitor-health).
+   Në Android/web informon. Gati për t'u aktivizuar sapo të kemi build-in iOS. */
+async function connectAppleHealth(){
+  var plat = (window.Capacitor && window.Capacitor.getPlatform) ? window.Capacitor.getPlatform() : 'web';
+  if(plat !== 'ios'){
+    showToast('🍎 Apple Health punon vetëm në app-in iOS (iPhone).');
+    return;
+  }
+  var Health = getHealthPlugin();
+  if(!Health){ showToast('⚠️ Apple Health s\'është i disponueshëm'); return; }
+  try{
+    var avail = await Health.isHealthAvailable();
+    if(!avail || !avail.available){
+      showToast('⚠️ Apple Health (HealthKit) s\'është i disponueshëm në këtë pajisje');
+      return;
+    }
+    await Health.requestHealthPermissions({
+      permissions: ['READ_STEPS','READ_ACTIVE_CALORIES','READ_HEART_RATE','READ_WORKOUTS','READ_DISTANCE']
+    });
+    setConnected('apple', true);
+    localStorage.setItem('connect_apple','true');
+    try{ refreshIntegBadges(); updateDataSources(); }catch(e){}
+    showToast('✅ Apple Health u lidh!');
+    /* Sync nga HealthKit — i njëjti motor, vetëm çelësat ndryshojnë */
+    setTimeout(function(){ syncHealthConnect({ connKey:'connect_apple', source:'apple_health' }); }, 500);
+  }catch(e){
+    console.error('Apple Health connect error:', e);
+    showToast('❌ Lidhja dështoi: ' + (e.message || e));
+  }
 }
 
 function connectFitbit(){
