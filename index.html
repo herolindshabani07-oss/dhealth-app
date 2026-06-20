@@ -1,302 +1,638 @@
 <!DOCTYPE html>
-<html lang="sq">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>D Health — Shëndeti yt, i monitoruar me kujdes</title>
-<meta name="description" content="D Health — aplikacioni inteligjent i shëndetit: monitorim i tensionit, pulsit, glukozës dhe SpO2, analizë AI, terapi, termine me mjekun dhe D Health Ring.">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D Health — AI Health Platform & Smart Wearables</title>
+<meta name="description" content="D Health turns your vitals, ECG and daily activity into clear, AI-driven insight — from your phone, smartwatch, or the D Health Ring." />
+<meta name="theme-color" content="#0a0e16" />
+<link rel="icon" type="image/png" href="assets/logo.png" />
+<link rel="apple-touch-icon" href="assets/logo.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0A0F26; --bg2:#0F1535; --card:rgba(255,255,255,0.05); --border:rgba(255,255,255,0.10);
-    --txt:#EAF0FB; --muted:rgba(234,240,251,0.6); --blue:#3B7DD8; --blue2:#2F6BD4; --purple:#8B6FE8;
-    --teal:#2DC8A0; --accent:#4AE89D; --font:'DM Sans',-apple-system,system-ui,sans-serif;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--txt);font-family:var(--font);line-height:1.6;overflow-x:hidden}
-  a{text-decoration:none;color:inherit}
-  .wrap{max-width:1100px;margin:0 auto;padding:0 22px}
-  .glow{position:fixed;border-radius:50%;filter:blur(90px);opacity:0.45;z-index:0;pointer-events:none}
-  .g1{width:480px;height:480px;background:#1E4FA0;top:-160px;right:-120px}
-  .g2{width:420px;height:420px;background:#5B3Fb0;bottom:-180px;left:-140px;opacity:0.35}
+:root{
+  --bg:#ffffff; --fg:#111418; --ink:#0a0e16; --muted:#8a91a0; --subtle:#aeb4c0;
+  --line:#e7e9ee; --surface:#f3f5f8; --surface2:#e6e9ef;
+  --accent:#1E88E5; --accent2:#1565C0; --accent-soft:#4CC9F0;
+  --radius-card:2rem; --radius-sm:1.25rem; --radius-ctrl:.875rem;
+  --shell:88rem; --font:'Onest',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;-webkit-font-smoothing:antialiased;}
+@media(max-width:1920px){html{font-size:.86vw;}}
+@media(max-width:1440px){html{font-size:1.05vw;}}
+@media(max-width:1024px){html{font-size:1.5vw;}}
+@media(max-width:640px){html{font-size:4.1vw;}}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+ul{list-style:none;}
+img{display:block;}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+.shell{max-width:var(--shell);margin-inline:auto;padding-inline:1.25rem;}
+@media(min-width:640px){.shell{padding-inline:2rem;}}
 
-  /* NAV */
-  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(10,15,38,0.72);border-bottom:1px solid var(--border)}
-  .nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:.3px}
-  .brand .mark{width:34px;height:34px;flex:0 0 34px}
-  .nav-links{display:flex;gap:26px;align-items:center}
-  .nav-links a{color:var(--muted);font-size:14px;font-weight:500;transition:.2s}
-  .nav-links a:hover{color:var(--txt)}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;font-family:var(--font);font-weight:700;border-radius:13px;transition:.2s;font-size:14px}
-  .btn-pri{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;padding:11px 20px;box-shadow:0 8px 24px rgba(59,125,216,.35)}
-  .btn-pri:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(59,125,216,.45)}
-  .btn-ghost{background:var(--card);color:var(--txt);border:1px solid var(--border);padding:11px 20px}
-  .btn-ghost:hover{background:rgba(255,255,255,0.09)}
-  @media(max-width:720px){.nav-links{display:none}}
+/* ===== LOADER ===== */
+#loader{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;
+  background:var(--ink);color:#fff;border-radius:0 0 2rem 2rem;transition:transform .8s cubic-bezier(.76,0,.24,1);}
+#loader.gone{transform:translateY(-100%);}
+.ld-c{display:flex;flex-direction:column;align-items:center;gap:1.1rem;text-align:center;transition:opacity .5s,transform .5s;}
+#loader.gone .ld-c{opacity:0;transform:translateY(-12px);}
+.ld-brand{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.6rem;}
+.ld-brand img{width:2rem;height:2rem;filter:drop-shadow(0 4px 10px rgba(76,201,240,.4));}
+.ld-tag{max-width:24ch;font-size:.9rem;color:rgba(255,255,255,.55);line-height:1.5;}
+.ld-prog{width:min(22rem,72vw);display:flex;flex-direction:column;gap:.75rem;}
+.ld-track{height:2px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;}
+.ld-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent-soft),var(--accent));transition:width .1s linear;}
+.ld-row{display:flex;justify-content:space-between;font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);}
+.ld-num{color:rgba(255,255,255,.85);font-variant-numeric:tabular-nums;}
 
-  /* HERO */
-  header{position:relative;z-index:1;padding:70px 0 40px;text-align:center}
-  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:30px;padding:7px 15px;font-size:12.5px;color:var(--muted);margin-bottom:26px;font-weight:600}
-  .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
-  h1{font-size:clamp(34px,6vw,58px);font-weight:800;line-height:1.08;letter-spacing:-1px;margin-bottom:18px}
-  h1 .grad{background:linear-gradient(120deg,#5B9BFF,#A78BFF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-  .sub{font-size:clamp(15px,2.4vw,19px);color:var(--muted);max-width:620px;margin:0 auto 34px}
-  .cta{display:flex;gap:13px;justify-content:center;flex-wrap:wrap}
-  .btn-lg{padding:15px 26px;font-size:15px;border-radius:15px}
-  .store-row{display:flex;gap:13px;justify-content:center;flex-wrap:wrap;margin-top:16px}
-  .store{display:inline-flex;align-items:center;gap:11px;background:#000;border:1px solid rgba(255,255,255,0.16);border-radius:14px;padding:9px 18px;min-width:185px;position:relative;transition:.2s}
-  .store:hover{border-color:rgba(255,255,255,0.32)}
-  .store.soon{opacity:.55;cursor:not-allowed}
-  .store .ico{font-size:26px;line-height:1}
-  .store .t1{font-size:10px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
-  .store .t2{font-size:15px;font-weight:700;line-height:1.1}
-  .store .tag-soon{position:absolute;top:-9px;right:10px;background:var(--purple);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+/* ===== HEADER ===== */
+header.hd{position:absolute;inset-inline:0;top:0;z-index:50;opacity:0;transform:translateY(-14px);}
+header.hd.in{opacity:1;transform:none;transition:opacity .7s,transform .7s;}
+.hd-in{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:1.5rem 0;}
+.hd-brand{display:flex;align-items:center;gap:.55rem;font-size:1.15rem;font-weight:700;letter-spacing:-.01em;}
+.hd-brand img{width:1.7rem;height:1.7rem;}
+.hd-nav{display:none;gap:2rem;font-size:.9rem;font-weight:500;}
+@media(min-width:1024px){.hd-nav{display:flex;}}
+.hd-nav button{color:var(--fg);opacity:.78;transition:.25s;}
+.hd-nav button:hover{opacity:1;transform:translateY(-2px);}
+.hd-right{display:flex;align-items:center;gap:.7rem;}
+.clock{display:none;align-items:center;gap:.7rem;border:1px solid var(--line);background:rgba(255,255,255,.5);backdrop-filter:blur(6px);border-radius:.875rem;padding:.5rem .8rem;font-size:.72rem;color:rgba(17,20,24,.7);}
+@media(min-width:768px){.clock{display:flex;}}
+.clock .lbl{color:rgba(17,20,24,.45);}
+.clock .t{min-width:3.5rem;font-variant-numeric:tabular-nums;font-weight:500;color:var(--fg);}
+.clock .sep{color:rgba(17,20,24,.3);}
+.menu-btn{border:1px solid var(--line);background:rgba(255,255,255,.5);backdrop-filter:blur(6px);border-radius:.875rem;padding:.55rem 1rem;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:.5rem;transition:.25s;}
+.menu-btn:hover{background:#fff;transform:scale(1.04);}
+.menu-btn svg{width:.95rem;height:.95rem;}
 
-  /* PHONE MOCK */
-  .hero-visual{position:relative;z-index:1;margin:54px auto 0;width:270px}
-  .phone{width:270px;height:550px;background:linear-gradient(160deg,#141B3A,#0C1230);border-radius:42px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 40px 90px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,0.08);padding:14px;position:relative}
-  .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:110px;height:26px;background:#070B1C;border-radius:0 0 16px 16px;z-index:3}
-  .screen{width:100%;height:100%;border-radius:30px;overflow:hidden;background:linear-gradient(165deg,#0E1430,#11183c);padding:24px 16px;display:flex;flex-direction:column;gap:11px}
-  .s-greet{font-size:11px;color:var(--muted);margin-top:6px}
-  .s-name{font-size:17px;font-weight:800}
-  .s-score{margin:6px auto 4px;width:88px;height:88px;border-radius:50%;background:conic-gradient(var(--teal) 0 75%,rgba(255,255,255,0.08) 75% 100%);display:flex;align-items:center;justify-content:center}
-  .s-score .inner{width:70px;height:70px;border-radius:50%;background:#0E1430;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .s-score b{font-size:24px}.s-score span{font-size:9px;color:var(--muted)}
-  .s-row{display:flex;gap:8px}
-  .s-vital{flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:13px;padding:9px 8px;text-align:left}
-  .s-vital .vl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-  .s-vital .vv{font-size:15px;font-weight:800;margin-top:2px}
-  .s-vital .vv small{font-size:9px;font-weight:600;color:var(--muted)}
-  .s-ai{background:linear-gradient(135deg,rgba(59,125,216,.18),rgba(139,111,232,.18));border:1px solid rgba(139,111,232,.3);border-radius:14px;padding:11px;margin-top:auto}
-  .s-ai .h{font-size:10px;font-weight:700;color:#A78BFF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-  .s-ai .b{font-size:11px;color:var(--txt);line-height:1.5}
+/* ===== HERO ===== */
+.hero{position:relative;isolation:isolate;overflow:hidden;border-radius:0 0 2rem 2rem;
+  background:radial-gradient(120% 90% at 80% 0%,#eaf3fc,#dfeaf6 45%,#cdd9e8);min-height:100vh;display:flex;align-items:center;}
+.hero-glow{position:absolute;width:36rem;height:36rem;border-radius:50%;background:radial-gradient(circle,rgba(76,201,240,.35),transparent 65%);filter:blur(20px);pointer-events:none;z-index:0;transition:transform .25s ease-out;will-change:transform;}
+.hero-wm{position:absolute;inset-inline:0;bottom:3.5rem;z-index:1;text-align:center;user-select:none;pointer-events:none;font-weight:800;line-height:1;font-size:13rem;color:rgba(255,255,255,.45);letter-spacing:-.03em;opacity:0;transform:translateY(20px);}
+.hero-wm.in{opacity:1;transform:none;transition:opacity 1s,transform 1s;transition-delay:.3s;}
+.hero-grid{position:relative;z-index:20;width:100%;display:flex;flex-direction:column;gap:2rem;padding:9rem 0 7rem;}
+@media(min-width:1024px){.hero-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:2.5rem;align-items:center;}}
+.hero-l{display:flex;flex-direction:column;gap:1.75rem;}
+@media(min-width:1024px){.hero-l{grid-column:span 7;padding-left:5rem;}}
+.eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.9rem;font-weight:500;color:rgba(17,20,24,.7);}
+.eyebrow .dot{width:.4rem;height:.4rem;border-radius:50%;background:var(--accent);}
+.hl{max-width:18ch;font-size:2.25rem;font-weight:600;line-height:1;letter-spacing:-.02em;}
+@media(min-width:640px){.hl{font-size:3rem;}}
+@media(min-width:768px){.hl{font-size:3.9rem;}}
+.hl .ln{display:block;overflow:hidden;}
+.hl .ln i{display:block;font-style:normal;transform:translateY(110%);opacity:0;}
+.ready .hl .ln i{transform:none;opacity:1;transition:transform .9s cubic-bezier(.215,.61,.355,1),opacity .9s;}
+.ready .hl .ln:nth-child(1) i{transition-delay:.25s;}
+.ready .hl .ln:nth-child(2) i{transition-delay:.37s;}
+.ready .hl .ln:nth-child(3) i{transition-delay:.49s;}
+.hl .ac{color:var(--accent2);}
+.rating{display:flex;align-items:center;gap:.75rem;}
+.rating .st{color:var(--accent);font-size:1rem;letter-spacing:1px;}
+.rating span{font-size:.9rem;font-weight:500;color:rgba(17,20,24,.7);}
+.hcta{display:flex;flex-wrap:wrap;gap:.75rem;}
+.hero-r{display:flex;justify-content:center;position:relative;}
+@media(min-width:1024px){.hero-r{grid-column:span 5;justify-content:center;}}
+.hero-r::before{content:'';position:absolute;width:24rem;height:24rem;border-radius:50%;background:radial-gradient(circle,rgba(76,201,240,.5),rgba(30,136,229,.15) 55%,transparent 72%);filter:blur(8px);z-index:0;}
+.phone{width:18rem;background:linear-gradient(150deg,#232c46,#0e1424);border-radius:2.4rem;padding:.55rem;box-shadow:0 50px 90px rgba(20,40,90,.4);position:relative;z-index:1;}
+.phone .scr{border-radius:2rem;overflow:hidden;position:relative;}
+.phone .scr img{width:100%;display:block;}
+.phone .scr::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.3),rgba(255,255,255,.06) 22%,transparent 42%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22);}
+.notch{position:absolute;top:.55rem;left:50%;transform:translateX(-50%);width:5rem;height:1.1rem;background:#0e1424;border-radius:0 0 .8rem .8rem;z-index:3;}
+.hero-status{display:flex;align-items:center;justify-content:space-between;gap:.75rem;border-top:1px solid rgba(17,20,24,.1);padding:1.25rem 0;font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:rgba(17,20,24,.6);position:relative;z-index:20;}
 
-  /* SECTIONS */
-  section{position:relative;z-index:1;padding:64px 0}
-  .sec-head{text-align:center;max-width:640px;margin:0 auto 44px}
-  .kicker{font-size:12.5px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
-  .sec-head h2{font-size:clamp(26px,4.2vw,38px);font-weight:800;letter-spacing:-.5px;line-height:1.15}
-  .sec-head p{color:var(--muted);margin-top:14px;font-size:16px}
+/* reveal */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
+.rv.in{opacity:1;transform:none;}
+.words i{display:inline-block;transform:translateY(24px);opacity:0;font-style:normal;transition:transform .7s cubic-bezier(.165,.84,.44,1),opacity .7s;}
+.words.in i{transform:none;opacity:1;}
 
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  @media(max-width:880px){.grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:560px){.grid{grid-template-columns:1fr}}
-  .feat{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;transition:.25s}
-  .feat:hover{transform:translateY(-4px);border-color:rgba(139,111,232,.4);background:rgba(255,255,255,0.07)}
-  .feat .fi{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:15px;background:linear-gradient(135deg,rgba(59,125,216,.25),rgba(139,111,232,.25));border:1px solid rgba(139,111,232,.25)}
-  .feat h3{font-size:17px;font-weight:700;margin-bottom:8px}
-  .feat p{font-size:13.5px;color:var(--muted);line-height:1.65}
+/* sections */
+section{position:relative;}
+.sec-pad{padding:6rem 0;}
+.k{font-size:.9rem;font-weight:500;color:rgba(17,20,24,.6);display:inline-flex;align-items:center;gap:.5rem;margin-bottom:1.1rem;}
+.k .dot{width:.4rem;height:.4rem;border-radius:50%;background:var(--accent);}
+h2{font-size:2.25rem;font-weight:600;letter-spacing:-.02em;line-height:1.05;}
+@media(min-width:640px){h2{font-size:3rem;}}
 
-  /* RING / ECOSYSTEM */
-  .ring-sec{background:linear-gradient(135deg,rgba(59,125,216,.08),rgba(139,111,232,.08));border:1px solid var(--border);border-radius:26px;padding:46px 38px;display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center}
-  @media(max-width:780px){.ring-sec{grid-template-columns:1fr;padding:34px 24px;text-align:center}}
-  .ring-sec h2{font-size:clamp(24px,4vw,34px);font-weight:800;letter-spacing:-.5px;line-height:1.15;margin-bottom:14px}
-  .ring-sec p{color:var(--muted);font-size:15px;margin-bottom:20px}
-  .ring-chips{display:flex;gap:9px;flex-wrap:wrap}
-  @media(max-width:780px){.ring-chips{justify-content:center}}
-  .chip{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:8px 13px;font-size:12.5px;font-weight:600;display:inline-flex;gap:7px;align-items:center}
-  .ring-visual{display:flex;justify-content:center;align-items:center}
-  .ring-orb{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2F6BD4,#13183a 70%);box-shadow:0 30px 70px rgba(47,107,212,.4),inset 0 0 40px rgba(0,0,0,.5);position:relative;display:flex;align-items:center;justify-content:center}
-  .ring-orb::after{content:"";position:absolute;width:118px;height:118px;border-radius:50%;background:#0A0F26;box-shadow:inset 0 0 30px rgba(0,0,0,.7)}
-  .ring-orb .lbl{position:relative;z-index:1;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.85)}
+/* integrations */
+.chips{display:flex;flex-wrap:wrap;gap:.75rem;}
+.chip{display:inline-flex;align-items:center;gap:.55rem;border:1px solid var(--line);background:#fff;border-radius:9999px;padding:.6rem 1.1rem;font-size:.85rem;font-weight:600;color:var(--fg);}
+.chip i{width:.55rem;height:.55rem;border-radius:50%;}
+.store-lbl{display:block;font-size:.85rem;font-weight:500;color:rgba(17,20,24,.55);margin-bottom:.9rem;}
+.store-btns{display:flex;flex-wrap:wrap;gap:.9rem;}
+.store{display:inline-flex;align-items:center;gap:.75rem;background:var(--ink);color:#fff;border-radius:1rem;padding:.7rem 1.3rem;transition:transform .25s;}
+.store:hover{transform:translateY(-3px);}
+.store .sico{width:1.7rem;height:1.7rem;flex-shrink:0;}
+.store .stx{line-height:1.15;text-align:left;}
+.store .stx s{display:block;font-size:.62rem;text-decoration:none;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.05em;}
+.store .stx b{font-size:1.05rem;font-weight:700;}
 
-  /* STEPS */
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:s}
-  @media(max-width:720px){.steps{grid-template-columns:1fr}}
-  .step{position:relative;padding-left:8px}
-  .step .num{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;margin-bottom:14px;box-shadow:0 8px 20px rgba(59,125,216,.3)}
-  .step h3{font-size:16px;font-weight:700;margin-bottom:7px}
-  .step p{font-size:13.5px;color:var(--muted)}
+/* about */
+.about-grid{display:grid;grid-template-columns:1fr;gap:3rem;align-items:center;}
+@media(min-width:1024px){.about-grid{grid-template-columns:1fr 1fr;}}
+.about-st{font-size:1.5rem;font-weight:500;line-height:1.35;letter-spacing:-.01em;}
+@media(min-width:640px){.about-st{font-size:1.95rem;}}
+.about-st .mut{color:var(--muted);}
+.ab-visual{position:relative;display:flex;justify-content:center;}
+.ab-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24rem;height:24rem;border-radius:50%;background:radial-gradient(circle,rgba(76,201,240,.4),rgba(30,136,229,.12) 55%,transparent 72%);filter:blur(10px);z-index:0;}
+.ab-stage{position:relative;width:16rem;z-index:1;}
+.ab-stage .phone{width:100%;}
+.ffloat{position:absolute;z-index:3;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-radius:1rem;box-shadow:0 20px 44px rgba(20,40,90,.22);padding:.65rem .85rem;display:flex;align-items:center;gap:.6rem;animation:abob 5.5s ease-in-out infinite;border:1px solid rgba(255,255,255,.9);}
+.ffloat .fi{width:2.1rem;height:2.1rem;border-radius:.65rem;display:grid;place-items:center;flex-shrink:0;}
+.ffloat .fi svg{width:1.1rem;height:1.1rem;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.ffloat .ft b{font-size:.85rem;font-weight:700;color:#15406e;display:block;line-height:1.1;}
+.ffloat .ft s{font-size:.62rem;color:#7387a4;text-decoration:none;}
+.ffloat .bar{margin-top:.3rem;width:5.5rem;height:.25rem;border-radius:2px;background:#e3e9f2;overflow:hidden;}
+.ffloat .bar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent-soft),var(--accent));}
+@keyframes abob{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+@media(max-width:640px){.ffloat{display:none;}}
 
-  /* CTA */
-  .cta-box{background:linear-gradient(135deg,#15224f,#1c1740);border:1px solid var(--border);border-radius:26px;padding:52px 30px;text-align:center}
-  .cta-box h2{font-size:clamp(26px,4.5vw,40px);font-weight:800;letter-spacing:-.5px;margin-bottom:14px}
-  .cta-box p{color:var(--muted);font-size:16px;max-width:520px;margin:0 auto 28px}
+/* capability cards (black) */
+.cap-grid{display:grid;grid-template-columns:1fr;gap:1.5rem;margin-top:3rem;}
+@media(min-width:768px){.cap-grid{grid-template-columns:1fr 1fr;}}
+.cap{position:relative;min-height:22rem;overflow:hidden;border-radius:2rem;background:var(--ink);padding:2rem;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+.cap:hover{transform:translateY(-8px);}
+.cap .meta{display:flex;justify-content:space-between;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.45);}
+.cap .badge{width:2.75rem;height:2.75rem;display:grid;place-items:center;border-radius:9999px;background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);transition:transform .4s;}
+.cap:hover .badge{transform:rotate(45deg) scale(1.08);}
+.cap .badge svg{width:1.1rem;height:1.1rem;stroke:#fff;fill:none;stroke-width:2;}
+.cap .wm{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;}
+.cap .wm img{width:5rem;opacity:.12;}
+.cap .bot{position:absolute;inset-inline:2rem;bottom:2rem;}
+.cap .bot h3{font-size:1.6rem;font-weight:500;letter-spacing:-.01em;}
+.cap .bot p{margin-top:.5rem;max-width:26rem;font-size:.9rem;color:rgba(255,255,255,.6);line-height:1.55;}
+.cap .tags{margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:.5rem;}
+.cap .tags span{display:inline-flex;border:1px solid rgba(255,255,255,.25);border-radius:9999px;padding:.45rem .9rem;font-size:.8rem;}
 
-  /* FOOTER */
-  footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:38px 0;margin-top:30px}
-  .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
-  .foot .muted{color:var(--muted);font-size:13px}
-  .foot-links{display:flex;gap:20px;flex-wrap:wrap}
-  .foot-links a{color:var(--muted);font-size:13px;transition:.2s}
-  .foot-links a:hover{color:var(--txt)}
+/* services rows */
+.srv li{border-top:1px solid var(--line);}
+.srv li:first-child{border-top:none;}
+.srv a{display:flex;align-items:center;gap:1.5rem;border-radius:1.25rem;padding:2rem 1.5rem;transition:background .4s,padding .4s;}
+.srv a:hover{background:var(--surface);padding-left:2rem;}
+.srv .ix{width:2.5rem;font-size:.9rem;font-weight:500;color:rgba(17,20,24,.4);}
+.srv h3{flex:1;font-size:1.6rem;font-weight:500;letter-spacing:-.01em;}
+@media(min-width:768px){.srv h3{font-size:2.25rem;}}
+.srv .ds{display:none;max-width:20rem;font-size:.9rem;color:rgba(17,20,24,.55);}
+@media(min-width:1024px){.srv .ds{display:block;}}
+.srv .ar{width:3rem;height:3rem;display:grid;place-items:center;border-radius:9999px;background:var(--ink);color:#fff;transition:transform .4s;flex-shrink:0;}
+.srv a:hover .ar{transform:translateX(5px);}
+.srv .ar svg{width:1.2rem;height:1.2rem;stroke:#fff;fill:none;stroke-width:2;}
+/* coming soon wearables */
+.cs-grid{display:grid;grid-template-columns:1fr;gap:1.5rem;margin-top:3rem;}
+@media(min-width:768px){.cs-grid{grid-template-columns:1fr 1fr;}}
+.cs-card{position:relative;overflow:hidden;border-radius:2rem;background:var(--ink);color:#fff;padding:2.6rem 2rem 2.2rem;display:flex;flex-direction:column;align-items:center;text-align:center;min-height:25rem;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+.cs-card:hover{transform:translateY(-8px);}
+.cs-card .glw{position:absolute;top:2.5rem;left:50%;transform:translateX(-50%);width:18rem;height:18rem;border-radius:50%;filter:blur(22px);z-index:0;opacity:.6;}
+.cs-badge{position:absolute;top:1.4rem;right:1.4rem;z-index:3;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:.45rem 1rem;border-radius:9999px;background:rgba(255,255,255,.12);}
+.cs-art{position:relative;z-index:2;width:11rem;height:11rem;margin-bottom:1.4rem;animation:abob 6s ease-in-out infinite;}
+.cs-card h3{position:relative;z-index:2;font-size:1.8rem;font-weight:600;letter-spacing:-.01em;}
+.cs-card p{position:relative;z-index:2;margin-top:.6rem;max-width:24rem;font-size:.95rem;color:rgba(255,255,255,.6);line-height:1.55;}
+.cs-tags{position:relative;z-index:2;margin-top:1.3rem;display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;}
+.cs-tags span{border:1px solid rgba(255,255,255,.22);border-radius:9999px;padding:.4rem .9rem;font-size:.8rem;}
+
+/* stats panel */
+.stats{border-radius:2rem;background:var(--ink);padding:4rem 2rem;color:#fff;}
+@media(min-width:768px){.stats{padding-inline:4rem;}}
+.stats .k{color:rgba(255,255,255,.7);}
+.stats h2{margin-top:1rem;max-width:20ch;font-size:1.95rem;font-weight:500;}
+.stats-grid{margin-top:3.5rem;display:grid;grid-template-columns:1fr 1fr;column-gap:2rem;row-gap:3rem;}
+@media(min-width:1024px){.stats-grid{grid-template-columns:repeat(4,1fr);}}
+.stat .n{font-size:3rem;font-weight:600;letter-spacing:-.02em;}
+@media(min-width:640px){.stat .n{font-size:3.75rem;}}
+.stat .l{margin-top:.75rem;font-size:.9rem;color:rgba(255,255,255,.55);}
+
+/* footer */
+footer{position:relative;overflow:hidden;border-radius:2rem 2rem 0 0;background:var(--ink);color:#fff;margin-top:2rem;}
+footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
+@media(min-width:640px){footer .shell{padding-inline:2rem;}}
+.ft-cta{display:flex;flex-direction:column;gap:2rem;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:4rem;}
+@media(min-width:1024px){.ft-cta{flex-direction:row;align-items:flex-end;justify-content:space-between;}}
+.ft-cta h2{max-width:16ch;font-size:2.25rem;font-weight:600;letter-spacing:-.02em;}
+@media(min-width:640px){.ft-cta h2{font-size:3rem;}}
+.ft-cols{display:grid;grid-template-columns:1fr;gap:3rem;padding-block:4rem;}
+@media(min-width:768px){.ft-cols{grid-template-columns:1fr 1fr;}}
+@media(min-width:1024px){.ft-cols{grid-template-columns:1.4fr 1fr 1fr 1fr;}}
+.ft-cols h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.4);margin-bottom:1.1rem;}
+.ft-cols a{display:block;font-size:.9rem;margin-bottom:.7rem;color:rgba(255,255,255,.75);transition:.25s;}
+.ft-cols a:hover{color:#fff;transform:translateX(4px);}
+.ft-brand b{display:flex;align-items:center;gap:.55rem;font-size:1.15rem;font-weight:700;margin-bottom:1rem;}
+.ft-brand img{width:1.6rem;height:1.6rem;}
+.ft-brand p{max-width:20rem;font-size:.9rem;color:rgba(255,255,255,.55);line-height:1.55;}
+.ft-social{display:flex;gap:.7rem;margin-top:1.5rem;}
+.soc{width:2.5rem;height:2.5rem;display:grid;place-items:center;border-radius:9999px;background:rgba(255,255,255,.08);transition:background .25s,transform .25s;}
+.soc:hover{background:var(--accent);transform:translateY(-3px);}
+.soc svg{width:1.15rem;height:1.15rem;fill:#fff;}
+.ft-legal{display:flex;flex-direction:column;align-items:center;gap:1rem;border-top:1px solid rgba(255,255,255,.1);padding-top:2rem;font-size:.72rem;color:rgba(255,255,255,.45);}
+@media(min-width:640px){.ft-legal{flex-direction:row;justify-content:space-between;}}
+.ft-wm{position:absolute;inset-inline:0;bottom:-1.5rem;z-index:0;text-align:center;pointer-events:none;user-select:none;font-weight:800;line-height:1;font-size:13rem;color:rgba(255,255,255,.04);letter-spacing:-.03em;}
+
+/* pill button */
+.pill{display:inline-flex;align-items:center;gap:.75rem;border-radius:9999px;font-size:.9rem;font-weight:600;transition:transform .25s;}
+.pill:hover{transform:scale(1.04);}
+.pill.dark{background:var(--ink);color:#fff;}
+.pill.light{background:var(--surface);color:var(--fg);}
+.pill.outline{border:1px solid var(--line);color:var(--fg);}
+.pill.acc{background:linear-gradient(135deg,var(--accent-soft),var(--accent2));color:#fff;}
+.pill.warrow{padding:.4rem .4rem .4rem 1.5rem;}
+.pill.plain{padding:.85rem 1.75rem;}
+.pill .bd{width:2.25rem;height:2.25rem;display:grid;place-items:center;border-radius:9999px;}
+.pill.dark .bd,.pill.acc .bd{background:#fff;color:var(--ink);}
+.pill.light .bd,.pill.outline .bd{background:var(--ink);color:#fff;}
+.pill .bd svg{width:1rem;height:1rem;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* nav overlay */
+#nav{position:fixed;inset:0;z-index:115;display:flex;flex-direction:column;background:var(--ink);color:#fff;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;}
+#nav.open{opacity:1;visibility:visible;}
+.nv-top{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 0;}
+.nv-top .b{display:flex;align-items:center;gap:.55rem;font-size:1.15rem;font-weight:700;}
+.nv-top .b img{width:1.6rem;height:1.6rem;}
+.nv-close{display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgba(255,255,255,.18);border-radius:.875rem;padding:.55rem 1rem;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.75);}
+.nv-close svg{width:.9rem;height:.9rem;stroke:currentColor;fill:none;stroke-width:2;}
+.nv-list{flex:1;display:flex;flex-direction:column;justify-content:center;}
+.nv-list button{display:flex;align-items:baseline;gap:1rem;padding:.5rem 0;text-align:left;font-size:2.25rem;font-weight:600;letter-spacing:-.02em;color:rgba(255,255,255,.72);transition:color .3s,transform .5s,opacity .5s;transform:translateY(1rem);opacity:0;}
+@media(min-width:640px){.nv-list button{font-size:3.4rem;}}
+#nav.open .nv-list button{transform:none;opacity:1;}
+.nv-list button:hover{color:#fff;}
+.nv-list .ix{font-size:1rem;font-weight:400;color:rgba(255,255,255,.3);}
+.nv-bot{display:flex;flex-direction:column;gap:.75rem;border-top:1px solid rgba(255,255,255,.1);padding:1.5rem 0;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.45);}
+@media(min-width:640px){.nv-bot{flex-direction:row;justify-content:space-between;}}
+
+/* modal */
+#modal{position:fixed;inset:0;z-index:130;display:flex;align-items:flex-end;justify-content:center;padding:1rem;background:rgba(10,14,22,.4);backdrop-filter:blur(14px);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;}
+@media(min-width:640px){#modal{align-items:center;}}
+#modal.open{opacity:1;visibility:visible;}
+.md-panel{position:relative;width:100%;max-width:32rem;overflow:hidden;border-radius:2rem;background:#fff;padding:2rem;box-shadow:0 40px 90px rgba(20,40,90,.3);transform:translateY(28px);transition:transform .35s cubic-bezier(.2,.8,.2,1);}
+#modal.open .md-panel{transform:none;}
+.md-x{position:absolute;right:1rem;top:1rem;width:2.25rem;height:2.25rem;display:grid;place-items:center;border-radius:9999px;background:var(--surface);color:rgba(17,20,24,.6);}
+.md-x svg{width:1rem;height:1rem;stroke:currentColor;fill:none;stroke-width:2;}
+.md-h{display:inline-flex;align-items:center;gap:.5rem;font-size:.9rem;font-weight:500;color:rgba(17,20,24,.6);margin-bottom:.4rem;}
+.md-h .dot{width:.4rem;height:.4rem;border-radius:50%;background:var(--accent);}
+.md-panel h2{font-size:1.5rem;margin-bottom:1.5rem;}
+.md-form{display:flex;flex-direction:column;gap:1rem;}
+.md-form label{display:block;font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:rgba(17,20,24,.5);margin-bottom:.4rem;}
+.md-form input,.md-form textarea{width:100%;border:1px solid var(--line);background:rgba(243,245,248,.6);border-radius:.875rem;padding:.75rem 1rem;font-family:var(--font);font-size:.9rem;outline:none;transition:.2s;}
+.md-form input:focus,.md-form textarea:focus{border-color:var(--accent);background:#fff;}
+.md-form textarea{resize:none;}
+.md-bot{margin-top:.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.md-note{font-size:.72rem;color:rgba(17,20,24,.45);}
+.md-ok{text-align:center;padding-block:2rem;display:flex;flex-direction:column;align-items:center;gap:1rem;}
+.md-ok .bd{width:3.5rem;height:3.5rem;display:grid;place-items:center;border-radius:9999px;background:var(--ink);}
+.md-ok .bd img{width:1.8rem;}
+.md-ok p{max-width:32ch;font-size:.9rem;color:rgba(17,20,24,.6);}
+.hidden{display:none!important;}
+
+@media(max-width:640px){
+  .hero-wm,.ft-wm{font-size:6rem;}
+  .cap-grid,.stats-grid{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  h2{font-size:2.1rem;}
+}
 </style>
 </head>
 <body>
-<div class="glow g1"></div>
-<div class="glow g2"></div>
 
-<!-- LOGO SVG (reusable) -->
-<svg width="0" height="0" style="position:absolute"><defs>
-  <linearGradient id="dg" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#4C9BFF"/><stop offset="1" stop-color="#2F6BD4"/>
-  </linearGradient>
-</defs></svg>
-
-<nav>
-  <div class="wrap nav-in">
-    <a href="#top" class="brand">
-      <svg class="mark" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#dg)" opacity="0.16"/>
-        <path d="M20 14h13c12 0 19 8 19 18s-7 18-19 18H20V14z" fill="url(#dg)"/>
-        <path d="M33 24c-7 1-12 6-12 13 0 1 .2 2 .5 3 6-1 11-6 11.5-13 .1-1 0-2 0-3z" fill="#0A0F26" opacity="0.9"/>
-        <path d="M34 23c6 1 10 5 10.5 11-6-.5-10-4.5-10.5-11z" fill="#79B6FF"/>
-      </svg>
-      D Health
-    </a>
-    <div class="nav-links">
-      <a href="#features">Veçoritë</a>
-      <a href="#ring">D Health Ring</a>
-      <a href="#how">Si funksionon</a>
-      <a href="#download" class="btn btn-pri">Shkarko</a>
-    </div>
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-c">
+    <div class="ld-brand"><img src="assets/logo.png" alt="">D Health</div>
+    <div class="ld-tag">Clarity for every heartbeat.</div>
   </div>
-</nav>
+  <div class="ld-prog">
+    <div class="ld-track"><div class="ld-fill" id="ldFill"></div></div>
+    <div class="ld-row"><span>Loading</span><span class="ld-num" id="ldNum">000</span></div>
+  </div>
+</div>
 
-<a id="top"></a>
-<header>
-  <div class="wrap">
-    <div class="badge"><span class="dot"></span> Shëndeti yt, i monitoruar me inteligjencë</div>
-    <h1>Kujdesi shëndetësor<br><span class="grad">në xhepin tënd.</span></h1>
-    <p class="sub">D Health monitoron tensionin, pulsin, glukozën dhe SpO2, jep analizë të plotë me AI, ndjek terapinë dhe të lidh drejtpërdrejt me mjekun — gjithçka në një aplikacion.</p>
-    <div class="cta">
-      <a href="#download" class="btn btn-pri btn-lg">⬇️ Shkarko aplikacionin</a>
-      <a href="APP_URL" class="btn btn-ghost btn-lg" id="openWebApp">🌐 Hap Web App</a>
-    </div>
-
-    <div class="hero-visual">
-      <div class="phone">
-        <div class="notch"></div>
-        <div class="screen">
-          <div>
-            <div class="s-greet">Mirëmëngjes 👋</div>
-            <div class="s-name">Herolind</div>
-          </div>
-          <div class="s-score"><div class="inner"><b>75</b><span>/100</span></div></div>
-          <div class="s-row">
-            <div class="s-vital"><div class="vl">Tensioni</div><div class="vv">120/80 <small>mmHg</small></div></div>
-            <div class="s-vital"><div class="vl">Pulsi</div><div class="vv">72 <small>bpm</small></div></div>
-          </div>
-          <div class="s-row">
-            <div class="s-vital"><div class="vl">Glukoza</div><div class="vv">95 <small>mg/dL</small></div></div>
-            <div class="s-vital"><div class="vl">SpO2</div><div class="vv">98<small>%</small></div></div>
-          </div>
-          <div class="s-ai">
-            <div class="h">🤖 AI Doctor</div>
-            <div class="b">Treguesit tuaj janë në normë. Vazhdoni terapinë dhe 30 min aktivitet ditor.</div>
-          </div>
-        </div>
-      </div>
+<!-- HEADER -->
+<header class="hd" id="hd">
+  <div class="shell hd-in">
+    <button class="hd-brand" data-scroll="home"><img src="assets/logo.png" alt="">D Health</button>
+    <nav class="hd-nav">
+      <button data-scroll="home">Home</button>
+      <button data-scroll="caps">Platform</button>
+      <button data-scroll="services">Wearables</button>
+      <button data-scroll="about">About</button>
+      <button onclick="location.href='mailto:contact@dhealth.app'">Contact</button>
+    </nav>
+    <div class="hd-right">
+      <div class="clock"><span class="lbl">Local time</span><span class="t" id="clkT">9:41am</span><span class="sep">•</span><span id="clkD">12 March, 2026</span></div>
+      <button class="menu-btn" id="menuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Menu</span></button>
     </div>
   </div>
 </header>
 
-<!-- FEATURES -->
-<section id="features">
-  <div class="wrap">
-    <div class="sec-head">
-      <div class="kicker">Veçoritë</div>
-      <h2>Gjithçka për shëndetin tënd, në një vend</h2>
-      <p>Nga matjet ditore te analiza inteligjente dhe komunikimi me mjekun.</p>
+<main>
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-glow" id="glow"></div>
+  <div class="hero-wm" id="heroWm">D HEALTH</div>
+  <div class="shell hero-grid">
+    <div class="hero-l">
+      <div class="eyebrow rv"><span class="dot"></span> AI-Powered Health Platform</div>
+      <h1 class="hl"><span class="ln"><i>Your health,</i></span><span class="ln"><i>finally</i></span><span class="ln"><i class="ac">understood.</i></span></h1>
+      <div class="rating rv"><span class="st">★★★★★</span><span>Vitals, ECG &amp; activity — in one app</span></div>
+      <div class="hcta rv">
+        <a href="https://dhealth.app/app/" class="pill acc warrow">Open the App <span class="bd"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+        <button class="pill outline plain" data-modal>Partner with us</button>
+      </div>
     </div>
-    <div class="grid">
-      <div class="feat"><div class="fi">❤️</div><h3>Monitorim i Vitaleve</h3><p>Tensioni, pulsi, glukoza, SpO2, temperatura, HRV dhe frymëmarrja — të gjitha të ndjekura dhe të sinkronizuara.</p></div>
-      <div class="feat"><div class="fi">🤖</div><h3>AI Doctor</h3><p>Analizë e plotë shëndetësore me Claude AI: Health Score, alarme inteligjente dhe rekomandime të personalizuara.</p></div>
-      <div class="feat"><div class="fi">💊</div><h3>Terapia & Alarme</h3><p>Ndjek ilaçet, dozat dhe oraret me kujtesa, të lidhura me diagnozat dhe analizat e tua.</p></div>
-      <div class="feat"><div class="fi">🧬</div><h3>Analiza Laboratorike</h3><p>Ngarko foto ose PDF të analizave — AI lexon çdo parametër dhe e lidh me gjendjen tënde.</p></div>
-      <div class="feat"><div class="fi">📅</div><h3>Termine me Mjekun</h3><p>Rezervo takime me Dr. Herolind Shabani direkt nga app-i dhe merr konfirmim në kohë reale.</p></div>
-      <div class="feat"><div class="fi">🥗</div><h3>Ushqimi & Aktiviteti</h3><p>Regjistro vaktet, hapat dhe kaloritë; AI vlerëson ndikimin te shëndeti dhe diagnozat e tua.</p></div>
+    <div class="hero-r rv">
+      <div class="phone"><div class="notch"></div><div class="scr"><img src="assets/shot_home.jpg" alt="D Health app"></div></div>
     </div>
   </div>
+  <div class="shell"><div class="hero-status rv"><span>Building since 2024</span><span style="opacity:.5">Remote-first, worldwide</span><span>Scroll to explore ↓</span></div></div>
 </section>
 
-<!-- RING / ECOSYSTEM -->
-<section id="ring">
-  <div class="wrap">
-    <div class="ring-sec">
-      <div>
-        <div class="kicker">Ekosistemi D Health</div>
-        <h2>Më shumë se një app — një industri shëndetësore</h2>
-        <p>D Health Ring sjell monitorimin 24/7 të gjumit, pulsit, SpO2 dhe aktivitetit direkt në gisht, i sinkronizuar pa ndërprerje me aplikacionin. Dhe kjo është vetëm fillimi — peshore inteligjente dhe pajisje të tjera po vijnë.</p>
-        <div class="ring-chips">
-          <span class="chip">💍 Sleep Monitor</span>
-          <span class="chip">❤️ Heart Rate 24/7</span>
-          <span class="chip">🫁 SpO2</span>
-          <span class="chip">🏃 Aktiviteti</span>
-          <span class="chip">⚖️ Smart Scale <small style="color:var(--purple)">së shpejti</small></span>
+<!-- INTEGRATIONS -->
+<section class="sec-pad"><div class="shell">
+  <div class="k rv"><span class="dot"></span>One app. All your health data.</div>
+  <div class="chips rv">
+    <div class="chip"><i style="background:#FF5E7E"></i>Apple Health</div>
+    <div class="chip"><i style="background:#34A853"></i>Health Connect</div>
+    <div class="chip"><i style="background:#00B0B9"></i>Fitbit</div>
+    <div class="chip"><i style="background:#1428A0"></i>Samsung Health</div>
+    <div class="chip"><i style="background:#1BBFD6"></i>D Health Ring</div>
+  </div>
+  <div class="rv" style="margin-top:2.2rem;">
+    <span class="store-lbl">Get the app</span>
+    <div class="store-btns">
+      <a class="store" href="https://dhealth.app/downloads/dhealth.apk" download>
+        <svg class="sico" viewBox="0 0 24 24" fill="none" stroke="#3DDC84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11M7.5 10l4.5 4.5L16.5 10M5 20h14"/></svg>
+        <div class="stx"><s style="color:#7fe3a8;">Available now</s><b>Android APK</b></div>
+      </a>
+      <a class="store" data-modal>
+        <svg class="sico" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 12.54c-.03-2.53 2.07-3.74 2.16-3.8-1.18-1.72-3.01-1.96-3.66-1.98-1.56-.16-3.04.92-3.83.92-.79 0-2.01-.9-3.31-.87-1.7.02-3.27.99-4.14 2.51-1.77 3.07-.45 7.61 1.27 10.1.84 1.22 1.84 2.58 3.15 2.53 1.26-.05 1.74-.81 3.27-.81 1.52 0 1.96.81 3.3.79 1.36-.02 2.23-1.24 3.06-2.46.96-1.41 1.36-2.78 1.38-2.85-.03-.01-2.65-1.02-2.68-4.05zM14.54 5.01c.7-.85 1.17-2.03 1.04-3.21-1.01.04-2.23.67-2.95 1.52-.65.75-1.22 1.96-1.07 3.11 1.13.09 2.28-.57 2.98-1.42z"/></svg>
+        <div class="stx"><s>Coming soon</s><b>App Store</b></div>
+      </a>
+      <a class="store" data-modal>
+        <svg class="sico" viewBox="0 0 24 24"><path fill="#00C3FF" d="M3.5 2.1c-.32.2-.5.55-.5.96v17.88c0 .41.18.76.5.96L13 12 3.5 2.1z"/><path fill="#34A853" d="M3.5 2.1 13 12l3.9-3.55L6.1 2.2c-.95-.53-1.98-.45-2.6-.1z"/><path fill="#EA4335" d="M3.5 21.9 13 12l3.9 3.55L6.1 21.8c-.95.53-1.98.45-2.6.1z"/><path fill="#FFCE00" d="M16.9 8.45 13 12l3.9 3.55 3.46-2c.94-.54.94-1.56 0-2.1l-3.46-2z"/></svg>
+        <div class="stx"><s>Coming soon</s><b>Google Play</b></div>
+      </a>
+    </div>
+  </div>
+</div></section>
+
+<!-- ABOUT -->
+<section class="sec-pad" id="about"><div class="shell">
+  <div class="about-grid" style="margin-bottom:5rem;">
+    <div class="rv ab-visual">
+      <div class="ab-glow"></div>
+      <div class="ab-stage">
+        <div class="phone"><div class="scr"><img src="assets/shot_diagnosis.jpg" alt="D Health — Diagnosis"></div></div>
+        <div class="ffloat" style="top:16%;right:-3.6rem;">
+          <div class="fi" style="background:#fdeaee;"><svg viewBox="0 0 24 24" stroke="#e8456b"><path d="m10.5 20.5 10-10a5 5 0 0 0-7-7l-10 10a5 5 0 0 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg></div>
+          <div class="ft"><b>4 active</b><s>Therapy</s></div>
+        </div>
+        <div class="ffloat" style="bottom:30%;left:-4rem;animation-delay:-1.8s;">
+          <div class="fi" style="background:#eef4ff;"><svg viewBox="0 0 24 24" stroke="#3B7DD8"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/><path d="M9 13h6M9 17h4"/></svg></div>
+          <div class="ft"><b>Weekly Report</b><s>Ready to share</s></div>
+        </div>
+        <div class="ffloat" style="bottom:1%;right:-2rem;animation-delay:-3.4s;">
+          <div class="fi" style="background:#fff2e0;"><svg viewBox="0 0 24 24" stroke="#e8902a"><path d="M3.3 19a10 10 0 1 1 17.4 0"/><path d="m12 14 4-4"/></svg></div>
+          <div class="ft"><b>58/100</b><s>Health Score</s><div class="bar"><i style="width:58%"></i></div></div>
         </div>
       </div>
-      <div class="ring-visual">
-        <div class="ring-orb"><span class="lbl">D Health<br>Ring</span></div>
+    </div>
+    <div>
+      <div class="k rv"><span class="dot"></span>The Platform</div>
+      <div class="about-st words">
+        <i>We</i> <i>turn</i> <i>your</i> <i>vitals,</i> <i>ECG</i> <i>and</i> <i>daily</i> <i>activity</i> <i>into</i>
+        <i class="mut">clear,</i> <i class="mut">AI-driven</i> <i class="mut">insight</i> <i class="mut">—</i> <i class="mut">and</i> <i class="mut">the</i> <i class="mut">wearables</i> <i class="mut">that</i> <i class="mut">power</i> <i class="mut">it.</i>
       </div>
     </div>
   </div>
-</section>
-
-<!-- HOW -->
-<section id="how">
-  <div class="wrap">
-    <div class="sec-head">
-      <div class="kicker">Si funksionon</div>
-      <h2>Fillo në 3 hapa</h2>
-    </div>
-    <div class="steps">
-      <div class="step"><div class="num">1</div><h3>Shkarko & regjistrohu</h3><p>Merr app-in dhe krijo llogarinë me Google ose email — për pak sekonda.</p></div>
-      <div class="step"><div class="num">2</div><h3>Mat & sinkronizo</h3><p>Shëno treguesit ose lidh D Health Ring; të dhënat ruhen sigurt në llogarinë tënde.</p></div>
-      <div class="step"><div class="num">3</div><h3>Merr analizë & kujdes</h3><p>AI të jep vlerësimin e plotë dhe lidhu me mjekun kur të duash.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- DOWNLOAD CTA -->
-<section id="download">
-  <div class="wrap">
-    <div class="cta-box">
-      <h2>Merr D Health sot</h2>
-      <p>Shkarko aplikacionin dhe nis udhëtimin drejt një shëndeti më të mirë, të monitoruar me kujdes.</p>
-      <div class="store-row">
-        <a href="/downloads/dhealth.apk" class="store" id="apkBtn">
-          <span class="ico"><svg width="23" height="23" viewBox="0 0 32 32" fill="#3DDC84" xmlns="http://www.w3.org/2000/svg"><path d="M21.7 11.3l1.6-2.8c.1-.2 0-.4-.1-.5-.2-.1-.4 0-.5.1l-1.6 2.9c-1.3-.6-2.7-.9-4.1-.9h-2c-1.4 0-2.8.3-4.1.9L9.3 8.1c-.1-.2-.3-.2-.5-.1-.2.1-.2.3-.1.5l1.6 2.8c-2.9 1.6-4.8 4.5-5.1 7.9h21.6c-.3-3.4-2.2-6.3-5.1-7.9zM12.5 16.2c-.6 0-1.1-.5-1.1-1.1s.5-1.1 1.1-1.1 1.1.5 1.1 1.1-.5 1.1-1.1 1.1zm7 0c-.6 0-1.1-.5-1.1-1.1s.5-1.1 1.1-1.1 1.1.5 1.1 1.1-.5 1.1-1.1 1.1z"/></svg></span><span><span class="t1">Shkarko direkt</span><span class="t2">Android APK</span></span>
-        </a>
-        <span class="store soon">
-          <span class="tag-soon">Së shpejti</span>
-          <span class="ico"><svg width="22" height="24" viewBox="0 0 40 44" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.2 24 22 3 41.8c-1.2.5-2.7-.3-2.7-2V4.2c0-1.7 1.5-2.5 2.7-2z" fill="#00D9FF"/><path d="M24 22 30.5 15.5 5.5 1.2C4.6.7 3.7.8 3 1.3L24 22z" fill="#00E676"/><path d="M24 22 3 42.7c.7.5 1.6.6 2.5.1L30.5 28.5 24 22z" fill="#FF3D47"/><path d="M24 22 30.5 28.5 37.8 24.3c1.6-.9 1.6-3.7 0-4.6L30.5 15.5 24 22z" fill="#FFC400"/></svg></span><span><span class="t1">Merr nga</span><span class="t2">Google Play</span></span>
-        </span>
-        <span class="store soon">
-          <span class="tag-soon">Së shpejti</span>
-          <span class="ico"><svg width="22" height="26" viewBox="0 0 24 28" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M17.6 14.8c0-3 2.4-4.4 2.5-4.5-1.4-2-3.5-2.3-4.2-2.3-1.8-.2-3.5 1-4.4 1-.9 0-2.3-1-3.8-1-1.9 0-3.7 1.1-4.7 2.9-2 3.5-.5 8.6 1.4 11.5.9 1.4 2 3 3.5 2.9 1.4-.1 1.9-.9 3.6-.9s2.2.9 3.7.9c1.5 0 2.5-1.4 3.4-2.8 1.1-1.6 1.5-3.1 1.5-3.2-.1 0-2.9-1.1-3-4.4zM14.8 5.9c.8-1 1.3-2.3 1.2-3.7-1.1.1-2.5.8-3.3 1.7-.7.8-1.4 2.2-1.2 3.5 1.2.1 2.5-.6 3.3-1.5z"/></svg></span><span><span class="t1">Merr nga</span><span class="t2">App Store</span></span>
-        </span>
+  <div class="about-grid">
+    <div>
+      <div class="k rv"><span class="dot"></span>Therapy &amp; Care</div>
+      <div class="about-st words">
+        <i>Plan</i> <i>your</i> <i>therapy,</i> <i>book</i> <i>appointments,</i> <i>and</i> <i>let</i>
+        <i class="mut">smart</i> <i class="mut">alarms</i> <i class="mut">ring</i> <i class="mut">on</i> <i class="mut">time</i> <i class="mut">—</i> <i class="mut">even</i> <i class="mut">with</i> <i class="mut">the</i> <i class="mut">app</i> <i class="mut">closed.</i>
       </div>
-      <div style="margin-top:18px">
-        <a href="APP_URL" class="btn btn-ghost" id="openWebApp2">🌐 Ose hap direkt në shfletues</a>
+    </div>
+    <div class="rv ab-visual">
+      <div class="ab-glow"></div>
+      <div class="ab-stage">
+        <div class="phone"><div class="scr"><img src="assets/shot_calendar.jpg" alt="D Health — Therapy Calendar"></div></div>
+        <div class="ffloat" style="top:16%;left:-3.8rem;">
+          <div class="fi" style="background:#eef4ff;"><svg viewBox="0 0 24 24" stroke="#3B7DD8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+          <div class="ft"><b>In 2 weeks</b><s>Next visit</s></div>
+        </div>
+        <div class="ffloat" style="bottom:30%;right:-3.6rem;animation-delay:-1.8s;">
+          <div class="fi" style="background:#fff2e0;"><svg viewBox="0 0 24 24" stroke="#e8902a"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
+          <div class="ft"><b>08:00 AM</b><s>Therapy alarm</s></div>
+        </div>
+        <div class="ffloat" style="bottom:1%;left:-2rem;animation-delay:-3.4s;">
+          <div class="fi" style="background:#e4f7ef;"><svg viewBox="0 0 24 24" stroke="#1ec6a0"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></div>
+          <div class="ft"><b>On track</b><s>Adherence</s><div class="bar"><i style="width:92%"></i></div></div>
+        </div>
       </div>
     </div>
   </div>
-</section>
+</div></section>
 
+<!-- CAPABILITIES (black cards) -->
+<section class="sec-pad" id="caps"><div class="shell">
+  <div class="k rv"><span class="dot"></span>The Platform</div>
+  <h2 class="rv">What D Health does</h2>
+  <ul class="cap-grid">
+    <li class="cap rv"><div class="meta"><span>AI · Diagnostics</span><span class="badge"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div><div class="wm"><img src="assets/logo.png" alt=""></div><div class="bot"><h3>AI Doctor</h3><p>Chat with your AI medical assistant about symptoms, results and next steps — in your language.</p><div class="tags"><span>Chat</span><span>Verdict</span><span>Guidance</span></div></div></li>
+    <li class="cap rv"><div class="meta"><span>Monitoring</span><span class="badge"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div><div class="wm"><img src="assets/logo.png" alt=""></div><div class="bot"><h3>Vital Intelligence</h3><p>BP, heart rate, SpO₂, glucose and temperature — each with an instant, plain-language AI verdict.</p><div class="tags"><span>BP</span><span>HR</span><span>SpO₂</span><span>Glucose</span></div></div></li>
+    <li class="cap rv"><div class="meta"><span>Cardiac</span><span class="badge"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div><div class="wm"><img src="assets/logo.png" alt=""></div><div class="bot"><h3>ECG Smart Analysis</h3><p>Upload an ECG and let AI interpret rhythm, anomalies and cardiac risk in seconds.</p><div class="tags"><span>ECG</span><span>Rhythm</span><span>Risk</span></div></div></li>
+    <li class="cap rv"><div class="meta"><span>Hardware</span><span class="badge"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div><div class="wm"><img src="assets/logo.png" alt=""></div><div class="bot"><h3>D Health Wearables</h3><p>A branded ring &amp; ECG band that stream your health straight into the app over Bluetooth.</p><div class="tags"><span>Ring</span><span>Band</span><span>24/7</span></div></div></li>
+  </ul>
+</div></section>
+
+<!-- WEARABLES — COMING SOON -->
+<section class="sec-pad" id="services"><div class="shell">
+  <div class="k rv"><span class="dot"></span>The Ecosystem</div>
+  <h2 class="rv">Wearables, coming soon</h2>
+  <p class="rv" style="margin-top:1rem;max-width:42rem;font-size:1.1rem;color:var(--muted);line-height:1.6;">Branded D Health hardware that streams your health straight into the app over Bluetooth — no third-party account needed.</p>
+  <div class="cs-grid">
+    <div class="cs-card rv">
+      <div class="glw" style="background:radial-gradient(circle,rgba(76,201,240,.55),transparent 70%);"></div>
+      <span class="cs-badge">Coming soon</span>
+      <svg class="cs-art" viewBox="0 0 200 200" fill="none"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fe9d4"/><stop offset="1" stop-color="#1BBFD6"/></linearGradient></defs><ellipse cx="100" cy="112" rx="60" ry="66" stroke="url(#rg)" stroke-width="28"/><ellipse cx="100" cy="112" rx="60" ry="66" stroke="rgba(255,255,255,.25)" stroke-width="7"/><rect x="76" y="30" width="48" height="32" rx="12" fill="url(#rg)"/><circle cx="100" cy="46" r="5.5" fill="#0a0e16"/></svg>
+      <h3>D Health Ring</h3>
+      <p>Steps, heart rate, SpO₂ and sleep, 24/7 — pairing directly with the app over Bluetooth.</p>
+      <div class="cs-tags"><span>Steps</span><span>Heart rate</span><span>SpO₂</span><span>Sleep</span></div>
+    </div>
+    <div class="cs-card rv">
+      <div class="glw" style="background:radial-gradient(circle,rgba(139,111,232,.55),transparent 70%);"></div>
+      <span class="cs-badge">Coming soon</span>
+      <svg class="cs-art" viewBox="0 0 200 200" fill="none"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c5b3ff"/><stop offset="1" stop-color="#7c4dff"/></linearGradient></defs><rect x="66" y="26" width="68" height="40" rx="14" fill="url(#wg)"/><rect x="66" y="134" width="68" height="40" rx="14" fill="url(#wg)"/><rect x="50" y="58" width="100" height="84" rx="24" fill="url(#wg)"/><rect x="62" y="70" width="76" height="60" rx="16" fill="#0a0e16"/><path d="M72 100h11l5-13 8 26 5-13h13" stroke="#c5b3ff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h3>D Health Watch</h3>
+      <p>An on-demand ECG smart watch with richer monitoring — the "Pro" tier of the D Health family.</p>
+      <div class="cs-tags"><span>ECG</span><span>Heart rate</span><span>HRV</span><span>Activity</span></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- STATS -->
+<section class="sec-pad" style="padding-top:0"><div class="shell">
+  <div class="stats rv">
+    <div class="k"><span class="dot"></span>By the numbers</div>
+    <h2>Built for clarity, secured by design.</h2>
+    <ul class="stats-grid">
+      <li class="stat"><div class="n"><span data-count="7">0</span></div><div class="l">Vitals tracked</div></li>
+      <li class="stat"><div class="n"><span data-count="5">0</span>+</div><div class="l">Data sources</div></li>
+      <li class="stat"><div class="n"><span data-count="24">0</span>/7</div><div class="l">Monitoring</div></li>
+      <li class="stat"><div class="n"><span data-count="100">0</span>%</div><div class="l">GDPR &amp; RLS secured</div></li>
+    </ul>
+  </div>
+</div></section>
+</main>
+
+<!-- FOOTER -->
 <footer>
-  <div class="wrap foot">
-    <div style="display:flex;align-items:center;gap:10px">
-      <svg width="28" height="28" viewBox="0 0 64 64" fill="none"><rect x="2" y="2" width="60" height="60" rx="16" fill="url(#dg)" opacity="0.16"/><path d="M20 14h13c12 0 19 8 19 18s-7 18-19 18H20V14z" fill="url(#dg)"/><path d="M33 24c-7 1-12 6-12 13 0 1 .2 2 .5 3 6-1 11-6 11.5-13 .1-1 0-2 0-3z" fill="#0A0F26" opacity="0.9"/><path d="M34 23c6 1 10 5 10.5 11-6-.5-10-4.5-10.5-11z" fill="#79B6FF"/></svg>
-      <div><div style="font-weight:800">D Health</div><div class="muted" style="font-size:12px">Dr. Herolind Shabani</div></div>
+  <div class="shell">
+    <div class="ft-cta">
+      <h2 class="rv">Have a health idea — or building hardware? Let's talk.</h2>
+      <button class="pill light warrow" data-modal>Start a project <span class="bd"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button>
     </div>
-    <div class="foot-links">
-      <a href="#features">Veçoritë</a>
-      <a href="#ring">Ring</a>
-      <a href="#download">Shkarko</a>
-      <a href="mailto:noreply@dhealth.app">Kontakt</a>
+    <div class="ft-cols">
+      <div class="ft-brand"><b><img src="assets/logo.png" alt="">D Health</b><p>An AI-powered medical wallet and a branded wearable ecosystem — making everyday health simple, clear and connected.</p>
+        <div class="ft-social">
+          <a href="#" class="soc" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8h2.2l.33-2.8H13.5V8.4c0-.8.22-1.34 1.4-1.34h1.43V4.55c-.7-.07-1.4-.1-2.1-.1-2.2 0-3.73 1.34-3.73 3.8v2.15H8.3V13h2.2v8h3z"/></svg></a>
+          <a href="#" class="soc" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17.2" cy="6.8" r="1.1" fill="#fff" stroke="none"/></svg></a>
+          <a href="#" class="soc" aria-label="X"><svg viewBox="0 0 24 24"><path d="M17.6 3h3.3l-7.2 8.2L22.2 21h-6.6l-5.18-6.78L4.5 21H1.2l7.7-8.8L1.8 3h6.77l4.68 6.2L17.6 3zm-1.16 16h1.83L7.65 4.9H5.7L16.44 19z"/></svg></a>
+          <a href="#" class="soc" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.5 3c.32 2.1 1.5 3.42 3.5 3.62v2.74c-1.16.11-2.27-.27-3.4-1.02v5.43a5.27 5.27 0 1 1-5.27-5.27c.28 0 .56.02.83.07v2.82a2.46 2.46 0 1 0 1.74 2.36V3h2.6z"/></svg></a>
+        </div>
+      </div>
+      <div><h4>Platform</h4><a data-scroll="caps">AI Doctor</a><a data-scroll="caps">Vitals</a><a data-scroll="caps">ECG</a><a data-scroll="caps">Wearables</a></div>
+      <div><h4>Company</h4><a data-scroll="about">About</a><a data-modal>Partners</a><a href="mailto:contact@dhealth.app">Contact</a><a data-modal>Careers</a></div>
+      <div><h4>Connect</h4><a href="https://dhealth.app/app/">Open App</a><a data-modal>Newsletter</a><a href="#">Privacy</a><a href="#">Terms</a></div>
     </div>
-    <div class="muted">© 2026 D Health. Të gjitha të drejtat e rezervuara.</div>
+    <div class="ft-legal"><span>© 2026 D Health. All rights reserved.</span><span>Powered by Claude AI · GDPR compliant</span></div>
   </div>
+  <div class="ft-wm">D HEALTH</div>
 </footer>
 
-<script>
-  // Web app-i ndodhet te /app
-  var APP_URL = '/app/';
-  document.querySelectorAll('#openWebApp,#openWebApp2').forEach(function(a){ a.href = APP_URL; });
+<!-- NAV OVERLAY -->
+<div id="nav">
+  <div class="shell nv-top">
+    <div class="b"><img src="assets/logo.png" alt="">D Health</div>
+    <button class="nv-close" id="navClose"><svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4 4 20"/></svg>Close</button>
+  </div>
+  <div class="shell nv-list">
+    <button data-scroll="home"><span class="ix">01</span> Home</button>
+    <button data-scroll="caps"><span class="ix">02</span> Platform</button>
+    <button data-scroll="services"><span class="ix">03</span> Wearables</button>
+    <button data-scroll="about"><span class="ix">04</span> About</button>
+    <button onclick="location.href='mailto:contact@dhealth.app'"><span class="ix">05</span> Contact</button>
+  </div>
+  <div class="shell nv-bot"><span>Local time — <span id="clkT2">9:41am</span></span><button data-modal style="color:rgba(255,255,255,.7)">Start a project →</button></div>
+</div>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="md-panel">
+    <button class="md-x" id="mdX"><svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4 4 20"/></svg></button>
+    <div id="mdForm">
+      <div class="md-h"><span class="dot"></span> Start a project</div>
+      <h2>Tell us what you're building.</h2>
+      <form class="md-form" id="reqForm">
+        <div><label>Name</label><input type="text" required placeholder="Your name"></div>
+        <div><label>Email</label><input type="email" required placeholder="you@company.com"></div>
+        <div><label>Message</label><textarea rows="4" required placeholder="A few words about your project, timeline, and budget."></textarea></div>
+        <div class="md-bot"><span class="md-note">We reply within one business day.</span><button type="submit" class="pill dark warrow" id="reqSend">Send request <span class="bd"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button></div>
+      </form>
+    </div>
+    <div id="mdOk" class="md-ok hidden">
+      <div class="bd"><img src="assets/logo.png" alt=""></div>
+      <h2>Request received</h2>
+      <p>Thanks for reaching out — we'll get back to you within one business day.</p>
+      <button class="pill dark plain" id="mdOkClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": { "lenis": "https://unpkg.com/lenis@1.3.23/dist/lenis.mjs" } }
+</script>
+<script type="module">
+window.scrollTo(0,0);
+/* Smooth scroll (Lenis) with graceful fallback */
+let lenis=null;
+try{
+  const mod=await import('lenis');
+  lenis=new mod.default({smoothWheel:true});
+  const raf=t=>{lenis.raf(t);requestAnimationFrame(raf);};
+  requestAnimationFrame(raf);
+}catch(e){ /* native scroll */ }
+function stopScroll(){ try{lenis&&lenis.stop();}catch(e){} document.documentElement.style.cssText+='position:relative;overflow:hidden;height:100%;'; }
+function startScroll(){ try{lenis&&lenis.start();}catch(e){} document.documentElement.style.position='';document.documentElement.style.overflow='';document.documentElement.style.height=''; }
+function scrollToId(id){
+  const el=document.getElementById(id); if(!el) return;
+  const top=el.getBoundingClientRect().top+window.pageYOffset;
+  if(lenis) lenis.scrollTo(top); else window.scrollTo({top,behavior:'smooth'});
+}
+
+/* LOADER */
+stopScroll();
+const loader=document.getElementById('loader'), ldFill=document.getElementById('ldFill'), ldNum=document.getElementById('ldNum');
+const FILL_MS=1300, t0=performance.now();
+const easeInOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+function tick(now){
+  let t=Math.min((now-t0)/FILL_MS,1); let p=Math.round(easeInOut(t)*100);
+  ldFill.style.width=p+'%'; ldNum.textContent=String(p).padStart(3,'0');
+  if(t<1){requestAnimationFrame(tick);}
+  else{ setTimeout(()=>{ loader.classList.add('gone'); setTimeout(()=>{ document.body.classList.add('ready'); startScroll(); document.getElementById('hd').classList.add('in'); document.getElementById('heroWm').classList.add('in'); loader.remove(); },820); },120); }
+}
+requestAnimationFrame(tick);
+
+/* CLOCK */
+function tickClock(){
+  const d=new Date(); let h=d.getHours(); const m=String(d.getMinutes()).padStart(2,'0'); const ap=h<12?'am':'pm'; h=h%12||12;
+  const time=h+':'+m+ap;
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const date=d.getDate()+' '+months[d.getMonth()]+', '+d.getFullYear();
+  const T=document.getElementById('clkT'); if(T)T.textContent=time;
+  const T2=document.getElementById('clkT2'); if(T2)T2.textContent=time;
+  const D=document.getElementById('clkD'); if(D)D.textContent=date;
+}
+tickClock(); setInterval(tickClock,1000);
+
+/* REVEALS */
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.14});
+document.querySelectorAll('.rv,.words').forEach(el=>io.observe(el));
+
+/* COUNT-UP */
+const cio=new IntersectionObserver(es=>{es.forEach(e=>{
+  if(!e.isIntersecting)return; const el=e.target, end=+el.getAttribute('data-count'); let c=0; const step=Math.max(1,Math.round(end/28));
+  const iv=setInterval(()=>{c+=step;if(c>=end){c=end;clearInterval(iv);}el.textContent=c;},26); cio.unobserve(el);
+});},{threshold:.6});
+document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+
+/* CURSOR GLOW on hero */
+const glow=document.getElementById('glow'), hero=document.getElementById('home');
+hero.addEventListener('pointermove',ev=>{ const r=hero.getBoundingClientRect(); glow.style.transform=`translate(${ev.clientX-r.left-288}px,${ev.clientY-r.top-288}px)`; });
+
+/* NAV + SCROLL routing */
+document.querySelectorAll('[data-scroll]').forEach(b=>b.addEventListener('click',()=>{ closeNav(); scrollToId(b.getAttribute('data-scroll')); }));
+const nav=document.getElementById('nav');
+function openNav(){ nav.classList.add('open'); stopScroll(); }
+function closeNav(){ if(nav.classList.contains('open')){ nav.classList.remove('open'); startScroll(); } }
+document.getElementById('menuBtn').addEventListener('click',openNav);
+document.getElementById('navClose').addEventListener('click',closeNav);
+
+/* MODAL */
+const modal=document.getElementById('modal'), mdForm=document.getElementById('mdForm'), mdOk=document.getElementById('mdOk');
+function openModal(){ closeNav(); modal.classList.add('open'); stopScroll(); }
+function closeModal(){ modal.classList.remove('open'); startScroll(); setTimeout(()=>{ mdForm.classList.remove('hidden'); mdOk.classList.add('hidden'); const f=document.getElementById('reqForm'); f&&f.reset(); },350); }
+document.querySelectorAll('[data-modal]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();openModal();}));
+document.getElementById('mdX').addEventListener('click',closeModal);
+document.getElementById('mdOkClose').addEventListener('click',closeModal);
+modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+document.getElementById('reqForm').addEventListener('submit',e=>{
+  e.preventDefault(); const btn=document.getElementById('reqSend'); btn.firstChild.textContent='Sending… ';
+  setTimeout(()=>{ mdForm.classList.add('hidden'); mdOk.classList.remove('hidden'); btn.firstChild.textContent='Send request '; },700);
+});
+addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeModal(); closeNav(); } });
 </script>
 </body>
 </html>
