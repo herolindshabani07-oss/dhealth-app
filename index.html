@@ -227,6 +227,10 @@ footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
 .soc{width:2.5rem;height:2.5rem;display:grid;place-items:center;border-radius:9999px;background:rgba(255,255,255,.08);transition:background .25s,transform .25s;}
 .soc:hover{background:var(--accent);transform:translateY(-3px);}
 .soc svg{width:1.15rem;height:1.15rem;fill:#fff;}
+.ft-contact{margin-top:1.5rem;display:flex;flex-direction:column;gap:.65rem;}
+.ft-contact a,.ft-contact span{display:inline-flex;align-items:center;gap:.65rem;font-size:.92rem;color:rgba(255,255,255,.75);transition:color .2s;}
+.ft-contact a:hover{color:#fff;}
+.ft-contact svg{width:1.05rem;height:1.05rem;flex-shrink:0;stroke:var(--accent-soft);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .ft-legal{display:flex;flex-direction:column;align-items:center;gap:1rem;border-top:1px solid rgba(255,255,255,.1);padding-top:2rem;font-size:.72rem;color:rgba(255,255,255,.45);}
 @media(min-width:640px){.ft-legal{flex-direction:row;justify-content:space-between;}}
 .ft-wm{position:absolute;inset-inline:0;bottom:-1.5rem;z-index:0;text-align:center;pointer-events:none;user-select:none;font-weight:800;line-height:1;font-size:13rem;color:rgba(255,255,255,.04);letter-spacing:-.03em;}
@@ -502,10 +506,12 @@ footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
           <a href="#" class="soc" aria-label="X"><svg viewBox="0 0 24 24"><path d="M17.6 3h3.3l-7.2 8.2L22.2 21h-6.6l-5.18-6.78L4.5 21H1.2l7.7-8.8L1.8 3h6.77l4.68 6.2L17.6 3zm-1.16 16h1.83L7.65 4.9H5.7L16.44 19z"/></svg></a>
           <a href="#" class="soc" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.5 3c.32 2.1 1.5 3.42 3.5 3.62v2.74c-1.16.11-2.27-.27-3.4-1.02v5.43a5.27 5.27 0 1 1-5.27-5.27c.28 0 .56.02.83.07v2.82a2.46 2.46 0 1 0 1.74 2.36V3h2.6z"/></svg></a>
         </div>
-        <a href="mailto:contact@dhealth.app" style="display:inline-flex;align-items:center;gap:.55rem;margin-top:1.4rem;color:#fff;font-weight:600;font-size:.95rem;">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-          contact@dhealth.app
-        </a>
+        <div class="ft-contact">
+          <a href="tel:+38979223814"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8.1 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>Mob +389 79 223 814</a>
+          <a href="tel:+38970241880"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8.1 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>Mob +389 70 241 880</a>
+          <a href="mailto:contact@dhealth.app"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>contact@dhealth.app</a>
+          <span><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>St. Franklin Ruzvelt No 21/8</span>
+        </div>
       </div>
       <div><h4>Platform</h4><a data-scroll="caps">AI Doctor</a><a data-scroll="caps">Vitals</a><a data-scroll="caps">ECG</a><a data-scroll="caps">Wearables</a></div>
       <div><h4>Company</h4><a data-scroll="about">About</a><a data-modal>Partners</a><a href="mailto:contact@dhealth.app">Contact</a><a data-modal>Careers</a></div>
@@ -540,10 +546,12 @@ footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
       <div class="md-h"><span class="dot"></span> Start a project</div>
       <h2 style="margin-bottom:.5rem;">Tell us what you're building.</h2>
       <p style="margin-bottom:1.4rem;font-size:.9rem;color:rgba(17,20,24,.55);">Or email us directly at <a href="mailto:contact@dhealth.app" style="color:var(--accent);font-weight:700;">contact@dhealth.app</a></p>
-      <form class="md-form" id="reqForm">
-        <div><label>Name</label><input type="text" required placeholder="Your name"></div>
-        <div><label>Email</label><input type="email" required placeholder="you@company.com"></div>
-        <div><label>Message</label><textarea rows="4" required placeholder="A few words about your project, timeline, and budget."></textarea></div>
+      <form class="md-form" id="reqForm" name="partner" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="partner">
+        <div style="display:none;"><label>Skip<input name="bot-field"></label></div>
+        <div><label>Name</label><input type="text" name="name" required placeholder="Your name"></div>
+        <div><label>Email</label><input type="email" name="email" required placeholder="you@company.com"></div>
+        <div><label>Message</label><textarea name="message" rows="4" required placeholder="A few words about your project, timeline, and budget."></textarea></div>
         <div class="md-bot"><span class="md-note">We reply within one business day.</span><button type="submit" class="pill dark warrow" id="reqSend">Send request <span class="bd"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button></div>
       </form>
     </div>
@@ -634,8 +642,12 @@ document.getElementById('mdX').addEventListener('click',closeModal);
 document.getElementById('mdOkClose').addEventListener('click',closeModal);
 modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
 document.getElementById('reqForm').addEventListener('submit',e=>{
-  e.preventDefault(); const btn=document.getElementById('reqSend'); btn.firstChild.textContent='Sending… ';
-  setTimeout(()=>{ mdForm.classList.add('hidden'); mdOk.classList.remove('hidden'); btn.firstChild.textContent='Send request '; },700);
+  e.preventDefault();
+  const form=e.target, btn=document.getElementById('reqSend');
+  btn.firstChild.textContent='Sending… ';
+  const body=new URLSearchParams(new FormData(form)).toString();
+  const done=()=>{ mdForm.classList.add('hidden'); mdOk.classList.remove('hidden'); btn.firstChild.textContent='Send request '; };
+  fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}).then(done).catch(done);
 });
 addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeModal(); closeNav(); } });
 </script>
