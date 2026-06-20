@@ -575,7 +575,9 @@ select option{background:#0A1628;color:#F1F5FF;}
 .ls{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;}
 .ls.lhide{display:none;}
 /* Welcome */
-#lw{background:radial-gradient(125% 80% at 50% 22%,#ffffff 0%,#eaf4fb 42%,#bcdef4 100%);}
+#lw{background:radial-gradient(120% 82% at 50% 18%,#ffffff 0%,#eaf2fb 38%,#dde9f7 70%,#c6dcef 100%);}
+#lw .llogo{position:relative;box-shadow:0 14px 34px rgba(30,136,229,0.22),inset 0 1px 1px rgba(255,255,255,.9)!important;}
+#lw .llogo:before{content:'';position:absolute;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(76,201,240,.35),transparent 68%);filter:blur(8px);z-index:-1;}
 .lwb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 28px;position:relative;z-index:1;}
 .llogo{width:86px;height:86px;border-radius:26px;background:rgba(255,255,255,0.75);border:1.5px solid rgba(120,160,210,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:20px;animation:lfloat 3s ease-in-out infinite;backdrop-filter:blur(8px);box-shadow:0 10px 26px rgba(70,120,190,0.18);}
 @keyframes lfloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
@@ -1070,20 +1072,7 @@ select option{background:#0A1628;color:#F1F5FF;}
   <div style="height:28px;"></div>
   <div class="lwb">
     <div class="llogo">
-      <svg width="54" height="54" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="grad1" x1="30%" y1="20%" x2="70%" y2="80%" gradientUnits="objectBoundingBox">
-            <stop offset="0%" stop-color="#4CC9F0"/>
-            <stop offset="100%" stop-color="#1E88E5"/>
-          </linearGradient>
-        </defs>
-        <!-- D-ja kryesore -->
-        <path d="M650 512 Q650 380 550 300 Q420 300 350 420 Q350 580 420 680 Q500 720 620 650"
-              fill="url(#grad1)" stroke="#1E88E5" stroke-width="40"/>
-        <!-- Elementi i gjethes/valës -->
-        <path d="M380 520 Q460 410 530 480 Q590 560 630 490 Q560 400 490 460 Q430 500 380 520Z"
-              fill="#FFFFFF" opacity="0.9"/>
-      </svg>
+      <img src="/assets/logo.png" alt="D Health" style="width:60px;height:60px;object-fit:contain;display:block;"/>
     </div>
     <h1 class="ltitle"><em>D Health</em></h1>
     <p class="ldesc">Medical Wallet</p>
