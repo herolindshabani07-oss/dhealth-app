@@ -4461,6 +4461,8 @@ async function saveVitalsToSupabase(){
   try{
     var sb = getSupa();
     if(!sb || !LST || !LST.currentUser) return;
+    /* Cache lokal (mbijeton Clear All edhe nëse Supabase nuk ngarkon në cold-start) */
+    try{ localStorage.setItem('dh_cache_vt_'+LST.currentUser.id, JSON.stringify({systolic_bp:vitalsState.sys||null,diastolic_bp:vitalsState.dia||null,heart_rate:vitalsState.hr||null,glucose:vitalsState.glu||null,spo2:vitalsState.spo2||null,temperature:vitalsState.temp||null})); }catch(e){}
     var res = await sb.from('vitals').insert({
       patient_id:   LST.currentUser.id,
       recorded_at:  new Date().toISOString(),
@@ -4490,6 +4492,8 @@ async function _upsertMedicalProfile(payload){
               && !(pp.allergies&&pp.allergies.length) && !(pp.lab_values&&pp.lab_values.length)
               && !(pp.notes && String(pp.notes).trim());
   if(allEmpty){ console.log('skip medical_profiles save (krejt bosh) — mbrojtje nga mbishkrimi'); return; }
+  /* Cache lokal (mbijeton Clear All edhe nëse Supabase nuk ngarkon në cold-start) */
+  try{ localStorage.setItem('dh_cache_mp_'+uid, JSON.stringify({diagnoses:pp.diagnoses||[],therapy:pp.therapy||[],allergies:pp.allergies||[],lab_values:pp.lab_values||[],notes:pp.notes||''})); }catch(e){}
   try{
     var ex = await sb.from('medical_profiles').select('patient_id').eq('patient_id', uid).limit(1);
     if(ex.error){ console.warn('medprofile check:', ex.error.message); showToast('⚠️ Profili (lexim): '+ex.error.message); return; }
@@ -8594,61 +8598,67 @@ async function initUserData(userId, userName, userEmail, attempt){
     return;
   }
 
+  /* Render i profilit mjekësor — nga Supabase OSE nga cache lokal (që të mos zhduket pas Clear All) */
+  var MPKEY = 'dh_cache_mp_'+userId;
+  var _renderMP = function(d){
+    if(!d) return;
+    var loadTags = function(tagIds, items, cls){
+      var seen = {}, uniq = [];
+      (items||[]).forEach(function(it){
+        var key = String(it).trim().toLowerCase();
+        if(it && !seen[key]){ seen[key]=1; uniq.push(it); }
+      });
+      tagIds.forEach(function(id){
+        var wrap = document.getElementById(id);
+        if(!wrap) return;
+        wrap.innerHTML = '';
+        uniq.forEach(function(item){
+          var sp = document.createElement('span');
+          sp.className = 'tag2 '+cls;
+          sp.innerHTML = item + ' <span class="tx" onclick="rmTag(\''+id+'\',this)">×</span>';
+          wrap.appendChild(sp);
+        });
+      });
+    };
+    loadTags(['diag-tags','prof-diag-tags','ds-diag-tags'], d.diagnoses, 'd');
+    loadTags(['therapy-tags','prof-therapy-tags','ds-therapy-tags'], d.therapy, 't');
+    loadTags(['allergy-tags','prof-allergy-tags','ds-allergy-tags'], d.allergies, 'a');
+    loadTags(['lab-tags','prof-lab-tags','ds-lab-tags'], d.lab_values, 'l');
+    ['prof-notes','ds-notes'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el && d.notes) el.value = d.notes;
+    });
+  };
+  /* 1) Hidrato menjëherë nga cache lokal (mbijeton Clear All) */
+  try{ var _mpCache = JSON.parse(localStorage.getItem(MPKEY)||'null'); if(_mpCache) _renderMP(_mpCache); }catch(e){}
+  /* 2) Pastaj rifresko nga Supabase nëse vjen */
   try{
-    /* Profili mjekesor — robust ndaj 0/shumë rreshtave (mos përdor .single() që hedh gabim) */
     var mpRes = await sb.from('medical_profiles').select('*').eq('patient_id', userId).order('updated_at',{ascending:false}).limit(1);
     if(mpRes.error){ _loadErr = true; console.warn('medical_profiles LOAD error:', mpRes.error.message); }
-    var mp = { data: (mpRes.data && mpRes.data[0]) || null };
-    if(mp.data){
-      var loadTags = function(tagIds, items, cls){
-        /* Dedupe (case-insensitive) — burimi i vërtetë është DB */
-        var seen = {}, uniq = [];
-        (items||[]).forEach(function(it){
-          var key = String(it).trim().toLowerCase();
-          if(it && !seen[key]){ seen[key]=1; uniq.push(it); }
-        });
-        tagIds.forEach(function(id){
-          var wrap = document.getElementById(id);
-          if(!wrap) return;
-          wrap.innerHTML = '';  /* pastro para mbushjes → idempotent, pa dyfishim kur rihyn */
-          uniq.forEach(function(item){
-            var sp = document.createElement('span');
-            sp.className = 'tag2 '+cls;
-            sp.innerHTML = item + ' <span class="tx" onclick="rmTag(\''+id+'\',this)">×</span>';
-            wrap.appendChild(sp);
-          });
-        });
-      };
-      loadTags(['diag-tags','prof-diag-tags','ds-diag-tags'], mp.data.diagnoses, 'd');
-      loadTags(['therapy-tags','prof-therapy-tags','ds-therapy-tags'], mp.data.therapy, 't');
-      loadTags(['allergy-tags','prof-allergy-tags','ds-allergy-tags'], mp.data.allergies, 'a');
-      loadTags(['lab-tags','prof-lab-tags','ds-lab-tags'], mp.data.lab_values, 'l');
-      ['prof-notes','ds-notes'].forEach(function(id){
-        var el = document.getElementById(id);
-        if(el && mp.data.notes) el.value = mp.data.notes;
-      });
-    }
-
+    var mpd = (mpRes.data && mpRes.data[0]) || null;
+    if(mpd){ try{ localStorage.setItem(MPKEY, JSON.stringify(mpd)); }catch(e){} _renderMP(mpd); }
     }catch(e){ _loadErr = true; console.warn('load medical_profiles:', e.message); }
 
-    /* Vitalet e fundit */
+    /* Vitalet e fundit — nga Supabase OSE cache lokal (që të mos zhduken pas Clear All) */
+    var VTKEY = 'dh_cache_vt_'+userId;
+    var _renderVT = function(d){
+      if(!d) return;
+      if(d.systolic_bp)  { vitalsState.sys  = d.systolic_bp;  updateV('sys',  d.systolic_bp); }
+      if(d.diastolic_bp) { vitalsState.dia  = d.diastolic_bp; updateV('dia',  d.diastolic_bp); }
+      if(d.heart_rate)   { vitalsState.hr   = d.heart_rate;   updateV('hr',   d.heart_rate); }
+      if(d.glucose)      { vitalsState.glu  = d.glucose;      updateV('glu',  d.glucose); }
+      if(d.spo2)         { vitalsState.spo2 = d.spo2; }
+      if(d.temperature)  { vitalsState.temp = d.temperature; }
+      var setVInp = function(id, v){ var e=document.getElementById(id); if(e && v) e.value = v; };
+      setVInp('v-sys', d.systolic_bp);  setVInp('v-dia', d.diastolic_bp);
+      setVInp('v-hr',  d.heart_rate);    setVInp('v-glu', d.glucose);
+      setVInp('v-spo2',d.spo2);          setVInp('v-temp',d.temperature);
+      try{ updateAllVitalsUI(); }catch(e){}
+    };
+    try{ var _vtCache = JSON.parse(localStorage.getItem(VTKEY)||'null'); if(_vtCache) _renderVT(_vtCache); }catch(e){}
     try{
     var vt = await sb.from('vitals').select('*').eq('patient_id', userId).order('recorded_at', {ascending:false}).limit(1).single();
-    if(vt.data){
-      if(vt.data.systolic_bp)  { vitalsState.sys  = vt.data.systolic_bp;  updateV('sys',  vt.data.systolic_bp); }
-      if(vt.data.diastolic_bp) { vitalsState.dia  = vt.data.diastolic_bp; updateV('dia',  vt.data.diastolic_bp); }
-      if(vt.data.heart_rate)   { vitalsState.hr   = vt.data.heart_rate;   updateV('hr',   vt.data.heart_rate); }
-      if(vt.data.glucose)      { vitalsState.glu  = vt.data.glucose;      updateV('glu',  vt.data.glucose); }
-      if(vt.data.spo2)         { vitalsState.spo2 = vt.data.spo2; }
-      if(vt.data.temperature)  { vitalsState.temp = vt.data.temperature; }
-      /* Mbush fushat input te ekrani Vitals (updateV s'i prek inputet) */
-      var setVInp = function(id, v){ var e=document.getElementById(id); if(e && v) e.value = v; };
-      setVInp('v-sys', vt.data.systolic_bp);  setVInp('v-dia', vt.data.diastolic_bp);
-      setVInp('v-hr',  vt.data.heart_rate);    setVInp('v-glu', vt.data.glucose);
-      setVInp('v-spo2',vt.data.spo2);          setVInp('v-temp',vt.data.temperature);
-      try{ updateAllVitalsUI(); }catch(e){}
-    }
-
+    if(vt.data){ try{ localStorage.setItem(VTKEY, JSON.stringify(vt.data)); }catch(e){} _renderVT(vt.data); }
     }catch(e){ console.warn('load vitals:', e.message); }
 
     /* Daily Activity e sotme (steps/calories/puls) nga llogaria */
