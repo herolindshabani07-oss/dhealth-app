@@ -5857,6 +5857,7 @@ function doSignOut() {
   var sb = getSupa();
   if(sb){ try{ sb.auth.signOut(); }catch(e){} }   /* pastro sesionin Supabase */
   _appliedSessionUid = null;                        /* rivendos guard-in → login-i tjetër ringarkon të dhënat */
+  _userDataLoaded = false;
   LST.currentUser = null;
   LST.rem = false;
   document.getElementById('login-overlay').style.display = 'flex';
@@ -5939,6 +5940,7 @@ function sendWelcomeEmail(email, name){
 
 /* Aplikon një session Supabase (email/password, restore, OSE Google OAuth) te gjendja e app-it */
 var _appliedSessionUid = null;
+var _userDataLoaded = false;  /* a u ngarkuan të dhënat me sukses (për riprovë në cold-start) */
 function applySupabaseSession(session){
   if(!session || !session.user) return;
   var sb = getSupa(); if(!sb) return;
@@ -5994,6 +5996,12 @@ function applySupabaseSession(session){
     /* Deep-link handler për app-in native (Capacitor) */
     try{ setupOAuthDeepLink(); }catch(e){}
   }, 500);
+  /* Kur rikthehet interneti (cold-start pas "Clear All" me rrjet të vonuar) → ringarko të dhënat */
+  window.addEventListener('online', function(){
+    if(!_userDataLoaded && typeof LST!=='undefined' && LST.currentUser && LST.currentUser.id){
+      try{ initUserData(LST.currentUser.id, LST.currentUser.name, LST.currentUser.email); }catch(e){}
+    }
+  });
 })();
 
 /* Capacitor plugin helper + deep-link i Google OAuth (vetëm native) */
@@ -8474,7 +8482,9 @@ function initPlatformDetection(){
 
 
 /* ════ INIT USER - pastro dhe ngarko te dhenat reale ════ */
-async function initUserData(userId, userName, userEmail){
+async function initUserData(userId, userName, userEmail, attempt){
+  attempt = attempt || 0;
+  var _loadErr = false;  /* gjurmo dështim rrjeti për të riprovuar ngarkimin */
   /* 1. Pastro vitalet demo */
   vitalsState = {sys:0, dia:0, hr:0, spo2:0, glu:0, temp:0};
 
@@ -8518,12 +8528,16 @@ async function initUserData(userId, userName, userEmail){
 
   /* 6. Ngarko nga Supabase */
   var sb = getSupa();
-  if(!sb || !userId) return;
+  if(!sb || !userId){
+    if(!userId) return;
+    if(attempt < 8){ setTimeout(function(){ initUserData(userId,userName,userEmail,attempt+1); }, 1500); }
+    return;
+  }
 
   try{
     /* Profili mjekesor — robust ndaj 0/shumë rreshtave (mos përdor .single() që hedh gabim) */
     var mpRes = await sb.from('medical_profiles').select('*').eq('patient_id', userId).order('updated_at',{ascending:false}).limit(1);
-    if(mpRes.error){ console.warn('medical_profiles LOAD error:', mpRes.error.message); showToast('⚠️ Leximi i profilit: '+mpRes.error.message); }
+    if(mpRes.error){ _loadErr = true; console.warn('medical_profiles LOAD error:', mpRes.error.message); }
     var mp = { data: (mpRes.data && mpRes.data[0]) || null };
     if(mp.data){
       var loadTags = function(tagIds, items, cls){
@@ -8555,7 +8569,7 @@ async function initUserData(userId, userName, userEmail){
       });
     }
 
-    }catch(e){ console.warn('load medical_profiles:', e.message); }
+    }catch(e){ _loadErr = true; console.warn('load medical_profiles:', e.message); }
 
     /* Vitalet e fundit */
     try{
@@ -8678,6 +8692,13 @@ async function initUserData(userId, userName, userEmail){
       console.log('✅ Daily score loaded:', scoreData.score);
     }
     }catch(e){ console.warn('load daily_score:', e.message); }
+
+    /* Rrjeti s'ishte gati në cold-start (p.sh. pas "Clear All") → riprovo ngarkimin pa kërkuar sign-out */
+    if(_loadErr){
+      if(attempt < 6){ setTimeout(function(){ initUserData(userId,userName,userEmail,attempt+1); }, 2500); }
+    } else {
+      _userDataLoaded = true;
+    }
 }
 
 
