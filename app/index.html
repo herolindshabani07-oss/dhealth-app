@@ -575,24 +575,25 @@ select option{background:#0A1628;color:#F1F5FF;}
 .ls{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;}
 .ls.lhide{display:none;}
 /* Welcome */
-#lw{background:linear-gradient(180deg,rgba(8,40,92,0.04) 0%,rgba(8,40,92,0.10) 50%,rgba(8,40,92,0.34) 100%),url('/assets/welcome_bg.jpg') center/cover no-repeat,linear-gradient(180deg,#3aa9f0,#1565C0);}
-#lw .llogo{position:relative;width:94px;height:94px;background:#ffffff!important;border:1px solid rgba(255,255,255,0.95)!important;box-shadow:0 18px 40px rgba(8,40,92,0.30),inset 0 1px 2px rgba(255,255,255,1)!important;}
-#lw .llogo:before{content:'';position:absolute;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.55),transparent 66%);filter:blur(10px);z-index:-1;}
+#lw{background:linear-gradient(180deg,#fcfdff 0%,#f1f7fe 52%,#e6f0fb 100%);overflow:hidden;}
+.lw-waves{position:absolute;left:0;right:0;bottom:0;width:100%;height:42%;z-index:0;pointer-events:none;}
+#lw .llogo{position:relative;width:96px;height:96px;background:transparent!important;border:none!important;box-shadow:none!important;backdrop-filter:none!important;}
+#lw .llogo:before{content:'';position:absolute;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(80,150,232,.20),transparent 66%);filter:blur(10px);z-index:-1;}
 .lwb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 28px;position:relative;z-index:1;}
 .llogo{width:86px;height:86px;border-radius:26px;background:rgba(255,255,255,0.75);border:1.5px solid rgba(120,160,210,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:20px;animation:lfloat 3s ease-in-out infinite;backdrop-filter:blur(8px);box-shadow:0 10px 26px rgba(70,120,190,0.18);}
 @keyframes lfloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
 .ltag{font-size:11px;font-weight:600;color:rgba(255,255,255,0.92);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;font-family:'DM Sans',sans-serif;text-shadow:0 1px 6px rgba(8,40,92,0.35);}
-.ltitle{font-family:'Playfair Display',serif;font-size:38px;color:#ffffff;line-height:1.2;text-align:center;margin-bottom:12px;text-shadow:0 2px 14px rgba(8,40,92,0.40);}
+.ltitle{font-family:'DM Sans',sans-serif;font-size:31px;font-weight:800;letter-spacing:-.4px;color:#16315a;line-height:1.15;text-align:center;margin-bottom:7px;}
 .ltitle em{color:#dff1ff;font-style:normal;}
-.ldesc{font-size:13px;color:rgba(255,255,255,0.92);text-align:center;line-height:1.65;margin-bottom:28px;max-width:270px;font-family:'DM Sans',sans-serif;text-shadow:0 1px 8px rgba(8,40,92,0.35);}
+.ldesc{font-size:14px;color:#6a7f9c;text-align:center;line-height:1.6;margin-bottom:30px;max-width:270px;font-family:'DM Sans',sans-serif;}
 .lpills{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:32px;}
 .lpill{font-size:11px;font-weight:500;padding:5px 11px;border-radius:20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-family:'DM Sans',sans-serif;}
 .lwbtns{width:100%;display:flex;flex-direction:column;gap:9px;}
 .lwbtn{width:100%;padding:14px;border-radius:17px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform 0.2s;}
 .lwbtn:hover{transform:translateY(-2px);}
-.lwbtn-s{background:linear-gradient(135deg,#3B7DD8,#1E88E5);color:#fff;box-shadow:0 8px 20px rgba(30,136,229,0.32);}
-.lwbtn-g{background:rgba(255,255,255,0.7);border:1.5px solid rgba(120,160,210,0.45);color:#1565C0;}
-.lwfoot{font-size:10px;color:rgba(255,255,255,0.85);text-align:center;margin-top:12px;line-height:1.5;font-family:'DM Sans',sans-serif;text-shadow:0 1px 6px rgba(8,40,92,0.35);}
+.lwbtn-s{background:#2563EB;color:#fff;box-shadow:0 10px 24px rgba(37,99,235,0.30);}
+.lwbtn-g{background:#fff;border:1.6px solid #2563EB;color:#2563EB;box-shadow:0 6px 16px rgba(37,99,235,0.10);}
+.lwfoot{font-size:12.5px;color:#6a7f9c;text-align:center;margin-top:16px;line-height:1.5;font-family:'DM Sans',sans-serif;}
 /* Auth */
 #la{background:rgba(255,255,255,0.05);}
 .lahdr{background:linear-gradient(145deg,#0C2A75 0%,#1E6FD6 52%,#37B0EE 100%);padding:42px 22px 32px;position:relative;overflow:hidden;flex-shrink:0;}
@@ -604,10 +605,6 @@ select option{background:#0A1628;color:#F1F5FF;}
 .labk{width:33px;height:33px;border-radius:11px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(6px);cursor:pointer;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;margin-bottom:15px;position:relative;z-index:1;transition:background 0.2s;}
 .labk:hover{background:rgba(255,255,255,0.2);}
 .lahin{position:relative;z-index:1;}
-.lahbrand{display:flex;align-items:center;gap:9px;margin-bottom:15px;}
-.lahlogo{width:32px;height:32px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(4,16,50,.32);}
-.lahlogo img{width:21px;height:21px;object-fit:contain;display:block;}
-.lahwm{font-size:14px;font-weight:700;letter-spacing:.4px;color:rgba(255,255,255,.95);font-family:'DM Sans',sans-serif;}
 .lahico{font-size:26px;margin-bottom:5px;}
 .laht{font-family:'Playfair Display',serif;font-size:25px;color:#fff;margin-bottom:3px;line-height:1.15;letter-spacing:.2px;}
 .lahs{font-size:12.5px;color:rgba(255,255,255,0.72);font-family:'DM Sans',sans-serif;letter-spacing:.2px;}
@@ -673,6 +670,31 @@ select option{background:#0A1628;color:#F1F5FF;}
 .lrembox{background:#eef3fb!important;border:2px solid rgba(120,150,190,.3)!important}
 .lplanopt{background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.6))!important;border:1px solid rgba(120,150,190,.2)!important}
 .ldtxt,.lterms{color:#9aabc4!important}
+/* Auth redesign: waves header + white card */
+.laheader{position:relative;height:230px;flex-shrink:0;overflow:hidden;}
+.la-waves{position:absolute;left:0;right:0;bottom:0;width:100%;height:62%;pointer-events:none;z-index:0;}
+.labk2{position:absolute;top:16px;left:16px;z-index:3;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.65);border:none;color:#2563EB;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);box-shadow:0 4px 12px rgba(40,80,140,.12);}
+.labrand{position:absolute;left:0;right:0;top:0;bottom:34px;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+.labrand-logo{width:62px;height:62px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px rgba(37,99,235,.18);margin-bottom:10px;}
+.labrand-logo img{width:40px;height:40px;object-fit:contain;display:block;}
+.labrand-name{font-family:'DM Sans',sans-serif;font-size:21px;font-weight:800;color:#16315a;letter-spacing:-.3px;line-height:1.1;}
+.labrand-tag{font-size:12px;color:#6a7f9c;font-family:'DM Sans',sans-serif;margin-top:3px;}
+.lascroll{background:#fff!important;border-radius:28px 28px 0 0!important;margin-top:-28px!important;position:relative;z-index:2;box-shadow:0 -10px 30px rgba(40,80,140,.07)!important;}
+.laform{padding:26px 20px 30px!important;}
+.latitle{font-family:'DM Sans',sans-serif;font-size:25px;font-weight:800;color:#16315a;letter-spacing:-.3px;margin-bottom:4px;}
+.lasub{font-size:13px;color:#6a7f9c;font-family:'DM Sans',sans-serif;margin-bottom:20px;}
+#la .lflbl{display:none!important;}
+#la .lfi{background:#fff!important;border:1.5px solid #e4ebf3!important;border-radius:13px!important;padding:14px 14px 14px 44px!important;font-size:14px!important;color:#1f2c44!important;}
+#la .lfi:focus{border-color:#2563EB!important;box-shadow:0 0 0 3px rgba(37,99,235,.10)!important;}
+#la .lfic{left:15px;color:#2563EB;font-size:15px;opacity:.95;}
+#la .lftgl{color:#9aabc4;}
+.lsubbtn{background:#2563EB!important;box-shadow:0 10px 24px rgba(37,99,235,.30)!important;border-radius:14px!important;}
+.laswitch{text-align:center;font-size:13px;color:#6a7f9c;margin-top:16px;font-family:'DM Sans',sans-serif;}
+.laswitch span{color:#2563EB;font-weight:700;cursor:pointer;}
+.laterms{display:flex;align-items:flex-start;gap:9px;margin:2px 0 16px;cursor:pointer;}
+.laterms .lrembox{flex-shrink:0;margin-top:1px;}
+.laterms-t{font-size:12.5px;color:#6a7f9c;line-height:1.45;font-family:'DM Sans',sans-serif;}
+.laterms-t a{color:#2563EB;font-weight:600;text-decoration:none;}
 .lnrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .lplansec{margin-bottom:12px;}
 .lplanlbl{font-size:10px;font-weight:700;color:#7B8BAD;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:block;font-family:'DM Sans',sans-serif;}
@@ -1069,47 +1091,44 @@ select option{background:#0A1628;color:#F1F5FF;}
 
 <!-- WELCOME -->
 <div class="ls" id="lw">
-  <svg class="lw-waves" viewBox="0 0 800 1200" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;">
-    <g fill="none" stroke-linecap="round">
-      <path d="M-150 720 Q 240 940 980 800" stroke="#cfe7f8" stroke-width="24" opacity="0.8"/>
-      <path d="M-150 850 Q 260 1090 1000 940" stroke="#a6d0f0" stroke-width="28" opacity="0.8"/>
-      <path d="M-160 980 Q 250 1230 1020 1080" stroke="#73b2e6" stroke-width="32" opacity="0.75"/>
-      <path d="M-170 1110 Q 230 1360 1040 1210" stroke="#4795da" stroke-width="30" opacity="0.7"/>
-      <path d="M-180 1230 Q 220 1470 1060 1330" stroke="#2f7fc9" stroke-width="26" opacity="0.6"/>
-    </g>
+  <svg class="lw-waves" viewBox="0 0 375 320" preserveAspectRatio="none">
+    <path d="M0,150 C70,110 130,175 200,148 C270,124 330,165 375,140 L375,320 L0,320 Z" fill="#deecfc"/>
+    <path d="M0,195 C80,160 145,205 215,188 C285,170 335,198 375,182 L375,320 L0,320 Z" fill="#c4ddf7"/>
+    <path d="M0,240 C90,212 155,245 235,232 C300,221 342,236 375,228 L375,320 L0,320 Z" fill="#a9cbf1"/>
   </svg>
-  <div style="height:28px;"></div>
   <div class="lwb">
     <div class="llogo">
-      <img src="/assets/logo.png" alt="D Health" style="width:60px;height:60px;object-fit:contain;display:block;"/>
+      <img src="/assets/logo.png" alt="D Health" style="width:72px;height:72px;object-fit:contain;display:block;"/>
     </div>
-    <h1 class="ltitle"><em>D Health</em></h1>
-    <p class="ldesc">Medical Wallet</p>
+    <h1 class="ltitle">D Health</h1>
+    <p class="ldesc">your health, your priority</p>
     <div class="lwbtns">
-      <button class="lwbtn lwbtn-s" onclick="lshow('la','register')">Create Free Account</button>
-      <button class="lwbtn lwbtn-g" onclick="lshow('la','login')">Already have an account? Sign in</button>
+      <button class="lwbtn lwbtn-s" onclick="lshow('la','login')">Sign In</button>
+      <button class="lwbtn lwbtn-g" onclick="lshow('la','register')">Create Account</button>
     </div>
-        <div class="lwfoot">By continuing you agree to our Terms &amp; Privacy Policy</div>
+    <div class="lwfoot">Already have an account? <span onclick="lshow('la','login')" style="color:#2563EB;font-weight:700;cursor:pointer;">Sign in</span></div>
   </div>
 </div>
 
 <!-- LOGIN / REGISTER -->
 <div class="ls lhide" id="la">
-  <div class="lahdr">
-    <div class="lahsh"></div>
-    <button class="labk" onclick="lshow('lw')">&#8249;</button>
-    <div class="lahin">
-      <div class="lahbrand"><span class="lahlogo"><img src="/assets/logo.png" alt="D Health"></span><span class="lahwm">D Health</span></div>
-      <div class="laht" id="laht">Welcome back</div>
-      <div class="lahs" id="lahs">Sign in to your D Health</div>
+  <div class="laheader">
+    <svg class="la-waves" viewBox="0 0 375 300" preserveAspectRatio="none">
+      <path d="M0,150 C70,110 130,175 200,148 C270,124 330,165 375,140 L375,300 L0,300 Z" fill="#deecfc"/>
+      <path d="M0,195 C80,160 145,205 215,188 C285,170 335,198 375,182 L375,300 L0,300 Z" fill="#c4ddf7"/>
+      <path d="M0,240 C90,212 155,245 235,232 C300,221 342,236 375,228 L375,300 L0,300 Z" fill="#a9cbf1"/>
+    </svg>
+    <button class="labk2" onclick="lshow('lw')">&#8249;</button>
+    <div class="labrand">
+      <span class="labrand-logo"><img src="/assets/logo.png" alt="D Health"></span>
+      <div class="labrand-name">D Health</div>
+      <div class="labrand-tag">your health, your priority</div>
     </div>
-  </div>
-  <div class="latabs">
-    <button class="latab lon" id="ltab-in" onclick="lswitchTab('login')">Sign In</button>
-    <button class="latab" id="ltab-up" onclick="lswitchTab('register')">Create Account</button>
   </div>
   <div class="lascroll">
     <div class="laform">
+      <div class="latitle" id="laht">Welcome back</div>
+      <div class="lasub" id="lahs">Sign in to continue to your account</div>
       <div class="lebanner" id="lebanner"><span>&#9888;</span><span id="letxt"></span></div>
       <div class="lsbanner" id="lsbanner"><span>&#10003;</span><span id="lstxt"></span></div>
 
@@ -1144,25 +1163,18 @@ select option{background:#0A1628;color:#F1F5FF;}
           <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7z"/></svg>
           Continue with Google
         </button>
-        <div class="lterms">Secured with end-to-end encryption &#128274;<br><a href="#">Terms</a> &middot; <a href="#">Privacy</a></div>
+        <div class="laswitch">Don't have an account? <span onclick="lswitchTab('register')">Create account</span></div>
       </div>
 
       <!-- REGISTER -->
       <div id="lform-reg" style="display:none;">
-        <div class="lnrow">
-          <div class="lfg">
-            <label class="lflbl">First Name</label>
-            <div class="lfw"><span class="lfic">&#128100;</span>
-              <input class="lfi" id="rfn" type="text" placeholder="Your name" oninput="lclrErr()"/>
-            </div>
-            <div class="lferr" id="rfn-e">Required</div>
+        <div class="lfg">
+          <label class="lflbl">Full name</label>
+          <div class="lfw"><span class="lfic">&#128100;</span>
+            <input class="lfi" id="rfn" type="text" placeholder="Full name" oninput="lclrErr()"/>
+            <input type="hidden" id="rln" value=""/>
           </div>
-          <div class="lfg">
-            <label class="lflbl">Last Name</label>
-            <div class="lfw"><span class="lfic">&#128100;</span>
-              <input class="lfi" id="rln" type="text" placeholder="Last name"/>
-            </div>
-          </div>
+          <div class="lferr" id="rfn-e">Required</div>
         </div>
         <div class="lfg">
           <label class="lflbl">Email</label>
@@ -1190,6 +1202,10 @@ select option{background:#0A1628;color:#F1F5FF;}
           </div>
           <div class="lferr" id="rcf-e">Passwords do not match</div>
         </div>
+        <div class="laterms" onclick="this.querySelector('.lrembox').classList.toggle('lon')">
+          <div class="lrembox lon"></div>
+          <span class="laterms-t">I agree to the <a href="https://dhealth.app/terms.html" target="_blank" onclick="event.stopPropagation()">Terms &amp; Conditions</a> and <a href="https://dhealth.app/privacy.html" target="_blank" onclick="event.stopPropagation()">Privacy Policy</a></span>
+        </div>
         <button class="lsubbtn" id="lbtn-reg" onclick="ldoReg()">Create My Account</button>
         <div style="display:flex;align-items:center;gap:10px;margin:12px 0 8px;">
           <div style="flex:1;height:0.5px;background:var(--border);"></div>
@@ -1200,7 +1216,7 @@ select option{background:#0A1628;color:#F1F5FF;}
           <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7z"/></svg>
           Continue with Google
         </button>
-        <div class="lterms">By registering you agree to our <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a></div>
+        <div class="laswitch">Already have an account? <span onclick="lswitchTab('login')">Sign in</span></div>
       </div>
     </div>
   </div>
@@ -5586,12 +5602,10 @@ function lshow(id, tab) {
   lclrErr();
 }
 function lswitchTab(tab) {
-  document.getElementById('ltab-in').classList.toggle('lon', tab==='login');
-  document.getElementById('ltab-up').classList.toggle('lon', tab==='register');
   document.getElementById('lform-in').style.display  = tab==='login'    ? 'block' : 'none';
   document.getElementById('lform-reg').style.display = tab==='register' ? 'block' : 'none';
   document.getElementById('laht').textContent = tab==='login' ? 'Welcome back' : 'Create account';
-  document.getElementById('lahs').textContent = tab==='login' ? 'Sign in to your D Health' : 'Join D Health today';
+  document.getElementById('lahs').textContent = tab==='login' ? 'Sign in to continue to your account' : 'Start your journey to a healthier you';
   lclrErr();
 }
 function lclrErr() {
