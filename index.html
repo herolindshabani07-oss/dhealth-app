@@ -239,6 +239,17 @@ footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
 .ft-contact a,.ft-contact span{display:inline-flex;align-items:center;gap:.65rem;font-size:.92rem;color:rgba(255,255,255,.75);transition:color .2s;}
 .ft-contact a:hover{color:#fff;}
 .ft-contact svg{width:1.05rem;height:1.05rem;flex-shrink:0;stroke:var(--accent-soft);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.ft-news{margin-top:1.6rem;max-width:22rem;}
+.ft-news-h{display:block;font-size:.92rem;font-weight:700;color:#fff;margin-bottom:.6rem;}
+.ft-news-sub{font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:.7rem;}
+.ft-news-row{display:flex;gap:.5rem;}
+.ft-news-row input{flex:1;min-width:0;padding:.72rem .9rem;border-radius:.7rem;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:.9rem;font-family:inherit;outline:none;}
+.ft-news-row input::placeholder{color:rgba(255,255,255,.45);}
+.ft-news-row input:focus{border-color:var(--accent-soft);}
+.ft-news-row button{padding:.72rem 1.1rem;border-radius:.7rem;border:none;background:#fff;color:#0a0e16;font-weight:700;font-size:.88rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:opacity .2s;}
+.ft-news-row button:hover{opacity:.85;}
+.ft-news-ok{margin-top:.55rem;font-size:.82rem;color:var(--accent-soft);display:none;}
+.ft-news-ok.show{display:block;}
 .ft-legal{display:flex;flex-direction:column;align-items:center;gap:1rem;border-top:1px solid rgba(255,255,255,.1);padding-top:2rem;font-size:.72rem;color:rgba(255,255,255,.45);}
 @media(min-width:640px){.ft-legal{flex-direction:row;justify-content:space-between;}}
 .ft-wm{position:absolute;inset-inline:0;bottom:-1.5rem;z-index:0;text-align:center;pointer-events:none;user-select:none;font-weight:800;line-height:1;font-size:13rem;color:rgba(255,255,255,.04);letter-spacing:-.03em;}
@@ -530,10 +541,21 @@ footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
           <a href="mailto:contact@dhealth.app"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>contact@dhealth.app</a>
           <span><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>St. Franklin Ruzvelt No 21/8, Skopje, North Macedonia</span>
         </div>
+        <form class="ft-news" id="newsForm" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="newsletter">
+          <div style="display:none;"><label>Skip<input name="bot-field"></label></div>
+          <label class="ft-news-h" id="newsletter">Newsletter</label>
+          <div class="ft-news-sub">Health tips, product updates & launches — no spam.</div>
+          <div class="ft-news-row">
+            <input type="email" name="email" required placeholder="Your email" id="newsEmail">
+            <button type="submit" id="newsBtn">Subscribe</button>
+          </div>
+          <div class="ft-news-ok" id="newsOk">Thanks — you're subscribed! &#10003;</div>
+        </form>
       </div>
       <div><h4>Platform</h4><a data-scroll="caps">AI Doctor</a><a data-scroll="caps">Vitals</a><a data-scroll="caps">ECG</a><a data-scroll="caps">Wearables</a></div>
       <div><h4>Company</h4><a data-scroll="about">About</a><a data-modal>Partners</a><a href="mailto:contact@dhealth.app">Contact</a><a data-modal>Careers</a></div>
-      <div><h4>Connect</h4><a href="https://dhealth.app/app/">Open App</a><a data-modal>Newsletter</a><a href="#">Privacy</a><a href="#">Terms</a></div>
+      <div><h4>Connect</h4><a href="https://dhealth.app/app/">Open App</a><a href="#newsletter">Newsletter</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div>
     </div>
     <div class="ft-legal"><span>© 2026 D Health. All rights reserved.</span><span>Powered by JH Group · GDPR compliant</span></div>
   </div>
@@ -667,6 +689,15 @@ document.getElementById('reqForm').addEventListener('submit',e=>{
   const done=()=>{ mdForm.classList.add('hidden'); mdOk.classList.remove('hidden'); btn.firstChild.textContent='Send request '; };
   fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}).then(done).catch(done);
 });
+const newsForm=document.getElementById('newsForm');
+if(newsForm){ newsForm.addEventListener('submit',e=>{
+  e.preventDefault();
+  const btn=document.getElementById('newsBtn');
+  btn.textContent='…';
+  const body=new URLSearchParams(new FormData(newsForm)).toString();
+  const done=()=>{ document.getElementById('newsOk').classList.add('show'); newsForm.reset(); btn.textContent='Subscribe'; };
+  fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}).then(done).catch(done);
+}); }
 addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeModal(); closeNav(); } });
 </script>
 </body>
