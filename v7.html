@@ -2213,7 +2213,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="cal-hs"><button class="cal-nb" onclick="prevM()">‹</button><span class="cal-m" id="calTitle">April 2026</span><button class="cal-nb" onclick="nextM()">›</button></div>
       <div class="cal-dh"><div class="cdn">Su</div><div class="cdn">Mo</div><div class="cdn">Tu</div><div class="cdn">We</div><div class="cdn">Th</div><div class="cdn">Fr</div><div class="cdn">Sa</div></div>
       <div class="cal-g" id="calGrid"></div>
-      <div class="als"><div class="alt" id="alTitle">Alarms — April 9</div><div id="alList"></div><button class="addab" onclick="openMod()">+ Add therapy alarm</button></div>
+      <div class="als"><div class="alt" id="alTitle">Alarms — April 9</div><div id="alList"></div><button class="addab" onclick="openMod()" data-i18n="cal.addAlarm">+ Add therapy alarm</button></div>
     </div>
     <div style="margin:12px 16px 0;background:var(--pul);border-radius:16px;padding:13px;border:0.5px solid rgba(139,111,232,0.2);display:flex;align-items:center;gap:10px;">
       <div style="font-size:24px;">📅</div>
@@ -4721,7 +4721,7 @@ function _dkToISO(k){ var p=String(k).split('-'); if(p.length<3) return k; var y
 function _isoToDk(iso){ var p=String(iso).split('T')[0].split('-'); if(p.length<3) return iso; var y=+p[0],m=+p[1]-1,d=+p[2]; return y+'-'+m+'-'+d; }
 function gPer(t){var h=parseInt(t.split(':')[0]);if(h>=5&&h<12)return{l:'Morning',c:'pm'};if(h>=12&&h<18)return{l:'Daytime',c:'pd'};return{l:'Evening',c:'pe'};}
 function renderCal(){document.getElementById('calTitle').textContent=months[cM]+' '+cY;var g=document.getElementById('calGrid');g.innerHTML='';var first=new Date(cY,cM,1).getDay(),days=new Date(cY,cM+1,0).getDate(),prev=new Date(cY,cM,0).getDate();for(var i=0;i<first;i++){var d=document.createElement('div');d.className='cd om';d.innerHTML='<span class="cdn2">'+(prev-first+1+i)+'</span>';g.appendChild(d);}for(var d=1;d<=days;d++){var el=document.createElement('div');el.className='cd';if(d===9&&cM===3&&cY===2026)el.className+=' tod';else if(d===sD&&cM===sM&&cY===sY)el.className+=' sel';var k=dk(cY,cM,d);if(alarms[k]&&alarms[k].length)el.className+=' ha';el.innerHTML='<span class="cdn2">'+d+'</span>';(function(day){el.onclick=function(){sD=day;sM=cM;sY=cY;renderCal();};})(d);g.appendChild(el);}renderAlarms();}
-function renderAlarms(){var k=dk(sY,sM,sD);document.getElementById('alTitle').textContent='Alarms — '+months[sM].slice(0,3)+' '+sD;var list=document.getElementById('alList');list.innerHTML='';var arr=alarms[k]||[];if(!arr.length){var e=document.createElement('div');e.style='text-align:center;padding:10px 0;font-size:12px;color:rgba(255,255,255,0.5);';e.textContent='No alarms for this day';list.appendChild(e);return;}arr.forEach(function(a,i){var p=gPer(a.time);var item=document.createElement('div');item.className='ali';item.innerHTML='<div class="ald" style="background:'+cMap[a.color]+';"></div><div class="alf"><div class="alnm">'+a.name+'</div><div class="altr"><span class="altm">'+ft(a.time)+'</span><span class="alpb '+p.c+'">'+p.l+'</span></div></div><div style="display:flex;align-items:center;gap:6px;"><button class="altg '+(a.on?'on':'off')+'" onclick="togA(\''+k+'\','+i+',this)"></button><button onclick="removeAlarm(\''+k+'\','+i+')" style="width:24px;height:24px;border-radius:8px;border:none;background:rgba(239,68,68,0.1);color:#DC2626;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Remove">×</button></div>';list.appendChild(item);});}
+function renderAlarms(){var k=dk(sY,sM,sD);document.getElementById('alTitle').textContent=dhT('cal.alarms')+' — '+months[sM].slice(0,3)+' '+sD;var list=document.getElementById('alList');list.innerHTML='';var arr=alarms[k]||[];if(!arr.length){var e=document.createElement('div');e.style='text-align:center;padding:10px 0;font-size:12px;color:rgba(255,255,255,0.5);';e.textContent=dhT('cal.noAlarms');list.appendChild(e);return;}arr.forEach(function(a,i){var p=gPer(a.time);var item=document.createElement('div');item.className='ali';item.innerHTML='<div class="ald" style="background:'+cMap[a.color]+';"></div><div class="alf"><div class="alnm">'+a.name+'</div><div class="altr"><span class="altm">'+ft(a.time)+'</span><span class="alpb '+p.c+'">'+p.l+'</span></div></div><div style="display:flex;align-items:center;gap:6px;"><button class="altg '+(a.on?'on':'off')+'" onclick="togA(\''+k+'\','+i+',this)"></button><button onclick="removeAlarm(\''+k+'\','+i+')" style="width:24px;height:24px;border-radius:8px;border:none;background:rgba(239,68,68,0.1);color:#DC2626;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Remove">×</button></div>';list.appendChild(item);});}
 
 function removeAlarm(key, idx){
   if(!alarms[key]) return;
@@ -6291,10 +6291,14 @@ var DH_I18N = {
   'vit.pulsAvg': {sq:'❤️ Puls avg ✎', mk:'❤️ Пулс просек ✎', en:'❤️ Avg pulse ✎'},
   /* Diagnosis / Vitals AI buttons */
   'dx.runVital':  {sq:'Analizo Vitalet', mk:'Анализирај витални', en:'Run Vital'},
-  'dx.reAnalyze': {sq:'Ri-analizo', mk:'Повторно анализирај', en:'Re-Analyze'}
+  'dx.reAnalyze': {sq:'Ri-analizo', mk:'Повторно анализирај', en:'Re-Analyze'},
+  /* Calendar — alarms */
+  'cal.alarms':   {sq:'Alarmet', mk:'Аларми', en:'Alarms'},
+  'cal.noAlarms': {sq:'Asnjë alarm për këtë ditë', mk:'Нема аларми за овој ден', en:'No alarms for this day'},
+  'cal.addAlarm': {sq:'+ Shto alarm terapie', mk:'+ Додади аларм за терапија', en:'+ Add therapy alarm'}
 };
 var DH_LANG = (function(){ try{ return localStorage.getItem('dh_lang') || 'sq'; }catch(e){ return 'sq'; } })();
-function dhT(key){ var o=DH_I18N[key]; return (o && (o[DH_LANG]||o.en||o.sq)) || key; }
+function dhT(key){ if(typeof DH_I18N==='undefined'||!DH_I18N) return key; var L=(typeof DH_LANG!=='undefined'&&DH_LANG)||'sq'; var o=DH_I18N[key]; return (o && (o[L]||o.en||o.sq)) || key; }
 function applyLang(lang){
   if(lang){ DH_LANG=lang; try{ localStorage.setItem('dh_lang',lang); }catch(e){} }
   try{ if(typeof currentLang!=='undefined') currentLang = DH_LANG; }catch(e){}  /* AI-ja ndjek të njëjtën gjuhë */
@@ -6305,6 +6309,8 @@ function applyLang(lang){
     });
     document.querySelectorAll('.dh-langbtn').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-lang')===DH_LANG); });
   }catch(e){}
+  /* Rifresko tekstet që vendosen me JS (jo data-i18n) */
+  try{ if(typeof renderAlarms==='function' && document.getElementById('alTitle')) renderAlarms(); }catch(e){}
 }
 document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ try{ applyLang(); }catch(e){} }, 60); });
 
@@ -7504,6 +7510,7 @@ async function loadAirQuality(){
 
   /* Koordinatat — provo vendndodhjen, përndryshe Shkup */
   var lat = 41.9981, lon = 21.4254, city = 'Skopje';
+  airState.cityGeneric = false;
   try{
     var pos = await new Promise(function(resolve){
       if(!navigator.geolocation){ resolve(null); return; }
@@ -7513,7 +7520,7 @@ async function loadAirQuality(){
         {timeout:5000, maximumAge:600000}
       );
     });
-    if(pos){ lat = pos.latitude; lon = pos.longitude; city = dhT('aq.yourLocation'); }
+    if(pos){ lat = pos.latitude; lon = pos.longitude; city = dhT('aq.yourLocation'); airState.cityGeneric = true; }
   }catch(e){}
 
   try {
@@ -7556,7 +7563,10 @@ function setAQI(aqi, pm25, aqiVal, aqiStatus, aqiDesc, aqiPm, aqiCircle, aqiTime
   airState.pm25   = pm25;
   airState.status = config.status.replace(/^[^\w]+/,'').trim();
   var cityLbl = document.getElementById('aqiCityLbl');
-  if(cityLbl && airState.city) cityLbl.textContent = airState.city;
+  if(cityLbl){
+    if(airState.cityGeneric){ cityLbl.setAttribute('data-i18n','aq.yourLocation'); cityLbl.textContent = dhT('aq.yourLocation'); }
+    else if(airState.city){ cityLbl.removeAttribute('data-i18n'); cityLbl.textContent = airState.city; }
+  }
 
   if(aqiCircle) aqiCircle.style.background = config.color;
   if(aqiStatus) aqiStatus.textContent = config.status;
