@@ -1610,7 +1610,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="v7-score" onclick="switchScreen('diagnostic')">
       <div class="v7-sctop">
         <div class="v7-sclogo"><svg viewBox="0 0 512 512" width="31" height="31" xmlns="http://www.w3.org/2000/svg"><path d="M100 180 A200 200 0 0 0 205 478" fill="none" stroke="#4F86B8" stroke-width="22" stroke-linecap="round"/><path d="M224 478 200 462 200 494 Z" fill="#4F86B8"/><path d="M412 180 A200 200 0 0 1 307 478" fill="none" stroke="#4F86B8" stroke-width="22" stroke-linecap="round"/><path d="M288 478 312 462 312 494 Z" fill="#4F86B8"/><path d="M256 212 C236 205 214 206 200 218 C176 214 156 230 160 254 C142 260 136 282 150 300 C138 314 142 338 162 348 C166 372 192 384 216 374 C230 388 246 386 256 376 Z" fill="#F5A623"/><path d="M256 212 C276 205 298 206 312 218 C336 214 356 230 352 254 C370 260 376 282 362 300 C374 314 370 338 350 348 C346 372 320 384 296 374 C282 388 266 386 256 376 Z" fill="#6BB6E8"/><path d="M226 300 H196 M196 300 l-14 -11 M196 300 l-14 11 M286 300 H316 M316 300 l14 -11 M316 300 l14 11" stroke="#2E7AA8" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="256" cy="300" r="30" fill="#2E7AA8"/><path d="M118 46 H226 a20 20 0 0 1 20 20 V104 a20 20 0 0 1 -20 20 H160 l-20 26 v-26 H118 a20 20 0 0 1 -20 -20 V66 a20 20 0 0 1 20 -20 Z" fill="#FBC02D"/><rect x="136" y="70" width="92" height="11" rx="5" fill="#4A90D2"/><rect x="136" y="92" width="68" height="11" rx="5" fill="#4A90D2"/><path d="M286 46 H394 a20 20 0 0 1 20 20 V104 a20 20 0 0 1 -20 20 H352 v26 l-20 -26 H286 a20 20 0 0 1 -20 -20 V66 a20 20 0 0 1 20 -20 Z" fill="#5B9BD5"/><rect x="300" y="70" width="92" height="11" rx="5" fill="#2E5F8F"/><rect x="300" y="92" width="68" height="11" rx="5" fill="#2E5F8F"/></svg></div>
-        <div><div class="v7-scname">D Health AI</div><div class="v7-scsub">Daily Score · Diagnostic AI</div></div>
+        <div><div class="v7-scname">D Health AI</div><div class="v7-scsub" data-i18n="home.aiSubtitle">Daily Score · Diagnostic AI</div></div>
         <div class="v7-scbk">🔖</div>
       </div>
       <div class="v7-scmid">
@@ -1620,7 +1620,7 @@ select option{background:#0A1628;color:#F1F5FF;}
           <div class="v7-scp" id="home-sc-desc">Trokit për analizën e plotë me AI</div>
         </div>
       </div>
-      <button class="v7-scbtn" onclick="event.stopPropagation();switchScreen('diagnostic')">Shiko analizën e plotë →</button>
+      <button class="v7-scbtn" onclick="event.stopPropagation();switchScreen('diagnostic')" data-i18n="home.viewAnalysis">Shiko analizën e plotë →</button>
     </div>
 
     <div class="v7-secrow" style="margin-top:2px;"><div class="v7-stitle" data-i18n="home.wellnessTitle">Wellness</div><span class="v7-see" id="wlPer">Today</span></div>
@@ -1662,7 +1662,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="v7-dadiv"></div>
       <div class="v7-da"><div class="v7-daico puls"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M256 440 C120 340 60 250 60 175 C60 120 105 80 160 80 C200 80 235 105 256 140 L256 440 Z" fill="#FF5A7E"/><path d="M256 440 C392 340 452 250 452 175 C452 120 407 80 352 80 C312 80 277 105 256 140 L256 440 Z" fill="#E91E8C"/><path class="pulse" d="M92 272 H178 L206 214 L246 330 L276 262 H406" fill="none" stroke="#46E0A0" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><b id="da-hr">--</b><span data-i18n="da.puls">Puls avg</span></div>
     </div>
-    <div class="v7-actline" onclick="switchScreen('vitals')" style="cursor:pointer;" title="Shiko te Vitals">🏃 Distanca: <strong id="da-dist">--</strong> · Aktiv: <strong id="da-active">--</strong> · Gjumi: <strong id="da-sleep">--</strong></div>
+    <div class="v7-actline" onclick="switchScreen('vitals')" style="cursor:pointer;" title="Shiko te Vitals">🏃 <span data-i18n="home.distance">Distanca:</span> <strong id="da-dist">--</strong> · <span data-i18n="home.active">Aktiv:</span> <strong id="da-active">--</strong> · <span data-i18n="home.sleepL">Gjumi:</span> <strong id="da-sleep">--</strong></div>
 
     <div class="v7-secrow"><div class="v7-stitle" data-i18n="home.summaryTitle">Përmbledhje</div></div>
     <div class="v7-wide" onclick="calcDailyScore(true);switchScreen('vitals')">
@@ -1672,14 +1672,14 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div>
     <div class="v7-wide" onclick="refreshAirQuality()">
       <div class="v7-wico air"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path class="tube" d="M300 150 C360 150 378 220 360 300 C345 365 300 410 250 440" fill="none" stroke="#FFB23A" stroke-width="18" stroke-linecap="round"/><path d="M180 130 H300 a30 30 0 0 1 30 30 V452 a30 30 0 0 1 -30 30 H180 a30 30 0 0 1 -30 -30 V160 a30 30 0 0 1 30 -30 Z" fill="#D4EAF7"/><rect x="150" y="240" width="180" height="150" fill="#5FCB92"/><text x="240" y="345" font-family="Arial,Helvetica,sans-serif" font-size="90" font-weight="800" fill="#EAF8F0" text-anchor="middle">O2</text><rect x="212" y="96" width="56" height="40" rx="6" fill="#B8D8F0"/><rect x="228" y="56" width="24" height="46" rx="6" fill="#5A5A5A"/><rect x="196" y="44" width="88" height="20" rx="10" fill="#5A5A5A"/><circle cx="196" cy="54" r="16" fill="#5A5A5A"/><circle cx="284" cy="54" r="16" fill="#5A5A5A"/><circle cx="120" cy="92" r="30" fill="#5A5A5A"/><circle cx="120" cy="92" r="17" fill="#CDE7FA"/><rect x="138" y="84" width="44" height="16" rx="6" fill="#5A5A5A"/><path d="M395 175 C345 185 326 245 342 305 C353 352 392 380 416 372 C462 378 478 312 472 250 C466 190 440 175 395 175 Z" fill="#C2DEF7"/></svg><span id="aqiVal" style="display:none">—</span></div>
-      <div><div class="v7-wt1" style="color:#4db6e8;">Cilësia e ajrit · <span id="aqiCityLbl">—</span> <span style="font-size:11px;">🔄</span></div><div class="v7-wt2" id="aqiStatus">Duke kontrolluar...</div></div>
+      <div><div class="v7-wt1" style="color:#4db6e8;"><span data-i18n="aq.title">Cilësia e ajrit</span> · <span id="aqiCityLbl">—</span> <span style="font-size:11px;">🔄</span></div><div class="v7-wt2" id="aqiStatus">Duke kontrolluar...</div></div>
       <div class="v7-wr"><span class="v7-wbadge wb-green">PM2.5 <span id="aqiPm">—</span></span><div id="aqiTime" style="font-size:9px;color:#9aa9c0;margin-top:3px;">—</div></div>
     </div>
     <div style="display:none">
       <span id="aqiCircle"></span><span id="aqiDesc"></span><span id="dailyScoreCircle"></span><span id="dailyScoreMain"></span><span id="dailyScoreBadge"></span><span id="dailyScoreBarWrap"><span id="dailyScoreBar"></span></span><span id="dailyScoreBenefits"><span id="dailyScoreBenefitsList"></span></span><span id="homeIndicators"></span><span id="platformBanner"></span><span id="dataSourcesCount"></span>
     </div>
 
-    <div class="v7-secrow"><div class="v7-stitle">🔗 Burimet e të dhënave</div><button onclick="syncNow()" id="homeSyncBtn" class="v7-sync">🔄 Sync</button></div>
+    <div class="v7-secrow"><div class="v7-stitle" data-i18n="home.sourcesTitle">🔗 Burimet e të dhënave</div><button onclick="syncNow()" id="homeSyncBtn" class="v7-sync" data-i18n="home.sync">🔄 Sync</button></div>
 
     <!-- Health Connect (primar) -->
     <div class="v7-wide" id="home-int-gfit" onclick="connectGoogleFit()">
@@ -6269,7 +6269,17 @@ var DH_I18N = {
   'menu.subscription':  {sq:'Abonimi', mk:'Претплата', en:'Subscription'},
   'menu.notifications': {sq:'Njoftimet', mk:'Известувања', en:'Notifications'},
   'menu.settings':      {sq:'Cilësimet', mk:'Поставки', en:'Settings'},
-  'menu.signout':       {sq:'Dil', mk:'Одјави се', en:'Sign Out'}
+  'menu.signout':       {sq:'Dil', mk:'Одјави се', en:'Sign Out'},
+  /* Home — të tjera */
+  'home.viewAnalysis': {sq:'Shiko analizën e plotë →', mk:'Види ја целата анализа →', en:'View full analysis →'},
+  'home.aiSubtitle':   {sq:'Rezultati ditor · AI Diagnostik', mk:'Дневен резултат · AI дијагностика', en:'Daily Score · Diagnostic AI'},
+  'home.distance': {sq:'Distanca:', mk:'Растојание:', en:'Distance:'},
+  'home.active':   {sq:'Aktiv:', mk:'Активен:', en:'Active:'},
+  'home.sleepL':   {sq:'Gjumi:', mk:'Сон:', en:'Sleep:'},
+  'home.sourcesTitle': {sq:'🔗 Burimet e të dhënave', mk:'🔗 Извори на податоци', en:'🔗 Data sources'},
+  'home.sync': {sq:'🔄 Sinkronizo', mk:'🔄 Синхронизирај', en:'🔄 Sync'},
+  'aq.title':        {sq:'Cilësia e ajrit', mk:'Квалитет на воздух', en:'Air quality'},
+  'aq.yourLocation': {sq:'Vendndodhja juaj', mk:'Твоја локација', en:'Your location'}
 };
 var DH_LANG = (function(){ try{ return localStorage.getItem('dh_lang') || 'sq'; }catch(e){ return 'sq'; } })();
 function dhT(key){ var o=DH_I18N[key]; return (o && (o[DH_LANG]||o.en||o.sq)) || key; }
@@ -7491,7 +7501,7 @@ async function loadAirQuality(){
         {timeout:5000, maximumAge:600000}
       );
     });
-    if(pos){ lat = pos.latitude; lon = pos.longitude; city = 'Vendndodhja juaj'; }
+    if(pos){ lat = pos.latitude; lon = pos.longitude; city = dhT('aq.yourLocation'); }
   }catch(e){}
 
   try {
