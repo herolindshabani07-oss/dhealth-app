@@ -5979,6 +5979,18 @@ function applySupabaseSession(session){
     try{setTimeout(calcDailyScore,2000);}catch(e){}
     try{updateMoreProfile();}catch(e){}
     setTimeout(function(){try{checkMyAppointment();}catch(e){}},1500);
+    /* RESTORE i detajeve nga memoria lokale — njësoj si te llaunchApp (sign-in).
+       Pa këtë, në cold-start (rikthim sesioni) detajet e vitaleve/aktivitetit/score nuk shfaqeshin. */
+    setTimeout(function(){
+      try{ initPlatformDetection(); }catch(e){}
+      try{ refreshIntegBadges(); }catch(e){}
+      try{ restoreDailyActivity(); }catch(e){}
+      try{ restoreVitalDetails(); }catch(e){}
+      try{ restoreHomeScore(); }catch(e){}
+      try{ applyAvatar(); }catch(e){}
+      try{ updateRingCard(); }catch(e){}
+      try{ updateIndicatorBadge(); }catch(e){}
+    }, 900);
   });
 }
 
@@ -6052,6 +6064,11 @@ async function dhDiag(){
       out.push(await cnt('vitals'));
       out.push(await cnt('daily_activity'));
       out.push(await cnt('therapy_alarms'));
+      try{ var mp=await sb.from('medical_profiles').select('*').eq('patient_id',uid).order('updated_at',{ascending:false}).limit(1); var m=mp.data&&mp.data[0];
+        out.push(' MP diag:'+((m&&m.diagnoses&&m.diagnoses.length)||0)+' ther:'+((m&&m.therapy&&m.therapy.length)||0)+' alg:'+((m&&m.allergies&&m.allergies.length)||0)); }catch(e){ out.push(' MP detail ERR'); }
+      try{ var v=await sb.from('vitals').select('*').eq('patient_id',uid).order('recorded_at',{ascending:false}).limit(1); var vv=v.data&&v.data[0];
+        out.push(' VT last sys:'+(vv?vv.systolic_bp:'-')+' hr:'+(vv?vv.heart_rate:'-')+' glu:'+(vv?vv.glucose:'-')+' spo2:'+(vv?vv.spo2:'-')); }catch(e){ out.push(' VT detail ERR'); }
+      out.push('UI now: prof-diag='+((document.querySelectorAll('#prof-diag-tags .tag2')||[]).length)+' v-sys='+((document.getElementById('v-sys')||{}).value||'-')+' g-glu='+((document.getElementById('g-glu')||{}).textContent||'-'));
     }
   }catch(e){ out.push('FATAL: '+(e.message||e)); }
   var pre=document.getElementById('dhdbgout'); if(pre) pre.textContent=out.join('\n');
