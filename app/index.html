@@ -4092,13 +4092,20 @@ function getProfile(){
 }
 var BASE_SYS='You are Health BOT, an advanced medical AI with full access to the patient\'s medical profile.\n\n'+
   'INSTRUCTIONS:\n- Respond in the SAME language the user writes in (Albanian or English)\n- Reference actual values and diagnoses — be specific\n- Be empathetic, warm, and professional\n- Use **bold** for key values\n- For serious concerns, recommend Dr. Shabani\n- Keep responses focused (3-4 paragraphs max)\n\n';
+/* Direktiva e gjuhës për verdiktet AI (Run Vital, Diagnostics, Health Report, Therapy) — ndjek gjuhën e zgjedhur */
+function aiLangDirective(){
+  var l=(typeof currentLang!=='undefined'?currentLang:'en')||'en';
+  return l==='sq' ? 'IMPORTANT: Respond ENTIRELY in Albanian (Shqip), regardless of the prompt language.\n\n'
+       : l==='mk' ? 'IMPORTANT: Одговарајте ИСКЛУЧИВО на македонски јазик (кирилица), без оглед на јазикот на барањето.\n\n'
+       : 'IMPORTANT: Respond ENTIRELY in English, regardless of the prompt language.\n\n';
+}
 
 /* ════════════════════ CLAUDE API CALLS ════════════════════ */
 async function callClaude(systemExtra, userMsg, onSuccess, onError, loadingEl, respEl){
   if(loadingEl){loadingEl.disabled=true;loadingEl.innerHTML='<div class="spin"></div> Claude AI analyzing...';}
   if(respEl){respEl.style&&(respEl.style.display='block');respEl.classList&&respEl.classList.add('vis');var txt=respEl.querySelector('[id$="-text"]')||respEl.querySelector('.arc-txt')||respEl.querySelector('.ar-txt')||respEl;if(txt)txt.innerHTML='<div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';}
   try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:BASE_SYS+getProfile()+'\n\n'+systemExtra,messages:[{role:'user',content:userMsg}]})});
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:aiLangDirective()+BASE_SYS+getProfile()+'\n\n'+systemExtra,messages:[{role:'user',content:userMsg}]})});
     var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);
     if(d.error)throw new Error(d.error.message);
     var text=d.content&&d.content[0]&&d.content[0].text;
@@ -4934,6 +4941,7 @@ function selectLang(code){
 
   // Apply translations to key UI elements
   applyTranslations(L);
+  try{ applyLang(code); }catch(e){}   /* motori i ri i18n (data-i18n) + sinkronizon currentLang */
 
   showToast(L.flag + ' ' + L.name + ' selected');
   setTimeout(function(){ closeLangModal(null); }, 600);
@@ -6206,6 +6214,7 @@ var DH_LANG = (function(){ try{ return localStorage.getItem('dh_lang') || 'sq'; 
 function dhT(key){ var o=DH_I18N[key]; return (o && (o[DH_LANG]||o.en||o.sq)) || key; }
 function applyLang(lang){
   if(lang){ DH_LANG=lang; try{ localStorage.setItem('dh_lang',lang); }catch(e){} }
+  try{ if(typeof currentLang!=='undefined') currentLang = DH_LANG; }catch(e){}  /* AI-ja ndjek të njëjtën gjuhë */
   try{
     document.querySelectorAll('[data-i18n]').forEach(function(el){
       var k=el.getAttribute('data-i18n'), o=DH_I18N[k];
