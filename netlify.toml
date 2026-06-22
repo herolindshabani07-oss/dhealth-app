@@ -4,3 +4,14 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# App HTML duhet të jetë GJITHMONË i freskët (live-shell) — pa cache të vjetëruar te WebView
+[[headers]]
+  for = "/app/*"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/v7.html"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
