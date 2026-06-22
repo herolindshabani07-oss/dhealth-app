@@ -1415,7 +1415,7 @@ select option{background:#0A1628;color:#F1F5FF;}
 .v7-scp{font-size:12px;color:rgba(255,255,255,.92);line-height:1.4}
 .v7-scbtn{margin-top:14px;background:#fff;color:#2b6cd4;border:none;border-radius:13px;padding:12px;width:100%;font-size:13px;font-weight:800;font-family:var(--font);position:relative;z-index:1;box-shadow:0 8px 16px rgba(0,0,0,.13);cursor:pointer}
 /* Wellness Score card */
-.wl-card{background:linear-gradient(150deg,#3f7fe6 0%,#2e63cf 100%);border-radius:22px;padding:18px;margin:0 0 4px;color:#fff;box-shadow:0 16px 34px rgba(46,99,207,.26)}
+.wl-card{background:linear-gradient(135deg,#7fbcff 0%,#4a90f0 55%,#3576e0 100%);border-radius:25px;padding:18px 19px;margin:0 0 18px;color:#fff;box-shadow:0 18px 38px rgba(74,144,240,.42),inset 0 1px 1px rgba(255,255,255,.5);position:relative;overflow:hidden}
 .wl-body{display:flex;align-items:center;gap:16px}
 .wl-ring{position:relative;width:108px;height:108px;flex-shrink:0}
 .wl-ring svg{width:108px;height:108px;display:block}
@@ -1432,8 +1432,8 @@ select option{background:#0A1628;color:#F1F5FF;}
 .wl-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.22);overflow:hidden}
 .wl-bar i{display:block;height:100%;width:0;border-radius:3px;background:#fff;transition:width .7s ease}
 .wl-m.locked{opacity:.5}
-.wl-cta{margin-top:15px;width:100%;padding:12px;border-radius:14px;border:none;background:rgba(255,255,255,.16);color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font)}
-.wl-cta:active{opacity:.78}
+.wl-cta{margin-top:15px;width:100%;padding:12px;border-radius:13px;border:none;background:#fff;color:#2b6cd4;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--font);box-shadow:0 8px 16px rgba(0,0,0,.13);position:relative;z-index:1}
+.wl-cta:active{transform:translateY(1px)}
 #wlPer{background:rgba(59,130,246,.12);padding:3px 10px;border-radius:20px;color:#2f6cd4;font-weight:600;cursor:default}
 
 .v7-daily{border-radius:21px;padding:14px 16px;display:flex;justify-content:space-around;margin-bottom:10px;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.55));backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 28px rgba(70,120,190,.14)}
@@ -1644,7 +1644,7 @@ select option{background:#0A1628;color:#F1F5FF;}
           </div>
         </div>
       </div>
-      <button class="wl-cta" id="wlCta" onclick="dhRingConnect()"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="7" fill="none" stroke="#fff" stroke-width="2.4"/></svg> <span id="wlCtaTxt">Connect D Health Ring for full insights</span></button>
+      <button class="wl-cta" id="wlCta" onclick="dhRingConnect()"><span id="wlCtaTxt">Connect D Health Ring</span> →</button>
     </div>
 
     <div class="v7-daily" onclick="switchScreen('vitals')" style="cursor:pointer;" title="Shiko te Vitals">
