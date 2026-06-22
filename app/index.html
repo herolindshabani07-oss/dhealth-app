@@ -2121,8 +2121,9 @@ select option{background:#0A1628;color:#F1F5FF;}
 #screen-calendar{background:linear-gradient(165deg,#f2f7fd 0%,#dde9f7 50%,#eaf2fb 100%)!important}
 #screen-calendar,#screen-calendar *{font-family:'Outfit','Plus Jakarta Sans',sans-serif!important}
 #screen-calendar .sb span{color:#1f2c44!important}
-#screen-calendar .cal-hdr{background:transparent!important}
-#screen-calendar .cal-hdr-t{color:#1f2c44!important}
+#screen-calendar .cal-hdr{background:transparent!important;padding-left:40px!important}
+#screen-calendar .cal-hdr::before{content:'';position:absolute;left:24px;top:12px;height:42px;width:5px;border-radius:3px;background:linear-gradient(180deg,#1ec6a0,#2f7fd1);box-shadow:0 2px 6px rgba(47,127,209,.28);z-index:1}
+#screen-calendar .cal-hdr-t{color:#13556b!important;letter-spacing:-.3px}
 #screen-calendar .cal-hdr-s{color:#7387a4!important}
 #screen-calendar .cal-card{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58))!important;border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 12px 30px rgba(70,120,190,.14),inset 0 1px 1px rgba(255,255,255,.9)!important}
 #screen-calendar .cal-m{color:#1f2c44!important}
