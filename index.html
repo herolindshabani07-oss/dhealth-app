@@ -53,7 +53,7 @@ img{display:block;}
 /* ===== HEADER ===== */
 header.hd{position:absolute;inset-inline:0;top:0;z-index:50;opacity:0;transform:translateY(-14px);}
 header.hd.in{opacity:1;transform:none;transition:opacity .7s,transform .7s;}
-.hd-in{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:1.5rem 0;}
+.hd-in{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding-block:1.5rem;}
 .hd-brand{display:flex;align-items:center;gap:.55rem;font-size:1.15rem;font-weight:700;letter-spacing:-.01em;}
 .hd-brand img{width:1.7rem;height:1.7rem;}
 .hd-nav{display:none;gap:2rem;font-size:.9rem;font-weight:500;}
@@ -98,11 +98,11 @@ header.hd.in{opacity:1;transform:none;transition:opacity .7s,transform .7s;}
 .hcta{display:flex;flex-wrap:wrap;gap:.75rem;}
 .hero-r{display:flex;justify-content:center;position:relative;}
 @media(min-width:1024px){.hero-r{grid-column:span 5;justify-content:center;}}
-.hero-r::before{content:'';position:absolute;width:24rem;height:24rem;border-radius:50%;background:radial-gradient(circle,rgba(76,201,240,.5),rgba(30,136,229,.15) 55%,transparent 72%);filter:blur(8px);z-index:0;}
-.phone{width:18rem;background:linear-gradient(150deg,#232c46,#0e1424);border-radius:2.4rem;padding:.55rem;box-shadow:0 50px 90px rgba(20,40,90,.4);position:relative;z-index:1;}
+.hero-r::before{content:'';position:absolute;width:26rem;height:26rem;border-radius:50%;background:radial-gradient(circle,rgba(76,201,240,.6),rgba(30,136,229,.18) 55%,transparent 72%);filter:blur(10px);z-index:0;}
+.phone{width:18rem;background:linear-gradient(150deg,#232c46,#0e1424);border-radius:2.4rem;padding:.55rem;box-shadow:0 50px 90px rgba(20,40,90,.45),0 0 70px rgba(76,201,240,.35),0 0 0 1px rgba(255,255,255,.06);position:relative;z-index:1;}
 .phone .scr{border-radius:2rem;overflow:hidden;position:relative;}
 .phone .scr img{width:100%;display:block;}
-.phone .scr::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.3),rgba(255,255,255,.06) 22%,transparent 42%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22);}
+.phone .scr::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.42),rgba(255,255,255,.08) 20%,transparent 40%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.26);}
 .notch{position:absolute;top:.55rem;left:50%;transform:translateX(-50%);width:5rem;height:1.1rem;background:#0e1424;border-radius:0 0 .8rem .8rem;z-index:3;}
 .hero-status{display:flex;align-items:center;justify-content:space-between;gap:.75rem;border-top:1px solid rgba(17,20,24,.1);padding:1.25rem 0;font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:rgba(17,20,24,.6);position:relative;z-index:20;}
 
@@ -202,6 +202,14 @@ h2{font-size:2.25rem;font-weight:600;letter-spacing:-.02em;line-height:1.05;}
 .cs-card p{position:relative;z-index:2;margin-top:.6rem;max-width:24rem;font-size:.95rem;color:rgba(255,255,255,.6);line-height:1.55;}
 .cs-tags{position:relative;z-index:2;margin-top:1.3rem;display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;}
 .cs-tags span{border:1px solid rgba(255,255,255,.22);border-radius:9999px;padding:.4rem .9rem;font-size:.8rem;}
+/* D Health Navigator showcase */
+.nav-lead{margin-top:1rem;max-width:44rem;font-size:1.1rem;color:var(--muted);line-height:1.65;}
+.nav-cta{margin-top:1.75rem;display:inline-flex;}
+.nav-shot{position:relative;margin-top:3rem;border-radius:1.5rem;overflow:hidden;background:#fff;box-shadow:0 40px 80px rgba(20,40,90,.22),0 0 0 1px rgba(17,20,24,.05);transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s;}
+.nav-shot:hover{transform:translateY(-6px);box-shadow:0 54px 100px rgba(20,40,90,.28),0 0 70px rgba(124,77,255,.18),0 0 0 1px rgba(17,20,24,.05);}
+.nav-shot::before{content:'';position:absolute;left:50%;top:-18%;transform:translateX(-50%);width:70%;height:55%;border-radius:50%;background:radial-gradient(circle,rgba(124,77,255,.22),rgba(76,201,240,.12) 55%,transparent 72%);filter:blur(45px);z-index:-1;}
+.nav-shot img{width:100%;display:block;}
+.nav-shot::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 24%,transparent 44%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);}
 
 /* stats panel */
 .stats{border-radius:2rem;background:var(--ink);padding:4rem 2rem;color:#fff;}
@@ -349,6 +357,7 @@ footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
       <button data-scroll="home">Home</button>
       <button data-scroll="about">About</button>
       <button data-scroll="caps">Platform</button>
+      <button data-scroll="navigator">Navigator</button>
       <button data-scroll="services">Wearables</button>
       <button onclick="location.href='mailto:contact@dhealth.app'">Contact</button>
     </nav>
@@ -480,6 +489,15 @@ footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
   </ul>
 </div></section>
 
+<!-- D HEALTH NAVIGATOR -->
+<section class="sec-pad" id="navigator"><div class="shell">
+  <div class="k rv"><span class="dot"></span>The Ecosystem</div>
+  <h2 class="rv">D Health <span style="color:var(--accent2)">Navigator</span></h2>
+  <p class="nav-lead rv">Part of the D Health ecosystem — an interactive way to make sense of your body. Tap any area and the Navigator walks you through it: surgery, radiology, conditions, exams and medical articles, all organized around the spot you choose. Answer a few simple questions and get clear, educational orientation on what might be going on, which tests fit, and when to see a doctor.</p>
+  <a href="navigator/index.html" target="_blank" rel="noopener" class="pill acc warrow nav-cta rv">Open Navigator <span class="bd"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+  <div class="nav-shot rv"><img src="assets/shot_navigator.png" alt="D Health Navigator — explore the body to find guidance"></div>
+</div></section>
+
 <!-- WEARABLES — COMING SOON -->
 <section class="sec-pad" id="services"><div class="shell">
   <div class="k rv"><span class="dot"></span>The Ecosystem</div>
@@ -572,8 +590,9 @@ footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
     <button data-scroll="home"><span class="ix">01</span> Home</button>
     <button data-scroll="about"><span class="ix">02</span> About</button>
     <button data-scroll="caps"><span class="ix">03</span> Platform</button>
-    <button data-scroll="services"><span class="ix">04</span> Wearables</button>
-    <button onclick="location.href='mailto:contact@dhealth.app'"><span class="ix">05</span> Contact</button>
+    <button data-scroll="navigator"><span class="ix">04</span> Navigator</button>
+    <button data-scroll="services"><span class="ix">05</span> Wearables</button>
+    <button onclick="location.href='mailto:contact@dhealth.app'"><span class="ix">06</span> Contact</button>
   </div>
   <div class="shell nv-bot"><span>Local time — <span id="clkT2">9:41am</span></span><button data-modal style="color:rgba(255,255,255,.7)">Start a project →</button></div>
 </div>

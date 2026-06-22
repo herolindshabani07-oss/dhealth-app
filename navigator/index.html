@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D Health | Interactive Medical Navigator</title>
+<style>
+:root{
+  --bg:#f5f8ff;
+  --panel:#ffffff;
+  --ink:#123b3f;
+  --ink-strong:#092f33;
+  --muted:#527073;
+  --line:#d7e8e8;
+  --blue:#0f766e;
+  --blue-2:#21a69a;
+  --teal:#0f766e;
+  --violet:#155e75;
+  --rose:#f0657f;
+  --amber:#f8b84e;
+  --soft:#eef4ff;
+  --glass:rgba(255,255,255,.76);
+  --shadow:0 24px 70px rgba(9,47,51,.12);
+  --shadow-soft:0 12px 34px rgba(9,47,51,.08);
+  --radius:8px;
+  --font:"Times New Roman",Times,serif;
+  --font-display:"Times New Roman",Times,serif;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 12% 8%,rgba(84,164,255,.20),transparent 32%),
+    radial-gradient(circle at 88% 18%,rgba(114,87,238,.14),transparent 34%),
+    linear-gradient(135deg,#f8fbff 0%,#ffffff 42%,#eef5ff 100%);
+  color:var(--ink);
+  font-family:var(--font);
+  font-size:15px;
+  line-height:1.48;
+  text-rendering:geometricPrecision;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:linear-gradient(rgba(47,99,246,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(47,99,246,.035) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.72),transparent 78%);
+}
+button,input{font:inherit}
+h1,h2,h3,.brand b{
+  font-family:var(--font-display);
+  letter-spacing:0;
+  color:var(--ink-strong);
+}
+p,span,button,input,td,th,a{letter-spacing:0}
+.title h1,.wizard h2,.wizard h3,.result-card h3,.module-head h3,.directions h3,.clinical-lens h3,.side-card h3{
+  font-weight:820;
+}
+.app{min-height:100vh;display:grid;grid-template-columns:270px minmax(0,1fr)}
+.sidebar{
+  background:linear-gradient(180deg,rgba(255,255,255,.90),rgba(248,251,255,.72));
+  border-right:1px solid var(--line);
+  padding:24px 18px;
+  position:sticky;
+  top:0;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+  backdrop-filter:blur(24px);
+  box-shadow:12px 0 40px rgba(35,48,85,.06);
+}
+.brand{display:flex;gap:12px;align-items:center;padding:0 8px}
+.brand img{width:38px;height:38px;object-fit:contain}
+.brand b{display:block;font-size:19px;font-weight:850}
+.brand span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.nav{display:grid;gap:8px}
+.nav button{
+  border:1px solid transparent;
+  width:100%;
+  background:transparent;
+  color:#315c60;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:14px;
+  border-radius:var(--radius);
+  cursor:pointer;
+  text-align:left;
+  transition:.18s ease;
+  font-weight:720;
+}
+.nav button:hover{background:rgba(238,244,255,.72);border-color:#e0e8fb}
+.nav button.active{background:linear-gradient(135deg,#eef4ff,#ffffff);color:var(--blue);border-color:#cfdcff;box-shadow:0 10px 24px rgba(47,99,246,.10),inset 0 0 0 1px rgba(255,255,255,.75)}
+.ico{
+  width:26px;
+  height:26px;
+  display:grid;
+  place-items:center;
+  color:currentColor;
+  border-radius:8px;
+  background:linear-gradient(135deg,rgba(240,246,255,.92),rgba(255,255,255,.74));
+  box-shadow:inset 0 0 0 1px rgba(216,226,246,.78);
+  font-size:15px;
+}
+.premium{
+  margin-top:auto;
+  border:1px solid rgba(114,87,238,.20);
+  background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(242,238,255,.92));
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:var(--shadow-soft);
+}
+.premium b{display:block;color:#5e35b1;margin-bottom:8px}
+.premium p{margin:0 0 14px;color:#68758f;font-size:13px;line-height:1.5}
+.premium-soon{display:inline-flex;align-items:center;gap:7px;border:1px solid #d8cdfd;background:#f4efff;color:#6541c9;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:850}
+.premium button,.primary{
+  border:0;
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  color:white;
+  border-radius:var(--radius);
+  padding:13px 18px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 14px 30px rgba(47,99,246,.26);
+  transition:.18s ease;
+}
+.premium button:hover,.primary:hover{transform:translateY(-1px);box-shadow:0 18px 34px rgba(47,99,246,.30)}
+.topbar{
+  height:78px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 34px;
+  background:rgba(255,255,255,.78);
+  backdrop-filter:blur(22px);
+  position:sticky;
+  top:0;
+  z-index:5;
+}
+.search{
+  width:min(560px,48vw);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid #d9e1f6;
+  background:rgba(255,255,255,.86);
+  border-radius:var(--radius);
+  padding:11px 15px;
+  color:#8994aa;
+  box-shadow:0 10px 26px rgba(35,48,85,.06);
+}
+.search input{border:0;outline:0;background:transparent;width:100%;color:var(--ink);font-weight:560}
+.user{display:flex;align-items:center;gap:14px;color:var(--ink)}
+.user span{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.58);border:1px solid #e0e8fb;box-shadow:0 8px 20px rgba(35,48,85,.06)}
+.lang-switch{display:flex;gap:4px;padding:4px;border:1px solid #e0e8fb;border-radius:999px;background:rgba(255,255,255,.58);box-shadow:0 8px 20px rgba(35,48,85,.06)}
+.lang-switch button{border:0;background:transparent;color:#59677f;border-radius:999px;padding:7px 9px;font-size:12px;font-weight:850;cursor:pointer}
+.lang-switch button.active{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff}
+.main{min-width:0}
+.content{padding:28px 34px 0;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:32px}
+.title h1{font-size:26px;margin:0 0 6px;font-weight:850}
+.title p{margin:0;color:var(--muted)}
+.workspace{display:grid;grid-template-columns:360px minmax(390px,1fr);gap:28px;align-items:start;margin-top:22px}
+.body-stage{
+  position:relative;
+  min-height:610px;
+  display:grid;
+  place-items:center;
+  padding-top:56px;
+}
+.body-tools{position:absolute;top:4px;left:50%;transform:translateX(-50%);display:flex;gap:20px;z-index:8;padding:0;border:0;background:transparent;box-shadow:none}
+.body-tools button{position:relative;border:0;background:transparent;color:#4f7073;border-radius:0;padding:8px 0;font-size:12px;font-weight:850;cursor:pointer;min-width:auto;box-shadow:none;transition:.18s ease}
+.body-tools button:hover{background:transparent;color:var(--blue)}
+.body-tools button.active{background:transparent;color:var(--blue);box-shadow:none;text-shadow:0 8px 22px rgba(47,99,246,.28)}
+.body-tools button.active:after{content:"";position:absolute;left:0;right:0;bottom:1px;height:2px;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--violet))}
+.body-wrap{position:relative;width:320px;height:560px}
+.body-card{position:absolute;inset:0;filter:drop-shadow(0 16px 20px rgba(20,35,65,.12))}
+.body-card.switching{animation:bodyTurn .42s ease}
+.body-face{position:absolute;inset:0;border-radius:14px;overflow:hidden;opacity:0;transform:scale(.985);transition:opacity .24s ease,transform .24s ease;box-shadow:inset 0 0 0 1px rgba(255,255,255,.75)}
+.body-face.front{opacity:1;transform:scale(1)}
+.body-card.back-view .body-face.front{opacity:0;transform:scale(.985)}
+.body-card.back-view .body-face.back{opacity:1;transform:scale(1)}
+@keyframes bodyTurn{0%{transform:rotateY(0deg) scale(1)}50%{transform:rotateY(12deg) scale(.985)}100%{transform:rotateY(0deg) scale(1)}}
+.body-img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+.zone{
+  position:absolute;
+  border:0;
+  border-radius:50%;
+  width:24px;height:24px;
+  background:linear-gradient(135deg,#fff,#eef4ff);
+  box-shadow:0 0 0 2px rgba(255,255,255,.95),0 0 0 5px rgba(47,99,246,.24),0 10px 20px rgba(47,99,246,.18);
+  cursor:pointer;
+  transition:.2s ease;
+}
+.zone:after{
+  content:attr(aria-label);
+  position:absolute;
+  left:28px;
+  top:50%;
+  transform:translateY(-50%);
+  white-space:nowrap;
+  background:#14203a;
+  color:white;
+  font-size:12px;
+  padding:5px 8px;
+  border-radius:6px;
+  opacity:0;
+  pointer-events:none;
+}
+.zone:hover,.zone.active{background:linear-gradient(135deg,var(--blue),var(--violet));transform:scale(1.1)}
+.zone:hover:after{opacity:1}
+.zone{z-index:5}
+.note{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.78);
+  color:#65728c;
+  border-radius:var(--radius);
+  padding:12px 14px;
+  font-size:13px;
+  line-height:1.45;
+  display:flex;
+  gap:10px;
+  max-width:560px;
+  box-shadow:var(--shadow-soft);
+}
+.card{
+  background:var(--glass);
+  border:1px solid rgba(217,227,245,.88);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px);
+}
+.wizard{padding:26px}
+.wizard-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:24px}
+.wizard h2{font-size:21px;margin:0 0 26px;font-weight:850}
+.wizard h3{margin:0 0 8px;font-size:20px;font-weight:850}
+.wizard p{margin:0;color:var(--muted);font-size:14px}
+.back-btn{border:0;background:transparent;color:var(--blue);font-weight:760;cursor:pointer}
+.step{color:#61708e;font-size:13px;margin-bottom:10px;font-weight:760}
+.options{display:grid;gap:8px}
+.option{
+  border:1px solid rgba(217,227,245,.9);
+  background:rgba(255,255,255,.82);
+  padding:12px 14px;
+  min-height:54px;
+  border-radius:var(--radius);
+  display:flex;
+  align-items:center;
+  gap:14px;
+  cursor:pointer;
+  transition:.18s;
+  font-weight:680;
+}
+.option:hover{border-color:#b9c7ff;background:#fbfcff;box-shadow:0 10px 24px rgba(47,99,246,.08)}
+.option.selected{border-color:var(--blue);box-shadow:0 12px 26px rgba(47,99,246,.12),inset 0 0 0 1px var(--blue);background:#fbfcff}
+.option .thumb{
+  width:34px;height:34px;border-radius:10px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,#eef5ff,#ffffff);
+  color:var(--teal);
+  flex:0 0 32px;
+  box-shadow:inset 0 0 0 1px rgba(216,226,246,.86),0 8px 18px rgba(47,99,246,.06);
+}
+.option .check{margin-left:auto;width:20px;height:20px;border-radius:50%;border:1px solid #c9d4e7;display:grid;place-items:center;color:white}
+.option.selected .check{background:linear-gradient(135deg,var(--blue),var(--violet));border-color:var(--blue)}
+.actions{display:flex;justify-content:center;margin-top:24px}
+.primary{min-width:210px}
+.primary:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.clinical-lens{margin-top:18px;padding:18px;display:grid;gap:14px}
+.clinical-lens h3{margin:0;font-size:18px}
+.lens-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.lens-box{border:1px solid rgba(217,227,245,.9);background:rgba(255,255,255,.84);border-radius:var(--radius);padding:14px;min-height:116px;box-shadow:var(--shadow-soft)}
+.lens-box b{display:flex;align-items:center;gap:8px;margin-bottom:7px;color:var(--ink-strong);font-weight:820}
+.lens-box p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.risk-badge{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:800;margin-bottom:8px}
+.risk-low{background:#eefbf6;color:#0b8d62}.risk-mid{background:#fff7e8;color:#a26305}.risk-high{background:#fff0f2;color:#c52d46}
+.right{display:grid;gap:14px;align-content:start}
+.side-card{padding:18px;background:rgba(255,255,255,.78)}
+.selected-card{min-height:286px;max-height:286px;overflow:hidden}
+.articles-card{min-height:286px;max-height:286px;overflow:hidden}
+.upload-card{min-height:286px}
+.side-card h3{margin:0 0 16px;font-size:17px;font-weight:850}
+.crumbs{display:grid;gap:7px;font-size:13px;color:#557276;max-height:194px;overflow:auto;padding-right:4px}
+.crumb{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:8px 9px;
+  border-radius:var(--radius);
+}
+.crumb.active{background:linear-gradient(135deg,#eefafa,#fff);color:var(--ink-strong);box-shadow:inset 0 0 0 1px #cfe8e6}
+.progress{height:7px;border-radius:99px;background:#e8edf7;overflow:hidden;margin-top:16px}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--violet));width:25%;transition:.25s}
+.help{display:flex;gap:14px;align-items:center}
+.help .big{font-size:28px}
+.article{display:grid;grid-template-columns:62px 1fr;gap:12px;align-items:center;margin-top:12px}
+.article .pic{height:52px;border-radius:var(--radius);background:linear-gradient(135deg,#e7f1ff,#fff0f3);display:grid;place-items:center;font-size:23px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.72)}
+.article p{margin:0;font-size:13px;line-height:1.35;color:var(--ink)}
+.article a{color:var(--ink);text-decoration:none}
+.article a:hover{color:var(--blue)}
+.feed-note{margin:8px 0 0;color:var(--muted);font-size:12px;line-height:1.35}
+#liveArticles{max-height:204px;overflow:auto;padding-right:4px}
+.upload-drop{
+  border:1px dashed rgba(76,106,255,.42);
+  background:linear-gradient(135deg,rgba(242,247,255,.92),rgba(255,255,255,.82));
+  border-radius:14px;
+  padding:16px;
+  display:grid;
+  gap:7px;
+  cursor:pointer;
+  transition:.2s ease;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.66);
+}
+.upload-drop:hover{border-color:var(--blue);transform:translateY(-1px);box-shadow:0 14px 30px rgba(47,99,246,.10)}
+.upload-icon{
+  width:38px;height:38px;border-radius:12px;
+  display:grid;place-items:center;
+  color:#fff;font-size:22px;font-weight:800;
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  box-shadow:0 10px 24px rgba(47,99,246,.22);
+}
+.upload-drop b{font-size:14px;color:var(--ink-strong)}
+.upload-drop p{margin:0;color:var(--muted);font-size:12px;line-height:1.38}
+.upload-preview{margin-top:12px}
+.upload-preview img{width:100%;max-height:156px;object-fit:cover;border-radius:12px;border:1px solid #dce6f7;display:block}
+.file-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#f2fbfb;border:1px solid #cfe8e6;color:var(--ink);font-size:13px;font-weight:750}
+.analyze-btn{display:none;width:100%;margin-top:12px;border:0;border-radius:12px;padding:12px 14px;background:linear-gradient(135deg,var(--teal),var(--violet));color:#fff;font-weight:850;cursor:pointer;box-shadow:0 14px 28px rgba(15,118,110,.18);transition:.18s ease}
+.analyze-btn.show{display:block}
+.analyze-btn:hover{transform:translateY(-1px);box-shadow:0 18px 34px rgba(15,118,110,.22)}
+.upload-assessment{display:none;margin-top:12px;padding:13px;border-radius:12px;background:linear-gradient(135deg,#f7fbff,#fff);border:1px solid #dce6f7;color:#526079;font-size:12px;line-height:1.45}
+.upload-assessment.show{display:block}
+.upload-assessment b{display:block;color:var(--ink-strong);margin-bottom:5px;font-size:13px}
+.upload-assessment ul{margin:8px 0 0;padding-left:17px}
+.upload-assessment li{margin:4px 0}
+.results{margin-top:28px;display:none}
+.results.show{display:block}
+.result-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;margin-top:18px}
+.result-card{padding:24px}
+.result-card h3{margin:0 0 16px;font-size:18px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{background:linear-gradient(135deg,#eefafa,#fff);border:1px solid #cfe8e6;color:var(--teal);border-radius:999px;padding:8px 12px;font-size:13px;font-weight:700;box-shadow:0 8px 18px rgba(15,118,110,.06);display:inline-flex;align-items:center;gap:7px}
+.report{
+  border-left:4px solid var(--teal);
+  background:#f5fffc;
+  padding:14px;
+  border-radius:0 var(--radius) var(--radius) 0;
+  margin-top:14px;
+}
+.report p{margin:7px 0;color:#557276;font-size:14px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:var(--radius)}
+table{border-collapse:collapse;width:100%;min-width:520px;background:white}
+th,td{padding:12px;border-bottom:1px solid var(--line);text-align:center;font-size:14px}
+th:first-child,td:first-child{text-align:left}
+th{color:#557276;background:#f5fbfb}
+tr:last-child td{border-bottom:0}
+.yes{color:#13a46f;font-weight:900}.no{color:#b7c0cf;font-weight:900}
+.specialties{margin-top:22px;padding:22px}
+.spec-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.spec-tabs button{border:1px solid var(--line);background:white;padding:10px 13px;border-radius:var(--radius);cursor:pointer;color:#4f7073;font-weight:760}
+.spec-tabs button.active{background:#eef3ff;color:var(--blue);border-color:#cfd9ff}
+.spec-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.spec-list span{padding:12px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;color:var(--ink);font-size:14px;display:flex;align-items:center;gap:10px;font-weight:680}
+.directions{margin:20px 0 24px;padding:22px}
+.directions-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:16px}
+.directions h3{margin:0 0 6px}
+.directions p{margin:0;color:var(--muted);font-size:14px}
+.direction-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.direction-tabs button{border:1px solid var(--line);background:white;padding:10px 13px;border-radius:var(--radius);cursor:pointer;color:#4f7073;font-weight:760}
+.direction-tabs button.active{background:#eef3ff;color:var(--blue);border-color:#cfd9ff}
+.direction-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.direction-item{padding:14px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;color:var(--ink);font-size:14px;line-height:1.35;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;box-shadow:0 10px 26px rgba(9,47,51,.05)}
+.direction-item b{display:block;color:var(--ink-strong);margin-bottom:3px;font-weight:820}
+.direction-item span{color:var(--muted);font-size:12px}
+.module-section{margin:20px 0 24px;padding:22px;scroll-margin-top:96px}
+.module-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:16px}
+.module-head h3{margin:0 0 6px}
+.module-head p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+.module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.module-card{border:1px solid rgba(217,227,245,.9);background:rgba(255,255,255,.86);border-radius:var(--radius);padding:15px;min-height:118px;box-shadow:var(--shadow-soft);transition:.18s ease}
+.module-card:hover{transform:translateY(-2px);box-shadow:0 18px 38px rgba(9,47,51,.12)}
+.module-card b{display:flex;align-items:center;gap:8px;color:var(--ink-strong);margin-bottom:6px;font-weight:820}
+.module-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.module-card a{color:var(--blue);font-weight:750;text-decoration:none}
+.module-kicker{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:linear-gradient(135deg,#eefafa,#fff);color:var(--teal);font-size:12px;font-weight:850;padding:6px 9px;margin-bottom:8px;border:1px solid #cfe8e6}
+.module-kicker .med-symbol{width:22px;height:22px;border-radius:7px;box-shadow:inset 0 0 0 1px rgba(199,226,224,.86)}
+.chip .med-symbol{width:24px;height:24px;border-radius:8px;margin-left:-4px}
+.med-symbol{
+  width:31px;height:31px;border-radius:10px;
+  display:inline-grid;place-items:center;flex:0 0 31px;
+  background:linear-gradient(135deg,#edfafa,#ffffff);
+  color:var(--teal);
+  box-shadow:inset 0 0 0 1px rgba(199,226,224,.94),0 9px 20px rgba(15,118,110,.08);
+  line-height:1;
+}
+.med-symbol svg,.ico svg,.thumb svg{width:18px;height:18px;display:block;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ico svg{width:16px;height:16px}
+.thumb svg{width:18px;height:18px}
+.med-symbol.soft-teal{color:#0b7b73;background:linear-gradient(135deg,#e9fbf8,#ffffff)}
+.med-symbol.soft-rose{color:#9f3f55;background:linear-gradient(135deg,#fff2f5,#ffffff)}
+.med-symbol.soft-amber{color:#8a6509;background:linear-gradient(135deg,#fff8e9,#ffffff)}
+.faq-list{display:grid;gap:10px}
+.faq-item{border:1px solid rgba(217,227,245,.9);background:rgba(255,255,255,.84);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow-soft)}
+.faq-item b{display:block;color:var(--ink-strong);margin-bottom:5px}
+.faq-item p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.flow{margin:20px 0 24px;padding:18px}
+.flow h3{margin:0 0 12px}
+.flow-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.flow-step{background:white;border:1px solid var(--line);border-radius:var(--radius);padding:14px;min-height:118px}
+.flow-step b{display:block;margin:8px 0;color:var(--ink-strong);font-size:14px}
+.flow-step p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.trust{
+  margin-top:24px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  background:rgba(238,241,255,.88);
+  border-radius:var(--radius) var(--radius) 0 0;
+  border:1px solid #e3e6fb;
+  overflow:hidden;
+}
+.trust div{padding:16px 18px;border-right:1px solid #dce1f5;color:#5f6d87;font-size:13px;display:flex;gap:12px;align-items:center}
+.trust div:last-child{border-right:0}
+.trust b{color:var(--ink-strong)}
+@media(max-width:1180px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:relative;height:auto;flex-direction:row;align-items:center;overflow:auto}
+  .premium{display:none}.nav{display:flex}.nav button{white-space:nowrap}
+  .content{grid-template-columns:1fr}
+  .right{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:900px){
+  .topbar{padding:0 18px}.search{width:100%}.user{display:none}
+  .content{padding:22px 18px 0}
+  .workspace,.result-grid,.lens-grid,.module-grid{grid-template-columns:1fr}
+  .body-stage{min-height:480px}
+  .right{grid-template-columns:1fr}
+  .spec-list,.direction-list,.flow-grid,.trust,.lens-grid,.module-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .sidebar{padding:14px}.brand span{display:none}.nav button span:last-child{display:none}
+  .body-wrap{transform:scale(.86);transform-origin:center top;height:470px}
+  .wizard{padding:18px}.wizard-head{display:block}
+  .spec-list,.direction-list,.flow-grid,.trust,.lens-grid,.module-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="assets/logo.png" alt="D Health">
+      <div><b>D Health</b><span>Medical Navigator</span></div>
+    </div>
+    <nav class="nav" aria-label="Navigimi kryesor">
+      <button class="active" data-target="navigatorTop"><span class="ico">⌖</span><span>Navigo Trupin</span></button>
+      <button data-target="surgeryModule"><span class="ico">✎</span><span>Kirurgji</span></button>
+      <button data-target="radiologyModule"><span class="ico">▣</span><span>Radiologji</span></button>
+      <button data-target="medicalDirections"><span class="ico">☷</span><span>Drejtimet Mjekësore</span></button>
+      <button data-target="diseaseModule"><span class="ico">♡</span><span>Sëmundje</span></button>
+      <button data-target="examModule"><span class="ico">⚕</span><span>Ekzaminime</span></button>
+      <button data-target="articleModule"><span class="ico">□</span><span>Artikuj Mjekësorë</span></button>
+      <button data-target="faqModule"><span class="ico">?</span><span>Pyetje të Shpeshta</span></button>
+      <button data-target="aboutModule"><span class="ico">ⓘ</span><span>Rreth Nesh</span></button>
+    </nav>
+    <div class="premium">
+      <b>Premium</b>
+      <p>Raporte të avancuara, historik pyetjesh dhe asistent AI do të aktivizohen së shpejti.</p>
+      <span class="premium-soon">Coming soon</span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <label class="search">
+        <span>⌕</span>
+        <input id="search" placeholder="Kërko për simptoma, sëmundje, ekzaminime..." autocomplete="off">
+      </label>
+      <div class="user">
+        <span>🔔</span>
+        <div class="lang-switch" aria-label="Language selector">
+          <button class="active" data-lang="sq" type="button">SQ</button>
+          <button data-lang="en" type="button">EN</button>
+          <button data-lang="mk" type="button">MK</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div>
+        <div class="title" id="navigatorTop">
+          <h1>Zgjidh zonën ku ke problem</h1>
+          <p>Kliko në një pjesë të trupit për të vazhduar.</p>
+        </div>
+
+        <div class="workspace">
+          <div>
+            <div class="body-stage">
+              <div class="body-wrap" aria-label="Figura interaktive e trupit">
+                <div class="body-tools" aria-label="Kontrolli i pamjes së trupit">
+                  <button class="active" data-view="front" type="button">Para</button>
+                  <button data-view="back" type="button">Mbrapa</button>
+                  <button data-view="toggle" type="button">Rrotullo</button>
+                </div>
+                <div class="body-card" id="bodyCard">
+                  <div class="body-face front">
+                    <img class="body-img" src="assets/body-front.png" alt="Trupi i njeriut nga para">
+                  </div>
+                  <div class="body-face back">
+                    <img class="body-img" src="assets/body-back.png" alt="Trupi i njeriut nga mbrapa">
+                  </div>
+                </div>
+                <button class="zone head" data-zone="head" aria-label="Kokë"></button>
+                <button class="zone neck" data-zone="neck" aria-label="Qafë"></button>
+                <button class="zone chest" data-zone="chest" aria-label="Gjoks"></button>
+                <button class="zone abdomen" data-zone="abdomen" aria-label="Abdomen"></button>
+                <button class="zone genital" data-zone="genital" aria-label="Organe gjenitale"></button>
+                <button class="zone back" data-zone="back" aria-label="Shpinë"></button>
+                <button class="zone arm active" data-zone="arm" aria-label="Krah"></button>
+                <button class="zone hand" data-zone="hand" aria-label="Dorë"></button>
+                <button class="zone leg" data-zone="leg" aria-label="Këmbë"></button>
+                <button class="zone knee" data-zone="knee" aria-label="Gju"></button>
+                <button class="zone foot" data-zone="foot" aria-label="Këmbë foot"></button>
+              </div>
+            </div>
+            <div class="note"><span>🛡</span><span>Ky informacion është për qëllime edukative dhe nuk zëvendëson konsultën mjekësore. Konsultohuni me mjekun tuaj për diagnozë të saktë.</span></div>
+          </div>
+
+          <section class="card wizard" aria-live="polite">
+            <div class="wizard-head">
+              <div>
+                <h2 id="zoneTitle">Krah</h2>
+                <div class="step" id="stepText">1 / 4</div>
+                <h3 id="questionTitle">Ku është problemi?</h3>
+                <p id="questionHint">Zgjidh zonën e saktë në krahun tënd.</p>
+              </div>
+              <button class="back-btn" id="backBtn">← Kthehu</button>
+            </div>
+            <div class="options" id="options"></div>
+            <div class="actions">
+              <button class="primary" id="nextBtn" disabled>Vazhdo →</button>
+            </div>
+          </section>
+        </div>
+
+        <section class="card clinical-lens">
+          <h3>Mendo si mjek</h3>
+          <div class="lens-grid" id="clinicalLens"></div>
+        </section>
+
+        <section class="card flow">
+          <h3>Si funksionon?</h3>
+          <div class="flow-grid">
+            <div class="flow-step"><span class="ico">⌖</span><b>Zgjidh zonën</b><p>Kliko në zonën ku ndjen problem.</p></div>
+            <div class="flow-step"><span class="ico">☷</span><b>Përgjigju pyetjeve</b><p>Përgjigju disa pyetjeve të thjeshta.</p></div>
+            <div class="flow-step"><span class="ico">◉</span><b>Merr informacion</b><p>Merr orientim mbi problemin e mundshëm.</p></div>
+            <div class="flow-step"><span class="ico">⚕</span><b>Konsultohu</b><p>Konsultohu me mjekun për diagnostikim të saktë.</p></div>
+          </div>
+        </section>
+
+        <section class="card directions" id="medicalDirections">
+          <div class="directions-head">
+            <div>
+              <h3>Drejtimet mjekësore</h3>
+              <p>Nga Dermatologjia deri te shërbimet diagnostike dhe mbështetëse.</p>
+            </div>
+          </div>
+          <div class="direction-tabs" id="directionTabs"></div>
+          <div class="direction-list" id="directionList"></div>
+        </section>
+
+        <section class="card module-section" id="surgeryModule">
+          <div class="module-head">
+            <div>
+              <h3>Kirurgji</h3>
+              <p>Degët kirurgjikale lidhen me zonën e zgjedhur dhe shenjat alarmuese.</p>
+            </div>
+          </div>
+          <div class="module-grid" id="surgeryList"></div>
+        </section>
+
+        <section class="card module-section" id="radiologyModule">
+          <div class="module-head">
+            <div>
+              <h3>Radiologji</h3>
+              <p>Radiografi, CT, MRI, ultrazë dhe ekzaminime të tjera sipas problemit.</p>
+            </div>
+          </div>
+          <div class="module-grid" id="radiologyList"></div>
+        </section>
+
+        <section class="card module-section" id="diseaseModule">
+          <div class="module-head">
+            <div>
+              <h3>Sëmundje</h3>
+              <p>Akute, kronike, infektive, inflamatore dhe degenerative.</p>
+            </div>
+          </div>
+          <div class="module-grid" id="diseaseList"></div>
+        </section>
+
+        <section class="card module-section" id="examModule">
+          <div class="module-head">
+            <div>
+              <h3>Ekzaminime</h3>
+              <p>Rutinore, primare, sekondare dhe të avancuara.</p>
+            </div>
+          </div>
+          <div class="module-grid" id="examList"></div>
+        </section>
+
+        <section class="card module-section" id="articleModule">
+          <div class="module-head">
+            <div>
+              <h3>Artikuj mjekësorë</h3>
+              <p>Artikuj edukativë me linke që mund të ndahen në rrjete sociale.</p>
+            </div>
+          </div>
+          <div class="module-grid" id="articleList"></div>
+        </section>
+
+        <section class="card module-section" id="faqModule">
+          <div class="module-head">
+            <div>
+              <h3>Pyetje të shpeshta</h3>
+              <p>Pyetjet që pacientët klikojnë më shpesh në navigator.</p>
+            </div>
+          </div>
+          <div class="faq-list" id="faqList"></div>
+        </section>
+
+        <section class="card module-section" id="aboutModule">
+          <div class="module-head">
+            <div>
+              <h3>Rreth nesh</h3>
+              <p>D Health Medical Navigator është ndërtuar për orientim edukativ para konsultës mjekësore.</p>
+            </div>
+          </div>
+          <div class="module-grid">
+            <div class="module-card"><span class="module-kicker"><span class="med-symbol" data-svg-icon="medical" aria-hidden="true"></span>Historia</span><b>Ideja</b><p>Platforma nisi si mënyrë e thjeshtë që pacienti të përshkruajë problemin me trupin, simptomat dhe drejtimin mjekësor.</p></div>
+            <div class="module-card"><span class="module-kicker"><span class="med-symbol soft-teal" data-svg-icon="stethoscope" aria-hidden="true"></span>Qëllimi</span><b>Orientim i qartë</b><p>Qëllimi është edukimi, zgjedhja më e mirë e ekzaminimit dhe drejtimi te specialisti i duhur.</p></div>
+            <div class="module-card"><span class="module-kicker"><span class="med-symbol soft-amber" data-svg-icon="alert" aria-hidden="true"></span>Kujdes</span><b>Nuk zëvendëson mjekun</b><p>Navigatori nuk vendos diagnozë përfundimtare. Vendimi klinik bëhet nga mjeku pas vizitës dhe ekzaminimeve.</p></div>
+          </div>
+        </section>
+
+        <section class="results show" id="results">
+          <div class="result-grid">
+            <div class="card result-card">
+              <h3>Raport paraprak AI</h3>
+              <div class="report" id="aiReport"></div>
+              <h3 style="margin-top:22px">Mund të lidhet me</h3>
+              <div class="chips" id="conditions"></div>
+            </div>
+            <div class="card result-card">
+              <h3>Ekzaminimet dhe specialisti</h3>
+              <div class="chips" id="exams"></div>
+              <h3 style="margin-top:22px">Specialisti i rekomanduar</h3>
+              <div class="chips" id="specialists"></div>
+            </div>
+          </div>
+
+          <div class="card result-card" style="margin-top:22px">
+            <h3>Cili ekzaminim jep informacionin më të mirë?</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Problem</th><th>Radiografi</th><th>CT</th><th>MRI</th><th>USG</th></tr></thead>
+                <tbody id="radiologyRows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <section class="card specialties">
+            <h3>Ndarja sipas specialiteteve</h3>
+            <div class="spec-tabs" id="specTabs"></div>
+            <div class="spec-list" id="specList"></div>
+          </section>
+        </section>
+
+        <footer class="trust">
+          <div><span>🔒</span><span><b>Të dhënat tuaja</b><br>të sigurta me ne</span></div>
+          <div><span>🛡</span><span><b>Informacion i bazuar</b><br>në evidencë mjekësore</span></div>
+          <div><span>👥</span><span><b>Përditësuar vazhdimisht</b><br>nga ekspertë</span></div>
+          <div><span>◴</span><span><b>Mbështetje</b><br>24/7</span></div>
+        </footer>
+      </div>
+
+      <aside class="right">
+        <section class="card side-card selected-card">
+          <h3>Simptomat e zgjedhura</h3>
+          <div class="crumbs" id="crumbs"></div>
+          <div class="progress"><span id="progressBar"></span></div>
+        </section>
+        <section class="card side-card articles-card">
+          <h3>Artikuj të rekomanduar</h3>
+          <div id="liveArticles">
+            <div class="article"><div class="pic">📰</div><p>Duke kërkuar artikuj mjekësorë nga rrjeti...</p></div>
+          </div>
+          <p class="feed-note" id="liveArticlesNote">Burimet online varen nga lidhja e internetit dhe lejet e browser-it.</p>
+        </section>
+        <section class="card side-card upload-card">
+          <h3>Ngarko për vlerësim</h3>
+          <label class="upload-drop" for="medicalUpload">
+            <input id="medicalUpload" type="file" accept="image/*,.pdf" hidden>
+            <span class="upload-icon">+</span>
+            <b>Foto ose raport mjekësor</b>
+            <p>Ngarko imazh të pjesës së lënduar, raport radiologjik/laboratorik ose dokument PDF.</p>
+          </label>
+          <div id="uploadPreview" class="upload-preview"></div>
+          <button id="analyzeUploadBtn" class="analyze-btn" type="button">Vlerëso imazhin</button>
+          <div id="uploadAssessment" class="upload-assessment"></div>
+        </section>
+      </aside>
+    </section>
+  </main>
+</div>
+
+<script>
+const bodyZones={
+  head:{label:"Kokë",parts:["Ballë","Sy","Vesh","Nofull","Skalp"],hint:"Zgjidh zonën e saktë të kokës.",conditions:["Migrenë","Sinusit","Neuralgji","Traumë e lehtë","Infeksion veshi"],exams:["Analiza bazë","CT koke në rast traume","MRI në raste të zgjedhura"],specialists:["Neurolog","ORL","Mjek familjar"]},
+  neck:{label:"Qafë",parts:["Pjesa e përparme","Pjesa anësore","Pjesa e pasme","Tiroidja","Nyje limfatike"],hint:"Zgjidh ku ndodhet problemi në qafë.",conditions:["Spazëm muskulor","Cervikalgji","Limfadenit","Çrregullim i tiroides","Hernie diskale cervikale"],exams:["Radiografi cervikale","USG qafe","MRI cervikale"],specialists:["Neurolog","ORL","Endokrinolog"]},
+  chest:{label:"Gjoks",parts:["Qendër gjoksi","Ana e majtë","Ana e djathtë","Brinjë","Mushkëri"],hint:"Zgjidh zonën ku ndjen shqetësim.",conditions:["Dhimbje muskulare","Bronkit","Pneumoni","Refluks","Anginë kardiake"],exams:["EKG","Radiografi toraksi","CT toraksi","Analiza gjaku"],specialists:["Kardiolog","Pulmolog","Internist"]},
+  abdomen:{label:"Abdomen",parts:["Kuadranti i djathtë","Kuadranti i majtë","Epigastrium","Rreth kërthizës","Pelvis"],hint:"Zgjidh pjesën e barkut ku ndjen problem.",conditions:["Apendicit akut","Kolecistit","Gastroenterit","Gastrit","Kolikë renale"],exams:["CBC","CRP","USG abdominale","CT abdomen"],specialists:["Kirurg i përgjithshëm","Gastroenterolog","Urolog"]},
+  genital:{label:"Organe gjenitale",parts:["Pelvis","Organ gjenital i jashtëm","Testikuj","Prostatë","Vaginë / vulvë","Cikël menstrual"],hint:"Zgjidh zonën gjenitale ose pelvike ku ndjen shqetësim.",conditions:["Infeksion urinar","Infeksion gjenital","Prostatit","Dhimbje pelvike","Çrregullim gjinekologjik"],exams:["Analizë urine","Urinokulturë","USG pelvike","USG testikulare","Kontroll gjinekologjik"],specialists:["Urolog","Gjinekolog","Mjek familjar"]},
+  back:{label:"Shpinë",parts:["Qafë pas","Torakale","Lumbare","Sakrale","Anë e shpinës"],hint:"Zgjidh nivelin e shpinës.",conditions:["Lumbalgji","Hernie diskale","Spazëm muskulor","Spondiloartrozë","Kolikë renale"],exams:["Radiografi kolone","MRI kolone","Analiza urine"],specialists:["Ortoped","Neurokirurg","Fiziatër"]},
+  arm:{label:"Krah",parts:["Shpatull","Bërryl","Parakrah","Dorë","Gishtërinj"],hint:"Zgjidh zonën e saktë në krahun tënd.",conditions:["Tendinit i manshetës rotatore","Bursit subakromial","Artrozë e shpatullës","Dëmtim muskulor","Luxacion i mëparshëm"],exams:["Radiografi e shpatullës","Ultrazë","MRI"],specialists:["Kirurg ortoped","Traumatolog"]},
+  hand:{label:"Dorë",parts:["Kyç dore","Pëllëmbë","Gisht i madh","Gishtërinj","Thonj"],hint:"Zgjidh pjesën e dorës.",conditions:["Sindroma e tunelit karpal","Tendinit","Frakturë e vogël","Artrit","Infeksion lokal"],exams:["Radiografi dore","USG tendinash","EMG"],specialists:["Ortoped","Kirurg dore","Reumatolog"]},
+  leg:{label:"Këmbë",parts:["Ije","Kofshë","Kërcir","Pulpa","Kyç"],hint:"Zgjidh pjesën e këmbës.",conditions:["Tërheqje muskulore","Trombozë venoze","Radikulopati","Tendinit","Dëmtim ligamentar"],exams:["USG doppler","Radiografi","MRI në raste të zgjedhura"],specialists:["Ortoped","Kirurg vaskular","Neurolog"]},
+  knee:{label:"Gju",parts:["Përpara gjurit","Pas gjurit","Ana e brendshme","Ana e jashtme","Rreth kapakut"],hint:"Zgjidh zonën e gjurit.",conditions:["Dëmtim menisku","Dëmtim ligamentesh","Artrozë e gjurit","Bursit","Tendinit patelar"],exams:["Radiografi gjuri","MRI gjuri","USG"],specialists:["Ortoped","Traumatolog","Fiziatër"]},
+  foot:{label:"Këmbë (foot)",parts:["Thembrë","Shputë","Gishta","Kyç i këmbës","Harku"],hint:"Zgjidh pjesën e shputës.",conditions:["Fasciit plantar","Entorsë kyçi","Frakturë stresi","Tendinit Akili","Neuropati"],exams:["Radiografi këmbë","USG tendini","MRI"],specialists:["Ortoped","Traumatolog","Endokrinolog"]}
+};
+const symptoms=["Dhimbje","Ënjtje","Vështirësi në lëvizje","Mpirje","Dobësi"];
+const sides=["Majtas","Djathtas","Të dyja anët","Në qendër","Nuk jam i/e sigurt"];
+const durations=["Më pak se 24 orë","1-7 ditë","1-4 javë","Mbi 1 muaj"];
+const severity=["E lehtë","Mesatare","E fortë"];
+const redFlags=["Traumë ose rënie","Temperaturë","Humbje ndjesie","Dhimbje gjoksi / vështirësi në frymëmarrje","Asnjë nga këto"];
+const zoneSpecialties={
+  head:["Neurologji","ORL","Dermatologji","Oftalmologji","Internë"],
+  neck:["ORL","Endokrinologji","Neurologji","Dermatologji","Ortopedi"],
+  chest:["Kardiologji","Pulmologji","Kirurgji","Dermatologji","Internë"],
+  abdomen:["Internë","Kirurgji","Gastroenterologji","Urologji","Gjinekologji"],
+  genital:["Urologji","Gjinekologji","Dermatologji","Internë","Kirurgji"],
+  back:["Ortopedi","Neurokirurgji","Dermatologji","Urologji","Fizioterapi"],
+  arm:["Dermatologji","Ortopedi","Neurologji","Kirurgji vaskulare","Reumatologji"],
+  hand:["Dermatologji","Ortopedi","Neurologji","Reumatologji","Kirurgji dore"],
+  leg:["Dermatologji","Ortopedi","Kirurgji vaskulare","Neurologji","Reumatologji"],
+  knee:["Ortopedi","Reumatologji","Dermatologji","Fizioterapi","Kirurgji"],
+  foot:["Dermatologji","Ortopedi","Endokrinologji","Kirurgji vaskulare","Neurologji"]
+};
+const specialtyQuestions={
+  Dermatologji:[
+    {title:"Çfarë ndryshimi shihni në lëkurë?",hint:"Përshkruaj pamjen kryesore të lezionit.",options:["Skuqje","Kruarje","Puçrra/flluska","Njollë e errët","Plagë që nuk mbyllet","Thatësi/çarje"]},
+    {title:"A po përhapet?",hint:"Përhapja dhe shpejtësia ndihmojnë dallimin mes alergjisë, infeksionit dhe irritimit.",options:["Jo, është lokale","Po, po zgjerohet","Po, në disa zona","Vjen dhe ikën","Nuk jam i/e sigurt"]},
+    {title:"Ka shenja infeksioni?",hint:"Këto shenja kërkojnë vëmendje më të shpejtë.",options:["Qelb","Ngrohtësi lokale","Dhimbje e fortë","Temperaturë","Vija të kuqe në lëkurë","Asnjë nga këto"]}
+  ],
+  Ortopedi:[
+    {title:"A pati traumë ose ngarkesë?",hint:"Trauma e ndryshon menjëherë rrugën diagnostike.",options:["Rënie/goditje","Sport/ngarkesë","Lëvizje e gabuar","Pa traumë","Nuk e di"]},
+    {title:"Si është lëvizja?",hint:"Kufizimi i lëvizjes tregon nëse duhet menduar nyje, tendin, muskul apo kockë.",options:["Nuk e lëviz dot","Lëviz me dhimbje","Bllokohet","Lëviz normalisht","Ka kërcitje"]},
+    {title:"A ka ënjtje ose deformim?",hint:"Ënjtja e menjëhershme pas traume është sinjal i rëndësishëm.",options:["Ënjtje e menjëhershme","Ënjtje graduale","Deformim","Mavijosje","Asnjë nga këto"]}
+  ],
+  Internë:[
+    {title:"A keni temperaturë?",hint:"Temperatura orienton drejt inflamacionit ose infeksionit.",options:["Jo","37.5-38°C","Mbi 38°C","Me të dridhura","Nuk e kam matur"]},
+    {title:"A keni diarre?",hint:"Numri i defekimeve dhe kohëzgjatja janë shumë të rëndësishme.",options:["Jo","1-3 herë/ditë","4-6 herë/ditë","Mbi 6 herë/ditë","Diarre me gjak"]},
+    {title:"Si është jashtëqitja?",hint:"Ngjyra dhe përmbajtja mund të tregojnë gjakderdhje, infeksion ose problem biliar.",options:["Normale","E ujshme","Me mukus","E zezë","Me gjak të kuq","Shumë e çelët"]},
+    {title:"A keni të vjella ose nauze?",hint:"Kjo ndihmon të vlerësohet dehidratimi dhe urgjenca.",options:["Jo","Nauze","Të vjella 1-2 herë","Të vjella të përsëritura","Nuk mbaj dot lëngje"]}
+  ],
+  Kirurgji:[
+    {title:"Ku është dhimbja më e fortë?",hint:"Vendndodhja e dhimbjes abdominale e ndryshon diagnozën.",options:["Djathtas poshtë","Djathtas sipër","Majtas poshtë","Rreth kërthizës","Në gjithë barkun"]},
+    {title:"Si filloi dhimbja?",hint:"Fillimi i menjëhershëm ose migrimi i dhimbjes është i rëndësishëm.",options:["Papritur","Gradualisht","Filloi rreth kërthizës dhe lëvizi","Pas ushqimit","Pas traume"]},
+    {title:"A ka shenja shoqëruese?",hint:"Këto ndihmojnë të dallohen urgjencat kirurgjikale.",options:["Temperaturë","Të vjella","Bark i fortë","Nuk kalojnë gazrat","Dhimbje kur e prek","Asnjë nga këto"]},
+    {title:"Jashtëqitja dhe urinimi?",hint:"Ndryshimet këtu orientojnë mes zorrëve, urinimit dhe inflamacionit.",options:["Kapsllëk","Diarre","Gjak në feçe","Djegie në urinim","Urinë me gjak","Pa ndryshim"]}
+  ],
+  Gastroenterologji:[
+    {title:"Çfarë dominon?",hint:"Zgjidh shqetësimin kryesor gastrointestinal.",options:["Dhimbje barku","Djegie stomaku","Fryrje","Diarre","Kapsllëk","Të përziera"]},
+    {title:"Lidhet me ushqimin?",hint:"Koha pas ushqimit ndihmon orientimin.",options:["Pas ushqimit të yndyrshëm","Kur jam esëll","Pas qumështit/glutenit","Nuk lidhet","Nuk jam i/e sigurt"]},
+    {title:"A ka shenja alarmi gastrointestinale?",hint:"Këto kërkojnë konsultë më të shpejtë.",options:["Rënie në peshë","Gjak në feçe","Feçe e zezë","Anemi/lodhje e fortë","Zgjim natën nga dhimbja","Asnjë"]}
+  ],
+  Urologji:[
+    {title:"Çfarë problemi urologjik keni?",hint:"Zgjidh simptomat kryesore urinare ose gjenitale.",options:["Djegie gjatë urinimit","Urinim i shpeshtë","Dhimbje në fund të barkut","Gjak në urinë","Sekrecion nga organi gjenital","Dhimbje testikuli"]},
+    {title:"Si është urinimi?",hint:"Këto përgjigje ndihmojnë të dallohen infeksioni, prostata, gurët dhe bllokimi urinar.",options:["Urinim me pak sasi","Vështirësi për të filluar","Ndërprerje e rrymës","Zgjim natën për urinim","Nuk urinoj dot","Urinim normal"]},
+    {title:"A ka shenja të lidhura me organet gjenitale mashkullore?",hint:"Përdoret kur pacienti ka penis/testikuj/prostatë.",options:["Dhimbje testikuli","Ënjtje testikuli","Skuqje ose plagë","Sekrecion","Dhimbje gjatë ejakulimit","Problem me ereksionin"]},
+    {title:"A ka shenja alarmi urologjike?",hint:"Këto kërkojnë vlerësim më të shpejtë.",options:["Temperaturë","Dhimbje mesi/anash","Gjak në urinë","Nuk urinoj dot","Dhimbje testikuli e papritur","Asnjë nga këto"]}
+  ],
+  Gjinekologji:[
+    {title:"Çfarë problemi gjinekologjik keni?",hint:"Zgjidh simptomat kryesore të organeve gjenitale femërore.",options:["Dhimbje pelvike","Sekrecione vaginale","Kruarje/djegie","Gjakderdhje jashtë ciklit","Dhimbje gjatë marrëdhënies","Vonesë cikli"]},
+    {title:"Si është cikli menstrual?",hint:"Cikli orienton drejt çrregullimeve hormonale, infeksioneve ose gjendjeve urgjente.",options:["I rregullt","I çrregullt","Më i bollshëm se zakonisht","Mungon cikli","Dhimbje e fortë gjatë ciklit","Pas menopauzës ka gjakderdhje"]},
+    {title:"Si janë sekrecionet?",hint:"Ngjyra, era dhe shoqërimi me kruarje ndihmojnë dallimin e infeksioneve.",options:["Pa sekrecione","Të bardha","Të verdha/jeshile","Me erë të keqe","Me gjak","Me kruarje"]},
+    {title:"A ka mundësi shtatzënie?",hint:"Kjo është pyetje sigurie për dhimbje pelvike ose gjakderdhje.",options:["Jo","Po, e mundshme","Test pozitiv","Pas lindjes/abortit së fundmi","Nuk jam e sigurt"]},
+    {title:"A ka shenja alarmi gjinekologjike?",hint:"Këto kërkojnë konsultë urgjente.",options:["Dhimbje shumë e fortë","Gjakderdhje e madhe","Marramendje/fikët","Temperaturë","Dhimbje në shtatzëni","Asnjë nga këto"]}
+  ],
+  Neurologji:[
+    {title:"A ka ndryshim ndjesie?",hint:"Mpirja, djegia dhe shpimi tregojnë përfshirje nervore.",options:["Mpirje","Djegie","Shpime si gjilpëra","Humbje ndjesie","Jo"]},
+    {title:"A ka dobësi?",hint:"Dobësia objektive kërkon vlerësim më të shpejtë.",options:["Jo","Pak dobësi","Nuk mbaj sende","Më bie këmba/dora","Po përkeqësohet"]},
+    {title:"Ku përhapet?",hint:"Përhapja ndihmon lokalizimin e nervit.",options:["Nuk përhapet","Deri në dorë/gishta","Deri në këmbë/shputë","Nga shpina","Nuk jam i/e sigurt"]}
+  ],
+  default:[
+    {title:"Çfarë simptome keni?",hint:"Zgjidh simptomën kryesore që po të shqetëson.",options:symptoms},
+    {title:"Sa kohë keni që ju shqetëson?",hint:"Kohëzgjatja ndihmon orientimin e rrezikut.",options:durations},
+    {title:"Sa e fortë është?",hint:"Vlerëso intensitetin e simptomës kryesore.",options:severity}
+  ]
+};
+function getSpecialtyQuestions(specialty){
+  if(specialtyQuestions[specialty]) return specialtyQuestions[specialty];
+  if(["Ortopedi dhe traumatologji","Kirurgji dore","Fizioterapi","Reumatologji"].includes(specialty)) return specialtyQuestions.Ortopedi;
+  if(["Gjinekologji dhe obstetrikë"].includes(specialty)) return specialtyQuestions.Gjinekologji;
+  if(["Mjekësi interne","Kardiologji","Pulmologji","Endokrinologji","Kirurgji vaskulare"].includes(specialty)) return specialtyQuestions.Internë;
+  return specialtyQuestions.default;
+}
+function getQuestions(){
+  const zone=bodyZones[state.zone];
+  const specialty=state.answers[1];
+  return [
+    {title:"Ku është problemi?",hint:zone.hint,options:zone.parts},
+    {title:"Cili drejtim mjekësor duket më i afërt?",hint:"Zgjidh nëse problemi duket i lëkurës, kockave/nyjeve, i brendshëm apo kirurgjikal.",options:zoneSpecialties[state.zone]||["Dermatologji","Ortopedi","Internë","Kirurgji"]},
+    {title:"Në cilën anë është?",hint:"Kjo ndihmon të dallohen problemet lokale nga ato sistemike.",options:sides},
+    ...getSpecialtyQuestions(specialty),
+    {title:"Sa kohë keni që ju shqetëson?",hint:"Kohëzgjatja ndihmon orientimin e rrezikut.",options:durations},
+    {title:"Sa e fortë është?",hint:"Vlerëso intensitetin e simptomës kryesore.",options:severity},
+    {title:"Ka ndonjë shenjë alarmi?",hint:"Nëse ka shenja alarmi, sistemi e ndryshon prioritetin e veprimit.",options:redFlags}
+  ];
+}
+const radiology={
+  arm:[["Frakturë",1,1,0,0],["Tendon",0,0,1,1],["Ligamente",0,0,1,0],["Artrozë",1,0,1,0]],
+  chest:[["Mushkëri",1,1,0,0],["Brinjë/frakturë",1,1,0,0],["Zemër",0,0,1,0],["Lëng pleural",1,1,0,1]],
+  abdomen:[["Apendicit",0,1,0,1],["Fshikëza e tëmthit",0,0,0,1],["Gurë në veshka",1,1,0,1],["Masa abdominale",0,1,1,1]],
+  knee:[["Frakturë",1,1,0,0],["Menisk",0,0,1,0],["Ligamente",0,0,1,0],["Efuzion",0,0,0,1]],
+  back:[["Disk/Hernie",0,0,1,0],["Frakturë vertebrale",1,1,1,0],["Artrozë",1,1,1,0],["Veshka",0,1,0,1]],
+  default:[["Frakturë",1,1,0,0],["Tendina/inde të buta",0,0,1,1],["Inflamacion",0,0,1,1],["Masa ose lezion",0,1,1,1]]
+};
+const specialties={
+  "Kirurgji":["Kirurgji e përgjithshme","Ortopedi","Neurokirurgji","Urologji","Kirurgji vaskulare","Kirurgji plastike"],
+  "Radiologji":["Radiografi","CT Scanner","MRI","Ultrazë","Mamografi","Radiologji intervenuese"],
+  "Internë":["Kardiologji","Gastroenterologji","Pulmologji","Endokrinologji","Reumatologji","Nefrologji"]
+};
+const medicalDirections={
+  "Klinike":[
+    ["Dermatologji","Lëkurë, flokë, thonj"],
+    ["Alergologji dhe Imunologji","Alergji, astmë alergjike, imunitet"],
+    ["Mjekësi familjare","Kujdesi i parë dhe ndjekje afatgjatë"],
+    ["Mjekësi interne","Sëmundje të organeve të brendshme"],
+    ["Kardiologji","Zemër dhe qarkullim"],
+    ["Pulmologji","Mushkëri dhe frymëmarrje"],
+    ["Gastroenterologji","Stomak, zorrë, mëlçi"],
+    ["Endokrinologji","Hormone, diabet, tiroide"],
+    ["Nefrologji","Veshka dhe hipertension renal"],
+    ["Reumatologji","Nyje, autoimunitet, inflamacion"],
+    ["Hematologji","Gjaku dhe palca kockore"],
+    ["Infektologji","Infeksione bakteriale, virale, parazitare"],
+    ["Neurologji","Tru, nerva, dhimbje neurologjike"],
+    ["Psikiatri","Shëndet mendor"],
+    ["Geriatri","Kujdesi për moshën e tretë"],
+    ["Pediatri","Fëmijë dhe adoleshentë"]
+  ],
+  "Kirurgjikale":[
+    ["Kirurgji e përgjithshme","Abdomen, hernie, urgjenca kirurgjikale"],
+    ["Ortopedi dhe traumatologji","Kocka, nyje, trauma"],
+    ["Neurokirurgji","Tru, shtyllë kurrizore, nerva"],
+    ["Urologji","Veshka, rrugë urinare, prostatë"],
+    ["Kirurgji vaskulare","Arterie, vena, qarkullim periferik"],
+    ["Kirurgji plastike","Rikonstruksion dhe estetikë"],
+    ["Kirurgji torakale","Mushkëri dhe kraharor"],
+    ["Kirurgji kardiake","Zemër dhe enë të mëdha"],
+    ["Kirurgji pediatrike","Ndërhyrje kirurgjikale te fëmijët"],
+    ["Kirurgji maksilofaciale","Fytyrë, nofulla, trauma orale"],
+    ["Gjinekologji dhe obstetrikë","Shëndeti i gruas dhe shtatzënia"],
+    ["ORL","Vesh, hundë, fyt"],
+    ["Oftalmologji","Sy dhe shikim"],
+    ["Stomatologji","Dhëmbë dhe kavitet oral"]
+  ],
+  "Diagnostike":[
+    ["Radiologji","Radiografi, CT, MRI, ultrazë"],
+    ["Radiologji intervenuese","Procedura mini-invazive me imazheri"],
+    ["Mjekësi nukleare","PET/CT, scintigrafi"],
+    ["Patologji","Biopsi dhe diagnozë mikroskopike"],
+    ["Mjekësi laboratorike","Analiza gjaku, urine, biokimi"],
+    ["Gjenetikë mjekësore","Sëmundje trashëgimore dhe teste gjenetike"],
+    ["Kardiologji diagnostike","EKG, eko zemre, Holter"],
+    ["Neurofiziologji","EEG, EMG, studime nervore"]
+  ],
+  "Mbështetëse":[
+    ["Anesteziologji dhe reanimacion","Anestezi, terapi intensive, dhimbje"],
+    ["Mjekësi emergjente","Urgjenca dhe triazh"],
+    ["Onkologji mjekësore","Trajtim sistemik i kancerit"],
+    ["Radioterapi onkologjike","Trajtim me rrezatim"],
+    ["Mjekësi fizikale dhe rehabilitim","Rikuperim funksional"],
+    ["Mjekësi sportive","Dëmtime sportive dhe performancë"],
+    ["Mjekësi paliative","Kontroll simptomash dhe cilësi jete"],
+    ["Mjekësi pune","Shëndeti në vendin e punës"],
+    ["Nutricion dhe dietologji","Ushqyerje klinike"],
+    ["Psikologji klinike","Vlerësim dhe terapi psikologjike"],
+    ["Fizioterapi","Ushtrime dhe rikuperim i lëvizjes"],
+    ["Logopedi","Të folurit, gëlltitja, komunikimi"]
+  ]
+};
+const zonePathways={
+  head:{ruleOut:"Traumë, deficit neurologjik, infeksion, migrenë me shenja alarmi",firstMove:"Mat temperaturën, tensionin dhe vlerëso shikimin, të folurin, mpirjen ose dobësinë.",care:"Neurolog / ORL / urgjencë nëse ka shenja neurologjike"},
+  neck:{ruleOut:"Kompresion nervor, infeksion, çrregullim i tiroides, traumë cervikale",firstMove:"Kontrollo lëvizjen e qafës, mpirjen në krahë dhe praninë e temperaturës.",care:"Neurolog / ORL / endokrinolog sipas gjetjeve"},
+  chest:{ruleOut:"Problem kardiak, pulmonar, emboli, pneumoni ose dëmtim i brinjëve",firstMove:"Në dhimbje gjoksi, mungesë ajri ose djersë të ftohta, mos prit: kërko vlerësim urgjent.",care:"Kardiolog / pulmolog / urgjencë"},
+  abdomen:{ruleOut:"Apendicit, kolecistit, pankreatit, kolikë renale, infeksion urinar, problem gjinekologjik ose gastrointestinal",firstMove:"Shiko vendndodhjen, temperaturën, të vjellat, urinimin, jashtëqitjen, ciklin menstrual dhe nëse dhimbja po përkeqësohet.",care:"Kirurg i përgjithshëm / gastroenterolog / urolog / gjinekolog"},
+  genital:{ruleOut:"Infeksion urinar, infeksion gjenital, prostatit, torsion testikular, dhimbje pelvike ose problem gjinekologjik",firstMove:"Vlerëso djegien gjatë urinimit, sekrecionet, dhimbjen pelvike/testikulare, gjakderdhjen dhe mundësinë e shtatzënisë.",care:"Urolog / gjinekolog / urgjencë në dhimbje të fortë ose gjakderdhje"},
+  back:{ruleOut:"Hernie diskale, frakturë, infeksion, kolikë renale, kompresion nervor",firstMove:"Vlerëso nëse dhimbja zbret në këmbë, ka mpirje, dobësi ose probleme urinimi.",care:"Ortoped / neurokirurg / fiziatër"},
+  arm:{ruleOut:"Frakturë, luxacion, dëmtim tendini, kompresion nervor, inflamacion artikular",firstMove:"Kontrollo nëse mund ta ngresh krahun, nëse ka deformim, ënjtje ose mpirje.",care:"Ortoped / traumatolog"},
+  hand:{ruleOut:"Frakturë, infeksion, tendinit, tunel karpal, dëmtim nervor",firstMove:"Shiko forcën e kapjes, ndjeshmërinë e gishtave dhe ndryshimin e ngjyrës.",care:"Ortoped / kirurg dore / reumatolog"},
+  leg:{ruleOut:"Trombozë venoze, dëmtim muskulor, radikulopati, frakturë, problem vaskular",firstMove:"Krahaso të dy këmbët për ënjtje, ngrohtësi, ngjyrë dhe dhimbje në pulpë.",care:"Ortoped / kirurg vaskular / neurolog"},
+  knee:{ruleOut:"Dëmtim menisku, ligament, frakturë, bursit, artrozë",firstMove:"Vlerëso nëse gjuri bllokohet, mban peshë dhe nëse u ënjt menjëherë pas traumës.",care:"Ortoped / traumatolog / fiziatër"},
+  foot:{ruleOut:"Frakturë stresi, entorsë, tendinit Akili, fasciit plantar, neuropati",firstMove:"Kontrollo nëse shkel dot, vendin e dhimbjes dhe ënjtjen rreth kyçit.",care:"Ortoped / traumatolog / endokrinolog në neuropati"}
+};
+const moduleData={
+  surgery:[
+    ["Kirurgji e përgjithshme","Dhimbje barku, hernie, apendicit, kolecistit dhe urgjenca abdominale."],
+    ["Ortopedi","Kocka, nyje, tendina, ligamente, trauma dhe dhimbje muskuloskeletale."],
+    ["Neurokirurgji","Shtyllë kurrizore, kompresion nervor, dhimbje me mpirje ose dobësi."],
+    ["Urologji","Veshka, rrugë urinare, prostatë, testikuj dhe simptoma urinare."],
+    ["Kirurgji vaskulare","Arterie, vena, trombozë, qarkullim periferik dhe plagë vaskulare."],
+    ["Kirurgji plastike","Plagë, djegie, rikonstruksion dhe defekte të indeve të buta."]
+  ],
+  radiology:[
+    ["X Ray / Radiografi","E mirë për fraktura, mushkëri, artrozë dhe orientim fillestar."],
+    ["CT Scanner","E mirë për trauma, abdomen akut, mushkëri, gurë në veshka dhe urgjenca."],
+    ["MRI","Më e mirë për ligamente, disqe, tru, palcë, menisk dhe inde të buta."],
+    ["Ultrazë / USG","E mirë për abdomen, tiroiden, tendina, efuzione, gjinekologji dhe urologji."],
+    ["Mamografi","Screening dhe vlerësim i gjirit."],
+    ["Doppler","Qarkullim arterial/venoz, trombozë dhe insuficiencë venoze."]
+  ],
+  diseases:[
+    ["Akute","Fillim i shpejtë: traumë, infeksion, abdomen akut, dhimbje e papritur."],
+    ["Kronike","Mbi javë/muaj: artrozë, diabet, hipertension, sëmundje inflamatore."],
+    ["Infektive","Temperaturë, sekrecione, skuqje, kollë, diarre ose urinim me djegie."],
+    ["Inflamatore / autoimune","Dhimbje nyjesh, ënjtje, lodhje, skuqje, përkeqësim periodik."],
+    ["Degjenerative","Ndryshime nga mosha/ngarkesa: artrozë, diskopati, tendinopati."],
+    ["Tumorale / masa","Masa, humbje peshe, gjakderdhje ose simptomë që nuk shpjegohet."]
+  ],
+  exams:[
+    ["Rutinore","Hemogramë, glukozë, lipide, kreatininë, urinokulturë sipas rastit."],
+    ["Primare","Vizitë klinike, shenja vitale, CBC, CRP, urinë, radiografi ose USG fillestare."],
+    ["Sekondare","CT, MRI, analiza specifike, kulturë, hormone, markerë inflamacioni."],
+    ["Të avancuara","Endoskopi, biopsi, EMG/EEG, PET/CT, teste gjenetike kur ka indikacion."],
+    ["Urgjente","EKG, troponinë, CT urgjente, gazra gjaku, analiza të shpejta."],
+    ["Kontroll ndjekës","Përsëritje analizash dhe imazherie për krahasim pas trajtimit."]
+  ],
+  articles:[
+    ["Dhimbja e shpatullës: kur duhet MRI?","#share-shoulder"],
+    ["Diarre, temperaturë dhe jashtëqitje me gjak: kur duhet urgjencë?","#share-abdomen"],
+    ["Djegie gjatë urinimit: urologji apo gjinekologji?","#share-uro-gyn"],
+    ["Radiografi, CT apo MRI: si zgjidhet ekzaminimi?","#share-radiology"],
+    ["Skuqje dhe kruarje në lëkurë: shenjat që duhen parë","#share-derm"],
+    ["Pyetjet që duhet t’i bëni mjekut para ekzaminimit","#share-questions"]
+  ],
+  faqs:[
+    ["A zëvendëson navigatori vizitën te mjeku?","Jo. Ai jep orientim edukativ dhe ndihmon të përgatitet konsultimi."],
+    ["Kur duhet të shkoj urgjent?","Dhimbje shumë e fortë, vështirësi në frymëmarrje, humbje ndjesie, gjakderdhje, temperaturë e lartë ose përkeqësim i shpejtë."],
+    ["A duhet MRI për çdo dhimbje?","Jo. Zgjedhja varet nga zona, trauma, ekzaminimi fizik dhe dyshimi klinik."],
+    ["Pse më pyet për feçe, urinim ose cikël?","Sepse abdomeni/pelvisi lidhet me zorrët, rrugët urinare dhe organet gjinekologjike."],
+    ["A mund të zgjedh disa simptoma?","Po, në pyetjet klinike mund të zgjedhësh deri në 3 përgjigje."],
+    ["Çfarë ruhet nga përgjigjet?","Në këtë version statik përgjigjet përdoren vetëm në ekranin aktual për raportin paraprak."]
+  ]
+};
+const zonePositions={
+  front:{
+    head:[50,10],neck:[50,20],chest:[50,30],abdomen:[50,41],genital:[50,52],back:[42,39],arm:[72,35],hand:[78,57],leg:[42,73],knee:[59,74],foot:[60,93]
+  },
+  back:{
+    head:[50,10],neck:[50,19],chest:[50,31],abdomen:[50,44],genital:[50,52],back:[50,36],arm:[72,36],hand:[77,57],leg:[42,73],knee:[58,74],foot:[60,93]
+  }
+};
+let state={zone:"arm",step:0,answers:["Shpatull","Ortopedi","Djathtas","Sport/ngarkesë","Lëviz me dhimbje","Ënjtje graduale","Mbi 1 muaj","Mesatare","Asnjë nga këto"]};
+let bodyView="front";
+let pendingUploadFile=null;
+const $=id=>document.getElementById(id);
+let currentLang="sq";
+const i18n={
+  en:{
+    "D Health":"D Health","Medical Navigator":"Medical Navigator","Navigo Trupin":"Body Navigator","Kirurgji":"Surgery","Radiologji":"Radiology","Drejtimet Mjekësore":"Medical Specialties","Sëmundje":"Diseases","Ekzaminime":"Examinations","Artikuj Mjekësorë":"Medical Articles","Pyetje të Shpeshta":"FAQ","Rreth Nesh":"About Us",
+    "Premium":"Premium","Raporte të avancuara, historik pyetjesh dhe asistent AI do të aktivizohen së shpejti.":"Advanced reports, question history and AI assistant will be activated soon.","Coming soon":"Coming soon",
+    "Zgjidh zonën ku ke problem":"Choose the area where you have a problem","Kliko në një pjesë të trupit për të vazhduar.":"Click a body area to continue.","Para":"Front","Mbrapa":"Back","Rrotullo":"Rotate","Kthehu":"Back","← Kthehu":"← Back","Vazhdo":"Continue","Vazhdo →":"Continue →","Shfaq raportin":"Show report",
+    "Ku është problemi?":"Where is the problem?","Cili drejtim mjekësor duket më i afërt?":"Which medical specialty seems closest?","Në cilën anë është?":"Which side is it on?","Sa kohë keni që ju shqetëson?":"How long has it bothered you?","Sa e fortë është?":"How severe is it?","Ka ndonjë shenjë alarmi?":"Are there any warning signs?","Mund të zgjidhni deri në 3 përgjigje. ":"You can choose up to 3 answers. ",
+    "Simptomat e zgjedhura":"Selected symptoms","Artikuj të rekomanduar":"Recommended articles","Duke kërkuar artikuj mjekësorë nga rrjeti...":"Searching medical articles online...","Burimet online varen nga lidhja e internetit dhe lejet e browser-it.":"Online sources depend on internet connection and browser permissions.","Ngarko për vlerësim":"Upload for review","Foto ose raport mjekësor":"Photo or medical report","Ngarko imazh të pjesës së lënduar, raport radiologjik/laboratorik ose dokument PDF.":"Upload an image of the injured area, a radiology/lab report, or a PDF document.","Analizo":"Analyze","Vlerëso imazhin":"Evaluate image",
+    "Mendo si mjek":"Think like a doctor","Si funksionon?":"How does it work?","Zgjidh zonën":"Choose area","Përgjigju pyetjeve":"Answer questions","Merr informacion":"Get information","Konsultohu":"Consult","Raport paraprak AI":"Preliminary AI report","Mund të lidhet me":"May be related to","Ekzaminimet dhe specialisti":"Exams and specialist","Specialisti i rekomanduar":"Recommended specialist","Cili ekzaminim jep informacionin më të mirë?":"Which exam gives the best information?","Ndarja sipas specialiteteve":"Breakdown by specialties",
+    "Kokë":"Head","Qafë":"Neck","Gjoks":"Chest","Abdomen":"Abdomen","Organe gjenitale":"Genital organs","Shpinë":"Back","Krah":"Arm","Dorë":"Hand","Këmbë":"Leg","Gju":"Knee","Këmbë (foot)":"Foot",
+    "Shpatull":"Shoulder","Bërryl":"Elbow","Parakrah":"Forearm","Gishtërinj":"Fingers","Pelvis":"Pelvis","Organ gjenital i jashtëm":"External genital organ","Testikuj":"Testicles","Prostatë":"Prostate","Vaginë / vulvë":"Vagina / vulva","Cikël menstrual":"Menstrual cycle","Majtas":"Left","Djathtas":"Right","Të dyja anët":"Both sides","Në qendër":"Center","Nuk jam i/e sigurt":"Not sure",
+    "Dhimbje":"Pain","Ënjtje":"Swelling","Vështirësi në lëvizje":"Difficulty moving","Mpirje":"Numbness","Dobësi":"Weakness","Më pak se 24 orë":"Less than 24 hours","1-7 ditë":"1-7 days","1-4 javë":"1-4 weeks","Mbi 1 muaj":"Over 1 month","E lehtë":"Mild","Mesatare":"Moderate","E fortë":"Severe","Asnjë nga këto":"None of these","Temperaturë":"Fever","Traumë ose rënie":"Trauma or fall",
+    "Dermatologji":"Dermatology","Ortopedi":"Orthopedics","Urologji":"Urology","Gjinekologji":"Gynecology","Internë":"Internal medicine","Gastroenterologji":"Gastroenterology","Neurologji":"Neurology","Sport/ngarkesë":"Sports/overuse","Lëviz me dhimbje":"Moves with pain","Ënjtje graduale":"Gradual swelling","Rënie/goditje":"Fall/impact","Lëvizje e gabuar":"Wrong movement","Pa traumë":"No trauma","Nuk e lëviz dot":"Cannot move it","Bllokohet":"Locks","Ka kërcitje":"Cracking/clicking","Ënjtje e menjëhershme":"Immediate swelling","Deformim":"Deformity","Mavijosje":"Bruising"
+  },
+  mk:{
+    "D Health":"D Health","Medical Navigator":"Медицински навигатор","Navigo Trupin":"Навигација по тело","Kirurgji":"Хирургија","Radiologji":"Радиологија","Drejtimet Mjekësore":"Медицински насоки","Sëmundje":"Болести","Ekzaminime":"Испитувања","Artikuj Mjekësorë":"Медицински статии","Pyetje të Shpeshta":"Чести прашања","Rreth Nesh":"За нас",
+    "Premium":"Премиум","Raporte të avancuara, historik pyetjesh dhe asistent AI do të aktivizohen së shpejti.":"Напредни извештаи, историја на прашања и AI асистент ќе бидат активирани наскоро.","Coming soon":"Наскоро",
+    "Zgjidh zonën ku ke problem":"Изберете ја зоната каде имате проблем","Kliko në një pjesë të trupit për të vazhduar.":"Кликнете на дел од телото за да продолжите.","Para":"Напред","Mbrapa":"Назад","Rrotullo":"Ротирај","Kthehu":"Назад","← Kthehu":"← Назад","Vazhdo":"Продолжи","Vazhdo →":"Продолжи →","Shfaq raportin":"Прикажи извештај",
+    "Ku është problemi?":"Каде е проблемот?","Cili drejtim mjekësor duket më i afërt?":"Која медицинска насока е најблиска?","Në cilën anë është?":"На која страна е?","Sa kohë keni që ju shqetëson?":"Колку долго ве вознемирува?","Sa e fortë është?":"Колку е силно?","Ka ndonjë shenjë alarmi?":"Има ли алармантни знаци?","Mund të zgjidhni deri në 3 përgjigje. ":"Може да изберете до 3 одговори. ",
+    "Simptomat e zgjedhura":"Избрани симптоми","Artikuj të rekomanduar":"Препорачани статии","Duke kërkuar artikuj mjekësorë nga rrjeti...":"Се бараат медицински статии онлајн...","Burimet online varen nga lidhja e internetit dhe lejet e browser-it.":"Онлајн изворите зависат од интернет и дозволите на прелистувачот.","Ngarko për vlerësim":"Прикачи за проценка","Foto ose raport mjekësor":"Фотографија или медицински извештај","Ngarko imazh të pjesës së lënduar, raport radiologjik/laboratorik ose dokument PDF.":"Прикачете слика од повреденото место, радиолошки/лабораториски извештај или PDF документ.","Analizo":"Анализирај","Vlerëso imazhin":"Процени ја сликата",
+    "Mendo si mjek":"Размислувај како лекар","Si funksionon?":"Како функционира?","Zgjidh zonën":"Избери зона","Përgjigju pyetjeve":"Одговори на прашања","Merr informacion":"Добиј информации","Konsultohu":"Консултирај се","Raport paraprak AI":"Прелиминарен AI извештај","Mund të lidhet me":"Може да е поврзано со","Ekzaminimet dhe specialisti":"Испитувања и специјалист","Specialisti i rekomanduar":"Препорачан специјалист","Cili ekzaminim jep informacionin më të mirë?":"Кое испитување дава најдобра информација?","Ndarja sipas specialiteteve":"Поделба по специјалности",
+    "Kokë":"Глава","Qafë":"Врат","Gjoks":"Гради","Abdomen":"Абдомен","Organe gjenitale":"Генитални органи","Shpinë":"Грб","Krah":"Рака","Dorë":"Дланка","Këmbë":"Нога","Gju":"Колено","Këmbë (foot)":"Стапало",
+    "Shpatull":"Рамо","Bërryl":"Лакт","Parakrah":"Подлактица","Gishtërinj":"Прсти","Pelvis":"Карлица","Organ gjenital i jashtëm":"Надворешен генитален орган","Testikuj":"Тестиси","Prostatë":"Простата","Vaginë / vulvë":"Вагина / вулва","Cikël menstrual":"Менструален циклус","Majtas":"Лево","Djathtas":"Десно","Të dyja anët":"Двете страни","Në qendër":"Во центар","Nuk jam i/e sigurt":"Не сум сигурен/сигурна",
+    "Dhimbje":"Болка","Ënjtje":"Оток","Vështirësi në lëvizje":"Тешко движење","Mpirje":"Вкочанетост","Dobësi":"Слабост","Më pak se 24 orë":"Помалку од 24 часа","1-7 ditë":"1-7 дена","1-4 javë":"1-4 недели","Mbi 1 muaj":"Над 1 месец","E lehtë":"Лесна","Mesatare":"Средна","E fortë":"Силна","Asnjë nga këto":"Ниту едно","Temperaturë":"Температура","Traumë ose rënie":"Траума или пад",
+    "Dermatologji":"Дерматологија","Ortopedi":"Ортопедија","Urologji":"Урологија","Gjinekologji":"Гинекологија","Internë":"Интерна медицина","Gastroenterologji":"Гастроентерологија","Neurologji":"Неврологија","Sport/ngarkesë":"Спорт/оптоварување","Lëviz me dhimbje":"Се движи со болка","Ënjtje graduale":"Постепен оток","Rënie/goditje":"Пад/удар","Lëvizje e gabuar":"Погрешно движење","Pa traumë":"Без траума","Nuk e lëviz dot":"Не може да се движи","Bllokohet":"Се блокира","Ka kërcitje":"Крцкање","Ënjtje e menjëhershme":"Ненадеен оток","Deformim":"Деформација","Mavijosje":"Модринка"
+  }
+};
+Object.assign(i18n.en,{
+  "Drejtimet mjekësore":"Medical specialties","Nga Dermatologjia deri te shërbimet diagnostike dhe mbështetëse.":"From dermatology to diagnostic and supportive services.","Klinike":"Clinical","Kirurgjikale":"Surgical","Diagnostike":"Diagnostic","Mbështetëse":"Supportive",
+  "Alergologji dhe Imunologji":"Allergology and Immunology","Mjekësi familjare":"Family medicine","Mjekësi interne":"Internal medicine","Kardiologji":"Cardiology","Pulmologji":"Pulmonology","Endokrinologji":"Endocrinology","Nefrologji":"Nephrology","Reumatologji":"Rheumatology","Hematologji":"Hematology","Infektologji":"Infectious diseases","Psikiatri":"Psychiatry","Geriatri":"Geriatrics","Pediatri":"Pediatrics",
+  "Lëkurë, flokë, thonj":"Skin, hair, nails","Alergji, astmë alergjike, imunitet":"Allergies, allergic asthma, immunity","Kujdesi i parë dhe ndjekje afatgjatë":"Primary care and long-term follow-up","Sëmundje të organeve të brendshme":"Diseases of internal organs","Zemër dhe qarkullim":"Heart and circulation","Mushkëri dhe frymëmarrje":"Lungs and breathing","Stomak, zorrë, mëlçi":"Stomach, intestines, liver","Hormone, diabet, tiroide":"Hormones, diabetes, thyroid","Veshka dhe hipertension renal":"Kidneys and renal hypertension","Nyje, autoimunitet, inflamacion":"Joints, autoimmunity, inflammation","Gjaku dhe palca kockore":"Blood and bone marrow","Infeksione bakteriale, virale, parazitare":"Bacterial, viral and parasitic infections","Tru, nerva, dhimbje neurologjike":"Brain, nerves, neurological pain","Shëndet mendor":"Mental health","Kujdesi për moshën e tretë":"Care for older adults","Fëmijë dhe adoleshentë":"Children and adolescents",
+  "Kirurgji e përgjithshme":"General surgery","Ortopedi dhe traumatologji":"Orthopedics and traumatology","Neurokirurgji":"Neurosurgery","Kirurgji vaskulare":"Vascular surgery","Kirurgji plastike":"Plastic surgery","Kirurgji torakale":"Thoracic surgery","Kirurgji kardiake":"Cardiac surgery","Kirurgji pediatrike":"Pediatric surgery","Kirurgji maksilofaciale":"Maxillofacial surgery","Gjinekologji dhe obstetrikë":"Gynecology and obstetrics","ORL":"ENT","Oftalmologji":"Ophthalmology","Stomatologji":"Dentistry",
+  "Abdomen, hernie, urgjenca kirurgjikale":"Abdomen, hernias, surgical emergencies","Kocka, nyje, trauma":"Bones, joints, trauma","Tru, shtyllë kurrizore, nerva":"Brain, spine, nerves","Veshka, rrugë urinare, prostatë":"Kidneys, urinary tract, prostate","Arterie, vena, qarkullim periferik":"Arteries, veins, peripheral circulation","Rikonstruksion dhe estetikë":"Reconstruction and aesthetics","Mushkëri dhe kraharor":"Lungs and chest","Zemër dhe enë të mëdha":"Heart and large vessels","Ndërhyrje kirurgjikale te fëmijët":"Surgical procedures in children","Fytyrë, nofulla, trauma orale":"Face, jaws, oral trauma","Shëndeti i gruas dhe shtatzënia":"Women's health and pregnancy","Vesh, hundë, fyt":"Ear, nose, throat","Sy dhe shikim":"Eyes and vision","Dhëmbë dhe kavitet oral":"Teeth and oral cavity",
+  "Radiografi":"X-ray","Ultrazë":"Ultrasound","Mamografi":"Mammography","Radiologji intervenuese":"Interventional radiology","Mjekësi nukleare":"Nuclear medicine","Patologji":"Pathology","Mjekësi laboratorike":"Laboratory medicine","Gjenetikë mjekësore":"Medical genetics","Kardiologji diagnostike":"Diagnostic cardiology","Neurofiziologji":"Neurophysiology","Radiografi, CT, MRI, ultrazë":"X-ray, CT, MRI, ultrasound","Procedura mini-invazive me imazheri":"Minimally invasive image-guided procedures","PET/CT, scintigrafi":"PET/CT, scintigraphy","Biopsi dhe diagnozë mikroskopike":"Biopsy and microscopic diagnosis","Analiza gjaku, urine, biokimi":"Blood tests, urine tests, biochemistry","Sëmundje trashëgimore dhe teste gjenetike":"Inherited diseases and genetic testing","EKG, eko zemre, Holter":"ECG, echocardiography, Holter","EEG, EMG, studime nervore":"EEG, EMG, nerve studies",
+  "Anesteziologji dhe reanimacion":"Anesthesiology and resuscitation","Mjekësi emergjente":"Emergency medicine","Onkologji mjekësore":"Medical oncology","Radioterapi onkologjike":"Radiation oncology","Mjekësi fizikale dhe rehabilitim":"Physical medicine and rehabilitation","Mjekësi sportive":"Sports medicine","Mjekësi paliative":"Palliative medicine","Mjekësi pune":"Occupational medicine","Nutricion dhe dietologji":"Nutrition and dietetics","Psikologji klinike":"Clinical psychology","Fizioterapi":"Physiotherapy","Logopedi":"Speech therapy",
+  "Anestezi, terapi intensive, dhimbje":"Anesthesia, intensive care, pain","Urgjenca dhe triazh":"Emergencies and triage","Trajtim sistemik i kancerit":"Systemic cancer treatment","Trajtim me rrezatim":"Radiation treatment","Rikuperim funksional":"Functional recovery","Dëmtime sportive dhe performancë":"Sports injuries and performance","Kontroll simptomash dhe cilësi jete":"Symptom control and quality of life","Shëndeti në vendin e punës":"Workplace health","Ushqyerje klinike":"Clinical nutrition","Vlerësim dhe terapi psikologjike":"Psychological assessment and therapy","Ushtrime dhe rikuperim i lëvizjes":"Exercises and movement recovery","Të folurit, gëlltitja, komunikimi":"Speech, swallowing, communication",
+  "Degët kirurgjikale lidhen me zonën e zgjedhur dhe shenjat alarmuese.":"Surgical branches are linked to the selected body area and warning signs.","Radiografi, CT, MRI, ultrazë dhe ekzaminime të tjera sipas problemit.":"X-ray, CT, MRI, ultrasound and other examinations depending on the problem.","Akute, kronike, infektive, inflamatore dhe degenerative.":"Acute, chronic, infectious, inflammatory and degenerative.","Rutinore, primare, sekondare dhe të avancuara.":"Routine, primary, secondary and advanced.","Artikuj mjekësorë":"Medical articles","Artikuj edukativë me linke që mund të ndahen në rrjete sociale.":"Educational articles with links that can be shared on social networks.","Pyetje të shpeshta":"Frequently asked questions","Pyetjet që pacientët klikojnë më shpesh në navigator.":"Questions patients click most often in the navigator.","Rreth nesh":"About us","D Health Medical Navigator është ndërtuar për orientim edukativ para konsultës mjekësore.":"D Health Medical Navigator is built for educational guidance before a medical consultation.",
+  "Historia":"History","Ideja":"The idea","Qëllimi":"Purpose","Orientim i qartë":"Clear guidance","Kujdes":"Caution","Nuk zëvendëson mjekun":"It does not replace the doctor","Platforma nisi si mënyrë e thjeshtë që pacienti të përshkruajë problemin me trupin, simptomat dhe drejtimin mjekësor.":"The platform started as a simple way for patients to describe the body problem, symptoms and medical specialty.","Qëllimi është edukimi, zgjedhja më e mirë e ekzaminimit dhe drejtimi te specialisti i duhur.":"The purpose is education, choosing the best examination and guiding the patient to the right specialist.","Navigatori nuk vendos diagnozë përfundimtare. Vendimi klinik bëhet nga mjeku pas vizitës dhe ekzaminimeve.":"The navigator does not make a final diagnosis. The clinical decision is made by the doctor after the visit and examinations.",
+  "Artikull edukativ i lidhur me navigatorin.":"Educational article linked to the navigator.","Kopjo / shpërnda linkun":"Copy / share link","Ky drejtim përputhet me zgjedhjen aktuale.":"This specialty matches the current selection.","mund të jetë pjesë e rrugës diagnostike.":"may be part of the diagnostic pathway.","zgjidhet sipas indikacionit.":"is selected according to the indication.","Zona aktuale:":"Current area:","Sugjerime aktuale:":"Current suggestions:"
+});
+Object.assign(i18n.mk,{
+  "Drejtimet mjekësore":"Медицински насоки","Nga Dermatologjia deri te shërbimet diagnostike dhe mbështetëse.":"Од дерматологија до дијагностички и поддржувачки услуги.","Klinike":"Клинички","Kirurgjikale":"Хируршки","Diagnostike":"Дијагностички","Mbështetëse":"Поддржувачки",
+  "Alergologji dhe Imunologji":"Алергологија и имунологија","Mjekësi familjare":"Семејна медицина","Mjekësi interne":"Интерна медицина","Kardiologji":"Кардиологија","Pulmologji":"Пулмологија","Endokrinologji":"Ендокринологија","Nefrologji":"Нефрологија","Reumatologji":"Ревматологија","Hematologji":"Хематологија","Infektologji":"Инфектологија","Psikiatri":"Психијатрија","Geriatri":"Геријатрија","Pediatri":"Педијатрија",
+  "Lëkurë, flokë, thonj":"Кожа, коса, нокти","Alergji, astmë alergjike, imunitet":"Алергии, алергиска астма, имунитет","Kujdesi i parë dhe ndjekje afatgjatë":"Примарна грижа и долгорочно следење","Sëmundje të organeve të brendshme":"Болести на внатрешни органи","Zemër dhe qarkullim":"Срце и циркулација","Mushkëri dhe frymëmarrje":"Бели дробови и дишење","Stomak, zorrë, mëlçi":"Желудник, црева, црн дроб","Hormone, diabet, tiroide":"Хормони, дијабетес, тироидна жлезда","Veshka dhe hipertension renal":"Бубрези и бубрежна хипертензија","Nyje, autoimunitet, inflamacion":"Зглобови, автоимунитет, воспаление","Gjaku dhe palca kockore":"Крв и коскена срцевина","Infeksione bakteriale, virale, parazitare":"Бактериски, вирусни и паразитарни инфекции","Tru, nerva, dhimbje neurologjike":"Мозок, нерви, невролошка болка","Shëndet mendor":"Ментално здравје","Kujdesi për moshën e tretë":"Грижа за повозрасни лица","Fëmijë dhe adoleshentë":"Деца и адолесценти",
+  "Kirurgji e përgjithshme":"Општа хирургија","Ortopedi dhe traumatologji":"Ортопедија и трауматологија","Neurokirurgji":"Неврохирургија","Kirurgji vaskulare":"Васкуларна хирургија","Kirurgji plastike":"Пластична хирургија","Kirurgji torakale":"Торакална хирургија","Kirurgji kardiake":"Кардиохирургија","Kirurgji pediatrike":"Педијатриска хирургија","Kirurgji maksilofaciale":"Максилофацијална хирургија","Gjinekologji dhe obstetrikë":"Гинекологија и акушерство","ORL":"ОРЛ","Oftalmologji":"Офталмологија","Stomatologji":"Стоматологија",
+  "Abdomen, hernie, urgjenca kirurgjikale":"Абдомен, хернии, хируршки итни состојби","Kocka, nyje, trauma":"Коски, зглобови, траума","Tru, shtyllë kurrizore, nerva":"Мозок, рбет, нерви","Veshka, rrugë urinare, prostatë":"Бубрези, уринарни патишта, простата","Arterie, vena, qarkullim periferik":"Артерии, вени, периферна циркулација","Rikonstruksion dhe estetikë":"Реконструкција и естетика","Mushkëri dhe kraharor":"Бели дробови и граден кош","Zemër dhe enë të mëdha":"Срце и големи крвни садови","Ndërhyrje kirurgjikale te fëmijët":"Хируршки интервенции кај деца","Fytyrë, nofulla, trauma orale":"Лице, вилици, орална траума","Shëndeti i gruas dhe shtatzënia":"Женско здравје и бременост","Vesh, hundë, fyt":"Уво, нос, грло","Sy dhe shikim":"Очи и вид","Dhëmbë dhe kavitet oral":"Заби и усна празнина",
+  "Radiografi":"Радиографија","Ultrazë":"Ултразвук","Mamografi":"Мамографија","Radiologji intervenuese":"Интервентна радиологија","Mjekësi nukleare":"Нуклеарна медицина","Patologji":"Патологија","Mjekësi laboratorike":"Лабораториска медицина","Gjenetikë mjekësore":"Медицинска генетика","Kardiologji diagnostike":"Дијагностичка кардиологија","Neurofiziologji":"Неврофизиологија","Radiografi, CT, MRI, ultrazë":"Радиографија, CT, MRI, ултразвук","Procedura mini-invazive me imazheri":"Минимално инвазивни процедури со имиџинг","PET/CT, scintigrafi":"PET/CT, сцинтиграфија","Biopsi dhe diagnozë mikroskopike":"Биопсија и микроскопска дијагноза","Analiza gjaku, urine, biokimi":"Крвни анализи, урина, биохемија","Sëmundje trashëgimore dhe teste gjenetike":"Наследни болести и генетски тестови","EKG, eko zemre, Holter":"ЕКГ, ехо на срце, Холтер","EEG, EMG, studime nervore":"ЕЕГ, ЕМГ, нервни студии",
+  "Anesteziologji dhe reanimacion":"Анестезиологија и реанимација","Mjekësi emergjente":"Итна медицина","Onkologji mjekësore":"Медицинска онкологија","Radioterapi onkologjike":"Радиотерапија","Mjekësi fizikale dhe rehabilitim":"Физикална медицина и рехабилитација","Mjekësi sportive":"Спортска медицина","Mjekësi paliative":"Палијативна медицина","Mjekësi pune":"Медицина на труд","Nutricion dhe dietologji":"Нутриција и диетологија","Psikologji klinike":"Клиничка психологија","Fizioterapi":"Физиотерапија","Logopedi":"Логопедија",
+  "Anestezi, terapi intensive, dhimbje":"Анестезија, интензивна терапија, болка","Urgjenca dhe triazh":"Итни состојби и тријажа","Trajtim sistemik i kancerit":"Системски третман на канцер","Trajtim me rrezatim":"Третман со зрачење","Rikuperim funksional":"Функционално закрепнување","Dëmtime sportive dhe performancë":"Спортски повреди и перформанси","Kontroll simptomash dhe cilësi jete":"Контрола на симптоми и квалитет на живот","Shëndeti në vendin e punës":"Здравје на работното место","Ushqyerje klinike":"Клиничка исхрана","Vlerësim dhe terapi psikologjike":"Психолошка проценка и терапија","Ushtrime dhe rikuperim i lëvizjes":"Вежби и закрепнување на движењето","Të folurit, gëlltitja, komunikimi":"Говор, голтање, комуникација",
+  "Degët kirurgjikale lidhen me zonën e zgjedhur dhe shenjat alarmuese.":"Хируршките гранки се поврзани со избраната зона и алармантните знаци.","Radiografi, CT, MRI, ultrazë dhe ekzaminime të tjera sipas problemit.":"Радиографија, CT, MRI, ултразвук и други испитувања според проблемот.","Akute, kronike, infektive, inflamatore dhe degenerative.":"Акутни, хронични, инфективни, воспалителни и дегенеративни.","Rutinore, primare, sekondare dhe të avancuara.":"Рутински, примарни, секундарни и напредни.","Artikuj mjekësorë":"Медицински статии","Artikuj edukativë me linke që mund të ndahen në rrjete sociale.":"Едукативни статии со линкови што може да се споделуваат на социјални мрежи.","Pyetje të shpeshta":"Чести прашања","Pyetjet që pacientët klikojnë më shpesh në navigator.":"Прашања што пациентите најчесто ги кликаат во навигаторот.","Rreth nesh":"За нас","D Health Medical Navigator është ndërtuar për orientim edukativ para konsultës mjekësore.":"D Health Medical Navigator е создаден за едукативна ориентација пред медицинска консултација.",
+  "Historia":"Историја","Ideja":"Идеја","Qëllimi":"Цел","Orientim i qartë":"Јасна ориентација","Kujdes":"Внимание","Nuk zëvendëson mjekun":"Не го заменува лекарот","Platforma nisi si mënyrë e thjeshtë që pacienti të përshkruajë problemin me trupin, simptomat dhe drejtimin mjekësor.":"Платформата започна како едноставен начин пациентот да го опише проблемот со телото, симптомите и медицинската насока.","Qëllimi është edukimi, zgjedhja më e mirë e ekzaminimit dhe drejtimi te specialisti i duhur.":"Целта е едукација, избор на најдобро испитување и насочување кон соодветен специјалист.","Navigatori nuk vendos diagnozë përfundimtare. Vendimi klinik bëhet nga mjeku pas vizitës dhe ekzaminimeve.":"Навигаторот не поставува конечна дијагноза. Клиничката одлука ја носи лекарот по преглед и испитувања.",
+  "Artikull edukativ i lidhur me navigatorin.":"Едукативна статија поврзана со навигаторот.","Kopjo / shpërnda linkun":"Копирај / сподели линк","Ky drejtim përputhet me zgjedhjen aktuale.":"Оваа насока се совпаѓа со тековниот избор.","mund të jetë pjesë e rrugës diagnostike.":"може да биде дел од дијагностичката патека.","zgjidhet sipas indikacionit.":"се избира според индикацијата.","Zona aktuale:":"Тековна зона:","Sugjerime aktuale:":"Тековни предлози:"
+});
+Object.assign(i18n.en,{
+  "Dhimbje barku, hernie, apendicit, kolecistit dhe urgjenca abdominale.":"Abdominal pain, hernias, appendicitis, cholecystitis and abdominal emergencies.",
+  "Kocka, nyje, tendina, ligamente, trauma dhe dhimbje muskuloskeletale.":"Bones, joints, tendons, ligaments, trauma and musculoskeletal pain.",
+  "Shtyllë kurrizore, kompresion nervor, dhimbje me mpirje ose dobësi.":"Spine, nerve compression, pain with numbness or weakness.",
+  "Veshka, rrugë urinare, prostatë, testikuj dhe simptoma urinare.":"Kidneys, urinary tract, prostate, testicles and urinary symptoms.",
+  "Arterie, vena, trombozë, qarkullim periferik dhe plagë vaskulare.":"Arteries, veins, thrombosis, peripheral circulation and vascular wounds.",
+  "Plagë, djegie, rikonstruksion dhe defekte të indeve të buta.":"Wounds, burns, reconstruction and soft-tissue defects.",
+  "X Ray / Radiografi":"X-ray / Radiography",
+  "E mirë për fraktura, mushkëri, artrozë dhe orientim fillestar.":"Useful for fractures, lungs, osteoarthritis and initial orientation.",
+  "CT Scanner":"CT scanner",
+  "E mirë për trauma, abdomen akut, mushkëri, gurë në veshka dhe urgjenca.":"Useful for trauma, acute abdomen, lungs, kidney stones and emergencies.",
+  "Më e mirë për ligamente, disqe, tru, palcë, menisk dhe inde të buta.":"Best for ligaments, discs, brain, spinal cord, meniscus and soft tissues.",
+  "Ultrazë / USG":"Ultrasound / USG",
+  "E mirë për abdomen, tiroiden, tendina, efuzione, gjinekologji dhe urologji.":"Useful for abdomen, thyroid, tendons, effusions, gynecology and urology.",
+  "Screening dhe vlerësim i gjirit.":"Breast screening and assessment.",
+  "Doppler":"Doppler",
+  "Qarkullim arterial/venoz, trombozë dhe insuficiencë venoze.":"Arterial/venous circulation, thrombosis and venous insufficiency.",
+  "Akute":"Acute","Kronike":"Chronic","Infektive":"Infectious","Inflamatore / autoimune":"Inflammatory / autoimmune","Degjenerative":"Degenerative","Tumorale / masa":"Tumoral / masses",
+  "Fillim i shpejtë: traumë, infeksion, abdomen akut, dhimbje e papritur.":"Rapid onset: trauma, infection, acute abdomen, sudden pain.",
+  "Mbi javë/muaj: artrozë, diabet, hipertension, sëmundje inflamatore.":"Over weeks/months: osteoarthritis, diabetes, hypertension, inflammatory disease.",
+  "Temperaturë, sekrecione, skuqje, kollë, diarre ose urinim me djegie.":"Fever, discharge, redness, cough, diarrhea or burning urination.",
+  "Dhimbje nyjesh, ënjtje, lodhje, skuqje, përkeqësim periodik.":"Joint pain, swelling, fatigue, redness, periodic worsening.",
+  "Ndryshime nga mosha/ngarkesa: artrozë, diskopati, tendinopati.":"Age/load-related changes: osteoarthritis, disc disease, tendinopathy.",
+  "Masa, humbje peshe, gjakderdhje ose simptomë që nuk shpjegohet.":"Masses, weight loss, bleeding or an unexplained symptom.",
+  "Rutinore":"Routine","Primare":"Primary","Sekondare":"Secondary","Të avancuara":"Advanced","Urgjente":"Urgent","Kontroll ndjekës":"Follow-up check",
+  "Hemogramë, glukozë, lipide, kreatininë, urinokulturë sipas rastit.":"Blood count, glucose, lipids, creatinine, urine culture when indicated.",
+  "Vizitë klinike, shenja vitale, CBC, CRP, urinë, radiografi ose USG fillestare.":"Clinical visit, vital signs, CBC, CRP, urine, initial X-ray or ultrasound.",
+  "CT, MRI, analiza specifike, kulturë, hormone, markerë inflamacioni.":"CT, MRI, specific tests, culture, hormones, inflammatory markers.",
+  "Endoskopi, biopsi, EMG/EEG, PET/CT, teste gjenetike kur ka indikacion.":"Endoscopy, biopsy, EMG/EEG, PET/CT, genetic tests when indicated.",
+  "EKG, troponinë, CT urgjente, gazra gjaku, analiza të shpejta.":"ECG, troponin, urgent CT, blood gases, rapid tests.",
+  "Përsëritje analizash dhe imazherie për krahasim pas trajtimit.":"Repeat tests and imaging for comparison after treatment.",
+  "Dhimbja e shpatullës: kur duhet MRI?":"Shoulder pain: when is MRI needed?",
+  "Diarre, temperaturë dhe jashtëqitje me gjak: kur duhet urgjencë?":"Diarrhea, fever and bloody stool: when is it urgent?",
+  "Djegie gjatë urinimit: urologji apo gjinekologji?":"Burning urination: urology or gynecology?",
+  "Radiografi, CT apo MRI: si zgjidhet ekzaminimi?":"X-ray, CT or MRI: how is the exam chosen?",
+  "Skuqje dhe kruarje në lëkurë: shenjat që duhen parë":"Skin redness and itching: signs to look for",
+  "Pyetjet që duhet t’i bëni mjekut para ekzaminimit":"Questions to ask your doctor before an examination",
+  "A zëvendëson navigatori vizitën te mjeku?":"Does the navigator replace a doctor visit?",
+  "Jo. Ai jep orientim edukativ dhe ndihmon të përgatitet konsultimi.":"No. It provides educational guidance and helps prepare the consultation.",
+  "Kur duhet të shkoj urgjent?":"When should I go urgently?",
+  "Dhimbje shumë e fortë, vështirësi në frymëmarrje, humbje ndjesie, gjakderdhje, temperaturë e lartë ose përkeqësim i shpejtë.":"Very severe pain, difficulty breathing, loss of sensation, bleeding, high fever or rapid worsening.",
+  "A duhet MRI për çdo dhimbje?":"Is MRI needed for every pain?",
+  "Jo. Zgjedhja varet nga zona, trauma, ekzaminimi fizik dhe dyshimi klinik.":"No. The choice depends on the area, trauma, physical examination and clinical suspicion.",
+  "Pse më pyet për feçe, urinim ose cikël?":"Why does it ask about stool, urination or menstrual cycle?",
+  "Sepse abdomeni/pelvisi lidhet me zorrët, rrugët urinare dhe organet gjinekologjike.":"Because the abdomen/pelvis is connected with the intestines, urinary tract and gynecological organs.",
+  "A mund të zgjedh disa simptoma?":"Can I choose several symptoms?",
+  "Po, në pyetjet klinike mund të zgjedhësh deri në 3 përgjigje.":"Yes, in clinical questions you can choose up to 3 answers.",
+  "Çfarë ruhet nga përgjigjet?":"What is stored from the answers?",
+  "Në këtë version statik përgjigjet përdoren vetëm në ekranin aktual për raportin paraprak.":"In this static version, answers are used only on the current screen for the preliminary report."
+});
+Object.assign(i18n.mk,{
+  "Dhimbje barku, hernie, apendicit, kolecistit dhe urgjenca abdominale.":"Болка во стомак, хернии, апендицит, холецистит и абдоминални итни состојби.",
+  "Kocka, nyje, tendina, ligamente, trauma dhe dhimbje muskuloskeletale.":"Коски, зглобови, тетиви, лигаменти, траума и мускулоскелетна болка.",
+  "Shtyllë kurrizore, kompresion nervor, dhimbje me mpirje ose dobësi.":"Рбет, компресија на нерв, болка со вкочанетост или слабост.",
+  "Veshka, rrugë urinare, prostatë, testikuj dhe simptoma urinare.":"Бубрези, уринарни патишта, простата, тестиси и уринарни симптоми.",
+  "Arterie, vena, trombozë, qarkullim periferik dhe plagë vaskulare.":"Артерии, вени, тромбоза, периферна циркулација и васкуларни рани.",
+  "Plagë, djegie, rikonstruksion dhe defekte të indeve të buta.":"Рани, изгореници, реконструкција и дефекти на меки ткива.",
+  "X Ray / Radiografi":"X-ray / Радиографија",
+  "E mirë për fraktura, mushkëri, artrozë dhe orientim fillestar.":"Корисно за фрактури, бели дробови, артроза и почетна ориентација.",
+  "CT Scanner":"CT скенер",
+  "E mirë për trauma, abdomen akut, mushkëri, gurë në veshka dhe urgjenca.":"Корисно за траума, акутен абдомен, бели дробови, камења во бубрези и итни состојби.",
+  "Më e mirë për ligamente, disqe, tru, palcë, menisk dhe inde të buta.":"Најдобро за лигаменти, дискови, мозок, рбетен мозок, менискус и меки ткива.",
+  "Ultrazë / USG":"Ултразвук / USG",
+  "E mirë për abdomen, tiroiden, tendina, efuzione, gjinekologji dhe urologji.":"Корисно за абдомен, тироидна жлезда, тетиви, ефузии, гинекологија и урологија.",
+  "Screening dhe vlerësim i gjirit.":"Скрининг и проценка на дојка.",
+  "Doppler":"Доплер",
+  "Qarkullim arterial/venoz, trombozë dhe insuficiencë venoze.":"Артериска/венска циркулација, тромбоза и венска инсуфициенција.",
+  "Akute":"Акутни","Kronike":"Хронични","Infektive":"Инфективни","Inflamatore / autoimune":"Воспалителни / автоимуни","Degjenerative":"Дегенеративни","Tumorale / masa":"Туморски / маси",
+  "Fillim i shpejtë: traumë, infeksion, abdomen akut, dhimbje e papritur.":"Брз почеток: траума, инфекција, акутен абдомен, ненадејна болка.",
+  "Mbi javë/muaj: artrozë, diabet, hipertension, sëmundje inflamatore.":"Со недели/месеци: артроза, дијабетес, хипертензија, воспалителна болест.",
+  "Temperaturë, sekrecione, skuqje, kollë, diarre ose urinim me djegie.":"Температура, секрет, црвенило, кашлица, дијареја или печење при мокрење.",
+  "Dhimbje nyjesh, ënjtje, lodhje, skuqje, përkeqësim periodik.":"Болка во зглобови, оток, замор, црвенило, периодично влошување.",
+  "Ndryshime nga mosha/ngarkesa: artrozë, diskopati, tendinopati.":"Промени од возраст/оптоварување: артроза, дископатија, тендинопатија.",
+  "Masa, humbje peshe, gjakderdhje ose simptomë që nuk shpjegohet.":"Маси, губење тежина, крварење или необјаснет симптом.",
+  "Rutinore":"Рутински","Primare":"Примарни","Sekondare":"Секундарни","Të avancuara":"Напредни","Urgjente":"Итни","Kontroll ndjekës":"Контролно следење",
+  "Hemogramë, glukozë, lipide, kreatininë, urinokulturë sipas rastit.":"Крвна слика, глукоза, липиди, креатинин, уринокултура според случајот.",
+  "Vizitë klinike, shenja vitale, CBC, CRP, urinë, radiografi ose USG fillestare.":"Клинички преглед, витални знаци, CBC, CRP, урина, почетна радиографија или ултразвук.",
+  "CT, MRI, analiza specifike, kulturë, hormone, markerë inflamacioni.":"CT, MRI, специфични анализи, култура, хормони, воспалителни маркери.",
+  "Endoskopi, biopsi, EMG/EEG, PET/CT, teste gjenetike kur ka indikacion.":"Ендоскопија, биопсија, EMG/EEG, PET/CT, генетски тестови кога има индикација.",
+  "EKG, troponinë, CT urgjente, gazra gjaku, analiza të shpejta.":"ЕКГ, тропонин, итен CT, крвни гасови, брзи анализи.",
+  "Përsëritje analizash dhe imazherie për krahasim pas trajtimit.":"Повторување анализи и имиџинг за споредба по третман.",
+  "Dhimbja e shpatullës: kur duhet MRI?":"Болка во рамо: кога е потребен MRI?",
+  "Diarre, temperaturë dhe jashtëqitje me gjak: kur duhet urgjencë?":"Дијареја, температура и крвава столица: кога е итно?",
+  "Djegie gjatë urinimit: urologji apo gjinekologji?":"Печење при мокрење: урологија или гинекологија?",
+  "Radiografi, CT apo MRI: si zgjidhet ekzaminimi?":"Радиографија, CT или MRI: како се избира испитувањето?",
+  "Skuqje dhe kruarje në lëkurë: shenjat që duhen parë":"Црвенило и чешање на кожа: знаци што треба да се следат",
+  "Pyetjet që duhet t’i bëni mjekut para ekzaminimit":"Прашања што треба да му ги поставите на лекарот пред испитување",
+  "A zëvendëson navigatori vizitën te mjeku?":"Дали навигаторот ја заменува посетата кај лекар?",
+  "Jo. Ai jep orientim edukativ dhe ndihmon të përgatitet konsultimi.":"Не. Тој дава едукативна ориентација и помага да се подготви консултацијата.",
+  "Kur duhet të shkoj urgjent?":"Кога треба итно да одам?",
+  "Dhimbje shumë e fortë, vështirësi në frymëmarrje, humbje ndjesie, gjakderdhje, temperaturë e lartë ose përkeqësim i shpejtë.":"Многу силна болка, тешко дишење, губење чувство, крварење, висока температура или брзо влошување.",
+  "A duhet MRI për çdo dhimbje?":"Дали MRI е потребен за секоја болка?",
+  "Jo. Zgjedhja varet nga zona, trauma, ekzaminimi fizik dhe dyshimi klinik.":"Не. Изборот зависи од зоната, траумата, физикалниот преглед и клиничкото сомнение.",
+  "Pse më pyet për feçe, urinim ose cikël?":"Зошто прашува за столица, мокрење или циклус?",
+  "Sepse abdomeni/pelvisi lidhet me zorrët, rrugët urinare dhe organet gjinekologjike.":"Затоа што абдоменот/карлицата е поврзан со црева, уринарни патишта и гинеколошки органи.",
+  "A mund të zgjedh disa simptoma?":"Може ли да изберам повеќе симптоми?",
+  "Po, në pyetjet klinike mund të zgjedhësh deri në 3 përgjigje.":"Да, во клиничките прашања може да изберете до 3 одговори.",
+  "Çfarë ruhet nga përgjigjet?":"Што се зачувува од одговорите?",
+  "Në këtë version statik përgjigjet përdoren vetëm në ekranin aktual për raportin paraprak.":"Во оваа статичка верзија одговорите се користат само на тековниот екран за прелиминарниот извештај."
+});
+Object.assign(i18n.en,{
+  "Drejtimi i zgjedhur:":"Selected specialty:","Simptomat kryesore:":"Main symptoms:","Prioriteti:":"Priority:","Shenja alarmi:":"Warning sign:","Mundësitë diagnostike:":"Diagnostic possibilities:","Duhet menduar edhe për:":"Also consider:","Hapi i parë:":"First step:",
+  "pa drejtim":"no specialty","pa anë të përcaktuar":"no side selected","Simptomë":"Symptom","pa kohëzgjatje":"no duration","pa intensitet":"no intensity","pa shenja alarmi":"no warning signs","në":"in","intensitet":"intensity",
+  "Tendinit i manshetës rotatore":"Rotator cuff tendinitis","Bursit subakromial":"Subacromial bursitis","Artrozë e shpatullës":"Shoulder osteoarthritis","Dëmtim muskulor":"Muscle injury","Luxacion i mëparshëm":"Previous dislocation",
+  "Radiografi e shpatullës":"Shoulder X-ray","Kirurg ortoped":"Orthopedic surgeon","Traumatolog":"Traumatologist","Frakturë":"Fracture","Tendon":"Tendon","Ligamente":"Ligaments","Artrozë":"Osteoarthritis","Problem":"Problem"
+});
+Object.assign(i18n.mk,{
+  "Drejtimi i zgjedhur:":"Избрана насока:","Simptomat kryesore:":"Главни симптоми:","Prioriteti:":"Приоритет:","Shenja alarmi:":"Алармантен знак:","Mundësitë diagnostike:":"Дијагностички можности:","Duhet menduar edhe për:":"Треба да се размисли и за:","Hapi i parë:":"Прв чекор:",
+  "pa drejtim":"без насока","pa anë të përcaktuar":"без одредена страна","Simptomë":"Симптом","pa kohëzgjatje":"без времетраење","pa intensitet":"без интензитет","pa shenja alarmi":"без алармантни знаци","në":"во","intensitet":"интензитет",
+  "Tendinit i manshetës rotatore":"Тендинит на ротаторна манжетна","Bursit subakromial":"Субакромијален бурзит","Artrozë e shpatullës":"Артроза на рамо","Dëmtim muskulor":"Мускулна повреда","Luxacion i mëparshëm":"Претходна луксација",
+  "Radiografi e shpatullës":"Радиографија на рамо","Kirurg ortoped":"Ортопедски хирург","Traumatolog":"Трауматолог","Frakturë":"Фрактура","Tendon":"Тетива","Ligamente":"Лигаменти","Artrozë":"Артроза","Problem":"Проблем"
+});
+const t=value=>currentLang==="sq" ? value : (i18n[currentLang]&&i18n[currentLang][value]) || value;
+const displayAnswer=value=>Array.isArray(value)?value.map(t).join(", "):t(value||"");
+function setI18nText(el,text){
+  if(!el) return;
+  el.dataset.i18nOriginal=text;
+  el.textContent=t(text);
+}
+function applyStaticTranslations(){
+  document.documentElement.lang=currentLang==="mk"?"mk":currentLang;
+  document.querySelectorAll("body *").forEach(el=>{
+    if(el.children.length || ["SCRIPT","STYLE","INPUT","IMG"].includes(el.tagName)) return;
+    const raw=(el.dataset.i18nOriginal || el.textContent).trim();
+    if(!raw) return;
+    if(!el.dataset.i18nOriginal) el.dataset.i18nOriginal=raw;
+    el.textContent=t(el.dataset.i18nOriginal);
+  });
+  const search=$("search");
+  if(search) search.placeholder=currentLang==="sq"?"Kërko për simptoma, sëmundje, ekzaminime...":currentLang==="en"?"Search symptoms, diseases, exams...":"Барај симптоми, болести, испитувања...";
+  document.querySelectorAll(".lang-switch button").forEach(btn=>btn.classList.toggle("active",btn.dataset.lang===currentLang));
+}
+const flatAnswers=()=>state.answers.flatMap(x=>Array.isArray(x)?x:[x]).filter(Boolean);
+const answerText=value=>Array.isArray(value)?value.join(", "):(value||"");
+const answerFrom=(list,fallback)=>flatAnswers().find(x=>list.includes(x))||fallback;
+const dynamicAnswers=()=>flatAnswers().slice(3).filter(x=>!durations.includes(x)&&!severity.includes(x)&&!redFlags.includes(x));
+const isMultiQuestion=(step,question)=>step>2 && !question.single;
+const iconTone=text=>{
+  const s=String(text||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  if(/dermat|lekure|skuq|kruar|plage|djegie|plastike/.test(s)) return "soft-rose";
+  if(/pulm|mushker|respir|frym|gjoks|torak/.test(s)) return "soft-teal";
+  if(/ortop|kock|trauma|fraktur|menisk|ligament|nyje|sport|rehabilitim|fizioterapi/.test(s)) return "soft-amber";
+  return "";
+};
+const svgIcon=name=>{
+  const common='viewBox="0 0 24 24" aria-hidden="true"';
+  const icons={
+    stethoscope:'<path d="M6 3v5a4 4 0 0 0 8 0V3"/><path d="M10 12v2a5 5 0 0 0 10 0v-1"/><circle cx="20" cy="10" r="2"/><path d="M4 3h2M14 3h2"/>',
+    ortho:'<path d="M14 4l6 6"/><path d="M11 7l6 6"/><path d="M8 10l6 6"/><path d="M4 20l7-7"/><path d="M3 17l4 4"/>',
+    lungs:'<path d="M12 12V4"/><path d="M12 12c-2-4-5-5-7-3-2 2-2 8 0 10 2 2 5-1 7-7Z"/><path d="M12 12c2-4 5-5 7-3 2 2 2 8 0 10-2 2-5-1-7-7Z"/>',
+    heart:'<path d="M20 8c0 5-8 10-8 10S4 13 4 8a4 4 0 0 1 7-2 4 4 0 0 1 9 2Z"/>',
+    radiology:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/><path d="M16 16l2 2"/>',
+    lab:'<path d="M9 3h6"/><path d="M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 15h8"/>',
+    skin:'<path d="M12 3c4 4 7 7 7 11a7 7 0 0 1-14 0c0-4 3-7 7-11Z"/><path d="M9 14h.01M13 11h.01M14 16h.01"/>',
+    gastro:'<path d="M10 4c4 0 7 3 7 7 0 5-4 9-9 9-2 0-4-1-4-3 0-3 4-3 6-5 2-2-1-4 0-8Z"/><path d="M12 7c3 1 4 5 1 8"/>',
+    uro:'<path d="M8 5c-2 2-3 5-2 8 1 4 4 6 6 6s5-2 6-6c1-3 0-6-2-8"/><path d="M12 19v2"/><path d="M9 9c1 2 5 2 6 0"/>',
+    gyn:'<circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/>',
+    neuro:'<path d="M9 4a4 4 0 0 0-4 4c0 2 1 3 3 4-2 1-3 2-3 4a4 4 0 0 0 7 2"/><path d="M15 4a4 4 0 0 1 4 4c0 2-1 3-3 4 2 1 3 2 3 4a4 4 0 0 1-7 2"/><path d="M12 5v14"/>',
+    endocrine:'<path d="M12 3l8 5v8l-8 5-8-5V8l8-5Z"/><path d="M8 12h8"/>',
+    infection:'<path d="M12 8v8M8 12h8"/><circle cx="12" cy="12" r="7"/>',
+    eye:'<path d="M3 12s3-5 9-5 9 5 9 5-3 5-9 5-9-5-9-5Z"/><circle cx="12" cy="12" r="2"/>',
+    ent:'<path d="M8 10a4 4 0 1 1 7 3c-2 2-1 4-3 5-2 1-4-1-3-3"/><path d="M10 10a2 2 0 1 1 3 2"/>',
+    tooth:'<path d="M7 5c2-2 4 0 5 0s3-2 5 0c2 2 0 6-1 9-1 4-2 7-4 7s-1-5-4-7c-1-3-3-7-1-9Z"/>',
+    alert:'<path d="M12 4l9 16H3L12 4Z"/><path d="M12 10v4M12 17h.01"/>',
+    repeat:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>',
+    surgery:'<path d="M12 5v14M5 12h14"/><rect x="4" y="4" width="16" height="16" rx="4"/>',
+    article:'<path d="M6 4h9l3 3v13H6z"/><path d="M14 4v4h4"/><path d="M9 12h6M9 16h6"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+    target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>',
+    side:'<path d="M8 7l-5 5 5 5"/><path d="M16 7l5 5-5 5"/><path d="M3 12h18"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    intensity:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
+    medical:'<path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="9"/>'
+  };
+  return `<svg ${common}>${icons[name]||icons.medical}</svg>`;
+};
+function iconNameForMedical(text=""){
+  const s=String(text).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  if(/stetoskop|klinike|mjekesi familjare|mjekesi interne|intern/.test(s)) return "stethoscope";
+  if(/ortop|trauma|kock|fraktur|menisk|ligament|nyje|sport|rehabilitim|fizioterapi/.test(s)) return "ortho";
+  if(/pulm|mushker|respir|frym|torak/.test(s)) return "lungs";
+  if(/kardi|zemer|ekg|holter|qarkullim|vaskulare|arterie|vena|doppler/.test(s)) return "heart";
+  if(/radiolog|x ray|radiografi|ct|mri|ultraz|usg|mamografi|imazheri/.test(s)) return "radiology";
+  if(/laborator|analiza|gjak|urine|biokimi|hemogram|crp|cbc|troponin/.test(s)) return "lab";
+  if(/dermat|lekure|flok|thonj|skuq|kruar|lezion|plage/.test(s)) return "skin";
+  if(/gastro|stomak|zorr|melci|abdomen|bark|diarre|apendicit|kolecistit/.test(s)) return "gastro";
+  if(/urolog|veshk|urinar|prostat|testikuj|urine/.test(s)) return "uro";
+  if(/gjinek|obstetr|gruas|shtatz|cikel|vaginal/.test(s)) return "gyn";
+  if(/neuro|tru|nerva|shtylle|disk|hernie|emg|eeg/.test(s)) return "neuro";
+  if(/endo|hormon|diabet|tiroid/.test(s)) return "endocrine";
+  if(/infekt|temperature|viral|bakter|parazit/.test(s)) return "infection";
+  if(/sy|oftalm/.test(s)) return "eye";
+  if(/orl|vesh|hund|fyt/.test(s)) return "ent";
+  if(/stomat|dhemb|oral/.test(s)) return "tooth";
+  if(/emergj|urgjent|akute|alarm/.test(s)) return "alert";
+  if(/kronike|ndjek|kontroll/.test(s)) return "repeat";
+  if(/kirurg|oper|biopsi|patolog/.test(s)) return "surgery";
+  return "medical";
+}
+const iconForMedical=text=>svgIcon(iconNameForMedical(text));
+const medIcon=(text,extra="")=>`<span class="med-symbol ${iconTone(text)} ${extra}" aria-hidden="true">${iconForMedical(text)}</span>`;
+function iconForQuestion(step,question){
+  const text=`${question?.title||""} ${question?.hint||""}`;
+  if(step===0) return svgIcon("target");
+  if(step===1) return iconForMedical(text);
+  if(step===2) return svgIcon("side");
+  if(/kohe|kohë|duration|sa kohe/i.test(text)) return svgIcon("clock");
+  if(/forte|fortë|intensitet|dhimbje/i.test(text)) return svgIcon("intensity");
+  if(/alarm|urgjent|temperature|temperaturë/i.test(text)) return svgIcon("alert");
+  return iconForMedical(text);
+}
+function applyNavIcons(){
+  const navIcons={
+    navigatorTop:"stethoscope",
+    surgeryModule:"surgery",
+    radiologyModule:"radiology",
+    medicalDirections:"medical",
+    diseaseModule:"heart",
+    examModule:"lab",
+    articleModule:"article",
+    faqModule:"info",
+    aboutModule:"info"
+  };
+  document.querySelectorAll(".nav button[data-target]").forEach(btn=>{
+    const ico=btn.querySelector(".ico");
+    if(ico) ico.innerHTML=svgIcon(navIcons[btn.dataset.target]||"medical");
+  });
+  document.querySelectorAll("[data-svg-icon]").forEach(el=>{
+    el.innerHTML=svgIcon(el.dataset.svgIcon||"medical");
+  });
+}
+function render(){
+  const zone=bodyZones[state.zone], currentQuestions=getQuestions(), q=currentQuestions[state.step]||currentQuestions[0];
+  const currentAnswer=state.answers[state.step];
+  const multi=isMultiQuestion(state.step,q);
+  setI18nText($("zoneTitle"),zone.label);
+  $("stepText").textContent=`${state.step+1} / ${currentQuestions.length}`;
+  setI18nText($("questionTitle"),q.title);
+  const hintText=(multi ? "Mund të zgjidhni deri në 3 përgjigje. " : "") + q.hint;
+  $("questionHint").dataset.i18nOriginal=hintText;
+  $("questionHint").textContent=(multi ? t("Mund të zgjidhni deri në 3 përgjigje. ") : "") + t(q.hint);
+  $("options").innerHTML=q.options.map((o,i)=>{
+    const picked=Array.isArray(currentAnswer)?currentAnswer.includes(o):currentAnswer===o;
+    return `<button class="option ${picked?"selected":""}" data-option="${o}">
+      <span class="thumb">${iconForQuestion(state.step,q)}</span>
+      <span>${t(o)}</span><span class="check">${picked?"✓":""}</span>
+    </button>`;
+  }).join("");
+  $("nextBtn").disabled=Array.isArray(currentAnswer)?currentAnswer.length===0:!currentAnswer;
+  const nextText=state.step===currentQuestions.length-1?"Shfaq raportin":"Vazhdo →";
+  $("nextBtn").dataset.i18nOriginal=nextText;
+  $("nextBtn").textContent=t(nextText);
+  document.querySelectorAll(".zone").forEach(z=>z.classList.toggle("active",z.dataset.zone===state.zone));
+  renderBodyView();
+  renderCrumbs();
+  renderResults();
+  renderClinicalLens();
+  renderConnectedModules();
+  applyNavIcons();
+  applyStaticTranslations();
+}
+function renderBodyView(){
+  const card=$("bodyCard");
+  if(card){
+    card.classList.toggle("back-view",bodyView==="back");
+    card.classList.remove("switching");
+    void card.offsetWidth;
+    card.classList.add("switching");
+  }
+  document.querySelectorAll(".body-tools button[data-view]").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.view===bodyView);
+  });
+  document.querySelectorAll(".zone").forEach(zone=>{
+    const pos=(zonePositions[bodyView]||zonePositions.front)[zone.dataset.zone]||[50,50];
+    zone.style.display=(bodyView==="front" && zone.dataset.zone==="back")?"none":"";
+    zone.style.left=`calc(${pos[0]}% - 12px)`;
+    zone.style.top=`calc(${pos[1]}% - 12px)`;
+  });
+}
+function renderCrumbs(){
+  const zone=bodyZones[state.zone];
+  const items=[`${t(zone.label)} → ${displayAnswer(state.answers[0])||"..."}`,displayAnswer(state.answers[1]),displayAnswer(state.answers[2]),...dynamicAnswers().map(t),t(answerFrom(durations,"...")),t(answerFrom(severity,"...")),t(answerFrom(redFlags,"..."))];
+  $("crumbs").innerHTML=items.map((it,i)=>`<div class="crumb ${i===state.step?"active":""}"><span>${i+1}.</span><span>${it||"..."}</span></div>`).join("");
+  $("progressBar").style.width=`${((state.step+1)/getQuestions().length)*100}%`;
+}
+function renderResults(){
+  const zone=bodyZones[state.zone], specialty=displayAnswer(state.answers[1])||t("pa drejtim"), side=displayAnswer(state.answers[2])||t("pa anë të përcaktuar"), symptom=t(dynamicAnswers()[0]||"Simptomë"), duration=t(answerFrom(durations,"pa kohëzgjatje")), sev=t(answerFrom(severity,"pa intensitet")), alarm=t(answerFrom(redFlags,"pa shenja alarmi"));
+  const risk=getRiskLevel();
+  const pathway=pathwayFor(state.zone);
+  const dynamicText=dynamicAnswers().map(t).join(", ")||symptom;
+  $("aiReport").innerHTML=`
+    <p><b>${t("Drejtimi i zgjedhur:")}</b> ${specialty}.</p>
+    <p><b>${t("Simptomat kryesore:")}</b> ${dynamicText} ${t("në")} ${displayAnswer(state.answers[0])||t(zone.label)}, ${side.toLowerCase()}, ${duration.toLowerCase()}, ${t("intensitet")} ${sev.toLowerCase()}.</p>
+    <p><b>${t("Prioriteti:")}</b> ${risk.label}. ${t("Shenja alarmi:")} ${alarm.toLowerCase()}.</p>
+    <p><b>${t("Mundësitë diagnostike:")}</b> ${zone.conditions.slice(0,3).map(t).join(", ")}.</p>
+    <p><b>${t("Duhet menduar edhe për:")}</b> ${pathway.ruleOut}.</p>
+    <p><b>${t("Hapi i parë:")}</b> ${pathway.firstMove}</p>`;
+  $("conditions").innerHTML=zone.conditions.map(x=>`<span class="chip">${medIcon(x)}${t(x)}</span>`).join("");
+  $("exams").innerHTML=zone.exams.map(x=>`<span class="chip">${medIcon(x)}${t(x)}</span>`).join("");
+  $("specialists").innerHTML=zone.specialists.map(x=>`<span class="chip">${medIcon(x)}${t(x)}</span>`).join("");
+  const rows=(radiology[state.zone]||radiology.default);
+  $("radiologyRows").innerHTML=rows.map(r=>`<tr><td>${t(r[0])}</td>${r.slice(1).map(v=>`<td class="${v?"yes":"no"}">${v?"✓":"×"}</td>`).join("")}</tr>`).join("");
+}
+const clinicalCopy={
+  en:{
+    riskHigh:"High - needs prompt medical assessment",
+    riskMid:"Moderate - consult within 24-48 hours",
+    riskLow:"Low - guidance and monitoring",
+    priorityNote:"This priority changes according to intensity, duration and warning signs.",
+    ruleOutTitle:"What should be ruled out?",
+    nextTitle:"What should be done now?",
+    missingTitle:"Missing questions",
+    missingText:"Are there risk factors, medications, chronic diseases, an old injury, or worsening during the night?",
+    routeTitle:"Clinical pathway",
+    signalTitle:"Main signal",
+    routeJoin:"For",
+    routeMiddle:"with",
+    routeEnd:"the exam is selected according to the physical examination.",
+    signalEnd:"If this changes or new symptoms appear, the report should be repeated.",
+    direction:"specialty",
+    symptoms:"symptoms",
+    duration:"duration",
+    notChosen:"not selected yet"
+  },
+  mk:{
+    riskHigh:"Висок - потребна е брза медицинска проценка",
+    riskMid:"Среден - консултација во рок од 24-48 часа",
+    riskLow:"Низок - ориентација и следење",
+    priorityNote:"Овој приоритет се менува според интензитетот, времетраењето и алармантните знаци.",
+    ruleOutTitle:"Што треба да се исклучи?",
+    nextTitle:"Што треба да се направи сега?",
+    missingTitle:"Прашања што недостасуваат",
+    missingText:"Има ли ризик фактори, лекови, хронични болести, стара траума или влошување ноќе?",
+    routeTitle:"Клиничка патека",
+    signalTitle:"Главен сигнал",
+    routeJoin:"За",
+    routeMiddle:"со",
+    routeEnd:"испитувањето се избира според физикалниот преглед.",
+    signalEnd:"Ако ова се промени или се појават нови симптоми, извештајот треба повторно да се направи.",
+    direction:"насока",
+    symptoms:"симптоми",
+    duration:"времетраење",
+    notChosen:"сè уште не е избрано"
+  }
+};
+const pathwayTranslations={
+  en:{
+    head:{ruleOut:"Trauma, neurological deficit, infection, migraine with warning signs",firstMove:"Measure temperature and blood pressure, and assess vision, speech, numbness or weakness.",care:"Neurologist / ENT / emergency care if neurological signs are present"},
+    neck:{ruleOut:"Nerve compression, infection, thyroid disorder, cervical trauma",firstMove:"Check neck movement, arm numbness and whether fever is present.",care:"Neurologist / ENT / endocrinologist depending on findings"},
+    chest:{ruleOut:"Cardiac problem, lung disease, embolism, pneumonia or rib injury",firstMove:"With chest pain, shortness of breath or cold sweats, do not wait: seek urgent assessment.",care:"Cardiologist / pulmonologist / emergency care"},
+    abdomen:{ruleOut:"Appendicitis, cholecystitis, pancreatitis, renal colic, urinary infection, gynecological or gastrointestinal problem",firstMove:"Check location, fever, vomiting, urination, stool, menstrual cycle and whether pain is worsening.",care:"General surgeon / gastroenterologist / urologist / gynecologist"},
+    back:{ruleOut:"Disc herniation, fracture, infection, renal colic, nerve compression",firstMove:"Assess whether pain radiates to the leg, with numbness, weakness or urinary problems.",care:"Orthopedist / neurosurgeon / physiatrist"},
+    arm:{ruleOut:"Fracture, dislocation, tendon injury, nerve compression, joint inflammation",firstMove:"Check whether you can raise the arm, and whether there is deformity, swelling or numbness.",care:"Orthopedist / traumatologist"},
+    hand:{ruleOut:"Fracture, infection, tendinitis, carpal tunnel, nerve injury",firstMove:"Check grip strength, finger sensation and color change.",care:"Orthopedist / hand surgeon / rheumatologist"},
+    leg:{ruleOut:"Venous thrombosis, muscle injury, radiculopathy, fracture, vascular problem",firstMove:"Compare both legs for swelling, warmth, color and calf pain.",care:"Orthopedist / vascular surgeon / neurologist"},
+    knee:{ruleOut:"Meniscus injury, ligament injury, fracture, bursitis, osteoarthritis",firstMove:"Assess whether the knee locks, bears weight and whether it swelled immediately after trauma.",care:"Orthopedist / traumatologist / physiatrist"},
+    foot:{ruleOut:"Stress fracture, ankle sprain, Achilles tendinitis, plantar fasciitis, neuropathy",firstMove:"Check whether you can step on it, the pain location and swelling around the ankle.",care:"Orthopedist / traumatologist / endocrinologist in neuropathy"}
+  },
+  mk:{
+    head:{ruleOut:"Траума, невролошки дефицит, инфекција, мигрена со алармантни знаци",firstMove:"Измерете температура и притисок, и проценете вид, говор, вкочанетост или слабост.",care:"Невролог / ОРЛ / итна помош ако има невролошки знаци"},
+    neck:{ruleOut:"Компресија на нерв, инфекција, нарушување на тироидна жлезда, цервикална траума",firstMove:"Проверете движење на вратот, вкочанетост во раката и присуство на температура.",care:"Невролог / ОРЛ / ендокринолог според наодите"},
+    chest:{ruleOut:"Срцев проблем, белодробна болест, емболија, пневмонија или повреда на ребра",firstMove:"При болка во градите, недостиг на воздух или ладна пот, не чекајте: побарајте итна проценка.",care:"Кардиолог / пулмолог / итна помош"},
+    abdomen:{ruleOut:"Апендицит, холецистит, панкреатит, бубрежна колика, уринарна инфекција, гинеколошки или гастроинтестинален проблем",firstMove:"Проверете локација, температура, повраќање, мокрење, столица, менструален циклус и дали болката се влошува.",care:"Општ хирург / гастроентеролог / уролог / гинеколог"},
+    back:{ruleOut:"Дискус хернија, фрактура, инфекција, бубрежна колика, компресија на нерв",firstMove:"Проценете дали болката се шири кон ногата, со вкочанетост, слабост или проблеми со мокрење.",care:"Ортопед / неврохирург / физијатар"},
+    arm:{ruleOut:"Фрактура, луксација, повреда на тетива, компресија на нерв, воспаление на зглоб",firstMove:"Проверете дали можете да ја кренете раката и дали има деформација, оток или вкочанетост.",care:"Ортопед / трауматолог"},
+    hand:{ruleOut:"Фрактура, инфекција, тендинит, карпален тунел, повреда на нерв",firstMove:"Проверете сила на стисок, чувствителност на прсти и промена на боја.",care:"Ортопед / хирург на рака / ревматолог"},
+    leg:{ruleOut:"Венска тромбоза, мускулна повреда, радикулопатија, фрактура, васкуларен проблем",firstMove:"Споредете ги двете нозе за оток, топлина, боја и болка во лист.",care:"Ортопед / васкуларен хирург / невролог"},
+    knee:{ruleOut:"Повреда на менискус, лигамент, фрактура, бурзит, артроза",firstMove:"Проценете дали коленото се блокира, носи тежина и дали отекло веднаш по траума.",care:"Ортопед / трауматолог / физијатар"},
+    foot:{ruleOut:"Стрес фрактура, истегнување на зглоб, Ахилов тендинит, плантарен фасциит, невропатија",firstMove:"Проверете дали можете да стапнете, каде боли и дали има оток околу зглобот.",care:"Ортопед / трауматолог / ендокринолог при невропатија"}
+  }
+};
+const ctext=key=>currentLang==="sq" ? null : clinicalCopy[currentLang]?.[key];
+const pathwayFor=zoneKey=>currentLang==="sq" ? zonePathways[zoneKey] : (pathwayTranslations[currentLang]?.[zoneKey] || zonePathways[zoneKey]);
+function getRiskLevel(){
+  const sev=answerFrom(severity,"");
+  const alarm=answerFrom(redFlags,"");
+  const symptom=dynamicAnswers().join(" ");
+  if(sev==="E fortë" || alarm.includes("Dhimbje gjoksi") || alarm.includes("Humbje ndjesie") || alarm.includes("Traumë")) return {label:ctext("riskHigh") || "I lartë - kërkon vlerësim të shpejtë",className:"risk-high",icon:"!"};
+  if(alarm.includes("Temperaturë") || symptom==="Dobësi" || symptom==="Mpirje") return {label:ctext("riskMid") || "Mesatar - konsultë brenda 24-48 orëve",className:"risk-mid",icon:"?"};
+  return {label:ctext("riskLow") || "I ulët - orientim dhe monitorim",className:"risk-low",icon:"✓"};
+}
+function renderClinicalLens(){
+  const pathway=pathwayFor(state.zone), risk=getRiskLevel();
+  const specialty=displayAnswer(state.answers[1])||ctext("direction")||"drejtimi";
+  const symptom=dynamicAnswers().map(t).join(", ")||ctext("symptoms")||"simptoma", duration=t(answerFrom(durations,ctext("duration")||"kohëzgjatja")), alarm=t(answerFrom(redFlags,ctext("notChosen")||"ende pa zgjedhur"));
+  $("clinicalLens").innerHTML=`
+    <div class="lens-box">
+      <span class="risk-badge ${risk.className}">${risk.icon} ${risk.label}</span>
+      <p>${ctext("priorityNote") || "Ky prioritet ndryshon sipas intensitetit, kohëzgjatjes dhe shenjave alarmuese."}</p>
+    </div>
+    <div class="lens-box">
+      <b>${medIcon(pathway.ruleOut)}${ctext("ruleOutTitle") || "Çfarë duhet përjashtuar?"}</b>
+      <p>${specialty}: ${pathway.ruleOut}.</p>
+    </div>
+    <div class="lens-box">
+      <b>${medIcon(pathway.firstMove)}${ctext("nextTitle") || "Çfarë bëhet tani?"}</b>
+      <p>${pathway.firstMove}</p>
+    </div>
+    <div class="lens-box">
+      <b>${medIcon("Mjekësi klinike")}${ctext("missingTitle") || "Pyetje që mungojnë"}</b>
+      <p>${ctext("missingText") || "A ka faktorë rreziku, ilaçe, sëmundje kronike, traumë të vjetër, ose përkeqësim gjatë natës?"}</p>
+    </div>
+    <div class="lens-box">
+      <b>${medIcon(pathway.care)}${ctext("routeTitle") || "Rruga klinike"}</b>
+      <p>${pathway.care}. ${ctext("routeJoin") || "Për"} ${symptom.toLowerCase()} ${ctext("routeMiddle") || "me"} ${duration.toLowerCase()}, ${ctext("routeEnd") || "zgjidhet ekzaminimi sipas kontrollit fizik."}</p>
+    </div>
+    <div class="lens-box">
+      <b>${medIcon(alarm)}${ctext("signalTitle") || "Sinjali kryesor"}</b>
+      <p>${alarm}. ${ctext("signalEnd") || "Nëse kjo ndryshon ose shtohen simptoma të reja, raporti duhet ribërë."}</p>
+    </div>`;
+}
+function renderSpecialties(active="Kirurgji"){
+  $("specTabs").innerHTML=Object.keys(specialties).map(k=>`<button class="${k===active?"active":""}" data-spec="${k}">${t(k)}</button>`).join("");
+  $("specList").innerHTML=specialties[active].map(x=>`<span>${medIcon(x)}${t(x)}</span>`).join("");
+}
+function renderDirections(active="Klinike"){
+  $("directionTabs").innerHTML=Object.keys(medicalDirections).map(k=>`<button class="${k===active?"active":""}" data-direction="${k}">${t(k)}</button>`).join("");
+  $("directionList").innerHTML=medicalDirections[active].map(([name,desc])=>`<div class="direction-item">${medIcon(name)}<div><b>${t(name)}</b><span>${t(desc)}</span></div></div>`).join("");
+}
+function moduleCards(items){
+  return items.map(([title,body],i)=>`<div class="module-card"><span class="module-kicker">${medIcon(title)} ${i+1}</span><b>${t(title)}</b><p>${t(body)}</p></div>`).join("");
+}
+function renderConnectedModules(){
+  const zone=bodyZones[state.zone];
+  const specialty=answerText(state.answers[1])||"drejtimi";
+  const suggestedExams=[...new Set([...(zone.exams||[]),...moduleData.exams.slice(0,3).map(x=>x[0])])];
+  const zoneLabel=t(zone.label);
+  const examList=suggestedExams.slice(0,3).map(t).join(", ");
+  const forZone=currentLang==="sq"?"Për":currentLang==="mk"?"За":"For";
+  $("surgeryList").innerHTML=moduleCards(moduleData.surgery.map(x=>[x[0],`${t(x[1])} ${specialty.includes(x[0])?t("Ky drejtim përputhet me zgjedhjen aktuale."):""}`]));
+  $("radiologyList").innerHTML=moduleCards(moduleData.radiology.map(x=>[x[0],`${t(x[1])} ${forZone} ${zoneLabel}: ${suggestedExams.includes(x[0])?t("mund të jetë pjesë e rrugës diagnostike."):t("zgjidhet sipas indikacionit.")}`]));
+  $("diseaseList").innerHTML=moduleCards(moduleData.diseases.map(x=>[x[0],`${t(x[1])} ${t("Zona aktuale:")} ${zoneLabel}.`]));
+  $("examList").innerHTML=moduleCards(moduleData.exams.map(x=>[x[0],`${t(x[1])} ${t("Sugjerime aktuale:")} ${examList}.`]));
+  $("articleList").innerHTML=moduleData.articles.map(([title,href])=>`<div class="module-card"><span class="module-kicker">${medIcon(title)} Share</span><b>${t(title)}</b><p>${t("Artikull edukativ i lidhur me navigatorin.")}</p><p style="margin-top:10px"><a href="${href}" data-share="${title}">${t("Kopjo / shpërnda linkun")}</a></p></div>`).join("");
+  $("faqList").innerHTML=moduleData.faqs.map(([q,a],i)=>`<div class="faq-item"><b>${i+1}. ${t(q)}</b><p>${t(a)}</p></div>`).join("");
+}
+const fallbackLiveArticles=[
+  ["Medical news for patients","https://news.google.com/search?q=medical%20health%20patients"],
+  ["Radiology MRI CT ultrasound updates","https://news.google.com/search?q=radiology%20MRI%20CT%20ultrasound"],
+  ["Orthopedics shoulder knee pain news","https://news.google.com/search?q=orthopedics%20shoulder%20knee%20pain"]
+];
+async function loadLiveArticles(){
+  const box=$("liveArticles");
+  if(!box) return;
+  const query=encodeURIComponent("health medicine radiology patient care");
+  const url=`https://api.gdeltproject.org/api/v2/doc/doc?query=${query}&mode=artlist&format=json&maxrecords=3&sort=hybridrel`;
+  try{
+    const response=await fetch(url,{cache:"no-store"});
+    if(!response.ok) throw new Error("network");
+    const data=await response.json();
+    const articles=(data.articles||[]).slice(0,3).map(a=>[a.title,a.url]);
+    if(!articles.length) throw new Error("empty");
+    box.innerHTML=articles.map(([title,link])=>`<div class="article"><div class="pic">📰</div><p><a href="${link}" target="_blank" rel="noopener noreferrer">${title}</a></p></div>`).join("");
+    $("liveArticlesNote").textContent=currentLang==="en"?"Articles loaded from the web. Open them to read the original source.":currentLang==="mk"?"Статии преземени од интернет. Отворете ги за да го прочитате оригиналниот извор.":"Artikuj të marrë nga rrjeti. Hapini për të lexuar burimin origjinal.";
+  }catch(err){
+    box.innerHTML=fallbackLiveArticles.map(([title,link])=>`<div class="article"><div class="pic">🔗</div><p><a href="${link}" target="_blank" rel="noopener noreferrer">${title}</a></p></div>`).join("");
+    $("liveArticlesNote").textContent=currentLang==="en"?"Live articles could not be loaded; online search links are shown.":currentLang==="mk"?"Не можеа да се вчитаат live статии; прикажани се линкови за онлајн пребарување.":"Nuk u morën dot live nga browser-i; po shfaqen linke kërkimi online.";
+  }
+  applyStaticTranslations();
+}
+const safeText=value=>String(value||"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
+function uploadCopy(kind,zone,specialty,fileName){
+  const isDoc=kind==="doc";
+  if(currentLang==="en"){
+    return {
+      title:isDoc?"Report uploaded":"Image uploaded",
+      intro:isDoc?"This static prototype does not read report text automatically yet. It can later be connected to OCR and AI for structured interpretation.":"The image preview is ready. A real medical evaluation would need an AI vision model or a clinician review.",
+      context:`Current navigator context: ${zone} / ${specialty}.`,
+      checks:isDoc?["Check the exam type: X-ray, CT, MRI, ultrasound, lab result.","Look for the conclusion, date, recommendation and urgent warning terms.","Compare the report with the symptoms selected in the navigator."]:["Check redness, swelling, deformity, wounds or skin color change.","Compare both sides if the problem is on an arm, hand, leg or foot.","Seek urgent care for severe pain, bleeding, numbness or breathing difficulty."],
+      note:"Educational orientation only; it does not replace a doctor's diagnosis."
+    };
+  }
+  if(currentLang==="mk"){
+    return {
+      title:isDoc?"Извештајот е прикачен":"Сликата е прикачена",
+      intro:isDoc?"Овој статички прототип сè уште не го чита текстот автоматски. Подоцна може да се поврзе со OCR и AI за структуриран преглед.":"Прегледот на сликата е подготвен. За реална медицинска проценка треба AI vision модел или лекарски преглед.",
+      context:`Тековен контекст: ${zone} / ${specialty}.`,
+      checks:isDoc?["Проверете го типот на преглед: X-ray, CT, MRI, ултразвук или лабораторија.","Побарајте заклучок, датум, препорака и итни предупредувања.","Споредете го извештајот со симптомите избрани во навигаторот."]:["Проверете црвенило, оток, деформација, рана или промена на боја.","Споредете ги двете страни ако проблемот е на рака, дланка, нога или стапало.","Побарајте итна помош при силна болка, крварење, вкочанетост или отежнато дишење."],
+      note:"Само едукативна ориентација; не заменува лекарска дијагноза."
+    };
+  }
+  return {
+    title:isDoc?"Raporti u ngarkua":"Imazhi u ngarkua",
+    intro:isDoc?"Ky prototip statik nuk e lexon ende tekstin automatikisht. Më vonë mund të lidhet me OCR dhe AI për interpretim të strukturuar.":"Pamja paraprake e fotos është gati. Për vlerësim real mjekësor nevojitet model AI vizual ose shqyrtim nga mjeku.",
+    context:`Konteksti aktual i navigatorit: ${zone} / ${specialty}.`,
+    checks:isDoc?["Kontrollo llojin e ekzaminimit: X-ray, CT, MRI, ultrazë ose laborator.","Shiko për përfundimin, datën, rekomandimin dhe shenjat urgjente.","Krahasoje raportin me simptomat e zgjedhura në navigator."]:["Kontrollo skuqje, ënjtje, deformim, plagë ose ndryshim ngjyre të lëkurës.","Krahaso të dyja anët nëse problemi është në krah, dorë, këmbë ose shputë.","Kërko ndihmë urgjente në dhimbje të fortë, gjakderdhje, mpirje ose vështirësi në frymëmarrje."],
+    note:"Vetëm orientim edukativ; nuk zëvendëson diagnozën e mjekut."
+  };
+}
+function renderUploadPreview(file){
+  const preview=$("uploadPreview"), assessment=$("uploadAssessment");
+  if(!preview || !assessment || !file) return;
+  const isImage=file.type.startsWith("image/");
+  if(isImage){
+    const url=URL.createObjectURL(file);
+    preview.innerHTML=`<img src="${url}" alt="${safeText(file.name)}">`;
+  }else{
+    preview.innerHTML=`<div class="file-pill"><span>📄</span><span>${safeText(file.name)}</span></div>`;
+  }
+  pendingUploadFile=file;
+  assessment.classList.remove("show");
+  assessment.innerHTML="";
+  $("analyzeUploadBtn")?.classList.add("show");
+}
+function renderUploadAssessment(file){
+  const assessment=$("uploadAssessment");
+  if(!assessment || !file) return;
+  const isDoc=file.type==="application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+  const zone=t(bodyZones[state.zone]?.label || "Zona");
+  const specialty=displayAnswer(state.answers[1]) || t("Drejtimi mjekësor");
+  const copy=uploadCopy(isDoc?"doc":"image",zone,specialty,file.name);
+  assessment.classList.add("show");
+  assessment.innerHTML=`
+    <b>${safeText(copy.title)}</b>
+    <p>${safeText(copy.intro)}</p>
+    <p>${safeText(copy.context)}</p>
+    <ul>${copy.checks.map(item=>`<li>${safeText(item)}</li>`).join("")}</ul>
+    <p><b>${safeText(copy.note)}</b></p>
+  `;
+}
+document.addEventListener("click",e=>{
+  const langBtn=e.target.closest(".lang-switch button[data-lang]");
+  if(langBtn){
+    currentLang=langBtn.dataset.lang;
+    renderDirections();
+    renderSpecialties();
+    render();
+    loadLiveArticles();
+    applyStaticTranslations();
+  }
+  const viewBtn=e.target.closest(".body-tools button[data-view]");
+  if(viewBtn){
+    const requested=viewBtn.dataset.view;
+    bodyView=requested==="toggle"?(bodyView==="front"?"back":"front"):requested;
+    renderBodyView();
+  }
+  const bodyCard=e.target.closest("#bodyCard");
+  if(bodyCard && !e.target.closest(".zone")){
+    bodyView=bodyView==="front"?"back":"front";
+    renderBodyView();
+  }
+  const navBtn=e.target.closest(".nav button[data-target]");
+  if(navBtn){
+    document.querySelectorAll(".nav button").forEach(btn=>btn.classList.toggle("active",btn===navBtn));
+    const target=$(navBtn.dataset.target);
+    if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  const share=e.target.closest("[data-share]");
+  if(share){
+    e.preventDefault();
+    const url=`${location.href.split("#")[0]}${share.getAttribute("href")}`;
+    if(navigator.clipboard) navigator.clipboard.writeText(url);
+    share.textContent="Linku u kopjua";
+  }
+  const zoneBtn=e.target.closest(".zone");
+  if(zoneBtn){
+    state.zone=zoneBtn.dataset.zone;
+    state.step=0;
+    state.answers=[];
+    render();
+  }
+  const opt=e.target.closest(".option");
+  if(opt){
+    const currentQuestions=getQuestions();
+    const q=currentQuestions[state.step]||currentQuestions[0];
+    if(isMultiQuestion(state.step,q)){
+      const existing=Array.isArray(state.answers[state.step])?[...state.answers[state.step]]:(state.answers[state.step]?[state.answers[state.step]]:[]);
+      const value=opt.dataset.option;
+      const next=existing.includes(value)?existing.filter(x=>x!==value):(existing.length>=3?existing:[...existing,value]);
+      state.answers[state.step]=next;
+    }else{
+      state.answers[state.step]=opt.dataset.option;
+      state.answers=state.answers.slice(0,state.step+1);
+    }
+    render();
+  }
+  const spec=e.target.closest("[data-spec]");
+  if(spec) renderSpecialties(spec.dataset.spec);
+  const direction=e.target.closest("[data-direction]");
+  if(direction) renderDirections(direction.dataset.direction);
+});
+$("nextBtn").addEventListener("click",()=>{
+  const total=getQuestions().length;
+  if(state.step<total-1){state.step++;render();return;}
+  $("results").scrollIntoView({behavior:"smooth",block:"start"});
+});
+$("backBtn").addEventListener("click",()=>{
+  if(state.step>0){state.step--;render();}
+});
+$("search").addEventListener("input",e=>{
+  const term=e.target.value.toLowerCase().trim();
+  if(!term) return;
+  const found=Object.entries(bodyZones).find(([,z])=>[z.label,...z.parts,...z.conditions].some(x=>x.toLowerCase().includes(term)));
+  if(found){state.zone=found[0];state.step=0;state.answers=[];render();}
+  const directionMatch=Object.entries(medicalDirections).find(([,items])=>items.some(([name,desc])=>(name+" "+desc).toLowerCase().includes(term)));
+  if(directionMatch) renderDirections(directionMatch[0]);
+});
+$("medicalUpload").addEventListener("change",e=>{
+  const file=e.target.files && e.target.files[0];
+  if(file) renderUploadPreview(file);
+});
+$("analyzeUploadBtn").addEventListener("click",()=>{
+  if(pendingUploadFile) renderUploadAssessment(pendingUploadFile);
+});
+renderSpecialties();
+renderDirections();
+renderConnectedModules();
+render();
+applyStaticTranslations();
+loadLiveArticles();
+</script>
+</body>
+</html>
