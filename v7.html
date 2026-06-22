@@ -2119,7 +2119,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       </div>
       <!-- VITAL INTELLIGENCE ENGINE -->
       <div style="padding:10px 14px;">
-        <button id="vitAiAnalyzeBtn" onclick="runVitalIntelligence()" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#0D3B8E,#1E5FBA,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(59,125,216,0.4);">
+        <button id="vitAiAnalyzeBtn" onclick="runVitalIntelligence()" data-i18n="dx.runVital" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#0D3B8E,#1E5FBA,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(59,125,216,0.4);">
           Run Vital
         </button>
 
@@ -3188,7 +3188,7 @@ select option{background:#0A1628;color:#F1F5FF;}
           <div id="eng-doc-txt" style="font-size:11px;color:#F1F5FF;line-height:1.5;"></div>
         </div>
       </div>
-      <button onclick="runCorrelationEngine()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;" id="ds-analyze-btn">
+      <button onclick="runCorrelationEngine()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;" id="ds-analyze-btn" data-i18n="dx.reAnalyze">
         Re-Analyze
       </button>
 
@@ -4112,7 +4112,7 @@ async function callClaude(systemExtra, userMsg, onSuccess, onError, loadingEl, r
     if(!text)throw new Error();
     onSuccess(text);
   }catch(e){if(onError)onError();}
-  if(loadingEl){loadingEl.disabled=false;loadingEl.innerHTML='Re-Analyze';}
+  if(loadingEl){loadingEl.disabled=false;loadingEl.innerHTML=dhT('dx.reAnalyze');}
 }
 
 function fmt(t){return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');}
@@ -4145,7 +4145,7 @@ async function aiPanel(opts){
     if(err){ if(resp){ resp.style.display='none'; if(resp.classList) resp.classList.remove('vis'); } err.classList.add('vis'); }
     else text.innerHTML='❌ Connection error. Provo përsëri.';
   }
-  if(btn){ btn.disabled=false; btn.innerHTML=opts.label || origLabel || 'Re-Analyze'; }
+  if(btn){ btn.disabled=false; btn.innerHTML=opts.label || origLabel || dhT('dx.reAnalyze'); }
 }
 
 /* VERDICT */
@@ -4163,7 +4163,7 @@ async function runVerdictAI(){
     var tx=d.content&&d.content[0]&&d.content[0].text;if(!tx)throw new Error();
     text.innerHTML=fmt(tx);
   }catch(e){resp.style.display='none';err.classList.add('vis');}
-  btn.disabled=false;btn.innerHTML='Re-Analyze';
+  btn.disabled=false;btn.innerHTML=dhT('dx.reAnalyze');
 }
 
 /* PROFILE */
@@ -6288,7 +6288,10 @@ var DH_I18N = {
   'vit.daLog':     {sq:'🏃 Ditari i Aktivitetit', mk:'🏃 Дневник на активност', en:'🏃 Daily Activity Log'},
   'vit.steps':   {sq:'👟 Hapa ✎', mk:'👟 Чекори ✎', en:'👟 Steps ✎'},
   'vit.cal':     {sq:'🔥 Kalori ✎', mk:'🔥 Калории ✎', en:'🔥 Calories ✎'},
-  'vit.pulsAvg': {sq:'❤️ Puls avg ✎', mk:'❤️ Пулс просек ✎', en:'❤️ Avg pulse ✎'}
+  'vit.pulsAvg': {sq:'❤️ Puls avg ✎', mk:'❤️ Пулс просек ✎', en:'❤️ Avg pulse ✎'},
+  /* Diagnosis / Vitals AI buttons */
+  'dx.runVital':  {sq:'Analizo Vitalet', mk:'Анализирај витални', en:'Run Vital'},
+  'dx.reAnalyze': {sq:'Ri-analizo', mk:'Повторно анализирај', en:'Re-Analyze'}
 };
 var DH_LANG = (function(){ try{ return localStorage.getItem('dh_lang') || 'sq'; }catch(e){ return 'sq'; } })();
 function dhT(key){ var o=DH_I18N[key]; return (o && (o[DH_LANG]||o.en||o.sq)) || key; }
@@ -6976,7 +6979,7 @@ function enhancedRunVerdictAI(){
   if(!navigator.onLine){
     showErrToast('No Internet', 'Connect to the internet to use Claude AI analysis.', 'warn');
     var btn = document.getElementById('verdictAiBtn');
-    if(btn){ btn.disabled=false; btn.textContent='Re-Analyze'; }
+    if(btn){ btn.disabled=false; btn.textContent=dhT('dx.reAnalyze'); }
     return;
   }
   if(_origRunVerdictAI) _origRunVerdictAI();
