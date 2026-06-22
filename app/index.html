@@ -6024,55 +6024,6 @@ function applySupabaseSession(session){
   });
 })();
 
-/* === DEBUG i përkohshëm: diagnostiko ngarkimin e të dhënave pas cold-start === */
-async function dhDiag(){
-  var out=[];
-  try{
-    var sb=getSupa();
-    out.push('getSupa: '+(sb?'OK':'NULL'));
-    var sess = sb? await sb.auth.getSession() : null;
-    var s = sess&&sess.data?sess.data.session:null;
-    out.push('session: '+(s?'YES':'NO'));
-    if(s&&s.expires_at){ out.push('exp '+new Date(s.expires_at*1000).toLocaleTimeString()+' | now '+new Date().toLocaleTimeString()); }
-    var ures = sb? await sb.auth.getUser().catch(function(e){return {error:e};}) : null;
-    out.push('getUser err: '+(ures&&ures.error?(ures.error.message||ures.error):'none'));
-    var uid = (ures&&ures.data&&ures.data.user&&ures.data.user.id) || (s&&s.user&&s.user.id) || (typeof LST!=='undefined'&&LST.currentUser&&LST.currentUser.id) || null;
-    out.push('uid: '+(uid?uid.slice(0,8)+'…':'NULL'));
-    out.push('LST.uid: '+((typeof LST!=='undefined'&&LST.currentUser&&LST.currentUser.id)?LST.currentUser.id.slice(0,8)+'…':'NULL'));
-    out.push('_userDataLoaded: '+(typeof _userDataLoaded!=='undefined'?_userDataLoaded:'?'));
-    async function cnt(t){ try{ var r=await sb.from(t).select('id').eq('patient_id',uid); return t+': '+(r.error?('ERR '+r.error.message):((r.data?r.data.length:0)+' rows')); }catch(e){ return t+': THROW '+(e.message||e); } }
-    if(sb&&uid){
-      out.push(await cnt('medical_profiles'));
-      out.push(await cnt('vitals'));
-      out.push(await cnt('daily_activity'));
-      out.push(await cnt('therapy_alarms'));
-      try{ var mp=await sb.from('medical_profiles').select('*').eq('patient_id',uid).order('updated_at',{ascending:false}).limit(1); var m=mp.data&&mp.data[0];
-        out.push(' MP diag:'+((m&&m.diagnoses&&m.diagnoses.length)||0)+' ther:'+((m&&m.therapy&&m.therapy.length)||0)+' alg:'+((m&&m.allergies&&m.allergies.length)||0)); }catch(e){ out.push(' MP detail ERR'); }
-      try{ var v=await sb.from('vitals').select('*').eq('patient_id',uid).order('recorded_at',{ascending:false}).limit(1); var vv=v.data&&v.data[0];
-        out.push(' VT last sys:'+(vv?vv.systolic_bp:'-')+' hr:'+(vv?vv.heart_rate:'-')+' glu:'+(vv?vv.glucose:'-')+' spo2:'+(vv?vv.spo2:'-')); }catch(e){ out.push(' VT detail ERR'); }
-      out.push('UI now: prof-diag='+((document.querySelectorAll('#prof-diag-tags .tag2')||[]).length)+' v-sys='+((document.getElementById('v-sys')||{}).value||'-')+' g-glu='+((document.getElementById('g-glu')||{}).textContent||'-'));
-      var d=window._dbgIUD||{};
-      out.push('IUD runs:'+(d.count||0)+' lastAtt:'+(d.attempt!=null?d.attempt:'-')+' @'+(d.t||'-'));
-      out.push(' load mpRows:'+(d.mpRows!=null?d.mpRows:'-')+' cache:'+(d.mpCache?'Y':'N')+' err:'+(d.mpErr||d.mpThrow||'-'));
-      out.push(' diagRendered:'+(d.diagRendered!=null?d.diagRendered:'-')+' diagFinal:'+(d.diagFinal!=null?d.diagFinal:'-')+' retry:'+(d.willRetry?'Y':'N'));
-    }
-  }catch(e){ out.push('FATAL: '+(e.message||e)); }
-  var pre=document.getElementById('dhdbgout'); if(pre) pre.textContent=out.join('\n');
-  var ov=document.getElementById('dhdbg'); if(ov) ov.style.display='flex';
-}
-(function(){
-  function inject(){
-    if(!document.body || document.getElementById('dhdbgbtn')) return;
-    var b=document.createElement('button'); b.id='dhdbgbtn'; b.textContent='🐞 Debug';
-    b.style.cssText='position:fixed;left:10px;bottom:84px;z-index:100000;background:#111827;color:#fff;border:none;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.4);';
-    b.onclick=function(){ try{ dhDiag(); }catch(e){ alert('diag err '+(e.message||e)); } };
-    var ov=document.createElement('div'); ov.id='dhdbg';
-    ov.style.cssText='display:none;position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.8);align-items:center;justify-content:center;padding:18px;';
-    ov.innerHTML='<div style="background:#fff;border-radius:14px;max-width:340px;width:100%;max-height:80vh;overflow:auto;padding:16px;"><div style="font-weight:800;margin-bottom:8px;color:#111;">Data load diagnostic</div><pre id="dhdbgout" style="white-space:pre-wrap;font-size:11px;line-height:1.5;color:#111;margin:0 0 12px;"></pre><button onclick="document.getElementById(\'dhdbg\').style.display=\'none\'" style="width:100%;padding:10px;border:none;border-radius:10px;background:#2563EB;color:#fff;font-weight:700;">Close</button></div>';
-    document.body.appendChild(b); document.body.appendChild(ov);
-  }
-  if(document.readyState!=='loading') inject(); else document.addEventListener('DOMContentLoaded', inject);
-})();
 
 /* Capacitor plugin helper + deep-link i Google OAuth (vetëm native) */
 function capPlugin(name){
@@ -8562,7 +8513,6 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
   attempt = attempt || 0;
   var _loadErr = false;  /* gjurmo dështim rrjeti për të riprovuar ngarkimin */
   var _needRetry = false; /* riprovë nëse query kthen 0 rreshta gjatë ngarkimit (auth jo gati) */
-  window._dbgIUD = { count: ((window._dbgIUD&&window._dbgIUD.count)||0)+1, attempt: attempt, t: new Date().toLocaleTimeString() };
   /* 1. Pastro vitalet demo */
   vitalsState = {sys:0, dia:0, hr:0, spo2:0, glu:0, temp:0};
 
@@ -8645,18 +8595,14 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
   };
   /* 1) Hidrato menjëherë nga cache lokal (mbijeton Clear All) */
   try{ var _mpCache = JSON.parse(localStorage.getItem(MPKEY)||'null'); if(_mpCache) _renderMP(_mpCache); }catch(e){}
-  window._dbgIUD.mpCache = !!_mpCache;
   /* 2) Pastaj rifresko nga Supabase nëse vjen */
   try{
     var mpRes = await sb.from('medical_profiles').select('*').eq('patient_id', userId).order('updated_at',{ascending:false}).limit(1);
     if(mpRes.error){ _loadErr = true; console.warn('medical_profiles LOAD error:', mpRes.error.message); }
     var mpd = (mpRes.data && mpRes.data[0]) || null;
-    window._dbgIUD.mpRows = mpRes.data ? mpRes.data.length : 0;
-    window._dbgIUD.mpErr = mpRes.error ? mpRes.error.message : null;
     if(!mpd && !_mpCache) _needRetry = true;
     if(mpd){ try{ localStorage.setItem(MPKEY, JSON.stringify(mpd)); }catch(e){} _renderMP(mpd); try{ markUserHasData(); }catch(e){} }
-    window._dbgIUD.diagRendered = (document.querySelectorAll('#prof-diag-tags .tag2')||[]).length;
-    }catch(e){ _loadErr = true; _needRetry = true; window._dbgIUD.mpThrow = (e.message||''+e); console.warn('load medical_profiles:', e.message); }
+    }catch(e){ _loadErr = true; _needRetry = true; console.warn('load medical_profiles:', e.message); }
 
     /* Vitalet e fundit — nga Supabase OSE cache lokal (që të mos zhduken pas Clear All) */
     var VTKEY = 'dh_cache_vt_'+userId;
@@ -8783,10 +8729,7 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
     }catch(e){ console.warn('load daily_score:', e.message); }
 
     /* Riprovo nëse ngarkimi dështoi OSE ktheu 0 rreshta pa cache (auth jo gati në cold-start) → pa kërkuar sign-out */
-    window._dbgIUD.needRetry = _needRetry; window._dbgIUD.loadErr = _loadErr;
-    window._dbgIUD.diagFinal = (document.querySelectorAll('#prof-diag-tags .tag2')||[]).length;
     if((_loadErr || _needRetry) && attempt < 6){
-      window._dbgIUD.willRetry = true;
       setTimeout(function(){ initUserData(userId,userName,userEmail,attempt+1); }, 2500);
     } else {
       _userDataLoaded = true;
