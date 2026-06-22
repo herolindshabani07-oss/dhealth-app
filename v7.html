@@ -1376,6 +1376,13 @@ select option{background:#0A1628;color:#F1F5FF;}
 .v7-av{width:46px!important;height:46px!important;border-radius:15px!important;background:linear-gradient(135deg,#6cb2ff,#3b82f6)!important;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 8px 18px rgba(59,130,246,.4)}
 .v7-greet{font-size:12px;color:#7387a4;font-weight:600}
 .v7-name{font-size:15.5px;color:#1f2c44;font-weight:800}
+.v7-hi{font-size:18px;font-weight:600;color:#16315a;letter-spacing:-.2px;line-height:1.12;font-family:'DM Sans',sans-serif;}
+.v7-hi span{font-weight:700;color:#12294b;}
+.v7-syncrow{display:inline-flex;align-items:center;gap:5px;margin-top:4px;padding:0;border:none;background:transparent;cursor:pointer;color:#7b90ad;font-size:11.5px;font-weight:500;font-family:'DM Sans',sans-serif;}
+.v7-syncrow:active{opacity:.55;}
+.v7-syncico{width:13px;height:13px;stroke:#3b82f6;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.v7-syncing .v7-syncico{animation:v7spin .8s linear infinite;}
+@keyframes v7spin{to{transform:rotate(360deg);}}
 .v7-bell{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;background:linear-gradient(160deg,rgba(255,255,255,.85),rgba(255,255,255,.55));border:1px solid rgba(255,255,255,.9);box-shadow:0 8px 20px rgba(70,120,190,.14)}
 .v7-bell svg{width:21px;height:21px;stroke:#3b6ea5;fill:none;stroke-width:2}
 .v7-bdot{position:absolute;top:9px;right:10px;min-width:16px;height:16px;padding:0 4px;background:#ff5b6e;border-radius:9px;border:2px solid #fff;color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
@@ -1526,8 +1533,12 @@ select option{background:#0A1628;color:#F1F5FF;}
             <div class="av-drop-item red" onclick="closeAvDrop();doSignOut()"><div class="av-drop-ico" style="background:#FEF2F2;">🚪</div><div class="av-drop-lbl">Sign Out</div></div>
           </div>
         </div>
-        <div>
-          <div class="v7-name" id="v7HomeName"></div>
+        <div class="v7-hello">
+          <div class="v7-hi">Hello, <span id="v7HomeName">there</span></div>
+          <button class="v7-syncrow" id="v7SyncBtn" onclick="dhSyncNow()" aria-label="Sync data">
+            <svg class="v7-syncico" id="v7SyncIco" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 4v5h-5"/></svg>
+            <span id="v7SyncTxt">Last sync: just now</span>
+          </button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;">
@@ -6025,6 +6036,36 @@ function applySupabaseSession(session){
 })();
 
 
+/* ════ SYNC / REFRESH (Home header) — për unazën/bracelet-in + të dhënat ════ */
+var _lastSyncTs = Date.now();
+function _updateSyncLabel(){
+  var txt=document.getElementById('v7SyncTxt'); if(!txt) return;
+  var mins = Math.floor((Date.now()-_lastSyncTs)/60000);
+  var s;
+  if(mins<1) s='just now';
+  else if(mins===1) s='1 min ago';
+  else if(mins<60) s=mins+' min ago';
+  else { var h=Math.floor(mins/60); s=h+(h===1?' hr':' hrs')+' ago'; }
+  txt.textContent='Last sync: '+s;
+}
+function dhSyncNow(){
+  var btn=document.getElementById('v7SyncBtn'), txt=document.getElementById('v7SyncTxt');
+  if(btn) btn.classList.add('v7-syncing');
+  if(txt) txt.textContent='Syncing…';
+  try{ if(typeof isConnected==='function'){
+    if(isConnected('gfit')&&typeof syncGoogleFitData==='function') syncGoogleFitData();
+    if(isConnected('fitbit')&&typeof loadFitbitData==='function') loadFitbitData();
+  } }catch(e){}
+  try{ if(typeof LST!=='undefined' && LST.currentUser && LST.currentUser.id && typeof initUserData==='function') initUserData(LST.currentUser.id, LST.currentUser.name, LST.currentUser.email); }catch(e){}
+  setTimeout(function(){
+    _lastSyncTs = Date.now();
+    if(btn) btn.classList.remove('v7-syncing');
+    _updateSyncLabel();
+    try{ showToast('✅ Sinkronizuar'); }catch(e){}
+  }, 1100);
+}
+setInterval(_updateSyncLabel, 20000);
+
 /* Capacitor plugin helper + deep-link i Google OAuth (vetëm native) */
 function capPlugin(name){
   return (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins[name]) || null;
@@ -8535,7 +8576,7 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
   var profName = document.getElementById('moreProfileName');
   if(profName) profName.textContent = userName || firstName;
   var v7hn = document.getElementById('v7HomeName');
-  if(v7hn) v7hn.textContent = userName || firstName;
+  if(v7hn) v7hn.textContent = firstName;
   try{ renderRecentAlerts(); _updateNotifDot(); }catch(e){}
   var profEmail = document.getElementById('moreProfileEmail');
   if(profEmail) profEmail.textContent = userEmail || '';
@@ -8812,7 +8853,7 @@ function updateUIAfterLogin(name, email, picture, userId){
   var dsName = document.getElementById('ds-name');     if(dsName) dsName.textContent = firstName;
   var mpName = document.getElementById('moreProfileName'); if(mpName) mpName.textContent = name;
   var mpEmail= document.getElementById('moreProfileEmail'); if(mpEmail) mpEmail.textContent = email;
-  var v7hn = document.getElementById('v7HomeName');    if(v7hn)   v7hn.textContent = name;
+  var v7hn = document.getElementById('v7HomeName');    if(v7hn)   v7hn.textContent = firstName;
 
   /* Launch app */
   document.getElementById('login-overlay').style.display='none';
