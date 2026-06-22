@@ -1555,12 +1555,12 @@ select option{background:#0A1628;color:#F1F5FF;}
               <div class="av-drop-av">👩‍⚕️</div>
               <div><div class="av-drop-name">User</div><div class="av-drop-plan">Free Plan</div></div>
             </div>
-            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(function(){initSettings();applyProfileMode('profile');},100)"><div class="av-drop-ico" style="background:var(--bg);">👤</div><div class="av-drop-lbl">My Profile</div></div>
-            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('subscription')"><div class="av-drop-ico" style="background:var(--ambl);">⭐</div><div class="av-drop-lbl">Subscription</div></div>
-            <div class="av-drop-item" onclick="closeAvDrop();openNotifSheet()"><div class="av-drop-ico" style="background:var(--pul);">🔔</div><div class="av-drop-lbl">Notifications</div></div>
-            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(function(){initSettings();applyProfileMode('settings');},100)"><div class="av-drop-ico" style="background:var(--bg);">⚙️</div><div class="av-drop-lbl">Settings</div></div>
+            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(function(){initSettings();applyProfileMode('profile');},100)"><div class="av-drop-ico" style="background:var(--bg);">👤</div><div class="av-drop-lbl" data-i18n="menu.profile">My Profile</div></div>
+            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('subscription')"><div class="av-drop-ico" style="background:var(--ambl);">⭐</div><div class="av-drop-lbl" data-i18n="menu.subscription">Subscription</div></div>
+            <div class="av-drop-item" onclick="closeAvDrop();openNotifSheet()"><div class="av-drop-ico" style="background:var(--pul);">🔔</div><div class="av-drop-lbl" data-i18n="menu.notifications">Notifications</div></div>
+            <div class="av-drop-item" onclick="closeAvDrop();switchScreen('more');setTimeout(function(){initSettings();applyProfileMode('settings');},100)"><div class="av-drop-ico" style="background:var(--bg);">⚙️</div><div class="av-drop-lbl" data-i18n="menu.settings">Settings</div></div>
             <div class="av-drop-item" onclick="closeAvDrop();gatedAction('private')"><div class="av-drop-ico" style="background:#EBF3FF;">🔒</div><div class="av-drop-lbl">Dr. Shabani</div></div>
-            <div class="av-drop-item red" onclick="closeAvDrop();doSignOut()"><div class="av-drop-ico" style="background:#FEF2F2;">🚪</div><div class="av-drop-lbl">Sign Out</div></div>
+            <div class="av-drop-item red" onclick="closeAvDrop();doSignOut()"><div class="av-drop-ico" style="background:#FEF2F2;">🚪</div><div class="av-drop-lbl" data-i18n="menu.signout">Sign Out</div></div>
           </div>
         </div>
         <div class="v7-hello">
@@ -6263,7 +6263,13 @@ var DH_I18N = {
   'v.saveSigns': {sq:'✓ Ruaj shenjat vitale', mk:'✓ Зачувај витални знаци', en:'✓ Save Vital Signs'},
   /* Diagnosis AI actions */
   'dx.genReport':      {sq:'🤖 Gjenero raport shëndetësor', mk:'🤖 Генерирај здравствен извештај', en:'🤖 Generate health report'},
-  'dx.therapyAnalysis':{sq:'🤖 Analizë e Terapisë me AI', mk:'🤖 AI анализа на терапија', en:'🤖 AI Therapy Analysis'}
+  'dx.therapyAnalysis':{sq:'🤖 Analizë e Terapisë me AI', mk:'🤖 AI анализа на терапија', en:'🤖 AI Therapy Analysis'},
+  /* Menu / Settings */
+  'menu.profile':       {sq:'Profili Im', mk:'Мој профил', en:'My Profile'},
+  'menu.subscription':  {sq:'Abonimi', mk:'Претплата', en:'Subscription'},
+  'menu.notifications': {sq:'Njoftimet', mk:'Известувања', en:'Notifications'},
+  'menu.settings':      {sq:'Cilësimet', mk:'Поставки', en:'Settings'},
+  'menu.signout':       {sq:'Dil', mk:'Одјави се', en:'Sign Out'}
 };
 var DH_LANG = (function(){ try{ return localStorage.getItem('dh_lang') || 'sq'; }catch(e){ return 'sq'; } })();
 function dhT(key){ var o=DH_I18N[key]; return (o && (o[DH_LANG]||o.en||o.sq)) || key; }
