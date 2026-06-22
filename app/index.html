@@ -2027,7 +2027,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="prog-wrap"><div class="prog-lbl"><span>Systolic risk</span><span style="color:var(--orange);" id="bp-prog-lbl">--/180 mmHg</span></div><div class="prog-bar"><div class="prog-fill" id="bp-prog-fill" style="width:0%;background:linear-gradient(90deg,#F97316,#FBBF24);"></div></div></div>
     </div>
     <div class="glu-detail">
-      <div class="det-hdr"><div class="det-title">🍬 Glucose Detail <span style="opacity:0.55;font-weight:500;font-size:9px;">— trokit ✎</span></div><span id="glu-badge" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--al);color:#059669;">--</span></div>
+      <div class="det-hdr"><div class="det-title"><span data-i18n="vit.glucoseDetail">🍬 Glucose Detail</span> <span style="opacity:0.55;font-weight:500;font-size:9px;">— trokit ✎</span></div><span id="glu-badge" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--al);color:#059669;">--</span></div>
       <div class="gauge-row">
         <div class="gauge-box" onclick="editVitalDetail('glu')" title="Fut glukozën esëll" style="cursor:pointer;"><div class="gauge-val" style="color:var(--teal);" id="g-glu">--</div><div class="gauge-lbl">Fasting ✎</div><div class="gauge-sub">mmol/L</div></div>
         <div class="gauge-box" onclick="editVitalDetail('glupost')" title="Fut glukozën pas ngrënies" style="cursor:pointer;"><div class="gauge-val" style="color:var(--accent);" id="g-glu-post">--</div><div class="gauge-lbl">Post-meal ✎</div><div class="gauge-sub">mmol/L</div></div>
@@ -2044,7 +2044,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;margin:10px 16px 0;border:1px solid rgba(255,107,138,0.25);padding:14px;position:relative;overflow:hidden;">
       <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF6B8A,#8B6FE8);"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div style="font-size:13px;font-weight:700;color:#F1F5FF;">🫀 ECG Smart Analysis</div>
+        <div style="font-size:13px;font-weight:700;color:#F1F5FF;" data-i18n="vit.ecg">🫀 ECG Smart Analysis</div>
         <span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(139,111,232,0.1);color:var(--purple);">Clinic Only</span>
       </div>
       <div id="ecgVitalsArea">
@@ -2066,7 +2066,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <!-- NUTRITION TRACKER -->
     <div style="margin:10px 16px 0;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;border:0.5px solid rgba(255,255,255,0.12);padding:13px 14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;">🍽 Nutrition Today</div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;" data-i18n="vit.nutrition">🍽 Nutrition Today</div>
         <button onclick="openNutritionModal()" style="padding:6px 12px;border-radius:10px;border:none;background:linear-gradient(135deg,#F97316,#FB923C);color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">+ Add Meal</button>
       </div>
       <div id="nutrMealsList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
@@ -2091,25 +2091,25 @@ select option{background:#0A1628;color:#F1F5FF;}
 
     <!-- DAILY ACTIVITY IN VITALS -->
     <div style="margin:10px 16px 0;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;border:0.5px solid rgba(255,255,255,0.12);padding:13px 14px;">
-      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">🏃 Daily Activity <span style="opacity:0.6;font-weight:500;text-transform:none;">— trokit për të shënuar ✎</span></div>
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;"><span data-i18n="vit.daTitle">🏃 Daily Activity</span> <span style="opacity:0.6;font-weight:500;text-transform:none;">— trokit për të shënuar ✎</span></div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
         <div onclick="editDailyMetric('steps')" title="Fut hapat" style="text-align:center;cursor:pointer;">
           <div style="font-size:18px;font-weight:700;color:#60A5FA;" id="vit-steps">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">👟 Steps ✎</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;" data-i18n="vit.steps">👟 Steps ✎</div>
         </div>
         <div onclick="editDailyMetric('cal')" title="Fut kaloritë" style="text-align:center;cursor:pointer;">
           <div style="font-size:18px;font-weight:700;color:var(--orange);" id="vit-cal">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">🔥 Calories ✎</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;" data-i18n="vit.cal">🔥 Calories ✎</div>
         </div>
         <div onclick="editDailyMetric('hr')" title="Fut pulsin mesatar" style="text-align:center;cursor:pointer;">
           <div style="font-size:18px;font-weight:700;color:var(--heart);" id="vit-hr-avg">--</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">❤️ Puls avg ✎</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;" data-i18n="vit.pulsAvg">❤️ Puls avg ✎</div>
         </div>
       </div>
       <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);font-size:11px;color:rgba(255,255,255,0.5);text-align:center;">
-        Distance: <strong id="vit-dist" onclick="editDailyMetric('dist')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp;
-        Active: <strong id="vit-active" onclick="editDailyMetric('active')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp;
-        Sleep: <strong id="vit-sleep" onclick="editDailyMetric('sleep')" style="color:#F1F5FF;cursor:pointer;">--</strong> <span style="opacity:0.5;">✎</span>
+        <span data-i18n="home.distance">Distance:</span> <strong id="vit-dist" onclick="editDailyMetric('dist')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp;
+        <span data-i18n="home.active">Active:</span> <strong id="vit-active" onclick="editDailyMetric('active')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp;
+        <span data-i18n="home.sleepL">Sleep:</span> <strong id="vit-sleep" onclick="editDailyMetric('sleep')" style="color:#F1F5FF;cursor:pointer;">--</strong> <span style="opacity:0.5;">✎</span>
       </div>
     </div>
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;margin:10px 16px 0;border:0.5px solid rgba(255,255,255,0.12);overflow:hidden;">
@@ -2834,7 +2834,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <!-- DAILY ACTIVITY LOG -->
     <div style="margin:12px 14px 0;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;border:0.5px solid rgba(255,255,255,0.12);overflow:hidden;">
       <div style="padding:12px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-        <div style="font-size:13px;font-weight:700;color:#F1F5FF;">🏃 Daily Activity Log</div>
+        <div style="font-size:13px;font-weight:700;color:#F1F5FF;" data-i18n="vit.daLog">🏃 Daily Activity Log</div>
         <div style="font-size:11px;color:rgba(255,255,255,0.5);">Last 7 days</div>
       </div>
       <!-- Summary row -->
@@ -6279,7 +6279,16 @@ var DH_I18N = {
   'home.sourcesTitle': {sq:'🔗 Burimet e të dhënave', mk:'🔗 Извори на податоци', en:'🔗 Data sources'},
   'home.sync': {sq:'🔄 Sinkronizo', mk:'🔄 Синхронизирај', en:'🔄 Sync'},
   'aq.title':        {sq:'Cilësia e ajrit', mk:'Квалитет на воздух', en:'Air quality'},
-  'aq.yourLocation': {sq:'Vendndodhja juaj', mk:'Твоја локација', en:'Your location'}
+  'aq.yourLocation': {sq:'Vendndodhja juaj', mk:'Твоја локација', en:'Your location'},
+  /* Vitals — detajet & Daily Activity */
+  'vit.glucoseDetail': {sq:'🍬 Detaji i Glukozës', mk:'🍬 Детал за гликоза', en:'🍬 Glucose Detail'},
+  'vit.ecg':       {sq:'🫀 Analizë e zgjuar ECG', mk:'🫀 Паметна ЕКГ анализа', en:'🫀 ECG Smart Analysis'},
+  'vit.nutrition': {sq:'🍽 Ushqyerja sot', mk:'🍽 Исхрана денес', en:'🍽 Nutrition Today'},
+  'vit.daTitle':   {sq:'🏃 Aktiviteti ditor', mk:'🏃 Дневна активност', en:'🏃 Daily Activity'},
+  'vit.daLog':     {sq:'🏃 Ditari i Aktivitetit', mk:'🏃 Дневник на активност', en:'🏃 Daily Activity Log'},
+  'vit.steps':   {sq:'👟 Hapa ✎', mk:'👟 Чекори ✎', en:'👟 Steps ✎'},
+  'vit.cal':     {sq:'🔥 Kalori ✎', mk:'🔥 Калории ✎', en:'🔥 Calories ✎'},
+  'vit.pulsAvg': {sq:'❤️ Puls avg ✎', mk:'❤️ Пулс просек ✎', en:'❤️ Avg pulse ✎'}
 };
 var DH_LANG = (function(){ try{ return localStorage.getItem('dh_lang') || 'sq'; }catch(e){ return 'sq'; } })();
 function dhT(key){ var o=DH_I18N[key]; return (o && (o[DH_LANG]||o.en||o.sq)) || key; }
