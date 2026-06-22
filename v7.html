@@ -1414,6 +1414,27 @@ select option{background:#0A1628;color:#F1F5FF;}
 .v7-sch{font-size:17px;font-weight:800;color:#fff;margin-bottom:3px}
 .v7-scp{font-size:12px;color:rgba(255,255,255,.92);line-height:1.4}
 .v7-scbtn{margin-top:14px;background:#fff;color:#2b6cd4;border:none;border-radius:13px;padding:12px;width:100%;font-size:13px;font-weight:800;font-family:var(--font);position:relative;z-index:1;box-shadow:0 8px 16px rgba(0,0,0,.13);cursor:pointer}
+/* Wellness Score card */
+.wl-card{background:linear-gradient(150deg,#3f7fe6 0%,#2e63cf 100%);border-radius:22px;padding:18px;margin:0 0 4px;color:#fff;box-shadow:0 16px 34px rgba(46,99,207,.26)}
+.wl-body{display:flex;align-items:center;gap:16px}
+.wl-ring{position:relative;width:108px;height:108px;flex-shrink:0}
+.wl-ring svg{width:108px;height:108px;display:block}
+.wl-rtxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.wl-rtxt b{font-size:30px;font-weight:800;line-height:1;font-family:var(--font)}
+.wl-rtxt span{font-size:11px;font-weight:600;opacity:.85;margin-top:3px}
+.wl-mets{flex:1;display:flex;flex-direction:column;gap:11px;min-width:0}
+.wl-m{display:flex;align-items:center;gap:9px}
+.wl-mi{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.wl-mi svg{width:17px;height:17px;fill:#fff}
+.wl-mc{flex:1;min-width:0}
+.wl-mr{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:600;margin-bottom:4px;font-family:var(--font)}
+.wl-mr b{font-size:13px;font-weight:800}
+.wl-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.22);overflow:hidden}
+.wl-bar i{display:block;height:100%;width:0;border-radius:3px;background:#fff;transition:width .7s ease}
+.wl-m.locked{opacity:.5}
+.wl-cta{margin-top:15px;width:100%;padding:12px;border-radius:14px;border:none;background:rgba(255,255,255,.16);color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font)}
+.wl-cta:active{opacity:.78}
+#wlPer{background:rgba(59,130,246,.12);padding:3px 10px;border-radius:20px;color:#2f6cd4;font-weight:600;cursor:default}
 
 .v7-daily{border-radius:21px;padding:14px 16px;display:flex;justify-content:space-around;margin-bottom:10px;background:linear-gradient(160deg,rgba(255,255,255,.88),rgba(255,255,255,.55));backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 28px rgba(70,120,190,.14)}
 .v7-da{display:flex;flex-direction:column;align-items:center;gap:3px}
@@ -1592,6 +1613,38 @@ select option{background:#0A1628;color:#F1F5FF;}
         </div>
       </div>
       <button class="v7-scbtn" onclick="event.stopPropagation();switchScreen('diagnostic')">Shiko analizën e plotë →</button>
+    </div>
+
+    <div class="v7-secrow" style="margin-top:2px;"><div class="v7-stitle">Wellness</div><span class="v7-see" id="wlPer">Today</span></div>
+    <div class="wl-card" id="wlCard">
+      <div class="wl-body">
+        <div class="wl-ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="9"/>
+            <circle id="wlProg" cx="60" cy="60" r="52" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="327" transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="wl-rtxt"><b id="wlScore">--</b><span id="wlLbl">No data</span></div>
+        </div>
+        <div class="wl-mets">
+          <div class="wl-m" id="wlHeartRow">
+            <span class="wl-mi"><svg viewBox="0 0 24 24"><path d="M12 21S4 14 4 8.5A3.5 3.5 0 0 1 12 6a3.5 3.5 0 0 1 8 2.5C20 14 12 21 12 21Z"/></svg></span>
+            <div class="wl-mc"><div class="wl-mr"><span>Heart Health</span><b id="wlHeart">--</b></div><div class="wl-bar"><i id="wlHeartBar"></i></div></div>
+          </div>
+          <div class="wl-m locked" id="wlSleepRow">
+            <span class="wl-mi"><svg viewBox="0 0 24 24"><path d="M21 12.8A8 8 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"/></svg></span>
+            <div class="wl-mc"><div class="wl-mr"><span>Sleep</span><b id="wlSleep">--</b></div><div class="wl-bar"><i id="wlSleepBar"></i></div></div>
+          </div>
+          <div class="wl-m locked" id="wlActRow">
+            <span class="wl-mi"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+            <div class="wl-mc"><div class="wl-mr"><span>Activity</span><b id="wlAct">--</b></div><div class="wl-bar"><i id="wlActBar"></i></div></div>
+          </div>
+          <div class="wl-m locked" id="wlStressRow">
+            <span class="wl-mi"><svg viewBox="0 0 24 24"><path d="M12 3c3.5 4 3.5 9 0 13-3.5-4-3.5-9 0-13Zm0 13c0 0 5 .5 8-2-3 0-5 1-8 2Zm0 0c0 0-5 .5-8-2 3 0 5 1 8 2Z"/></svg></span>
+            <div class="wl-mc"><div class="wl-mr"><span>Stress</span><b id="wlStress">--</b></div><div class="wl-bar"><i id="wlStressBar"></i></div></div>
+          </div>
+        </div>
+      </div>
+      <button class="wl-cta" id="wlCta" onclick="dhRingConnect()"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="7" fill="none" stroke="#fff" stroke-width="2.4"/></svg> <span id="wlCtaTxt">Connect D Health Ring for full insights</span></button>
     </div>
 
     <div class="v7-daily" onclick="switchScreen('vitals')" style="cursor:pointer;" title="Shiko te Vitals">
@@ -6068,6 +6121,49 @@ function dhSyncNow(){
 }
 setInterval(_updateSyncLabel, 20000);
 
+/* ════ WELLNESS SCORE (Home) — Heart nga vitalet; Sleep/Activity/Stress nga unaza ════ */
+function _wlSet(valId, barId, score){
+  var v=document.getElementById(valId), b=document.getElementById(barId);
+  if(score==null){ if(v) v.textContent='--'; if(b) b.style.width='0%'; return; }
+  if(v) v.textContent=score;
+  if(b) b.style.width=Math.max(0,Math.min(100,score))+'%';
+}
+function computeWellness(){
+  var vs = (typeof vitalsState!=='undefined' && vitalsState) ? vitalsState : {};
+  var hr=vs.hr||0, sys=vs.sys||0, dia=vs.dia||0;
+  /* Heart Health nga vitalet reale */
+  var heart=null;
+  if(hr>0 || sys>0){
+    var h=100;
+    if(hr>0){ if(hr<60) h-=Math.min(30,(60-hr)*2); else if(hr>100) h-=Math.min(45,(hr-100)*2.2); }
+    if(sys>0){ if(sys>=140||dia>=90) h-=32; else if(sys>=130||dia>=85) h-=16; else if(sys<90) h-=18; }
+    heart=Math.max(15,Math.min(100,Math.round(h)));
+  }
+  _wlSet('wlHeart','wlHeartBar',heart);
+  /* Sleep / Activity / Stress — kërkojnë D Health Ring (ende jo i lidhur) */
+  var ringOn = false;
+  try{ ringOn = (typeof isConnected==='function' && !!isConnected('ring')); }catch(e){ ringOn = false; }
+  var sleep=null, act=null, stress=null;
+  _wlSet('wlSleep','wlSleepBar',sleep);
+  _wlSet('wlAct','wlActBar',act);
+  _wlSet('wlStress','wlStressBar',stress);
+  ['wlSleepRow','wlActRow','wlStressRow'].forEach(function(id){ var e=document.getElementById(id); if(e) e.classList.toggle('locked', !ringOn); });
+  var cta=document.getElementById('wlCta'); if(cta) cta.style.display = ringOn ? 'none' : 'flex';
+  /* Score i përgjithshëm = mesatarja e metrikave të disponueshme */
+  var vals=[heart,sleep,act,stress].filter(function(x){return x!=null;});
+  var overall = vals.length ? Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length) : null;
+  var sEl=document.getElementById('wlScore'), lEl=document.getElementById('wlLbl'), pEl=document.getElementById('wlProg');
+  if(overall==null){ if(sEl) sEl.textContent='--'; if(lEl) lEl.textContent='No data'; if(pEl) pEl.style.strokeDashoffset='327'; }
+  else {
+    if(sEl) sEl.textContent=overall;
+    if(lEl) lEl.textContent = overall>=80?'Excellent':overall>=60?'Good':overall>=40?'Fair':'Low';
+    if(pEl) pEl.style.strokeDashoffset = Math.round(327*(1-overall/100));
+  }
+}
+function dhRingConnect(){
+  try{ showToast('🔗 D Health Ring — po vjen së shpejti! Do sinkronizojë gjumin, aktivitetin & stresin live.'); }catch(e){}
+}
+
 /* Capacitor plugin helper + deep-link i Google OAuth (vetëm native) */
 function capPlugin(name){
   return (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins[name]) || null;
@@ -6945,6 +7041,7 @@ function updateAllVitalsUI(){
   var dia  = vitalsState.dia;
   var glu  = vitalsState.glu;
   var spo2 = vitalsState.spo2;
+  try{ computeWellness(); }catch(e){}
 
   /* Diagnostic AI panel - vstrip */
   var botHr  = document.getElementById('bot-hr');
