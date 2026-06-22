@@ -5999,34 +5999,16 @@ function applySupabaseSession(session){
   setTimeout(function(){
     var sb=getSupa();
     if(!sb) return;
-    var _bootTs = Date.now();
     sb.auth.getSession().then(function(res){
       var session = res.data ? res.data.session : null;
-      if(session && session.user){
-        applySupabaseSession(session);
-        /* Cold-start (p.sh. pas "Clear All"): token-i i ruajtur mund të jetë i vjetëruar → RLS të trajton si anon →
-           query-t kthejnë BOSH pa gabim. Konfirmo token-in me serverin (getUser refreshon nëse duhet) dhe ringarko
-           të dhënat me token valid — pa kërkuar sign-out. */
-        try{
-          sb.auth.getUser().then(function(u){
-            if(u && u.data && u.data.user && !u.error){
-              var usr=u.data.user, md=usr.user_metadata||{};
-              try{ initUserData(usr.id, md.full_name||md.name||usr.email, usr.email); }catch(e){}
-            }
-          }).catch(function(){});
-        }catch(e){}
-      }
+      if(session && session.user) applySupabaseSession(session);
     });
-    /* Dëgjo SIGNED_IN (mbulon kthimin nga Google OAuth në web + native) + TOKEN_REFRESHED */
+    /* Dëgjo SIGNED_IN (mbulon kthimin nga Google OAuth në web + native). Asnjë thirrje shtesë e initUserData —
+       applySupabaseSession e ngarkon një herë; initUserData është i serializuar kundër mbivendosjes. */
     try{
       sb.auth.onAuthStateChange(function(event, session){
         if((event==='SIGNED_IN' || event==='INITIAL_SESSION') && session && session.user){
           applySupabaseSession(session);
-        }
-        /* Token u rifreskua pak pas hapjes (cold-start me token të vjetëruar) → ringarko me token të ri */
-        if(event==='TOKEN_REFRESHED' && session && session.user && (Date.now()-_bootTs < 60000)){
-          var md=session.user.user_metadata||{};
-          try{ initUserData(session.user.id, md.full_name||md.name||session.user.email, session.user.email); }catch(e){}
         }
         if(event==='SIGNED_OUT'){ _appliedSessionUid = null; _userDataLoaded = false; }
       });
@@ -8566,7 +8548,13 @@ function initPlatformDetection(){
 
 
 /* ════ INIT USER - pastro dhe ngarko te dhenat reale ════ */
-async function initUserData(userId, userName, userEmail, attempt){
+/* Serializim: shmang mbivendosjen e disa thirrjeve të initUserData që pastrojnë UI-në njëra pas tjetrës (UI bosh) */
+var _iudChain = Promise.resolve();
+function initUserData(userId, userName, userEmail, attempt){
+  _iudChain = _iudChain.then(function(){ return _initUserDataImpl(userId, userName, userEmail, attempt); }).catch(function(){});
+  return _iudChain;
+}
+async function _initUserDataImpl(userId, userName, userEmail, attempt){
   attempt = attempt || 0;
   var _loadErr = false;  /* gjurmo dështim rrjeti për të riprovuar ngarkimin */
   /* 1. Pastro vitalet demo */
