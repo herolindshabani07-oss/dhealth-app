@@ -8654,7 +8654,7 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
     window._dbgIUD.mpRows = mpRes.data ? mpRes.data.length : 0;
     window._dbgIUD.mpErr = mpRes.error ? mpRes.error.message : null;
     if(!mpd && !_mpCache) _needRetry = true;
-    if(mpd){ try{ localStorage.setItem(MPKEY, JSON.stringify(mpd)); }catch(e){} _renderMP(mpd); }
+    if(mpd){ try{ localStorage.setItem(MPKEY, JSON.stringify(mpd)); }catch(e){} _renderMP(mpd); try{ markUserHasData(); }catch(e){} }
     window._dbgIUD.diagRendered = (document.querySelectorAll('#prof-diag-tags .tag2')||[]).length;
     }catch(e){ _loadErr = true; _needRetry = true; window._dbgIUD.mpThrow = (e.message||''+e); console.warn('load medical_profiles:', e.message); }
 
@@ -10671,7 +10671,18 @@ window.addEventListener('load', function(){
       if(res && res.data && res.data.session){
         /* User is logged in - check if new */
         if(isNewUser()){
-          clearAllDemoData();
+          /* MBROJTJE: mos pastro "demo data" nëse përdoruesi KA të dhëna reale në DB.
+             (flag-u localStorage 'hasUserData' mund të mungojë pas Clear cache → pa këtë kontroll
+              clearAllDemoData fshinte të dhënat reale që sapo u ngarkuan.) */
+          var _uid = res.data.session.user.id;
+          Promise.all([
+            sb.from('medical_profiles').select('id').eq('patient_id',_uid).limit(1),
+            sb.from('vitals').select('id').eq('patient_id',_uid).limit(1)
+          ]).then(function(r){
+            var hasDb = (r[0]&&r[0].data&&r[0].data.length) || (r[1]&&r[1].data&&r[1].data.length);
+            if(hasDb){ try{markUserHasData();}catch(e){} return; }   /* ka të dhëna → mos fshi, vetëm shëno */
+            clearAllDemoData();                                      /* vërtet i ri → pastro demo-n */
+          }).catch(function(){});
         }
       }
     });
