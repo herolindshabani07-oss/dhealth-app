@@ -1667,7 +1667,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="v7-secrow"><div class="v7-stitle" data-i18n="home.summaryTitle">Përmbledhje</div></div>
     <div class="v7-wide" onclick="calcDailyScore(true);switchScreen('vitals')">
       <div class="v7-wico ds"><svg viewBox="0 0 512 300" width="33" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M56 270 A200 200 0 0 1 94.2 152.4 L171.9 208.9 A104 104 0 0 0 152 270 Z" fill="#FF5A2E"/><path d="M94.2 152.4 A200 200 0 0 1 194.2 79.8 L223.9 171.1 A104 104 0 0 0 171.9 208.9 Z" fill="#FF9A33"/><path d="M194.2 79.8 A200 200 0 0 1 317.8 79.8 L288.1 171.1 A104 104 0 0 0 223.9 171.1 Z" fill="#FFD22E"/><path d="M317.8 79.8 A200 200 0 0 1 417.8 152.4 L340.1 208.9 A104 104 0 0 0 288.1 171.1 Z" fill="#8DC63F"/><path d="M417.8 152.4 A200 200 0 0 1 456 270 L360 270 A104 104 0 0 0 340.1 208.9 Z" fill="#14A07A"/><path d="M256 150 C232 205 216 235 216 262 A40 40 0 0 0 256 302 Z" fill="#FF6A2D"/><path d="M256 150 C280 205 296 235 296 262 A40 40 0 0 1 256 302 Z" fill="#E81E5C"/></svg><span id="dailyScoreEmoji" style="display:none"></span></div>
-      <div><div class="v7-wt1" style="color:#4db6e8;">Daily Health Score</div><div class="v7-wt2" id="dailyScoreDetails">Bazuar te hapat, vitalet & diagnoza</div></div>
+      <div><div class="v7-wt1" style="color:#4db6e8;" data-i18n="home.dailyScore">Daily Health Score</div><div class="v7-wt2" id="dailyScoreDetails" data-i18n="home.scoreBasis">Bazuar te hapat, vitalet & diagnoza</div></div>
       <div class="v7-wr"><span class="v7-wbadge wb-blue"><span id="dailyScoreNum">--</span>/100</span><div id="dailyScoreRefresh" style="font-size:9px;color:#9aa9c0;margin-top:3px;">Vitals ›</div></div>
     </div>
     <div class="v7-wide" onclick="refreshAirQuality()" style="display:none;">
@@ -6249,6 +6249,8 @@ var DH_I18N = {
   'home.scoreTitle':   {sq:'Health Score', mk:'Здравствен резултат', en:'Health Score'},
   'home.wellnessTitle':{sq:'Wellness', mk:'Добросостојба', en:'Wellness'},
   'home.summaryTitle': {sq:'Përmbledhje', mk:'Преглед', en:'Summary'},
+  'home.dailyScore':   {sq:'Rezultati ditor i shëndetit', mk:'Дневен здравствен резултат', en:'Daily Health Score'},
+  'home.scoreBasis':   {sq:'Bazuar te hapat, vitalet & diagnoza', mk:'Врз основа на чекори, витални и дијагнози', en:'Based on steps, vitals & diagnoses'},
   'home.seeAll':       {sq:'Të gjitha ›', mk:'Сите ›', en:'See all ›'},
   /* Diagnosis */
   'diag.healthScoreLbl':{sq:'PIKËT E SHËNDETIT', mk:'ЗДРАВСТВЕН РЕЗУЛТАТ', en:'HEALTH SCORE'},
