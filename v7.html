@@ -1670,10 +1670,38 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div><div class="v7-wt1" style="color:#4db6e8;">Daily Health Score</div><div class="v7-wt2" id="dailyScoreDetails">Bazuar te hapat, vitalet & diagnoza</div></div>
       <div class="v7-wr"><span class="v7-wbadge wb-blue"><span id="dailyScoreNum">--</span>/100</span><div id="dailyScoreRefresh" style="font-size:9px;color:#9aa9c0;margin-top:3px;">Vitals ›</div></div>
     </div>
-    <div class="v7-wide" onclick="refreshAirQuality()">
+    <div class="v7-wide" onclick="refreshAirQuality()" style="display:none;">
       <div class="v7-wico air"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path class="tube" d="M300 150 C360 150 378 220 360 300 C345 365 300 410 250 440" fill="none" stroke="#FFB23A" stroke-width="18" stroke-linecap="round"/><path d="M180 130 H300 a30 30 0 0 1 30 30 V452 a30 30 0 0 1 -30 30 H180 a30 30 0 0 1 -30 -30 V160 a30 30 0 0 1 30 -30 Z" fill="#D4EAF7"/><rect x="150" y="240" width="180" height="150" fill="#5FCB92"/><text x="240" y="345" font-family="Arial,Helvetica,sans-serif" font-size="90" font-weight="800" fill="#EAF8F0" text-anchor="middle">O2</text><rect x="212" y="96" width="56" height="40" rx="6" fill="#B8D8F0"/><rect x="228" y="56" width="24" height="46" rx="6" fill="#5A5A5A"/><rect x="196" y="44" width="88" height="20" rx="10" fill="#5A5A5A"/><circle cx="196" cy="54" r="16" fill="#5A5A5A"/><circle cx="284" cy="54" r="16" fill="#5A5A5A"/><circle cx="120" cy="92" r="30" fill="#5A5A5A"/><circle cx="120" cy="92" r="17" fill="#CDE7FA"/><rect x="138" y="84" width="44" height="16" rx="6" fill="#5A5A5A"/><path d="M395 175 C345 185 326 245 342 305 C353 352 392 380 416 372 C462 378 478 312 472 250 C466 190 440 175 395 175 Z" fill="#C2DEF7"/></svg><span id="aqiVal" style="display:none">—</span></div>
       <div><div class="v7-wt1" style="color:#4db6e8;"><span data-i18n="aq.title">Cilësia e ajrit</span> · <span id="aqiCityLbl">—</span> <span style="font-size:11px;">🔄</span></div><div class="v7-wt2" id="aqiStatus">Duke kontrolluar...</div></div>
-      <div class="v7-wr"><span class="v7-wbadge wb-green">PM2.5 <span id="aqiPm">—</span></span><div id="aqiTime" style="font-size:9px;color:#9aa9c0;margin-top:3px;">—</div></div>
+      <div class="v7-wr"><span class="v7-wbadge wb-green">PM2.5 <span id="aqiPm">—</span></span></div>
+    </div>
+
+    <!-- AIR QUALITY — premium card (IQAir-style, Open-Meteo data) -->
+    <div id="aqiCard" onclick="refreshAirQuality()" style="cursor:pointer;border-radius:20px;overflow:hidden;margin-bottom:12px;box-shadow:0 12px 30px rgba(70,120,190,.16);">
+      <div id="aqiTopBand" style="background:linear-gradient(135deg,#F87171,#DC2626);padding:15px 16px;">
+        <div style="display:flex;align-items:center;gap:13px;">
+          <div style="text-align:center;background:rgba(255,255,255,.18);border-radius:14px;padding:7px 11px;min-width:58px;">
+            <div id="aqiValBig" style="font-size:23px;font-weight:800;color:#fff;line-height:1;">—</div>
+            <div style="font-size:8.5px;font-weight:700;color:rgba(255,255,255,.85);margin-top:3px;letter-spacing:.3px;">US AQI</div>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div id="aqiStatusBig" style="font-size:17px;font-weight:800;color:#fff;line-height:1.15;">—</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.82);margin-top:3px;"><span data-i18n="aq.title">Cilësia e ajrit</span> · <span id="aqiCityLbl2">—</span> <span style="opacity:.85;">🔄</span></div>
+          </div>
+          <div id="aqiFace" style="font-size:34px;line-height:1;flex-shrink:0;">😷</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.22);">
+          <div style="font-size:12px;color:rgba(255,255,255,.85);"><span data-i18n="aq.mainPollutant">Ndotësi kryesor</span> <strong id="aqiMainName" style="color:#fff;">PM2.5</strong></div>
+          <div style="font-size:14px;font-weight:800;color:#fff;"><span id="aqiPmBig">—</span> µg/m³</div>
+        </div>
+      </div>
+      <div style="background:#fff;padding:11px 16px;display:flex;align-items:center;justify-content:space-around;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#1f2c44;">⛅ <span id="aqiTemp">—</span>°</div>
+        <div style="width:1px;height:18px;background:rgba(120,150,190,.2);"></div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#1f2c44;">🧭 <span id="aqiWind">—</span> km/h</div>
+        <div style="width:1px;height:18px;background:rgba(120,150,190,.2);"></div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#1f2c44;">💧 <span id="aqiHumidity">—</span>%</div>
+      </div>
     </div>
     <div style="display:none">
       <span id="aqiCircle"></span><span id="aqiDesc"></span><span id="dailyScoreCircle"></span><span id="dailyScoreMain"></span><span id="dailyScoreBadge"></span><span id="dailyScoreBarWrap"><span id="dailyScoreBar"></span></span><span id="dailyScoreBenefits"><span id="dailyScoreBenefitsList"></span></span><span id="homeIndicators"></span><span id="platformBanner"></span><span id="dataSourcesCount"></span>
@@ -6473,6 +6501,11 @@ var DH_I18N = {
   'home.sync': {sq:'🔄 Sinkronizo', mk:'🔄 Синхронизирај', en:'🔄 Sync'},
   'aq.title':        {sq:'Cilësia e ajrit', mk:'Квалитет на воздух', en:'Air quality'},
   'aq.yourLocation': {sq:'Vendndodhja juaj', mk:'Твоја локација', en:'Your location'},
+  'aq.mainPollutant':{sq:'Ndotësi kryesor', mk:'Главен загадувач', en:'Main pollutant'},
+  'aq.good':         {sq:'Mirë', mk:'Добро', en:'Good'},
+  'aq.moderate':     {sq:'Mesatare', mk:'Умерено', en:'Moderate'},
+  'aq.unhealthySens':{sq:'Jo e shëndetshme për të ndjeshmit', mk:'Нездраво за чувствителни', en:'Unhealthy for Sensitive'},
+  'aq.unhealthy':    {sq:'Jo e shëndetshme', mk:'Нездраво', en:'Unhealthy'},
   /* Vitals — detajet & Daily Activity */
   'vit.glucoseDetail': {sq:'🍬 Detaji i Glukozës', mk:'🍬 Детал за гликоза', en:'🍬 Glucose Detail'},
   'vit.ecg':       {sq:'🫀 Analizë e zgjuar ECG', mk:'🫀 Паметна ЕКГ анализа', en:'🫀 ECG Smart Analysis'},
@@ -6518,6 +6551,7 @@ function applyLang(lang){
   try{ if(typeof applyProfileMode==='function' && document.getElementById('moreScreenTitle')) applyProfileMode(_profileMode); }catch(e){}
   try{ if(typeof initSettings==='function' && document.getElementById('setPlanSub')) initSettings(); }catch(e){}
   try{ if(typeof updateNotifBadge==='function' && document.getElementById('notifBadge')) updateNotifBadge(); }catch(e){}
+  try{ if(typeof airState!=='undefined' && airState.statusKey){ var _s=dhT(airState.statusKey); ['aqiStatus','aqiStatusBig'].forEach(function(id){ var e=document.getElementById(id); if(e) e.textContent=_s; }); if(airState.cityGeneric){ var _c=document.getElementById('aqiCityLbl2'); if(_c) _c.textContent=dhT('aq.yourLocation'); } } }catch(e){}
 }
 document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ try{ applyLang(); }catch(e){} }, 60); });
 
@@ -7735,6 +7769,8 @@ async function loadAirQuality(){
     if(pos){ lat = pos.latitude; lon = pos.longitude; city = dhT('aq.yourLocation'); airState.cityGeneric = true; }
   }catch(e){}
 
+  try{ _fetchAQIWeather(lat, lon); }catch(e){}
+
   try {
     var url = 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude='+lat
             + '&longitude='+lon+'&current=us_aqi,pm2_5,pm10&timezone=auto';
@@ -7755,42 +7791,63 @@ async function loadAirQuality(){
   setAQI(faqi, fpm25, aqiVal, aqiStatus, aqiDesc, aqiPm, aqiCircle, aqiTime);
 }
 
+async function _fetchAQIWeather(lat, lon){
+  try{
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon
+            + '&current=temperature_2m,relative_humidity_2m,wind_speed_10m&wind_speed_unit=kmh&timezone=auto';
+    var res = await fetch(url); var data = await res.json();
+    if(data && data.current){
+      var c = data.current;
+      var t = document.getElementById('aqiTemp');     if(t && c.temperature_2m!=null)        t.textContent = Math.round(c.temperature_2m);
+      var w = document.getElementById('aqiWind');     if(w && c.wind_speed_10m!=null)        w.textContent = Math.round(c.wind_speed_10m);
+      var h = document.getElementById('aqiHumidity');  if(h && c.relative_humidity_2m!=null) h.textContent = Math.round(c.relative_humidity_2m);
+    }
+  }catch(e){ console.log('Weather error:', e.message); }
+}
 function setAQI(aqi, pm25, aqiVal, aqiStatus, aqiDesc, aqiPm, aqiCircle, aqiTime){
   if(aqiVal) aqiVal.textContent = aqi;
   if(aqiPm)  aqiPm.textContent  = pm25;
 
   var config;
   if(aqi <= 50){
-    config = {color:'linear-gradient(135deg,#2DC8A0,#16A34A)', status:'✅ Good', desc:'Air quality is satisfactory. Safe for outdoor activities.'};
+    config = {color:'linear-gradient(135deg,#34D399,#16A34A)', key:'aq.good', face:'🙂', desc:'Air quality is satisfactory. Safe for outdoor activities.'};
   } else if(aqi <= 100){
-    config = {color:'linear-gradient(135deg,#F5A623,#F97316)', status:'⚠️ Moderate', desc:'Acceptable quality. Sensitive groups should limit outdoor exposure.'};
+    config = {color:'linear-gradient(135deg,#FBBF24,#F59E0B)', key:'aq.moderate', face:'😐', desc:'Acceptable quality. Sensitive groups should limit outdoor exposure.'};
   } else if(aqi <= 150){
-    config = {color:'linear-gradient(135deg,#F97316,#DC2626)', status:'🚨 Unhealthy for Sensitive', desc:'HTA/respiratory patients — limit outdoor activity. Wear mask.'};
+    config = {color:'linear-gradient(135deg,#FB923C,#EA580C)', key:'aq.unhealthySens', face:'😷', desc:'HTA/respiratory patients — limit outdoor activity. Wear mask.'};
   } else {
-    config = {color:'linear-gradient(135deg,#DC2626,#7C3AED)', status:'🚨 Unhealthy', desc:'Avoid outdoor activities. Keep windows closed.'};
+    config = {color:'linear-gradient(135deg,#F87171,#DC2626)', key:'aq.unhealthy', face:'😷', desc:'Avoid outdoor activities. Keep windows closed.'};
   }
+  var statusTxt = (typeof dhT==='function') ? dhT(config.key) : config.key;
 
   /* Ruaj në state global — që Vitals/Diagnostic/Therapy AI ta marrin parasysh */
   airState.aqi    = aqi;
   airState.pm25   = pm25;
-  airState.status = config.status.replace(/^[^\w]+/,'').trim();
-  var cityLbl = document.getElementById('aqiCityLbl');
-  if(cityLbl){
-    if(airState.cityGeneric){ cityLbl.setAttribute('data-i18n','aq.yourLocation'); cityLbl.textContent = dhT('aq.yourLocation'); }
-    else if(airState.city){ cityLbl.removeAttribute('data-i18n'); cityLbl.textContent = airState.city; }
-  }
+  airState.status = statusTxt;
+  airState.statusKey = config.key;
+
+  var cityName = airState.cityGeneric ? dhT('aq.yourLocation') : (airState.city||'');
+  ['aqiCityLbl','aqiCityLbl2'].forEach(function(id){
+    var el = document.getElementById(id); if(!el) return;
+    if(airState.cityGeneric){ el.setAttribute('data-i18n','aq.yourLocation'); }
+    else { el.removeAttribute('data-i18n'); }
+    el.textContent = cityName;
+  });
 
   if(aqiCircle) aqiCircle.style.background = config.color;
-  if(aqiStatus) aqiStatus.textContent = config.status;
+  if(aqiStatus) aqiStatus.textContent = statusTxt;
   if(aqiDesc)   aqiDesc.textContent   = config.desc;
-  if(aqiTime){
-    var now = new Date();
-    aqiTime.textContent = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  }
+
+  /* Karta premium */
+  var topBand = document.getElementById('aqiTopBand'); if(topBand) topBand.style.background = config.color;
+  var vb = document.getElementById('aqiValBig');   if(vb) vb.textContent = aqi;
+  var sb = document.getElementById('aqiStatusBig'); if(sb) sb.textContent = statusTxt;
+  var pb = document.getElementById('aqiPmBig');     if(pb) pb.textContent = pm25;
+  var fc = document.getElementById('aqiFace');      if(fc) fc.textContent = config.face;
 
   /* Alert for respiratory patients */
   if(aqi > 100){
-    showToast('🌍 Air Quality: '+config.status+' — Kujdes pacienti!');
+    showToast('🌍 '+dhT('aq.title')+': '+statusTxt+' — Kujdes pacienti!');
   }
 }
 
