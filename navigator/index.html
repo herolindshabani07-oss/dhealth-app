@@ -30,6 +30,7 @@
 body{
   margin:0;
   min-height:100vh;
+  overflow-x:hidden;
   background:
     radial-gradient(circle at 12% 8%,rgba(84,164,255,.20),transparent 32%),
     radial-gradient(circle at 88% 18%,rgba(114,87,238,.14),transparent 34%),
@@ -162,8 +163,8 @@ p,span,button,input,td,th,a{letter-spacing:0}
 .lang-switch{display:flex;gap:4px;padding:4px;border:1px solid #e0e8fb;border-radius:999px;background:rgba(255,255,255,.58);box-shadow:0 8px 20px rgba(35,48,85,.06)}
 .lang-switch button{border:0;background:transparent;color:#59677f;border-radius:999px;padding:7px 9px;font-size:12px;font-weight:850;cursor:pointer}
 .lang-switch button.active{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff}
-.main{min-width:0}
-.content{padding:28px 34px 0;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:32px}
+.main{min-width:0;overflow-x:hidden}
+.content{padding:28px 34px 0;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:32px;max-width:1720px;margin:0 auto}
 .title h1{font-size:26px;margin:0 0 6px;font-weight:850}
 .title p{margin:0;color:var(--muted)}
 .workspace{display:grid;grid-template-columns:360px minmax(390px,1fr);gap:28px;align-items:start;margin-top:22px}
@@ -330,6 +331,8 @@ p,span,button,input,td,th,a{letter-spacing:0}
 .upload-preview{margin-top:12px}
 .upload-preview img{width:100%;max-height:156px;object-fit:cover;border-radius:12px;border:1px solid #dce6f7;display:block}
 .file-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#f2fbfb;border:1px solid #cfe8e6;color:var(--ink);font-size:13px;font-weight:750}
+.report-text{width:100%;min-height:92px;margin-top:12px;border:1px solid #cfe8e6;border-radius:12px;padding:12px;background:#fff;color:var(--ink);resize:vertical;outline:0}
+.report-text:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(15,118,110,.10)}
 .analyze-btn{display:none;width:100%;margin-top:12px;border:0;border-radius:12px;padding:12px 14px;background:linear-gradient(135deg,var(--teal),var(--violet));color:#fff;font-weight:850;cursor:pointer;box-shadow:0 14px 28px rgba(15,118,110,.18);transition:.18s ease}
 .analyze-btn.show{display:block}
 .analyze-btn:hover{transform:translateY(-1px);box-shadow:0 18px 34px rgba(15,118,110,.22)}
@@ -353,6 +356,15 @@ p,span,button,input,td,th,a{letter-spacing:0}
   margin-top:14px;
 }
 .report p{margin:7px 0;color:#557276;font-size:14px}
+.danger-alert{display:none;margin-top:14px;padding:14px;border-radius:12px;background:#fff4f1;border:1px solid #ffd1c7;color:#8c2f1d;font-size:13px;line-height:1.45}
+.danger-alert.show{display:block}
+.result-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.secondary-btn{border:1px solid #cfe8e6;background:#fff;color:var(--teal);border-radius:12px;padding:11px 13px;font-weight:850;cursor:pointer;box-shadow:0 10px 22px rgba(9,47,51,.06)}
+.secondary-btn:hover{background:#eefafa}
+.case-history{min-height:180px}
+.case-list{display:grid;gap:8px;max-height:260px;overflow:auto}
+.case-item{border:1px solid #d7e8e8;border-radius:12px;background:#fff;padding:10px;font-size:12px;color:var(--muted)}
+.case-item b{display:block;color:var(--ink-strong);font-size:13px;margin-bottom:4px}
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:var(--radius)}
 table{border-collapse:collapse;width:100%;min-width:520px;background:white}
 th,td{padding:12px;border-bottom:1px solid var(--line);text-align:center;font-size:14px}
@@ -426,23 +438,102 @@ tr:last-child td{border-bottom:0}
 .trust div{padding:16px 18px;border-right:1px solid #dce1f5;color:#5f6d87;font-size:13px;display:flex;gap:12px;align-items:center}
 .trust div:last-child{border-right:0}
 .trust b{color:var(--ink-strong)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(6,32,35,.42);display:none;align-items:center;justify-content:center;z-index:40;padding:20px}
+.modal-backdrop.show{display:flex}
+.modal{width:min(720px,100%);max-height:88vh;overflow:auto;background:rgba(255,255,255,.97);border:1px solid #cfe8e6;border-radius:14px;box-shadow:0 30px 90px rgba(9,47,51,.24);padding:22px}
+.modal-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}
+.modal-head h3{margin:0 0 6px}
+.modal-head p{margin:0;color:var(--muted);font-size:13px}
+.modal-close{border:0;background:#eefafa;color:var(--teal);border-radius:10px;padding:8px 11px;font-weight:900;cursor:pointer}
+.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.profile-grid label{display:grid;gap:6px;color:var(--ink-strong);font-size:13px;font-weight:800}
+.profile-grid input,.profile-grid select{border:1px solid #cfe8e6;border-radius:12px;padding:11px;background:#fff;color:var(--ink)}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.edu-grid{display:grid;gap:10px}
+.edu-item{border:1px solid #d7e8e8;border-radius:12px;background:#fff;padding:12px}
+.edu-item b{display:block;color:var(--ink-strong);margin-bottom:5px}
+.edu-item p{margin:0;color:var(--muted);font-size:13px}
+@media(min-width:2560px){
+  .app{grid-template-columns:320px minmax(0,1fr)}
+  .sidebar{padding:30px 24px}
+  .content{max-width:2320px;grid-template-columns:minmax(0,1fr) 420px;gap:44px;padding:38px 52px 0}
+  .topbar{height:88px;padding:0 52px}
+  .search{width:min(760px,42vw)}
+  .workspace{grid-template-columns:460px minmax(560px,1fr);gap:42px}
+  .body-stage{min-height:780px}
+  .body-wrap{width:430px;height:752px}
+  .wizard{padding:34px}
+  .right{gap:18px}
+  .selected-card,.articles-card{min-height:320px;max-height:320px}
+  .module-grid,.direction-list{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(min-width:1800px) and (max-width:2559px){
+  .app{grid-template-columns:292px minmax(0,1fr)}
+  .content{max-width:1960px;grid-template-columns:minmax(0,1fr) 370px;gap:38px;padding:34px 44px 0}
+  .workspace{grid-template-columns:400px minmax(470px,1fr);gap:34px}
+  .body-stage{min-height:690px}
+  .body-wrap{width:370px;height:648px}
+  .wizard{padding:30px}
+}
+@media(max-width:1500px){
+  .app{grid-template-columns:242px minmax(0,1fr)}
+  .sidebar{padding:20px 14px}
+  .nav button{padding:12px;gap:10px}
+  .content{grid-template-columns:minmax(0,1fr) 300px;gap:22px;padding:24px 24px 0}
+  .workspace{grid-template-columns:310px minmax(340px,1fr);gap:20px}
+  .body-stage{min-height:560px}
+  .body-wrap{width:292px;height:511px}
+  .wizard{padding:22px}
+  .side-card{padding:16px}
+}
+@media(max-width:1366px){
+  .app{grid-template-columns:230px minmax(0,1fr)}
+  .topbar{height:68px;padding:0 22px}
+  .search{width:min(470px,44vw)}
+  .content{grid-template-columns:minmax(0,1fr) 288px;gap:18px;padding:20px 20px 0}
+  .title h1{font-size:24px}
+  .workspace{grid-template-columns:290px minmax(320px,1fr);gap:18px}
+  .body-stage{min-height:520px;padding-top:48px}
+  .body-wrap{width:274px;height:480px}
+  .wizard{padding:20px}
+  .wizard-head{margin-bottom:18px}
+  .selected-card,.articles-card{min-height:260px;max-height:260px}
+  .crumbs{max-height:164px}
+  #liveArticles{max-height:178px}
+}
+@media(max-height:760px) and (min-width:1181px){
+  .topbar{height:64px}
+  .content{padding-top:18px}
+  .body-stage{min-height:500px;padding-top:44px}
+  .body-wrap{width:260px;height:456px}
+  .wizard{padding:18px}
+  .option{min-height:48px;padding:10px 12px}
+  .actions{margin-top:18px}
+  .selected-card,.articles-card{min-height:238px;max-height:238px}
+  .upload-card{min-height:250px}
+}
 @media(max-width:1180px){
   .app{grid-template-columns:1fr}
-  .sidebar{position:relative;height:auto;flex-direction:row;align-items:center;overflow:auto}
-  .premium{display:none}.nav{display:flex}.nav button{white-space:nowrap}
-  .content{grid-template-columns:1fr}
+  .sidebar{position:relative;height:auto;flex-direction:row;align-items:center;overflow:hidden;max-width:100vw}
+  .premium{display:none}.nav{display:flex;overflow-x:auto;max-width:100%;padding-bottom:4px}.nav button{white-space:nowrap;flex:0 0 auto}
+  .content{grid-template-columns:1fr;max-width:1120px}
   .right{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:900px){
   .topbar{padding:0 18px}.search{width:100%}.user{display:none}
-  .content{padding:22px 18px 0}
-  .workspace,.result-grid,.lens-grid,.module-grid{grid-template-columns:1fr}
+  .content{grid-template-columns:minmax(0,1fr);padding:22px 18px 0;width:100%;max-width:100%;overflow:hidden}
+  .content>*{min-width:0}
+  .workspace,.result-grid,.lens-grid,.module-grid{grid-template-columns:minmax(0,1fr)}
+  .workspace,.right,.wizard,.body-stage,.side-card{width:100%;max-width:100%;min-width:0}
   .body-stage{min-height:480px}
+  .body-wrap{width:300px;height:525px}
   .right{grid-template-columns:1fr}
   .spec-list,.direction-list,.flow-grid,.trust,.lens-grid,.module-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:560px){
   .sidebar{padding:14px}.brand span{display:none}.nav button span:last-child{display:none}
+  .content{padding:18px 14px 0}
+  .workspace{overflow:hidden}
   .body-wrap{transform:scale(.86);transform-origin:center top;height:470px}
   .wizard{padding:18px}.wizard-head{display:block}
   .spec-list,.direction-list,.flow-grid,.trust,.lens-grid,.module-grid{grid-template-columns:1fr}
@@ -652,6 +743,12 @@ tr:last-child td{border-bottom:0}
             <div class="card result-card">
               <h3>Raport paraprak AI</h3>
               <div class="report" id="aiReport"></div>
+              <div class="danger-alert" id="redFlagAlert"></div>
+              <div class="result-actions">
+                <button class="secondary-btn" id="downloadPdfBtn" type="button">Shkarko raport PDF</button>
+                <button class="secondary-btn" id="saveCaseBtn" type="button">Ruaj rastin</button>
+                <button class="secondary-btn" id="profileBtn" type="button">Mosha / gjinia</button>
+              </div>
               <h3 style="margin-top:22px">Mund të lidhet me</h3>
               <div class="chips" id="conditions"></div>
             </div>
@@ -665,6 +762,7 @@ tr:last-child td{border-bottom:0}
 
           <div class="card result-card" style="margin-top:22px">
             <h3>Cili ekzaminim jep informacionin më të mirë?</h3>
+            <button class="secondary-btn" id="radiologyEduBtn" type="button">Shpjego Radiologjinë</button>
             <div class="table-wrap">
               <table>
                 <thead><tr><th>Problem</th><th>Radiografi</th><th>CT</th><th>MRI</th><th>USG</th></tr></thead>
@@ -711,11 +809,59 @@ tr:last-child td{border-bottom:0}
           </label>
           <div id="uploadPreview" class="upload-preview"></div>
           <button id="analyzeUploadBtn" class="analyze-btn" type="button">Vlerëso imazhin</button>
+          <textarea id="reportTextInput" class="report-text" placeholder="Ose ngjit tekstin e raportit mjekësor për ta përmbledhur..."></textarea>
+          <button id="analyzeTextBtn" class="analyze-btn show" type="button">Analizo tekstin e raportit</button>
           <div id="uploadAssessment" class="upload-assessment"></div>
+        </section>
+        <section class="card side-card case-history">
+          <h3>Historia e rasteve</h3>
+          <div class="case-list" id="caseHistoryList"></div>
         </section>
       </aside>
     </section>
   </main>
+</div>
+
+<div class="modal-backdrop" id="profileModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+    <div class="modal-head">
+      <div><h3 id="profileTitle">Zgjidh gjininë dhe moshën</h3><p>Këto të dhëna ndihmojnë orientimin e pyetjeve dhe red flags.</p></div>
+      <button class="modal-close" data-close-modal="profileModal" type="button">Mbyll</button>
+    </div>
+    <div class="profile-grid">
+      <label>Mosha <input id="patientAge" type="number" min="0" max="120" placeholder="p.sh. 42"></label>
+      <label>Gjinia
+        <select id="patientSex">
+          <option value="">Zgjidh</option>
+          <option value="female">Femër</option>
+          <option value="male">Mashkull</option>
+          <option value="other">Tjetër / nuk preferoj</option>
+        </select>
+      </label>
+      <label>Shtatzëni e mundshme
+        <select id="patientPregnancy">
+          <option value="">Jo / nuk aplikohet</option>
+          <option value="possible">E mundshme</option>
+          <option value="positive">Test pozitiv</option>
+        </select>
+      </label>
+      <label>Sëmundje kronike <input id="patientChronic" placeholder="p.sh. diabet, hipertension"></label>
+    </div>
+    <div class="modal-actions">
+      <button class="secondary-btn" data-close-modal="profileModal" type="button">Më vonë</button>
+      <button class="primary" id="saveProfileBtn" type="button">Ruaj profilin</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="radiologyModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="radiologyTitle">
+    <div class="modal-head">
+      <div><h3 id="radiologyTitle">Modal edukativ për Radiologji</h3><p>Çfarë tregon secili ekzaminim dhe kur përdoret zakonisht.</p></div>
+      <button class="modal-close" data-close-modal="radiologyModal" type="button">Mbyll</button>
+    </div>
+    <div class="edu-grid" id="radiologyEduContent"></div>
+  </div>
 </div>
 
 <script>
@@ -737,6 +883,8 @@ const sides=["Majtas","Djathtas","Të dyja anët","Në qendër","Nuk jam i/e sig
 const durations=["Më pak se 24 orë","1-7 ditë","1-4 javë","Mbi 1 muaj"];
 const severity=["E lehtë","Mesatare","E fortë"];
 const redFlags=["Traumë ose rënie","Temperaturë","Humbje ndjesie","Dhimbje gjoksi / vështirësi në frymëmarrje","Asnjë nga këto"];
+const urgentSignals=["Dhimbje gjoksi / vështirësi në frymëmarrje","Humbje ndjesie","Dhimbje shumë e fortë","Gjakderdhje e madhe","Marramendje/fikët","Dhimbje testikuli e papritur","Nuk urinoj dot","Diarre me gjak","Bark i fortë","Nuk mbaj dot lëngje"];
+const allRedFlags=[...new Set([...redFlags,...urgentSignals])];
 const zoneSpecialties={
   head:["Neurologji","ORL","Dermatologji","Oftalmologji","Internë"],
   neck:["ORL","Endokrinologji","Neurologji","Dermatologji","Ortopedi"],
@@ -819,7 +967,7 @@ function getQuestions(){
     ...getSpecialtyQuestions(specialty),
     {title:"Sa kohë keni që ju shqetëson?",hint:"Kohëzgjatja ndihmon orientimin e rrezikut.",options:durations},
     {title:"Sa e fortë është?",hint:"Vlerëso intensitetin e simptomës kryesore.",options:severity},
-    {title:"Ka ndonjë shenjë alarmi?",hint:"Nëse ka shenja alarmi, sistemi e ndryshon prioritetin e veprimit.",options:redFlags}
+    {title:"Ka ndonjë shenjë alarmi?",hint:"Nëse ka shenja alarmi, sistemi e ndryshon prioritetin e veprimit.",options:["Asnjë nga këto","Dhimbje gjoksi / vështirësi në frymëmarrje","Humbje ndjesie","Dhimbje shumë e fortë","Gjakderdhje e madhe","Marramendje/fikët","Nuk urinoj dot","Dhimbje testikuli e papritur","Nuk mbaj dot lëngje"]}
   ];
 }
 const radiology={
@@ -969,6 +1117,7 @@ const zonePositions={
 let state={zone:"arm",step:0,answers:["Shpatull","Ortopedi","Djathtas","Sport/ngarkesë","Lëviz me dhimbje","Ënjtje graduale","Mbi 1 muaj","Mesatare","Asnjë nga këto"]};
 let bodyView="front";
 let pendingUploadFile=null;
+let patientProfile=JSON.parse(localStorage.getItem("dhealthProfile")||"{}");
 const $=id=>document.getElementById(id);
 let currentLang="sq";
 const i18n={
@@ -1158,7 +1307,7 @@ function applyStaticTranslations(){
 const flatAnswers=()=>state.answers.flatMap(x=>Array.isArray(x)?x:[x]).filter(Boolean);
 const answerText=value=>Array.isArray(value)?value.join(", "):(value||"");
 const answerFrom=(list,fallback)=>flatAnswers().find(x=>list.includes(x))||fallback;
-const dynamicAnswers=()=>flatAnswers().slice(3).filter(x=>!durations.includes(x)&&!severity.includes(x)&&!redFlags.includes(x));
+const dynamicAnswers=()=>flatAnswers().slice(3).filter(x=>!durations.includes(x)&&!severity.includes(x)&&!allRedFlags.includes(x));
 const isMultiQuestion=(step,question)=>step>2 && !question.single;
 const iconTone=text=>{
   const s=String(text||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
@@ -1304,9 +1453,34 @@ function renderBodyView(){
 }
 function renderCrumbs(){
   const zone=bodyZones[state.zone];
-  const items=[`${t(zone.label)} → ${displayAnswer(state.answers[0])||"..."}`,displayAnswer(state.answers[1]),displayAnswer(state.answers[2]),...dynamicAnswers().map(t),t(answerFrom(durations,"...")),t(answerFrom(severity,"...")),t(answerFrom(redFlags,"..."))];
+  const items=[`${t(zone.label)} → ${displayAnswer(state.answers[0])||"..."}`,displayAnswer(state.answers[1]),displayAnswer(state.answers[2]),...dynamicAnswers().map(t),t(answerFrom(durations,"...")),t(answerFrom(severity,"...")),t(answerFrom(allRedFlags,"..."))];
   $("crumbs").innerHTML=items.map((it,i)=>`<div class="crumb ${i===state.step?"active":""}"><span>${i+1}.</span><span>${it||"..."}</span></div>`).join("");
   $("progressBar").style.width=`${((state.step+1)/getQuestions().length)*100}%`;
+}
+function hasUrgentSignal(){
+  const answers=flatAnswers();
+  const sev=answerFrom(severity,"");
+  const profileRisk=patientProfile.pregnancy && state.zone==="genital";
+  return profileRisk || sev==="E fortë" || answers.some(x=>urgentSignals.includes(x));
+}
+function renderRedFlagAlert(){
+  const box=$("redFlagAlert");
+  if(!box) return;
+  if(!hasUrgentSignal()){box.classList.remove("show");box.innerHTML="";return;}
+  box.classList.add("show");
+  box.innerHTML=`<b>Urgjencë / Red flags</b><br>Ka shenja që kërkojnë vlerësim të shpejtë mjekësor. Nëse simptomat janë të forta, po përkeqësohen, ka vështirësi në frymëmarrje, gjakderdhje, humbje ndjesie ose dhimbje të papritur, kontakto urgjencën ose mjekun menjëherë.`;
+}
+function currentCaseSummary(){
+  const zone=bodyZones[state.zone];
+  return {
+    date:new Date().toLocaleString(),
+    zone:t(zone.label),
+    specialty:displayAnswer(state.answers[1])||"-",
+    symptoms:dynamicAnswers().map(t).join(", ")||"-",
+    duration:t(answerFrom(durations,"-")),
+    severity:t(answerFrom(severity,"-")),
+    urgent:hasUrgentSignal()
+  };
 }
 function renderResults(){
   const zone=bodyZones[state.zone], specialty=displayAnswer(state.answers[1])||t("pa drejtim"), side=displayAnswer(state.answers[2])||t("pa anë të përcaktuar"), symptom=t(dynamicAnswers()[0]||"Simptomë"), duration=t(answerFrom(durations,"pa kohëzgjatje")), sev=t(answerFrom(severity,"pa intensitet")), alarm=t(answerFrom(redFlags,"pa shenja alarmi"));
@@ -1325,6 +1499,7 @@ function renderResults(){
   $("specialists").innerHTML=zone.specialists.map(x=>`<span class="chip">${medIcon(x)}${t(x)}</span>`).join("");
   const rows=(radiology[state.zone]||radiology.default);
   $("radiologyRows").innerHTML=rows.map(r=>`<tr><td>${t(r[0])}</td>${r.slice(1).map(v=>`<td class="${v?"yes":"no"}">${v?"✓":"×"}</td>`).join("")}</tr>`).join("");
+  renderRedFlagAlert();
 }
 const clinicalCopy={
   en:{
@@ -1400,6 +1575,7 @@ function getRiskLevel(){
   const sev=answerFrom(severity,"");
   const alarm=answerFrom(redFlags,"");
   const symptom=dynamicAnswers().join(" ");
+  if(hasUrgentSignal()) return {label:ctext("riskHigh") || "I lartë - kërkon vlerësim të shpejtë",className:"risk-high",icon:"!"};
   if(sev==="E fortë" || alarm.includes("Dhimbje gjoksi") || alarm.includes("Humbje ndjesie") || alarm.includes("Traumë")) return {label:ctext("riskHigh") || "I lartë - kërkon vlerësim të shpejtë",className:"risk-high",icon:"!"};
   if(alarm.includes("Temperaturë") || symptom==="Dobësi" || symptom==="Mpirje") return {label:ctext("riskMid") || "Mesatar - konsultë brenda 24-48 orëve",className:"risk-mid",icon:"?"};
   return {label:ctext("riskLow") || "I ulët - orientim dhe monitorim",className:"risk-low",icon:"✓"};
@@ -1543,6 +1719,125 @@ function renderUploadAssessment(file){
     <p><b>${safeText(copy.note)}</b></p>
   `;
 }
+function analyzeReportText(){
+  const text=($("reportTextInput")?.value||"").trim();
+  const assessment=$("uploadAssessment");
+  if(!assessment) return;
+  if(!text){
+    assessment.classList.add("show");
+    assessment.innerHTML="<b>Vendos tekstin e raportit</b><p>Ngjit tekstin e raportit mjekësor dhe pastaj shtyp analizën.</p>";
+    return;
+  }
+  const lower=text.toLowerCase();
+  const findings=[];
+  if(/mri|rezonanc/.test(lower)) findings.push("Raporti përmend MRI/rezonancë, zakonisht e dobishme për inde të buta, ligamente, disqe dhe tru.");
+  if(/ct|scanner|skaner/.test(lower)) findings.push("Raporti përmend CT, shpesh përdoret në trauma, abdomen akut, mushkëri ose gurë.");
+  if(/ultra|usg|eko/.test(lower)) findings.push("Raporti përmend ultrazë/USG, i dobishëm për abdomen, gjinekologji, urologji dhe tendina.");
+  if(/fraktur|fracture/.test(lower)) findings.push("Ka term që lidhet me frakturë. Kërko vlerësim ortoped/traumatolog sipas simptomave.");
+  if(/inflam|infeks|infection|absces/.test(lower)) findings.push("Ka terma inflamacioni/infeksioni. Duhet krahasuar me temperaturën, CRP/CBC dhe gjendjen klinike.");
+  if(/urgent|urgjent|emergency|stat/.test(lower)) findings.push("Raporti përmban gjuhë urgjente. Mos e shty konsultën mjekësore.");
+  assessment.classList.add("show");
+  assessment.innerHTML=`<b>Përmbledhje orientuese e raportit</b><p>${findings.length?findings.join("</p><p>"):"Nuk u gjetën fjalë kyçe të qarta. Kontrollo përfundimin, rekomandimin, datën dhe ekzaminimin e kryer."}</p><p><b>Ky është orientim edukativ, jo interpretim mjekësor përfundimtar.</b></p>`;
+}
+function loadCases(){
+  return JSON.parse(localStorage.getItem("dhealthCases")||"[]");
+}
+function saveCases(cases){
+  localStorage.setItem("dhealthCases",JSON.stringify(cases.slice(0,6)));
+}
+function saveCurrentCase(){
+  const cases=loadCases();
+  cases.unshift(currentCaseSummary());
+  saveCases(cases);
+  renderCaseHistory();
+}
+function renderCaseHistory(){
+  const box=$("caseHistoryList");
+  if(!box) return;
+  const cases=loadCases();
+  if(!cases.length){box.innerHTML='<div class="case-item"><b>Ende pa histori</b>Rastet e ruajtura do të shfaqen këtu.</div>';return;}
+  box.innerHTML=cases.map(c=>`<div class="case-item"><b>${safeText(c.zone)} · ${safeText(c.specialty)}</b>${safeText(c.date)}<br>${safeText(c.symptoms)}<br>${safeText(c.duration)} · ${safeText(c.severity)}${c.urgent?"<br><b>Red flag</b>":""}</div>`).join("");
+}
+function profileLabel(){
+  const sex={female:"Femër",male:"Mashkull",other:"Tjetër / nuk preferoj"}[patientProfile.sex]||"Pa zgjedhur";
+  const pregnancy={possible:"E mundshme",positive:"Test pozitiv"}[patientProfile.pregnancy]||"Jo / nuk aplikohet";
+  return {sex,pregnancy,age:patientProfile.age||"Pa vendosur",chronic:patientProfile.chronic||"Nuk u vendos"};
+}
+function examReason(exam){
+  const text=String(exam||"").toLowerCase();
+  if(text.includes("mri")) return "Jep më shumë informacion për ligamente, tendina, disqe dhe inde të buta.";
+  if(text.includes("ct")) return "Përdoret kur kërkohet pamje më e detajuar ose dyshohet urgjencë/traumë.";
+  if(text.includes("ultraz") || text.includes("usg")) return "I dobishëm për abdomen, lëngje, tendina, gjinekologji dhe urologji.";
+  if(text.includes("radiografi")) return "Zakonisht është ekzaminim fillestar për kocka, fraktura dhe orientim.";
+  if(text.includes("cbc") || text.includes("crp") || text.includes("analiz")) return "Ndihmon të vlerësohet infeksioni, inflamacioni ose gjendja e përgjithshme.";
+  return "Zgjidhet sipas historisë, ekzaminimit fizik dhe dyshimit klinik.";
+}
+function actionPlan(){
+  if(hasUrgentSignal()) return [
+    ["Sot", "Kërko vlerësim të shpejtë mjekësor ose urgjencë nëse simptomat janë të forta apo po përkeqësohen."],
+    ["Brenda 24 orëve", "Kontakto specialistin e rekomanduar dhe merr me vete këtë raport."],
+    ["Pas konsultës", "Krahaso rekomandimet e mjekut me ekzaminimet e listuara këtu."]
+  ];
+  return [
+    ["Sot", "Monitoro simptomat, intensitetin dhe shenjat e reja alarmuese."],
+    ["24-48 orë", "Planifiko konsultë nëse shqetësimi vazhdon ose rritet."],
+    ["Kontroll rutinë", "Përdor ekzaminimet e rekomanduara vetëm sipas indikacionit mjekësor."]
+  ];
+}
+function downloadPatientPdf(){
+  const c=currentCaseSummary();
+  const zone=bodyZones[state.zone];
+  const profile=profileLabel();
+  const pathway=pathwayFor(state.zone);
+  const rows=(radiology[state.zone]||radiology.default);
+  const popup=window.open("","_blank");
+  if(!popup){window.print();return;}
+  const conditionHtml=zone.conditions.map((x,i)=>`<tr><td>${i+1}</td><td>${safeText(t(x))}</td><td>${i<2?"Më e mundshme / vlerësohet":"Duhet përjashtuar sipas simptomave"}</td></tr>`).join("");
+  const examHtml=zone.exams.map(x=>`<tr><td>${safeText(t(x))}</td><td>${safeText(examReason(x))}</td></tr>`).join("");
+  const radiologyHtml=rows.map(r=>`<tr><td>${safeText(t(r[0]))}</td><td>${r[1]?"✓":"-"}</td><td>${r[2]?"✓":"-"}</td><td>${r[3]?"✓":"-"}</td><td>${r[4]?"✓":"-"}</td></tr>`).join("");
+  const planHtml=actionPlan().map(([a,b])=>`<div class="plan"><b>${safeText(a)}</b><span>${safeText(b)}</span></div>`).join("");
+  popup.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>D Health Premium Report</title><style>
+    @page{size:A4;margin:14mm}*{box-sizing:border-box}body{font-family:"Times New Roman",Times,serif;color:#123b3f;margin:0;background:#fff;font-size:13px;line-height:1.42}
+    .header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #0f766e;padding-bottom:14px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:14px;border:1px solid #cfe8e6;display:grid;place-items:center;color:#0f766e;font-weight:900;font-size:24px}.brand h1{margin:0;font-size:26px;color:#092f33}.brand p,.meta p{margin:2px 0;color:#527073}.badge{display:inline-block;padding:7px 10px;border-radius:999px;background:${hasUrgentSignal()?"#fff4f1":"#eefafa"};border:1px solid ${hasUrgentSignal()?"#ffcbbf":"#cfe8e6"};color:${hasUrgentSignal()?"#8c2f1d":"#0f766e"};font-weight:700}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.box{border:1px solid #cfe8e6;border-radius:12px;padding:12px;margin-bottom:12px;background:#fbffff}.box h2{font-size:16px;margin:0 0 8px;color:#092f33}.kv{display:grid;grid-template-columns:130px 1fr;gap:5px 10px}.kv b{color:#092f33}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px solid #d7e8e8;padding:8px;text-align:left;vertical-align:top}th{background:#eefafa;color:#092f33}.plan{display:grid;grid-template-columns:90px 1fr;gap:10px;border:1px solid #d7e8e8;border-radius:10px;padding:9px;margin-top:7px;background:#fff}.footer{border-top:1px solid #cfe8e6;margin-top:18px;padding-top:10px;color:#527073;font-size:12px}.red{background:#fff4f1;border-color:#ffcbbf;color:#8c2f1d}.small{font-size:12px;color:#527073}
+  </style></head><body>
+    <div class="header"><div class="brand"><div class="logo">D</div><div><h1>D Health</h1><p>Interactive Medical Navigator · Raport inteligjent paraprak</p></div></div><div class="meta"><p>${safeText(c.date)}</p><span class="badge">${hasUrgentSignal()?"Red flag: vlerësim i shpejtë":"Orientim edukativ"}</span></div></div>
+    <div class="grid"><div class="box"><h2>Profili i pacientit</h2><div class="kv"><b>Mosha</b><span>${safeText(profile.age)}</span><b>Gjinia</b><span>${safeText(profile.sex)}</span><b>Shtatzëni</b><span>${safeText(profile.pregnancy)}</span><b>Kronike</b><span>${safeText(profile.chronic)}</span></div></div>
+    <div class="box"><h2>Përmbledhje</h2><div class="kv"><b>Zona</b><span>${safeText(c.zone)}</span><b>Nënzona</b><span>${safeText(displayAnswer(state.answers[0])||"-")}</span><b>Drejtimi</b><span>${safeText(c.specialty)}</span><b>Simptomat</b><span>${safeText(c.symptoms)}</span><b>Kohëzgjatja</b><span>${safeText(c.duration)}</span><b>Intensiteti</b><span>${safeText(c.severity)}</span></div></div></div>
+    ${hasUrgentSignal()?`<div class="box red"><h2>Urgjenca / Red flags</h2><p>Ka shenja që kërkojnë vlerësim të shpejtë mjekësor. Nëse simptomat janë të forta, po përkeqësohen, ka vështirësi në frymëmarrje, gjakderdhje, humbje ndjesie ose dhimbje të papritur, kontakto urgjencën ose mjekun menjëherë.</p></div>`:""}
+    <div class="box"><h2>Diferenciale klinike</h2><table><thead><tr><th>#</th><th>Mund të lidhet me</th><th>Roli në raport</th></tr></thead><tbody>${conditionHtml}</tbody></table></div>
+    <div class="box"><h2>Çfarë duhet përjashtuar?</h2><p>${safeText(pathway.ruleOut)}</p><p><b>Hapi i parë:</b> ${safeText(pathway.firstMove)}</p><p><b>Specialisti:</b> ${safeText(pathway.care)}</p></div>
+    <div class="box"><h2>Ekzaminimet e rekomanduara</h2><table><thead><tr><th>Ekzaminimi</th><th>Pse mund të ndihmojë</th></tr></thead><tbody>${examHtml}</tbody></table></div>
+    <div class="box"><h2>Pjesa radiologjike</h2><table><thead><tr><th>Problem</th><th>Radiografi</th><th>CT</th><th>MRI</th><th>USG</th></tr></thead><tbody>${radiologyHtml}</tbody></table><p class="small">Zgjedhja finale e ekzaminimit bëhet nga mjeku pas vizitës dhe ekzaminimit fizik.</p></div>
+    <div class="box"><h2>Plan veprimi</h2>${planHtml}</div>
+    <div class="footer"><b>Kujdes:</b> Ky raport është edukativ dhe nuk zëvendëson konsultën, diagnozën apo trajtimin nga mjeku. Ruajeni si PDF nga dritarja e printimit.</div>
+    <script>window.print();<\/script>
+  </body></html>`);
+  popup.document.close();
+}
+function openModal(id){$(id)?.classList.add("show")}
+function closeModal(id){$(id)?.classList.remove("show")}
+function saveProfile(){
+  patientProfile={age:$("patientAge")?.value||"",sex:$("patientSex")?.value||"",pregnancy:$("patientPregnancy")?.value||"",chronic:$("patientChronic")?.value||""};
+  localStorage.setItem("dhealthProfile",JSON.stringify(patientProfile));
+  closeModal("profileModal");
+  render();
+}
+function hydrateProfile(){
+  if($("patientAge")) $("patientAge").value=patientProfile.age||"";
+  if($("patientSex")) $("patientSex").value=patientProfile.sex||"";
+  if($("patientPregnancy")) $("patientPregnancy").value=patientProfile.pregnancy||"";
+  if($("patientChronic")) $("patientChronic").value=patientProfile.chronic||"";
+}
+function renderRadiologyEducation(){
+  const items=[
+    ["Radiografi / X-Ray","Më e mirë për fraktura, mushkëri, artrozë dhe orientim fillestar."],
+    ["CT Scanner","Jep detaje të shpejta në trauma, abdomen akut, mushkëri dhe gurë në veshka."],
+    ["MRI","Më e mirë për ligamente, menisk, disqe, tru, palcë dhe inde të buta."],
+    ["Ultrazë / USG","E dobishme për abdomen, gjinekologji, urologji, tiroiden, tendina dhe lëngje."]
+  ];
+  $("radiologyEduContent").innerHTML=items.map(([a,b])=>`<div class="edu-item"><b>${a}</b><p>${b}</p></div>`).join("");
+}
 document.addEventListener("click",e=>{
   const langBtn=e.target.closest(".lang-switch button[data-lang]");
   if(langBtn){
@@ -1603,6 +1898,8 @@ document.addEventListener("click",e=>{
   if(spec) renderSpecialties(spec.dataset.spec);
   const direction=e.target.closest("[data-direction]");
   if(direction) renderDirections(direction.dataset.direction);
+  const close=e.target.closest("[data-close-modal]");
+  if(close) closeModal(close.dataset.closeModal);
 });
 $("nextBtn").addEventListener("click",()=>{
   const total=getQuestions().length;
@@ -1627,12 +1924,24 @@ $("medicalUpload").addEventListener("change",e=>{
 $("analyzeUploadBtn").addEventListener("click",()=>{
   if(pendingUploadFile) renderUploadAssessment(pendingUploadFile);
 });
+$("analyzeTextBtn").addEventListener("click",analyzeReportText);
+$("downloadPdfBtn").addEventListener("click",downloadPatientPdf);
+$("saveCaseBtn").addEventListener("click",saveCurrentCase);
+$("profileBtn").addEventListener("click",()=>{hydrateProfile();openModal("profileModal")});
+$("saveProfileBtn").addEventListener("click",saveProfile);
+$("radiologyEduBtn").addEventListener("click",()=>{renderRadiologyEducation();openModal("radiologyModal")});
 renderSpecialties();
 renderDirections();
 renderConnectedModules();
+renderCaseHistory();
+hydrateProfile();
 render();
 applyStaticTranslations();
 loadLiveArticles();
+if(!patientProfile.age && !localStorage.getItem("dhealthProfileSeen")){
+  localStorage.setItem("dhealthProfileSeen","1");
+  setTimeout(()=>openModal("profileModal"),450);
+}
 </script>
 </body>
 </html>

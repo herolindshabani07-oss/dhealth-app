@@ -203,9 +203,13 @@ h2{font-size:2.25rem;font-weight:600;letter-spacing:-.02em;line-height:1.05;}
 .cs-tags{position:relative;z-index:2;margin-top:1.3rem;display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;}
 .cs-tags span{border:1px solid rgba(255,255,255,.22);border-radius:9999px;padding:.4rem .9rem;font-size:.8rem;}
 /* D Health Navigator showcase */
-.nav-lead{margin-top:1rem;max-width:44rem;font-size:1.1rem;color:var(--muted);line-height:1.65;}
+.nav-grid{display:flex;flex-direction:column;gap:2.25rem;align-items:center;}
+@media(min-width:900px){.nav-grid{flex-direction:row;align-items:center;gap:3.5rem;margin-top:1rem;}}
+.nav-text{flex:1;min-width:0;}
+@media(min-width:900px){.nav-text{flex:0 0 44%;}}
+.nav-lead{margin-top:1rem;font-size:1.05rem;color:var(--muted);line-height:1.65;}
 .nav-cta{margin-top:1.75rem;display:inline-flex;}
-.nav-shot{position:relative;margin-top:3rem;border-radius:1.5rem;overflow:hidden;background:#fff;box-shadow:0 40px 80px rgba(20,40,90,.22),0 0 0 1px rgba(17,20,24,.05);transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s;}
+.nav-shot{position:relative;flex:1;border-radius:1.4rem;overflow:hidden;background:#fff;box-shadow:0 30px 60px rgba(20,40,90,.18),0 0 0 1px rgba(17,20,24,.05);transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s;}
 .nav-shot:hover{transform:translateY(-6px);box-shadow:0 54px 100px rgba(20,40,90,.28),0 0 70px rgba(124,77,255,.18),0 0 0 1px rgba(17,20,24,.05);}
 .nav-shot::before{content:'';position:absolute;left:50%;top:-18%;transform:translateX(-50%);width:70%;height:55%;border-radius:50%;background:radial-gradient(circle,rgba(124,77,255,.22),rgba(76,201,240,.12) 55%,transparent 72%);filter:blur(45px);z-index:-1;}
 .nav-shot img{width:100%;display:block;}
@@ -491,11 +495,15 @@ footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
 
 <!-- D HEALTH NAVIGATOR -->
 <section class="sec-pad" id="navigator"><div class="shell">
-  <div class="k rv"><span class="dot"></span>The Ecosystem</div>
-  <h2 class="rv">D Health <span style="color:var(--accent2)">Navigator</span></h2>
-  <p class="nav-lead rv">Part of the D Health ecosystem — an interactive way to make sense of your body. Tap any area and the Navigator walks you through it: surgery, radiology, conditions, exams and medical articles, all organized around the spot you choose. Answer a few simple questions and get clear, educational orientation on what might be going on, which tests fit, and when to see a doctor.</p>
-  <a href="navigator/index.html" target="_blank" rel="noopener" class="pill acc warrow nav-cta rv">Open Navigator <span class="bd"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
-  <div class="nav-shot rv"><img src="assets/shot_navigator.png" alt="D Health Navigator — explore the body to find guidance"></div>
+  <div class="nav-grid">
+    <div class="nav-text rv">
+      <div class="k"><span class="dot"></span>The Ecosystem</div>
+      <h2>D Health <span style="color:var(--accent2)">Navigator</span></h2>
+      <p class="nav-lead">Part of the D Health ecosystem — an interactive way to make sense of your body. Tap any area and the Navigator walks you through it: surgery, radiology, conditions, exams and medical articles, all organized around the spot you choose. Answer a few simple questions and get clear, educational orientation on what might be going on and when to see a doctor.</p>
+      <a href="navigator/index.html" target="_blank" rel="noopener" class="pill acc warrow nav-cta">Open Navigator <span class="bd"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+    </div>
+    <div class="nav-shot rv"><img src="assets/shot_navigator.png" alt="D Health Navigator — explore the body to find guidance"></div>
+  </div>
 </div></section>
 
 <!-- WEARABLES — COMING SOON -->
