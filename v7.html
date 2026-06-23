@@ -4924,8 +4924,9 @@ function selectLang(code){
   currentLang = code;
   var L = LANGS[code];
 
-  // Update lang status in More screen
-  document.getElementById('langStatus').textContent = L.name + ' ' + L.flag;
+  // Update lang status in More screen (guarded — langStatus is legacy/removed; Settings uses setLangSub)
+  var _ls = document.getElementById('langStatus'); if(_ls) _ls.textContent = L.name + ' ' + L.flag;
+  var _ls2 = document.getElementById('setLangSub'); if(_ls2) _ls2.textContent = L.name + ' ' + L.flag;
 
   // Update language option UI (selected state)
   ['en','sq','mk'].forEach(function(c){
