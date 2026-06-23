@@ -2350,43 +2350,43 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div id="planName" style="font-size:13px;font-weight:700;color:#F1F5FF;">Free Plan</div>
         <div id="planDesc" style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Upgrade for full AI access</div>
       </div>
-      <button onclick="switchScreen('subscription')" style="background:linear-gradient(135deg,#F97316,#F5A623);color:#fff;font-size:11px;font-weight:700;padding:7px 12px;border-radius:10px;border:none;cursor:pointer;font-family:var(--font);">Upgrade</button>
+      <button onclick="switchScreen('subscription')" data-i18n="set.upgrade" style="background:linear-gradient(135deg,#F97316,#F5A623);color:#fff;font-size:11px;font-weight:700;padding:7px 12px;border-radius:10px;border:none;cursor:pointer;font-family:var(--font);">Upgrade</button>
     </div>
 
     
 
     <!-- ACCOUNT -->
     <div class="set-sec" id="sec-account">
-      <div class="set-sec-title">Account</div>
+      <div class="set-sec-title" data-i18n="set.account">Account</div>
       <div class="set-card">
         <div class="set-row" onclick="setShowEdit()">
           <div class="set-row-ico" style="background:#EBF3FF;">&#128100;</div>
-          <div class="set-row-info"><div class="set-row-title">Personal Information</div><div class="set-row-sub">Name, email, date of birth</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.personalInfo">Personal Information</div><div class="set-row-sub" data-i18n="set.personalInfoSub">Name, email, date of birth</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
         <div class="set-row" onclick="setShowEdit();setTimeout(function(){switchSetTab('pwd');},50);">
           <div class="set-row-ico" style="background:#F0EEFF;">&#128274;</div>
-          <div class="set-row-info"><div class="set-row-title">Password &amp; Security</div><div class="set-row-sub">Change password, 2FA</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.password">Password &amp; Security</div><div class="set-row-sub" data-i18n="set.passwordSub">Change password, 2FA</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
         <div class="set-row" onclick="switchScreen('subscription')">
           <div class="set-row-ico" style="background:#FFF8EC;">&#11088;</div>
-          <div class="set-row-info"><div class="set-row-title">Subscription Plan</div><div class="set-row-sub" id="setPlanSub">Free Plan — Upgrade available</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.subscription">Subscription Plan</div><div class="set-row-sub" id="setPlanSub">Free Plan — Upgrade available</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
         <div class="set-row" onclick="openPaymentModal()">
           <div class="set-row-ico" style="background:#E1F9F3;">&#128179;</div>
-          <div class="set-row-info"><div class="set-row-title">Payments</div><div class="set-row-sub">Cards · PayPal · G Pay · Stripe · Crypto</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.payments">Payments</div><div class="set-row-sub" data-i18n="set.paymentsSub">Cards · PayPal · G Pay · Stripe · Crypto</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
         <div class="set-row" onclick="openDevicesModal()">
           <div class="set-row-ico" style="background:#E7F0FF;">&#128241;</div>
-          <div class="set-row-info"><div class="set-row-title">Connected Devices</div><div class="set-row-sub">Health Connect · Fitbit · D Health Ring</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.devices">Connected Devices</div><div class="set-row-sub" data-i18n="set.devicesSub">Health Connect · Fitbit · D Health Ring</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
         <div class="set-row" onclick="openEmergencyModal()">
           <div class="set-row-ico" style="background:#FEECEC;">&#128680;</div>
-          <div class="set-row-info"><div class="set-row-title">Emergency Contact</div><div class="set-row-sub" id="setEmgSub">Add contact &amp; blood type</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.emergency">Emergency Contact</div><div class="set-row-sub" id="setEmgSub">Add contact &amp; blood type</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
       </div>
@@ -2394,11 +2394,11 @@ select option{background:#0A1628;color:#F1F5FF;}
 
     <!-- APPEARANCE -->
     <div class="set-sec" id="sec-appearance">
-      <div class="set-sec-title">Appearance &amp; Language</div>
+      <div class="set-sec-title" data-i18n="set.appearance">Appearance &amp; Language</div>
       <div class="set-card">
         <div class="set-row" onclick="openLangModal()">
           <div class="set-row-ico" style="background:#EBF3FF;">&#127757;</div>
-          <div class="set-row-info"><div class="set-row-title">Language</div><div class="set-row-sub" id="setLangSub">English &#127468;&#127463;</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.language">Language</div><div class="set-row-sub" id="setLangSub">English &#127468;&#127463;</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
       </div>
@@ -2406,26 +2406,26 @@ select option{background:#0A1628;color:#F1F5FF;}
 
     <!-- NOTIFICATIONS & PRIVACY -->
     <div class="set-sec" id="sec-notifications">
-      <div class="set-sec-title">Notifications &amp; Privacy</div>
+      <div class="set-sec-title" data-i18n="set.notifPrivacy">Notifications &amp; Privacy</div>
       <div class="set-card">
         <div class="set-row" onclick="openNotifSheet();">
           <div class="set-row-ico" style="background:var(--pl);">&#128276;</div>
-          <div class="set-row-info"><div class="set-row-title">Notifications</div><div class="set-row-sub">Alarms, alerts &amp; reminders</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.notifications">Notifications</div><div class="set-row-sub" data-i18n="set.notificationsSub">Alarms, alerts &amp; reminders</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
         <div class="set-row" style="cursor:default;">
           <div class="set-row-ico" style="background:#E1F9F3;">&#128100;</div>
-          <div class="set-row-info"><div class="set-row-title">Share Health Data</div><div class="set-row-sub">With your doctor or clinic</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.shareData">Share Health Data</div><div class="set-row-sub" data-i18n="set.shareDataSub">With your doctor or clinic</div></div>
           <button class="set-tgl off" onclick="setToggle(this,'data sharing')"><div class="set-tgl-thumb"></div></button>
         </div>
         <div class="set-row" style="cursor:default;">
           <div class="set-row-ico" style="background:#FFF8EC;">&#128202;</div>
-          <div class="set-row-info"><div class="set-row-title">Analytics &amp; Improvement</div><div class="set-row-sub">Help improve D Health</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.analytics">Analytics &amp; Improvement</div><div class="set-row-sub" data-i18n="set.analyticsSub">Help improve D Health</div></div>
           <button class="set-tgl on" onclick="setToggle(this,'analytics')"><div class="set-tgl-thumb"></div></button>
         </div>
         <div class="set-row" onclick="showToast('&#128196; GDPR export sent to your email')">
           <div class="set-row-ico" style="background:#FEF2F2;">&#128229;</div>
-          <div class="set-row-info"><div class="set-row-title">Export My Data</div><div class="set-row-sub">GDPR · Download all your data</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.exportData">Export My Data</div><div class="set-row-sub" data-i18n="set.exportDataSub">GDPR · Download all your data</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
       </div>
@@ -2434,26 +2434,26 @@ select option{background:#0A1628;color:#F1F5FF;}
 
     <!-- SUPPORT -->
     <div class="set-sec" id="sec-support">
-      <div class="set-sec-title">Support &amp; About</div>
+      <div class="set-sec-title" data-i18n="set.supportAbout">Support &amp; About</div>
       <div class="set-card">
         <div class="set-row" onclick="showToast('&#128172; Support chat coming soon')">
           <div class="set-row-ico" style="background:#EBF3FF;">&#10067;</div>
-          <div class="set-row-info"><div class="set-row-title">Help &amp; Support</div><div class="set-row-sub">FAQ, contact support</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.help">Help &amp; Support</div><div class="set-row-sub" data-i18n="set.helpSub">FAQ, contact support</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
         <div class="set-row" onclick="showToast('&#128196; Terms of Service')">
           <div class="set-row-ico" style="background:rgba(255,255,255,0.05);">&#128196;</div>
-          <div class="set-row-info"><div class="set-row-title">Terms of Service</div><div class="set-row-sub">Legal information</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.terms">Terms of Service</div><div class="set-row-sub" data-i18n="set.termsSub">Legal information</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
         <div class="set-row" onclick="showToast('&#128274; Privacy Policy')">
           <div class="set-row-ico" style="background:rgba(255,255,255,0.05);">&#128274;</div>
-          <div class="set-row-info"><div class="set-row-title">Privacy Policy</div><div class="set-row-sub">GDPR compliant · Your data is safe</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.privacy">Privacy Policy</div><div class="set-row-sub" data-i18n="set.privacySub">GDPR compliant · Your data is safe</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
         <div class="set-row" onclick="showToast('&#11088; Rate D Health — Thank you!')">
           <div class="set-row-ico" style="background:#FFF8EC;">&#11088;</div>
-          <div class="set-row-info"><div class="set-row-title">Rate D Health</div><div class="set-row-sub">Love the app? Leave a review</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.rate">Rate D Health</div><div class="set-row-sub" data-i18n="set.rateSub">Love the app? Leave a review</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
       </div>
@@ -2461,16 +2461,16 @@ select option{background:#0A1628;color:#F1F5FF;}
 
     <!-- DANGER ZONE -->
     <div class="set-sec">
-      <div class="set-sec-title">Danger Zone</div>
+      <div class="set-sec-title" data-i18n="set.dangerZone">Danger Zone</div>
     </div>
     <div class="set-danger">
       <div class="set-danger-row" onclick="doSignOut()">
         <div class="set-danger-ico">&#128682;</div>
-        <div><div class="set-danger-title">Sign Out</div><div class="set-danger-sub">You will need to log in again</div></div>
+        <div><div class="set-danger-title" data-i18n="menu.signout">Sign Out</div><div class="set-danger-sub" data-i18n="set.signoutSub">You will need to log in again</div></div>
       </div>
       <div class="set-danger-row" onclick="showToast('&#128465; Account deletion — contact support')">
         <div class="set-danger-ico">&#128465;</div>
-        <div><div class="set-danger-title">Delete Account</div><div class="set-danger-sub">Permanently delete all your data</div></div>
+        <div><div class="set-danger-title" data-i18n="set.deleteAccount">Delete Account</div><div class="set-danger-sub" data-i18n="set.deleteAccountSub">Permanently delete all your data</div></div>
       </div>
     </div>
 
@@ -2621,9 +2621,9 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div style="position:absolute;top:-60px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.06);"></div>
     <div style="position:absolute;bottom:-55px;left:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
     <button onclick="switchScreen('home')" style="background:rgba(255,255,255,0.18);border:none;border-radius:12px;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-bottom:16px;position:relative;z-index:1;">‹</button>
-    <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.9px;margin-bottom:6px;position:relative;z-index:1;">Choose Your Plan</div>
-    <div style="font-size:24px;font-weight:800;color:#fff;margin-bottom:5px;position:relative;z-index:1;letter-spacing:-0.3px;">D Health Plans</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.78);position:relative;z-index:1;">Unlock the full power of AI medicine</div>
+    <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.9px;margin-bottom:6px;position:relative;z-index:1;" data-i18n="sub.choose">Choose Your Plan</div>
+    <div style="font-size:24px;font-weight:800;color:#fff;margin-bottom:5px;position:relative;z-index:1;letter-spacing:-0.3px;" data-i18n="sub.title">D Health Plans</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.78);position:relative;z-index:1;" data-i18n="sub.subtitle">Unlock the full power of AI medicine</div>
     <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);color:#fff;font-size:11px;font-weight:600;padding:6px 13px;border-radius:14px;margin-top:13px;position:relative;z-index:1;">
       <span id="currentPlanTag">Current: Free Plan</span>
     </div>
@@ -2633,105 +2633,105 @@ select option{background:#0A1628;color:#F1F5FF;}
 
     <!-- BILLING TOGGLE -->
     <div style="display:flex;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:3px;margin-bottom:16px;border:0.5px solid rgba(255,255,255,0.12);">
-      <button id="btn-monthly" onclick="setBilling('monthly')" style="flex:1;padding:9px;border-radius:11px;border:none;background:var(--white);font-size:12px;font-weight:700;color:#F1F5FF;cursor:pointer;font-family:var(--font);box-shadow:0 2px 8px rgba(0,0,0,0.06);">Monthly</button>
-      <button id="btn-annual" onclick="setBilling('annual')" style="flex:1;padding:9px;border-radius:11px;border:none;background:transparent;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font);">Annual <span style="background:var(--al);color:var(--accent);font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;margin-left:3px;">-30%</span></button>
+      <button id="btn-monthly" onclick="setBilling('monthly')" style="flex:1;padding:9px;border-radius:11px;border:none;background:var(--white);font-size:12px;font-weight:700;color:#F1F5FF;cursor:pointer;font-family:var(--font);box-shadow:0 2px 8px rgba(0,0,0,0.06);" data-i18n="sub.monthly">Monthly</button>
+      <button id="btn-annual" onclick="setBilling('annual')" style="flex:1;padding:9px;border-radius:11px;border:none;background:transparent;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font);"><span data-i18n="sub.annual">Annual</span> <span style="background:var(--al);color:var(--accent);font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;margin-left:3px;">-30%</span></button>
     </div>
 
     <!-- FREE PLAN -->
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:20px;padding:16px;border:0.5px solid rgba(255,255,255,0.12);margin-bottom:10px;" id="plan-free">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
         <div style="width:40px;height:40px;border-radius:14px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;">🆓</div>
-        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#F1F5FF;">Free</div><div style="font-size:12px;color:rgba(255,255,255,0.5);">Always free, no card needed</div></div>
+        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#F1F5FF;">Free</div><div style="font-size:12px;color:rgba(255,255,255,0.5);" data-i18n="sub.freeDesc">Always free, no card needed</div></div>
         <div style="font-size:20px;font-weight:700;color:#F1F5FF;">$0</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:var(--accent);font-weight:700;">✓</span> Vital signs manual input (BP, Glucose, HR)</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:var(--accent);font-weight:700;">✓</span> AI Doctor — general questions, Manual Sync</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:var(--accent);font-weight:700;">✓</span> Therapy calendar (max 3 alarms)</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:var(--accent);font-weight:700;">✓</span> Basic Health Score (no AI detail)</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:var(--accent);font-weight:700;">✓</span> <span data-i18n="sub.f1">Vital signs manual input (BP, Glucose, HR)</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:var(--accent);font-weight:700;">✓</span> <span data-i18n="sub.f2">AI Doctor — general questions, Manual Sync</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:var(--accent);font-weight:700;">✓</span> <span data-i18n="sub.f3">Therapy calendar (max 3 alarms)</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:var(--accent);font-weight:700;">✓</span> <span data-i18n="sub.f4">Basic Health Score (no AI detail)</span></div>
       </div>
-      <button id="free-btn" onclick="selectPlan('free')" style="width:100%;padding:11px;border-radius:13px;border:1.5px solid var(--border);background:transparent;font-size:13px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font);">Current Plan</button>
+      <button id="free-btn" onclick="selectPlan('free')" style="width:100%;padding:11px;border-radius:13px;border:1.5px solid var(--border);background:transparent;font-size:13px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font);" data-i18n="sub.currentPlanBtn">Current Plan</button>
     </div>
 
     <!-- PREMIUM PLAN -->
     <div style="background:linear-gradient(135deg,#EBF3FF,#F0EEFF);border-radius:20px;padding:16px;border:1.5px solid rgba(59,125,216,0.3);margin-bottom:10px;position:relative;overflow:hidden;" id="plan-premium">
-      <div style="position:absolute;top:12px;right:12px;background:linear-gradient(135deg,#F97316,#F5A623);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;">OFERTË −60%</div>
+      <div style="position:absolute;top:12px;right:12px;background:linear-gradient(135deg,#F97316,#F5A623);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;" data-i18n="sub.offer">OFERTË −60%</div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
         <div style="width:40px;height:40px;border-radius:14px;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);display:flex;align-items:center;justify-content:center;font-size:20px;">⭐</div>
-        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#F1F5FF;">Premium</div><div style="font-size:12px;color:rgba(255,255,255,0.5);">For individual patients</div></div>
-        <div style="text-align:right;"><div style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:line-through;line-height:1;">$4.99</div><div style="font-size:22px;font-weight:800;color:#60A5FA;" id="premium-price">$1.99</div><div style="font-size:10px;color:rgba(255,255,255,0.5);">/muaj</div></div>
+        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#F1F5FF;">Premium</div><div style="font-size:12px;color:rgba(255,255,255,0.5);" data-i18n="sub.premiumDesc">For individual patients</div></div>
+        <div style="text-align:right;"><div style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:line-through;line-height:1;">$4.99</div><div style="font-size:22px;font-weight:800;color:#60A5FA;" id="premium-price">$1.99</div><div style="font-size:10px;color:rgba(255,255,255,0.5);" data-i18n="sub.perMonth">/muaj</div></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> Gjithçka nga Free</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <strong>Health BOT Verdict</strong> — score AI</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> Profil mjekësor i plotë</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> Vitals History 90 ditë</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> Alarme terapie të pakufizuara</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <strong>Dr. Shabani — konsulta pa limit</strong></div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <strong>ECG upload + analizë Claude AI</strong></div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> Raport javor + mujor AI + PDF</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> Air Quality alerts personale</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> Prioritet support 24/7</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p1">Gjithçka nga Free</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n-html="sub.p2"><strong>Health BOT Verdict</strong> — score AI</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p3">Profil mjekësor i plotë</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p4">Vitals History 90 ditë</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p5">Alarme terapie të pakufizuara</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n-html="sub.p6"><strong>Dr. Shabani — konsulta pa limit</strong></span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n-html="sub.p7"><strong>ECG upload + analizë Claude AI</strong></span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p8">Raport javor + mujor AI + PDF</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p9">Air Quality alerts personale</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p10">Prioritet support 24/7</span></div>
       </div>
-      <button onclick="selectPlan('premium')" style="width:100%;padding:12px;border-radius:13px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">Get Premium</button>
+      <button onclick="selectPlan('premium')" style="width:100%;padding:12px;border-radius:13px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="sub.getPremium">Get Premium</button>
     </div>
 
     <!-- D HEALTH RING — coming soon -->
     <div style="background:linear-gradient(135deg,#0d3b4e,#0e5b6e);border-radius:20px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden;" id="plan-ring">
       <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.06);"></div>
-      <div style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.16);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;">SË SHPEJTI</div>
+      <div style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.16);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;" data-i18n="sub.comingSoon">SË SHPEJTI</div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
         <div style="width:40px;height:40px;border-radius:14px;background:linear-gradient(135deg,#7fe9d4,#1BBFD6);display:flex;align-items:center;justify-content:center;font-size:20px;">💍</div>
-        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">D Health Ring</div><div style="font-size:12px;color:rgba(255,255,255,0.7);">Pajisje · auto-sync 24/7</div></div>
+        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">D Health Ring</div><div style="font-size:12px;color:rgba(255,255,255,0.7);" data-i18n="sub.ringDesc">Pajisje · auto-sync 24/7</div></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#5EEAD4;font-weight:700;">✓</span> HR, SpO₂, hapa & gjumë 24/7</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#5EEAD4;font-weight:700;">✓</span> Auto-sync Bluetooth — pa input manual</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#5EEAD4;font-weight:700;">✓</span> Health Score i vazhdueshëm</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#5EEAD4;font-weight:700;">✓</span> Ushqen Daily Activity & Wellness</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#5EEAD4;font-weight:700;">✓</span> <span data-i18n="sub.ring1">HR, SpO₂, hapa & gjumë 24/7</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#5EEAD4;font-weight:700;">✓</span> <span data-i18n="sub.ring2">Auto-sync Bluetooth — pa input manual</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#5EEAD4;font-weight:700;">✓</span> <span data-i18n="sub.ring3">Health Score i vazhdueshëm</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#5EEAD4;font-weight:700;">✓</span> <span data-i18n="sub.ring4">Ushqen Daily Activity & Wellness</span></div>
       </div>
-      <button onclick="showToast('💍 D Health Ring — së shpejti! Do të njoftohesh.')" style="width:100%;padding:12px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">🔔 Më njofto</button>
+      <button onclick="showToast('💍 D Health Ring — së shpejti! Do të njoftohesh.')" style="width:100%;padding:12px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="sub.notifyMe">🔔 Më njofto</button>
     </div>
 
     <!-- D HEALTH WATCH — coming soon -->
     <div style="background:linear-gradient(135deg,#2a1d5e,#4a2da8);border-radius:20px;padding:16px;margin-bottom:16px;position:relative;overflow:hidden;" id="plan-watch">
       <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.06);"></div>
-      <div style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.16);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;">SË SHPEJTI</div>
+      <div style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.16);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;" data-i18n="sub.comingSoon">SË SHPEJTI</div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
         <div style="width:40px;height:40px;border-radius:14px;background:linear-gradient(135deg,#c5b3ff,#7c4dff);display:flex;align-items:center;justify-content:center;font-size:20px;">⌚</div>
-        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">D Health Watch</div><div style="font-size:12px;color:rgba(255,255,255,0.7);">Pajisje · ECG + monitorim</div></div>
+        <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">D Health Watch</div><div style="font-size:12px;color:rgba(255,255,255,0.7);" data-i18n="sub.watchDesc">Pajisje · ECG + monitorim</div></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#C4B5FD;font-weight:700;">✓</span> Gjithçka e D Health Ring</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#C4B5FD;font-weight:700;">✓</span> ECG sipas kërkesës — analizë Claude AI</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#C4B5FD;font-weight:700;">✓</span> HRV & monitorim i pasur</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#C4B5FD;font-weight:700;">✓</span> Ushqen ECG Analysis & Vitalet</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#C4B5FD;font-weight:700;">✓</span> <span data-i18n="sub.watch1">Gjithçka e D Health Ring</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#C4B5FD;font-weight:700;">✓</span> <span data-i18n="sub.watch2">ECG sipas kërkesës — analizë Claude AI</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#C4B5FD;font-weight:700;">✓</span> <span data-i18n="sub.watch3">HRV & monitorim i pasur</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.9);"><span style="color:#C4B5FD;font-weight:700;">✓</span> <span data-i18n="sub.watch4">Ushqen ECG Analysis & Vitalet</span></div>
       </div>
-      <button onclick="showToast('⌚ D Health Watch — së shpejti! Do të njoftohesh.')" style="width:100%;padding:12px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">🔔 Më njofto</button>
+      <button onclick="showToast('⌚ D Health Watch — së shpejti! Do të njoftohesh.')" style="width:100%;padding:12px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="sub.notifyMe">🔔 Më njofto</button>
     </div>
 
     <!-- COMPARISON TABLE -->
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;padding:14px;border:0.5px solid rgba(255,255,255,0.12);margin-bottom:16px;">
-      <div style="font-size:12px;font-weight:700;color:#F1F5FF;margin-bottom:10px;">📊 Feature Comparison</div>
+      <div style="font-size:12px;font-weight:700;color:#F1F5FF;margin-bottom:10px;" data-i18n="sub.featureComp">📊 Feature Comparison</div>
       <table style="width:100%;border-collapse:collapse;font-size:11px;">
         <thead>
           <tr>
-            <td style="padding:5px 0;color:rgba(255,255,255,0.5);font-weight:600;width:60%;">Feature</td>
+            <td style="padding:5px 0;color:rgba(255,255,255,0.5);font-weight:600;width:60%;" data-i18n="sub.feature">Feature</td>
             <td style="padding:5px 4px;text-align:center;color:rgba(255,255,255,0.5);font-weight:600;">Free</td>
             <td style="padding:5px 4px;text-align:center;color:#60A5FA;font-weight:700;">Premium</td>
           </tr>
         </thead>
         <tbody>
-          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">Manual Vitals</td><td style="text-align:center;color:var(--accent);">✓</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
+          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tManualVitals">Manual Vitals</td><td style="text-align:center;color:var(--accent);">✓</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
           <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">AI Doctor</td><td style="text-align:center;color:var(--accent);">✓</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
           <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">Google Fit / Apple Health</td><td style="text-align:center;color:var(--accent);">✓</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
-          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">Therapy Alarms</td><td style="text-align:center;color:rgba(255,255,255,0.5);">3 max</td><td style="text-align:center;color:var(--accent);">∞</td></tr>
+          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tAlarms">Therapy Alarms</td><td style="text-align:center;color:rgba(255,255,255,0.5);" data-i18n="sub.v3max">3 max</td><td style="text-align:center;color:var(--accent);">∞</td></tr>
           <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">Health BOT AI</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
-          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">Full Profile</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
-          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">Vitals History</td><td style="text-align:center;color:rgba(255,255,255,0.5);">7 ditë</td><td style="text-align:center;color:var(--accent);">90 ditë</td></tr>
-          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">Raport Javor AI</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
-          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">Dr. Shabani</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">Pa limit</td></tr>
-          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">ECG Analizë AI</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
+          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tFullProfile">Full Profile</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
+          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tHistory">Vitals History</td><td style="text-align:center;color:rgba(255,255,255,0.5);" data-i18n="sub.v7days">7 ditë</td><td style="text-align:center;color:var(--accent);" data-i18n="sub.v90days">90 ditë</td></tr>
+          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tWeeklyReport">Raport Javor AI</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
+          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">Dr. Shabani</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);" data-i18n="sub.vUnlimited">Pa limit</td></tr>
+          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tEcg">ECG Analizë AI</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
         </tbody>
       </table>
     </div>
@@ -2739,16 +2739,16 @@ select option{background:#0A1628;color:#F1F5FF;}
     <!-- FAQ -->
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;padding:14px;border:0.5px solid rgba(255,255,255,0.12);margin-bottom:16px;">
       <div style="font-size:12px;font-weight:700;color:#F1F5FF;margin-bottom:10px;">❓ FAQ</div>
-      <div style="font-size:12px;color:#F1F5FF;font-weight:600;margin-bottom:3px;">Can I cancel anytime?</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;line-height:1.5;">Yes, cancel anytime from your account settings. No hidden fees.</div>
-      <div style="font-size:12px;color:#F1F5FF;font-weight:600;margin-bottom:3px;">Is my health data secure?</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;line-height:1.5;">All data is encrypted end-to-end. GDPR compliant. We never sell your data.</div>
-      <div style="font-size:12px;color:#F1F5FF;font-weight:600;margin-bottom:3px;">Is there a free trial?</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.5;">Yes! Premium comes with a 7-day free trial. No credit card required to start.</div>
+      <div style="font-size:12px;color:#F1F5FF;font-weight:600;margin-bottom:3px;" data-i18n="sub.faqQ1">Can I cancel anytime?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;line-height:1.5;" data-i18n="sub.faqA1">Yes, cancel anytime from your account settings. No hidden fees.</div>
+      <div style="font-size:12px;color:#F1F5FF;font-weight:600;margin-bottom:3px;" data-i18n="sub.faqQ2">Is my health data secure?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;line-height:1.5;" data-i18n="sub.faqA2">All data is encrypted end-to-end. GDPR compliant. We never sell your data.</div>
+      <div style="font-size:12px;color:#F1F5FF;font-weight:600;margin-bottom:3px;" data-i18n="sub.faqQ3">Is there a free trial?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.5;" data-i18n="sub.faqA3">Yes! Premium comes with a 7-day free trial. No credit card required to start.</div>
     </div>
 
     <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.3);line-height:1.6;margin-bottom:20px;">
-      🔒 Secure payment · GDPR compliant · Cancel anytime<br>
+      <span data-i18n="sub.securePay">🔒 Secure payment · GDPR compliant · Cancel anytime</span><br>
       Powered by D Health · Claude AI
     </div>
   </div>
@@ -3789,20 +3789,20 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div style="display:flex;align-items:center;justify-content:space-between;padding:0 20px 12px;flex-shrink:0;border-bottom:1px solid rgba(120,150,190,.14);">
       <div style="display:flex;align-items:center;gap:10px;">
         <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#6cb2ff,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 6px 14px rgba(59,130,246,.35);">&#128276;</div>
-        <div><div style="font-size:16px;font-weight:700;color:#1f2c44;">Notifications</div><div id="notifBadge" style="font-size:11px;color:#7387a4;font-weight:600;">0 unread</div></div>
+        <div><div style="font-size:16px;font-weight:700;color:#1f2c44;" data-i18n="menu.notifications">Notifications</div><div id="notifBadge" style="font-size:11px;color:#7387a4;font-weight:600;">0 unread</div></div>
       </div>
       <button onclick="closeNotifSheet(null)" style="width:30px;height:30px;border-radius:10px;border:none;background:#eef2fa;color:#7387a4;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#10005;</button>
     </div>
     <div style="flex:1;overflow-y:auto;padding:14px 16px 22px;scrollbar-width:none;">
       <div style="background:linear-gradient(135deg,#0D3B8E,#1E5FBA);border-radius:18px;padding:14px 16px;margin-bottom:14px;box-shadow:0 12px 28px rgba(30,95,186,.3);">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.65);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Next alarm today</div>
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.65);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;" data-i18n="nt.nextAlarm">Next alarm today</div>
         <div style="display:flex;align-items:center;">
-          <div><div style="font-size:26px;font-weight:700;color:#fff;" id="nextAlarmTime">--:--</div><div style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:1px;">Evening reminder</div></div>
-          <div style="flex:1;padding:0 12px;"><div style="font-size:14px;font-weight:700;color:#fff;" id="nextAlarmName">--</div><div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px;">Therapy reminder set</div></div>
+          <div><div style="font-size:26px;font-weight:700;color:#fff;" id="nextAlarmTime">--:--</div><div style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:1px;" data-i18n="nt.eveningReminder">Evening reminder</div></div>
+          <div style="flex:1;padding:0 12px;"><div style="font-size:14px;font-weight:700;color:#fff;" id="nextAlarmName">--</div><div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px;" data-i18n="nt.therapyReminderSet">Therapy reminder set</div></div>
           <div style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:22px;">&#128138;</div>
         </div>
         <div id="aptUpcoming" style="display:none;margin-top:10px;background:rgba(255,255,255,0.12);border-radius:14px;padding:12px 14px;">
-          <div style="font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">&#128197; Upcoming Appointment</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;" data-i18n="nt.upcomingAppt">&#128197; Upcoming Appointment</div>
           <div style="display:flex;align-items:center;gap:10px;">
             <div id="aptUpIco" style="font-size:22px;">&#9203;</div>
             <div style="flex:1;"><div id="aptUpTitle" style="font-size:13px;font-weight:700;color:#fff;">Pret konfirmim...</div><div id="aptUpSub" style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px;">Dr. Herolind Shabani</div></div>
@@ -3810,20 +3810,20 @@ select option{background:#0A1628;color:#F1F5FF;}
           </div>
         </div>
       </div>
-      <div style="font-size:10px;font-weight:700;color:#8094b3;text-transform:uppercase;letter-spacing:0.8px;margin:0 2px 8px;">Recent Alerts</div>
-      <div id="recentAlertsList" style="margin-bottom:16px;"><div style="text-align:center;padding:18px 0;font-size:12px;color:#7387a4;">No recent alerts</div></div>
-      <div style="font-size:10px;font-weight:700;color:#8094b3;text-transform:uppercase;letter-spacing:0.8px;margin:0 2px 8px;">Today's Therapy Schedule</div>
+      <div style="font-size:10px;font-weight:700;color:#8094b3;text-transform:uppercase;letter-spacing:0.8px;margin:0 2px 8px;" data-i18n="nt.recentAlerts">Recent Alerts</div>
+      <div id="recentAlertsList" style="margin-bottom:16px;"><div style="text-align:center;padding:18px 0;font-size:12px;color:#7387a4;" data-i18n="nt.noRecentAlerts">No recent alerts</div></div>
+      <div style="font-size:10px;font-weight:700;color:#8094b3;text-transform:uppercase;letter-spacing:0.8px;margin:0 2px 8px;" data-i18n="nt.todaySchedule">Today's Therapy Schedule</div>
       <div id="notifAlarmList"></div>
-      <button onclick="closeNotifSheet(null);switchScreen('calendar')" style="width:100%;padding:10px;border-radius:14px;border:1.5px dashed rgba(59,125,216,0.4);background:rgba(255,255,255,.5);color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:16px;">+ Add Alarm in Calendar &#8250;</button>
+      <button onclick="closeNotifSheet(null);switchScreen('calendar')" style="width:100%;padding:10px;border-radius:14px;border:1.5px dashed rgba(59,125,216,0.4);background:rgba(255,255,255,.5);color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:16px;" data-i18n="nt.addAlarmCal">+ Add Alarm in Calendar &#8250;</button>
       <div style="background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.6));border:1px solid rgba(255,255,255,.9);box-shadow:0 8px 20px rgba(70,120,190,.1);border-radius:16px;padding:14px;margin-bottom:14px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">&#128277; Quiet Hours</div><button class="ntgl on" onclick="toggleNotif('Quiet',this)"><div class="ntgl-thumb"></div></button></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div style="font-size:13px;font-weight:700;color:#1f2c44;" data-i18n="nt.quietHours">&#128277; Quiet Hours</div><button class="ntgl on" onclick="toggleNotif('Quiet',this)"><div class="ntgl-thumb"></div></button></div>
         <div style="display:flex;gap:10px;">
-          <div style="flex:1;background:#eef3fb;border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:#7387a4;font-weight:600;margin-bottom:4px;">FROM</div><div style="font-size:18px;font-weight:700;color:#1f2c44;">22:00</div></div>
-          <div style="display:flex;align-items:center;font-size:12px;color:#aab8cf;">to</div>
-          <div style="flex:1;background:#eef3fb;border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:#7387a4;font-weight:600;margin-bottom:4px;">UNTIL</div><div style="font-size:18px;font-weight:700;color:#1f2c44;">07:00</div></div>
+          <div style="flex:1;background:#eef3fb;border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:#7387a4;font-weight:600;margin-bottom:4px;" data-i18n="nt.from">FROM</div><div style="font-size:18px;font-weight:700;color:#1f2c44;">22:00</div></div>
+          <div style="display:flex;align-items:center;font-size:12px;color:#aab8cf;" data-i18n="nt.to">to</div>
+          <div style="flex:1;background:#eef3fb;border-radius:10px;padding:8px 12px;text-align:center;"><div style="font-size:10px;color:#7387a4;font-weight:600;margin-bottom:4px;" data-i18n="nt.until">UNTIL</div><div style="font-size:18px;font-weight:700;color:#1f2c44;">07:00</div></div>
         </div>
       </div>
-      <button onclick="clearAllNotifs()" style="width:100%;padding:12px;border-radius:14px;border:1px solid rgba(120,150,190,.25);background:#fff;font-size:13px;font-weight:600;color:#e0436a;cursor:pointer;font-family:var(--font);">&#128465; Clear All Notifications</button>
+      <button onclick="clearAllNotifs()" style="width:100%;padding:12px;border-radius:14px;border:1px solid rgba(120,150,190,.25);background:#fff;font-size:13px;font-weight:600;color:#e0436a;cursor:pointer;font-family:var(--font);" data-i18n="nt.clearAll">&#128465; Clear All Notifications</button>
     </div>
   </div>
 </div>
@@ -5136,21 +5136,23 @@ function updatePlanUI(){
   var tag = document.getElementById('currentPlanTag');
   var subText = document.getElementById('subStatusText');
 
+  var _T = (typeof dhT==='function') ? dhT : function(k){return k;};
+  var displayName = (plan==='free') ? _T('set.planFreeName') : p.name;
   if(icon) icon.textContent = p.icon;
-  if(name) name.textContent = p.name;
-  if(tag) tag.textContent = 'Current: '+p.name;
+  if(name) name.textContent = displayName;
+  if(tag) tag.textContent = _T('set.current')+' '+displayName;
 
   if(plan==='free'){
-    if(desc) desc.textContent = 'Vitals, AI Doctor, Google Fit & Apple Health';
+    if(desc) desc.textContent = _T('set.planFreeDesc');
     if(banner) banner.style.background = 'linear-gradient(135deg,#F4F7FB,#EBF3FF)';
-    if(subText) subText.textContent = 'Free — Upgrade for AI features';
+    if(subText) subText.textContent = _T('set.planFreeSub');
     // Show upgrade button
     if(banner) banner.querySelector('div:last-child').style.display='flex';
   } else if(plan==='premium'){
-    if(desc) desc.textContent = 'Health BOT AI · Reports · Full profile';
+    if(desc) desc.textContent = _T('set.planPremiumDesc');
     if(banner) banner.style.background = 'linear-gradient(135deg,#EBF3FF,#F0EEFF)';
     if(subText) subText.textContent = 'Premium — Active ✓';
-    if(banner) banner.querySelector('div:last-child').textContent='Manage';
+    if(banner) banner.querySelector('div:last-child').textContent=_T('set.manage');
   } else if(plan==='clinic'){
     if(desc) desc.textContent = 'Multi-patient · Dr. Shabani · Integrations';
     if(banner) banner.style.background = 'linear-gradient(135deg,#0D3B8E,#1E5FBA)';
@@ -6334,6 +6336,125 @@ var DH_I18N = {
   'menu.notifications': {sq:'Njoftimet', mk:'Известувања', en:'Notifications'},
   'menu.settings':      {sq:'Cilësimet', mk:'Поставки', en:'Settings'},
   'menu.signout':       {sq:'Dil', mk:'Одјави се', en:'Sign Out'},
+  /* Settings screen */
+  'set.upgrade':       {sq:'Përmirëso', mk:'Надгради', en:'Upgrade'},
+  'set.upgradeDesc':   {sq:'Përmirëso për qasje të plotë në AI', mk:'Надгради за целосен AI пристап', en:'Upgrade for full AI access'},
+  'set.manage':        {sq:'Menaxho', mk:'Управувај', en:'Manage'},
+  'set.current':       {sq:'Aktual:', mk:'Тековен:', en:'Current:'},
+  'set.planFreeName':  {sq:'Plani Falas', mk:'Бесплатен план', en:'Free Plan'},
+  'set.planFreeDesc':  {sq:'Vitale, AI Doctor, Google Fit & Apple Health', mk:'Витални, AI Doctor, Google Fit & Apple Health', en:'Vitals, AI Doctor, Google Fit & Apple Health'},
+  'set.planPremiumDesc':{sq:'Health BOT AI · Raporte · Profil i plotë', mk:'Health BOT AI · Извештаи · Целосен профил', en:'Health BOT AI · Reports · Full profile'},
+  'set.planFreeSub':   {sq:'Falas — Përmirëso për veçoritë AI', mk:'Бесплатно — Надгради за AI', en:'Free — Upgrade for AI features'},
+  'set.account':       {sq:'Llogaria', mk:'Сметка', en:'Account'},
+  'set.personalInfo':  {sq:'Të dhënat personale', mk:'Лични информации', en:'Personal Information'},
+  'set.personalInfoSub':{sq:'Emër, email, datëlindje', mk:'Име, е-пошта, дата на раѓање', en:'Name, email, date of birth'},
+  'set.password':      {sq:'Fjalëkalimi & Siguria', mk:'Лозинка и безбедност', en:'Password & Security'},
+  'set.passwordSub':   {sq:'Ndrysho fjalëkalimin, 2FA', mk:'Промени лозинка, 2FA', en:'Change password, 2FA'},
+  'set.subscription':  {sq:'Plani i abonimit', mk:'План за претплата', en:'Subscription Plan'},
+  'set.payments':      {sq:'Pagesat', mk:'Плаќања', en:'Payments'},
+  'set.paymentsSub':   {sq:'Karta · PayPal · G Pay · Stripe · Crypto', mk:'Картички · PayPal · G Pay · Stripe · Crypto', en:'Cards · PayPal · G Pay · Stripe · Crypto'},
+  'set.devices':       {sq:'Pajisjet e lidhura', mk:'Поврзани уреди', en:'Connected Devices'},
+  'set.devicesSub':    {sq:'Health Connect · Fitbit · D Health Ring', mk:'Health Connect · Fitbit · D Health Ring', en:'Health Connect · Fitbit · D Health Ring'},
+  'set.emergency':     {sq:'Kontakti i urgjencës', mk:'Итен контакт', en:'Emergency Contact'},
+  'set.appearance':    {sq:'Pamja & Gjuha', mk:'Изглед и јазик', en:'Appearance & Language'},
+  'set.language':      {sq:'Gjuha', mk:'Јазик', en:'Language'},
+  'set.notifPrivacy':  {sq:'Njoftimet & Privatësia', mk:'Известувања и приватност', en:'Notifications & Privacy'},
+  'set.notifications': {sq:'Njoftimet', mk:'Известувања', en:'Notifications'},
+  'set.notificationsSub':{sq:'Alarme, alerte & kujtesa', mk:'Аларми, предупредувања и потсетници', en:'Alarms, alerts & reminders'},
+  'set.shareData':     {sq:'Ndaj të dhënat shëndetësore', mk:'Сподели здравствени податоци', en:'Share Health Data'},
+  'set.shareDataSub':  {sq:'Me mjekun ose klinikën tënde', mk:'Со твојот лекар или клиника', en:'With your doctor or clinic'},
+  'set.analytics':     {sq:'Analitika & Përmirësimi', mk:'Аналитика и подобрување', en:'Analytics & Improvement'},
+  'set.analyticsSub':  {sq:'Ndihmo të përmirësojmë D Health', mk:'Помогни да го подобриме D Health', en:'Help improve D Health'},
+  'set.exportData':    {sq:'Eksporto të dhënat e mia', mk:'Извези ги моите податоци', en:'Export My Data'},
+  'set.exportDataSub': {sq:'GDPR · Shkarko të gjitha të dhënat', mk:'GDPR · Преземи ги сите податоци', en:'GDPR · Download all your data'},
+  'set.supportAbout':  {sq:'Mbështetja & Rreth', mk:'Поддршка и за нас', en:'Support & About'},
+  'set.help':          {sq:'Ndihmë & Mbështetje', mk:'Помош и поддршка', en:'Help & Support'},
+  'set.helpSub':       {sq:'FAQ, kontakto mbështetjen', mk:'ЧПП, контактирај поддршка', en:'FAQ, contact support'},
+  'set.terms':         {sq:'Kushtet e shërbimit', mk:'Услови за користење', en:'Terms of Service'},
+  'set.termsSub':      {sq:'Informacion ligjor', mk:'Правни информации', en:'Legal information'},
+  'set.privacy':       {sq:'Politika e privatësisë', mk:'Политика за приватност', en:'Privacy Policy'},
+  'set.privacySub':    {sq:'GDPR · Të dhënat e tua janë të sigurta', mk:'GDPR · Твоите податоци се безбедни', en:'GDPR compliant · Your data is safe'},
+  'set.rate':          {sq:'Vlerëso D Health', mk:'Оцени го D Health', en:'Rate D Health'},
+  'set.rateSub':       {sq:'Të pëlqen app-i? Lër një vlerësim', mk:'Ти се допаѓа апликацијата? Остави оценка', en:'Love the app? Leave a review'},
+  'set.dangerZone':    {sq:'Zona e rrezikut', mk:'Опасна зона', en:'Danger Zone'},
+  'set.signoutSub':    {sq:'Do të duhet të hysh sërish', mk:'Ќе треба повторно да се најавиш', en:'You will need to log in again'},
+  'set.deleteAccount': {sq:'Fshi llogarinë', mk:'Избриши сметка', en:'Delete Account'},
+  'set.deleteAccountSub':{sq:'Fshi përgjithmonë të gjitha të dhënat', mk:'Трајно избриши ги сите податоци', en:'Permanently delete all your data'},
+  'set.activeWord':    {sq:'Aktiv', mk:'Активен', en:'Active'},
+  /* Subscription screen */
+  'sub.choose':    {sq:'Zgjidh planin tënd', mk:'Избери план', en:'Choose Your Plan'},
+  'sub.title':     {sq:'Planet D Health', mk:'D Health планови', en:'D Health Plans'},
+  'sub.subtitle':  {sq:'Zhblloko fuqinë e plotë të mjekësisë AI', mk:'Отклучи ја целосната моќ на AI медицината', en:'Unlock the full power of AI medicine'},
+  'sub.monthly':   {sq:'Mujore', mk:'Месечно', en:'Monthly'},
+  'sub.annual':    {sq:'Vjetore', mk:'Годишно', en:'Annual'},
+  'sub.perMonth':  {sq:'/muaj', mk:'/месец', en:'/month'},
+  'sub.offer':     {sq:'OFERTË −60%', mk:'ПОНУДА −60%', en:'OFFER −60%'},
+  'sub.comingSoon':{sq:'SË SHPEJTI', mk:'НАСКОРО', en:'COMING SOON'},
+  'sub.notifyMe':  {sq:'🔔 Më njofto', mk:'🔔 Извести ме', en:'🔔 Notify me'},
+  'sub.freeDesc':  {sq:'Gjithmonë falas, pa kartë', mk:'Секогаш бесплатно, без картичка', en:'Always free, no card needed'},
+  'sub.currentPlanBtn':{sq:'Plani aktual', mk:'Тековен план', en:'Current Plan'},
+  'sub.f1':{sq:'Vitale manuale (BP, Glukozë, HR)', mk:'Витални рачно (BP, Гликоза, HR)', en:'Vital signs manual input (BP, Glucose, HR)'},
+  'sub.f2':{sq:'AI Doctor — pyetje të përgjithshme, Sync manual', mk:'AI Doctor — општи прашања, рачен Sync', en:'AI Doctor — general questions, Manual Sync'},
+  'sub.f3':{sq:'Kalendar terapie (max 3 alarme)', mk:'Календар за терапија (макс. 3 аларми)', en:'Therapy calendar (max 3 alarms)'},
+  'sub.f4':{sq:'Health Score bazik (pa detaj AI)', mk:'Основен Health Score (без AI детали)', en:'Basic Health Score (no AI detail)'},
+  'sub.premiumDesc':{sq:'Për pacientë individualë', mk:'За индивидуални пациенти', en:'For individual patients'},
+  'sub.p1':{sq:'Gjithçka nga Free', mk:'Сè од Free', en:'Everything from Free'},
+  'sub.p2':{sq:'<strong>Health BOT Verdict</strong> — score AI', mk:'<strong>Health BOT Verdict</strong> — AI оценка', en:'<strong>Health BOT Verdict</strong> — AI score'},
+  'sub.p3':{sq:'Profil mjekësor i plotë', mk:'Целосен медицински профил', en:'Full medical profile'},
+  'sub.p4':{sq:'Vitals History 90 ditë', mk:'Vitals History 90 дена', en:'Vitals History 90 days'},
+  'sub.p5':{sq:'Alarme terapie të pakufizuara', mk:'Неограничени аларми за терапија', en:'Unlimited therapy alarms'},
+  'sub.p6':{sq:'<strong>Dr. Shabani — konsulta pa limit</strong>', mk:'<strong>Др. Шабани — неограничени консултации</strong>', en:'<strong>Dr. Shabani — unlimited consultations</strong>'},
+  'sub.p7':{sq:'<strong>ECG upload + analizë Claude AI</strong>', mk:'<strong>ЕКГ прикачување + Claude AI анализа</strong>', en:'<strong>ECG upload + Claude AI analysis</strong>'},
+  'sub.p8':{sq:'Raport javor + mujor AI + PDF', mk:'Неделен + месечен AI извештај + PDF', en:'Weekly + monthly AI report + PDF'},
+  'sub.p9':{sq:'Air Quality alerts personale', mk:'Лични Air Quality предупредувања', en:'Personal Air Quality alerts'},
+  'sub.p10':{sq:'Prioritet support 24/7', mk:'Приоритетна поддршка 24/7', en:'Priority support 24/7'},
+  'sub.getPremium':{sq:'Merr Premium', mk:'Земи Premium', en:'Get Premium'},
+  'sub.ringDesc':{sq:'Pajisje · auto-sync 24/7', mk:'Уред · auto-sync 24/7', en:'Device · auto-sync 24/7'},
+  'sub.ring1':{sq:'HR, SpO₂, hapa & gjumë 24/7', mk:'HR, SpO₂, чекори и сон 24/7', en:'HR, SpO₂, steps & sleep 24/7'},
+  'sub.ring2':{sq:'Auto-sync Bluetooth — pa input manual', mk:'Auto-sync Bluetooth — без рачен внес', en:'Auto-sync Bluetooth — no manual input'},
+  'sub.ring3':{sq:'Health Score i vazhdueshëm', mk:'Континуиран Health Score', en:'Continuous Health Score'},
+  'sub.ring4':{sq:'Ushqen Daily Activity & Wellness', mk:'Полни Daily Activity & Wellness', en:'Feeds Daily Activity & Wellness'},
+  'sub.watchDesc':{sq:'Pajisje · ECG + monitorim', mk:'Уред · ЕКГ + мониторинг', en:'Device · ECG + monitoring'},
+  'sub.watch1':{sq:'Gjithçka e D Health Ring', mk:'Сè од D Health Ring', en:'Everything in D Health Ring'},
+  'sub.watch2':{sq:'ECG sipas kërkesës — analizë Claude AI', mk:'ЕКГ на барање — Claude AI анализа', en:'On-demand ECG — Claude AI analysis'},
+  'sub.watch3':{sq:'HRV & monitorim i pasur', mk:'HRV и богат мониторинг', en:'HRV & rich monitoring'},
+  'sub.watch4':{sq:'Ushqen ECG Analysis & Vitalet', mk:'Полни ЕКГ Analysis & Vitals', en:'Feeds ECG Analysis & Vitals'},
+  'sub.featureComp':{sq:'📊 Krahasimi i veçorive', mk:'📊 Споредба на функции', en:'📊 Feature Comparison'},
+  'sub.feature':{sq:'Veçoria', mk:'Функција', en:'Feature'},
+  'sub.tManualVitals':{sq:'Vitale manuale', mk:'Рачни витални', en:'Manual Vitals'},
+  'sub.tAlarms':{sq:'Alarme terapie', mk:'Аларми за терапија', en:'Therapy Alarms'},
+  'sub.tFullProfile':{sq:'Profil i plotë', mk:'Целосен профил', en:'Full Profile'},
+  'sub.tHistory':{sq:'Vitals History', mk:'Vitals History', en:'Vitals History'},
+  'sub.tWeeklyReport':{sq:'Raport javor AI', mk:'Неделен AI извештај', en:'Weekly AI Report'},
+  'sub.tEcg':{sq:'ECG analizë AI', mk:'ЕКГ AI анализа', en:'ECG AI Analysis'},
+  'sub.v3max':{sq:'3 max', mk:'3 макс.', en:'3 max'},
+  'sub.v7days':{sq:'7 ditë', mk:'7 дена', en:'7 days'},
+  'sub.v90days':{sq:'90 ditë', mk:'90 дена', en:'90 days'},
+  'sub.vUnlimited':{sq:'Pa limit', mk:'Без лимит', en:'Unlimited'},
+  'sub.faqQ1':{sq:'A mund ta anuloj në çdo kohë?', mk:'Можам ли да откажам во секое време?', en:'Can I cancel anytime?'},
+  'sub.faqA1':{sq:'Po, anulo në çdo kohë nga cilësimet e llogarisë. Pa tarifa të fshehura.', mk:'Да, откажи во секое време од поставките. Без скриени трошоци.', en:'Yes, cancel anytime from your account settings. No hidden fees.'},
+  'sub.faqQ2':{sq:'A janë të sigurta të dhënat e mia?', mk:'Дали се безбедни моите податоци?', en:'Is my health data secure?'},
+  'sub.faqA2':{sq:'Të gjitha të dhënat janë të enkriptuara end-to-end. Në përputhje me GDPR. S\'i shesim kurrë.', mk:'Сите податоци се шифрирани end-to-end. GDPR усогласено. Никогаш не ги продаваме.', en:'All data is encrypted end-to-end. GDPR compliant. We never sell your data.'},
+  'sub.faqQ3':{sq:'A ka provë falas?', mk:'Дали има бесплатен пробен период?', en:'Is there a free trial?'},
+  'sub.faqA3':{sq:'Po! Premium vjen me 7 ditë provë falas. Pa kartë krediti për të nisur.', mk:'Да! Premium доаѓа со 7 дена бесплатна проба. Без картичка за почеток.', en:'Yes! Premium comes with a 7-day free trial. No credit card required to start.'},
+  'sub.securePay':{sq:'🔒 Pagesë e sigurt · GDPR · Anulo në çdo kohë', mk:'🔒 Безбедно плаќање · GDPR · Откажи во секое време', en:'🔒 Secure payment · GDPR compliant · Cancel anytime'},
+  /* Notifications sheet */
+  'nt.nextAlarm':   {sq:'Alarmi tjetër sot', mk:'Следен аларм денес', en:'Next alarm today'},
+  'nt.eveningReminder':{sq:'Kujtesë mbrëmjeje', mk:'Вечерен потсетник', en:'Evening reminder'},
+  'nt.therapyReminderSet':{sq:'Kujtesë terapie e vendosur', mk:'Поставен потсетник за терапија', en:'Therapy reminder set'},
+  'nt.upcomingAppt':{sq:'📅 Takimi i ardhshëm', mk:'📅 Претстоен термин', en:'📅 Upcoming Appointment'},
+  'nt.pending':     {sq:'Në pritje', mk:'Во очекување', en:'Pending'},
+  'nt.recentAlerts':{sq:'Alertet e fundit', mk:'Неодамнешни предупредувања', en:'Recent Alerts'},
+  'nt.noRecentAlerts':{sq:'Pa alerte të fundit', mk:'Нема неодамнешни предупредувања', en:'No recent alerts'},
+  'nt.todaySchedule':{sq:'Orari i terapisë sot', mk:'Распоред за терапија денес', en:"Today's Therapy Schedule"},
+  'nt.addAlarmCal': {sq:'+ Shto alarm te Kalendari ›', mk:'+ Додади аларм во Календар ›', en:'+ Add Alarm in Calendar ›'},
+  'nt.quietHours':  {sq:'🔕 Orët e qeta', mk:'🔕 Тивки часови', en:'🔕 Quiet Hours'},
+  'nt.from':        {sq:'NGA', mk:'ОД', en:'FROM'},
+  'nt.to':          {sq:'deri', mk:'до', en:'to'},
+  'nt.until':       {sq:'DERI', mk:'ДО', en:'UNTIL'},
+  'nt.clearAll':    {sq:'🗑 Pastro të gjitha njoftimet', mk:'🗑 Исчисти ги сите известувања', en:'🗑 Clear All Notifications'},
+  'nt.unread':      {sq:'të palexuara', mk:'непрочитани', en:'unread'},
+  'nt.allRead':     {sq:'Të gjitha të lexuara', mk:'Сите прочитани', en:'All read'},
   /* Home — të tjera */
   'home.viewAnalysis': {sq:'Shiko analizën e plotë →', mk:'Види ја целата анализа →', en:'View full analysis →'},
   'home.aiSubtitle':   {sq:'Rezultati ditor · AI Diagnostik', mk:'Дневен резултат · AI дијагностика', en:'Daily Score · Diagnostic AI'},
@@ -6385,6 +6506,10 @@ function applyLang(lang){
   try{ if(typeof renderAlarms==='function' && document.getElementById('alTitle')) renderAlarms(); }catch(e){}
   try{ if(typeof updateDiagHeader==='function') updateDiagHeader(); }catch(e){}
   try{ if(typeof renderTherapyList==='function' && document.getElementById('therapy-count')) renderTherapyList(); }catch(e){}
+  try{ if(typeof updatePlanUI==='function' && document.getElementById('planName')) updatePlanUI(); }catch(e){}
+  try{ if(typeof applyProfileMode==='function' && document.getElementById('moreScreenTitle')) applyProfileMode(_profileMode); }catch(e){}
+  try{ if(typeof initSettings==='function' && document.getElementById('setPlanSub')) initSettings(); }catch(e){}
+  try{ if(typeof updateNotifBadge==='function' && document.getElementById('notifBadge')) updateNotifBadge(); }catch(e){}
 }
 document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ try{ applyLang(); }catch(e){} }, 60); });
 
@@ -6484,7 +6609,7 @@ function markTaken(el){
 }
 function updateNotifBadge(){
   var n=document.querySelectorAll('#notifSheet .notif-item.unread').length;
-  var b=document.getElementById('notifBadge');if(b)b.textContent=n>0?n+' unread':'All read';
+  var b=document.getElementById('notifBadge');if(b)b.textContent=n>0?(n+' '+(typeof dhT==='function'?dhT('nt.unread'):'unread')):(typeof dhT==='function'?dhT('nt.allRead'):'All read');
   var m=document.getElementById('notifMitsText');if(m)m.textContent=n>0?n+' unread alerts':'All caught up';
 }
 function clearAllNotifs(){
@@ -6817,28 +6942,31 @@ function setToggleDark(btn){
   if(mainThumb) mainThumb.style.left = on ? '23px' : '3px';
 }
 /* Filtro ekranin 'more': My Profile = vetëm Account; Settings = pa Account */
+var _profileMode = 'profile';
 function applyProfileMode(mode){
+  _profileMode = mode;
   var acct = document.getElementById('sec-account');
   var others = ['sec-appearance','sec-notifications','sec-support'].map(function(id){ return document.getElementById(id); });
   var title = document.getElementById('moreScreenTitle');
   if(mode==='settings'){
     if(acct) acct.style.display='';   /* trego Account-in edhe te Settings (Payments/Devices/Emergency) */
     others.forEach(function(e){ if(e) e.style.display=''; });
-    if(title) title.textContent='Settings';
+    if(title) title.textContent=(typeof dhT==='function'?dhT('menu.settings'):'Settings');
   } else {
     if(acct) acct.style.display='';
     others.forEach(function(e){ if(e) e.style.display='none'; });
-    if(title) title.textContent='My Profile';
+    if(title) title.textContent=(typeof dhT==='function'?dhT('menu.profile'):'My Profile');
   }
 }
 
 function initSettings(){
   // Sync plan text
+  var _T = (typeof dhT==='function') ? dhT : function(k){return k;};
   var planEl = document.getElementById('setPlanSub');
   if(planEl){
     var plan = ACCESS ? ACCESS.currentPlan : 'free';
-    var names = {free:'Free Plan', premium:'Premium Plan', clinic:'Clinic Plan'};
-    planEl.textContent = (names[plan]||'Free Plan') + ' — Active';
+    var names = {free:_T('set.planFreeName'), premium:'Premium', clinic:'Clinic'};
+    planEl.textContent = (names[plan]||_T('set.planFreeName')) + ' — ' + _T('set.activeWord');
   }
   // Sync dark mode toggle
   var btn = document.getElementById('setDarkTgl');
@@ -6849,7 +6977,7 @@ function initSettings(){
   }
   // Sync language
   var langSub = document.getElementById('setLangSub');
-  var langFlags = {en:'English \u{1F1EC}\u{1F1E7}', sq:'Shqip \u{1F1E6}\u{1F1F1}', mk:'Makedonski \u{1F1F2}\u{1F1F0}'};
+  var langFlags = {en:'English \u{1F1EC}\u{1F1E7}', sq:'Shqip \u{1F1E6}\u{1F1F1}', mk:'Македонски \u{1F1F2}\u{1F1F0}'};
   if(langSub && typeof currentLang !== 'undefined') langSub.textContent = langFlags[currentLang] || langFlags['en'];
   try{ refreshEmergencySub(); }catch(e){}
 }
@@ -7427,6 +7555,8 @@ function updateNotifBadge(){
       dot.style.display = 'none';
     }
   }
+  var b=document.getElementById('notifBadge');
+  if(b) b.textContent = unread>0 ? (unread+' '+(typeof dhT==='function'?dhT('nt.unread'):'unread')) : (typeof dhT==='function'?dhT('nt.allRead'):'All read');
 }
 /* Init badge on load */
 document.addEventListener('DOMContentLoaded', function(){
