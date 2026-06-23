@@ -3132,26 +3132,26 @@ select option{background:#0A1628;color:#F1F5FF;}
       
       <div style="flex:1;">
         <div id="ds-name" style="display:none;">--</div>
-        <div class="v7-stitle" style="font-size:23px;">Diagnosis</div>
+        <div class="v7-stitle" style="font-size:23px;" data-i18n="nav.diagnosis">Diagnosis</div>
       </div>
     </div>
     <!-- Score + Therapy -->
     <div class="diag-score-row">
       <div class="diag-score-box">
         <div style="font-size:20px;">📊</div>
-        <div><div style="font-size:9px;color:rgba(255,255,255,0.6);">HEALTH SCORE</div><div id="diagHeaderScore" style="font-size:15px;font-weight:700;color:#FCD34D;">--/100</div></div>
+        <div><div data-i18n="diag.healthScoreLbl" style="font-size:9px;color:rgba(255,255,255,0.6);">HEALTH SCORE</div><div id="diagHeaderScore" style="font-size:15px;font-weight:700;color:#FCD34D;">--/100</div></div>
       </div>
       <div class="diag-score-box">
         <div style="font-size:20px;">💊</div>
-        <div><div style="font-size:9px;color:rgba(255,255,255,0.6);">THERAPY</div><div id="diagHeaderTherapy" style="font-size:15px;font-weight:700;color:#fff;">0 active</div></div>
+        <div><div data-i18n="diag.therapyLbl" style="font-size:9px;color:rgba(255,255,255,0.6);">THERAPY</div><div id="diagHeaderTherapy" style="font-size:15px;font-weight:700;color:#fff;">0 active</div></div>
       </div>
     </div>
     <!-- Tabs -->
     <div class="diag-tabs-row">
-      <button class="diag-tab-s active" id="dst-verdict" onclick="switchDiagS('verdict')">📊 Verdict</button>
-      <button class="diag-tab-s" id="dst-profile" onclick="switchDiagS('profile')">📋 Profile</button>
-      <button class="diag-tab-s" id="dst-report" onclick="switchDiagS('report')">📄 Report</button>
-      <button class="diag-tab-s" id="dst-therapy" onclick="switchDiagS('therapy')">💊 Therapy</button>
+      <button class="diag-tab-s active" id="dst-verdict" onclick="switchDiagS('verdict')">📊 <span data-i18n="diag.verdict">Verdict</span></button>
+      <button class="diag-tab-s" id="dst-profile" onclick="switchDiagS('profile')">📋 <span data-i18n="diag.profile">Profile</span></button>
+      <button class="diag-tab-s" id="dst-report" onclick="switchDiagS('report')">📄 <span data-i18n="diag.report">Report</span></button>
+      <button class="diag-tab-s" id="dst-therapy" onclick="switchDiagS('therapy')">💊 <span data-i18n="diag.therapy">Therapy</span></button>
     </div>
   </div>
 
@@ -3167,8 +3167,8 @@ select option{background:#0A1628;color:#F1F5FF;}
             <div id="eng-score-num" style="font-size:28px;font-weight:700;color:#fff;">--</div>
             <div style="font-size:11px;color:rgba(255,255,255,0.8);">/100</div>
           </div>
-          <div id="eng-status-txt" style="font-size:14px;font-weight:700;color:#F1F5FF;">Press Re-Analyze to start</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px;">Correlation Engine — All data sources</div>
+          <div id="eng-status-txt" style="font-size:14px;font-weight:700;color:#F1F5FF;" data-i18n="dx.pressStart">Press Re-Analyze to start</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px;" data-i18n="dx.corrEngine">Correlation Engine — All data sources</div>
           <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;" id="ds-date">--</div>
         </div>
         <!-- Alarms -->
@@ -3179,12 +3179,12 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div id="eng-correlations" style="margin-bottom:10px;"></div>
         <!-- Recommendations -->
         <div id="eng-recommendations" style="background:linear-gradient(135deg,#1A0A2E,#2D1B69);border-radius:14px;padding:13px;margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">🤖 AI Recommendations</div>
-          <div id="eng-rec-content" style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.7;">Press Re-Analyze to generate personalized recommendations</div>
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;" data-i18n="dx.aiRecs">🤖 AI Recommendations</div>
+          <div id="eng-rec-content" style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.7;" data-i18n="dx.pressGenRecs">Press Re-Analyze to generate personalized recommendations</div>
         </div>
         <!-- Doctor summary -->
         <div id="eng-doctor-summary" style="display:none;background:var(--pl);border-radius:12px;padding:11px 13px;margin-bottom:10px;">
-          <div style="font-size:10px;font-weight:700;color:#60A5FA;margin-bottom:4px;">👨‍⚕️ For Dr. Shabani</div>
+          <div style="font-size:10px;font-weight:700;color:#60A5FA;margin-bottom:4px;" data-i18n="dx.forDoctor">👨‍⚕️ For Dr. Shabani</div>
           <div id="eng-doc-txt" style="font-size:11px;color:#F1F5FF;line-height:1.5;"></div>
         </div>
       </div>
@@ -3193,7 +3193,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       </button>
 
       <!-- DEEP PROFILE ANALYSIS -->
-      <button onclick="runDeepProfileAnalysis()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#0D3B8E,#7C3AED);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;" id="deepAnalyzeBtn">
+      <button onclick="runDeepProfileAnalysis()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#0D3B8E,#7C3AED);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;" id="deepAnalyzeBtn" data-i18n="dx.deepProfile">
         Deep Profile Analysis
       </button>
 
@@ -3201,37 +3201,37 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div id="deepAnalysisResult" style="display:none;margin-top:12px;">
         <!-- Overall Verdict -->
         <div style="background:linear-gradient(135deg,#0D3B8E,#1E5FBA);border-radius:16px;padding:14px;margin-bottom:10px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🔬 Deep Health Analysis</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" data-i18n="dx.deepHealth">🔬 Deep Health Analysis</div>
           <div id="deepOverallVerdict" style="font-size:12px;color:#fff;line-height:1.7;"></div>
         </div>
         <!-- Diagnoses Analysis -->
         <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,0.12);">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🏥 Diagnoses Deep Dive</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" data-i18n="dx.diagDeep">🏥 Diagnoses Deep Dive</div>
           <div id="deepDiagnosesText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
         </div>
         <!-- Therapy Analysis -->
         <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,0.12);">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">💊 Therapy Effectiveness</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" data-i18n="dx.therapyEff">💊 Therapy Effectiveness</div>
           <div id="deepTherapyText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
         </div>
         <!-- Lab Analysis -->
         <div id="deepLabSection" style="display:none;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,0.12);">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🧪 Lab Values Analysis</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" data-i18n="dx.labAnalysis">🧪 Lab Values Analysis</div>
           <div id="deepLabText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
         </div>
         <!-- Long-term Risks -->
         <div style="background:linear-gradient(135deg,#FEF2F2,#FFF8EC);border-radius:14px;padding:13px;margin-bottom:10px;border:0.5px solid rgba(220,38,38,0.15);">
-          <div style="font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">⚠️ Long-term Risk Assessment</div>
+          <div style="font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" data-i18n="dx.longRisk">⚠️ Long-term Risk Assessment</div>
           <div id="deepRisksText" style="font-size:12px;color:#F1F5FF;line-height:1.7;"></div>
         </div>
         <!-- Action Plan -->
         <div style="background:linear-gradient(135deg,rgba(45,200,160,0.1),rgba(59,125,216,0.1));border-radius:14px;padding:13px;margin-bottom:10px;border:1px solid rgba(45,200,160,0.2);">
-          <div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🎯 Action Plan</div>
+          <div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" data-i18n="dx.actionPlan">🎯 Action Plan</div>
           <div id="deepActionPlan" style="font-size:12px;color:#F1F5FF;line-height:1.8;"></div>
         </div>
         <!-- For Doctor -->
         <div style="background:var(--pl);border-radius:12px;padding:11px 13px;margin-bottom:10px;">
-          <div style="font-size:10px;font-weight:700;color:#60A5FA;margin-bottom:4px;">👨‍⚕️ Clinical Summary for Dr. Shabani</div>
+          <div style="font-size:10px;font-weight:700;color:#60A5FA;margin-bottom:4px;" data-i18n="dx.clinicalSummary">👨‍⚕️ Clinical Summary for Dr. Shabani</div>
           <div id="deepDoctorSummary" style="font-size:11px;color:#F1F5FF;line-height:1.5;"></div>
         </div>
       </div>
@@ -3244,62 +3244,62 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="diag-section-s" id="dss-profile">
       <div style="padding:14px;">
         <!-- DIAGNOSES -->
-        <div class="pf-sec-title">🏥 Diagnoses</div>
+        <div class="pf-sec-title" data-i18n="dx.pDiagnoses">🏥 Diagnoses</div>
         <div class="tag-wrap2" id="ds-diag-tags">
           </div>
         <div class="tadd-row">
-          <input class="ti" id="ds-diag-inp" placeholder="Add diagnosis..." onkeydown="if(event.key==='Enter')addTag('ds-diag-tags','ds-diag-inp','d')"/>
-          <button class="tb" style="background:var(--heart);" onclick="addTag('ds-diag-tags','ds-diag-inp','d')">+ Add</button>
+          <input class="ti" id="ds-diag-inp" placeholder="Add diagnosis..." data-i18n-ph="dx.phDiag" onkeydown="if(event.key==='Enter')addTag('ds-diag-tags','ds-diag-inp','d')"/>
+          <button class="tb" style="background:var(--heart);" onclick="addTag('ds-diag-tags','ds-diag-inp','d')" data-i18n="dx.add">+ Add</button>
         </div>
         <div class="divr"></div>
         <!-- THERAPY -->
-        <div class="pf-sec-title">💊 Current Therapy</div>
+        <div class="pf-sec-title" data-i18n="dx.pCurrentTherapy">💊 Current Therapy</div>
         <div class="tag-wrap2" id="ds-therapy-tags">
           </div>
-        <div style="font-size:11px;color:#7387a4;padding:2px 2px 6px;line-height:1.5;">ℹ️ Medikamentet shtohen te tab-i <strong style="color:#3b82f6;">Therapy</strong> dhe shfaqen automatikisht këtu.</div>
+        <div data-i18n-html="dx.therapyNote" style="font-size:11px;color:#7387a4;padding:2px 2px 6px;line-height:1.5;">ℹ️ Medikamentet shtohen te tab-i <strong style="color:#3b82f6;">Therapy</strong> dhe shfaqen automatikisht këtu.</div>
         <div class="divr"></div>
         <!-- ALLERGIES -->
-        <div class="pf-sec-title">⚠️ Allergies</div>
+        <div class="pf-sec-title" data-i18n="dx.pAllergies">⚠️ Allergies</div>
         <div class="tag-wrap2" id="ds-allergy-tags">
           </div>
         <div class="tadd-row">
-          <input class="ti" id="ds-allergy-inp" placeholder="Add allergy..." onkeydown="if(event.key==='Enter')addTag('ds-allergy-tags','ds-allergy-inp','a')"/>
-          <button class="tb" style="background:var(--heart);" onclick="addTag('ds-allergy-tags','ds-allergy-inp','a')">+ Add</button>
+          <input class="ti" id="ds-allergy-inp" placeholder="Add allergy..." data-i18n-ph="dx.phAllergy" onkeydown="if(event.key==='Enter')addTag('ds-allergy-tags','ds-allergy-inp','a')"/>
+          <button class="tb" style="background:var(--heart);" onclick="addTag('ds-allergy-tags','ds-allergy-inp','a')" data-i18n="dx.add">+ Add</button>
         </div>
         <div class="divr"></div>
         <!-- LAB VALUES -->
-        <div class="pf-sec-title">🧬 Lab Values</div>
+        <div class="pf-sec-title" data-i18n="dx.pLabValues">🧬 Lab Values</div>
         <div class="tag-wrap2" id="ds-lab-tags">
           </div>
         <div class="tadd-row">
-          <input class="ti" id="ds-lab-inp" placeholder="e.g. HbA1c: 5.9%..." onkeydown="if(event.key==='Enter')addTag('ds-lab-tags','ds-lab-inp','l')"/>
-          <button class="tb" style="background:var(--teal);" onclick="addTag('ds-lab-tags','ds-lab-inp','l')">+ Add</button>
+          <input class="ti" id="ds-lab-inp" placeholder="e.g. HbA1c: 5.9%..." data-i18n-ph="dx.phLab" onkeydown="if(event.key==='Enter')addTag('ds-lab-tags','ds-lab-inp','l')"/>
+          <button class="tb" style="background:var(--teal);" onclick="addTag('ds-lab-tags','ds-lab-inp','l')" data-i18n="dx.add">+ Add</button>
         </div>
         <div class="divr"></div>
         <!-- DOCUMENTS -->
-        <div class="pf-sec-title">📄 Documents</div>
+        <div class="pf-sec-title" data-i18n="dx.pDocuments">📄 Documents</div>
         <div class="fl-list" id="ds-fl-list"></div>
         <div class="divr"></div>
         <!-- ECG ANALYSIS -->
-        <div class="pf-sec-title">🫀 ECG Analysis</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px;">Upload ECG nga smartwatch ose ring — Claude AI analizon dhe krahason me historikun (1 ECG / 24h)</div>
+        <div class="pf-sec-title" data-i18n="dx.pEcgAnalysis">🫀 ECG Analysis</div>
+        <div data-i18n="dx.ecgNote" style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px;">Upload ECG nga smartwatch ose ring — Claude AI analizon dhe krahason me historikun (1 ECG / 24h)</div>
         <label for="ecgFileInputProfile" style="width:100%;padding:11px;border-radius:12px;background:linear-gradient(135deg,#FF6B8A,#8B6FE8);color:#fff;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15M17 8L12 3L7 8M12 3V15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Upload Analyze &amp; ECG
+          <span data-i18n="dx.ecgUpload">Upload Analyze &amp; ECG</span>
           <input type="file" id="ecgFileInputProfile" accept="image/*,.pdf" style="display:none;" onchange="handleECGUpload(event)"/>
         </label>
         <div id="ecgResultAreaProfile" style="display:none;margin-top:10px;background:linear-gradient(135deg,#1A0A2E,#2D1B69);border-radius:12px;padding:13px;">
-          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">🤖 Claude AI — ECG Analysis</div>
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;" data-i18n="dx.ecgResultHdr">🤖 Claude AI — ECG Analysis</div>
           <div style="font-size:12px;color:rgba(255,255,255,0.9);line-height:1.7;" id="ecgResultTextProfile"></div>
         </div>
         <div class="divr"></div>
         <!-- ECG HISTORY — seksion paralel me Diagnoses/Therapy -->
-        <div class="pf-sec-title">📋 ECG History</div>
+        <div class="pf-sec-title" data-i18n="dx.pEcgHistory">📋 ECG History</div>
         <div id="ecgHistoryProfile"></div>
         <div class="divr"></div>
-        <button class="pf-ai-btn" onclick="syncTherapyToProfile();analyzeDsProfile()">Diagnostics</button>
+        <button class="pf-ai-btn" onclick="syncTherapyToProfile();analyzeDsProfile()" data-i18n="dx.diagnostics">Diagnostics</button>
         <div class="ai-resp" id="ds-prof-resp" style="display:none;">
-          <div class="ar-hdr"><div class="ar-av">🤖</div><div style="font-size:12px;font-weight:700;color:#fff;">Claude AI — Profile Assessment</div></div>
+          <div class="ar-hdr"><div class="ar-av">🤖</div><div style="font-size:12px;font-weight:700;color:#fff;" data-i18n="dx.profileAssessment">Claude AI — Profile Assessment</div></div>
           <div class="ar-txt" id="ds-prof-text"></div>
         </div>
         <div style="height:96px;"></div>
@@ -3310,23 +3310,23 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="rpt-wrap">
         <!-- HEADER dinamik -->
         <div class="rpt-hdr2">
-          <div class="rpt-tag2" id="rpt-date-tag">📄 Weekly Report</div>
-          <div class="rpt-title2">Weekly Health Report</div>
+          <div class="rpt-tag2" id="rpt-date-tag" data-i18n="dx.weeklyReportTag">📄 Weekly Report</div>
+          <div class="rpt-title2" data-i18n="dx.weeklyHealthReport">Weekly Health Report</div>
           <div class="rpt-per">D Health · Claude AI</div>
         </div>
 
         <!-- DAILY READINGS - dinamike nga vitals history -->
-        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">📅 Daily Readings</div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" data-i18n="dx.dailyReadings">📅 Daily Readings</div>
         <div class="wt" id="rpt-readings-table">
-          <div class="wt-row hdr"><div class="wt-cell">Day</div><div class="wt-cell">BP mmHg</div><div class="wt-cell">Glucose</div><div class="wt-cell">HR bpm</div></div>
+          <div class="wt-row hdr"><div class="wt-cell" data-i18n="dx.thDay">Day</div><div class="wt-cell">BP mmHg</div><div class="wt-cell">Glucose</div><div class="wt-cell">HR bpm</div></div>
           <div id="rpt-readings-body">
-            <div style="text-align:center;padding:16px;color:rgba(255,255,255,0.3);font-size:12px;">No readings yet — add vitals to see weekly data</div>
+            <div style="text-align:center;padding:16px;color:rgba(255,255,255,0.3);font-size:12px;" data-i18n="dx.noReadings">No readings yet — add vitals to see weekly data</div>
           </div>
         </div>
 
         <!-- AI REPORT -->
         <div id="aiRptCard" style="margin-top:14px;">
-          <div id="rptText" style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;min-height:60px;">
+          <div id="rptText" data-i18n="dx.pressGenerate" style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;min-height:60px;">
             Press "Generate" to create your weekly AI health report.
           </div>
           <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:6px;text-align:right;" id="rptTime"></div>
@@ -3335,7 +3335,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         <!-- BUTTONS -->
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">
           <button data-i18n="dx.genReport" onclick="generateWeeklyReport(this)" style="width:100%;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">🤖 Generate health report</button>
-          <button onclick="sendReportToDoctor()" style="width:100%;padding:11px;border-radius:12px;border:none;background:rgba(255,255,255,0.07);color:#F1F5FF;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">📤 Send to Dr. Shabani</button>
+          <button onclick="sendReportToDoctor()" style="width:100%;padding:11px;border-radius:12px;border:none;background:rgba(255,255,255,0.07);color:#F1F5FF;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);" data-i18n="dx.sendToDoctor">📤 Send to Dr. Shabani</button>
         </div>
         <div style="height:16px;"></div>
       </div>
@@ -3345,29 +3345,29 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div style="padding:14px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
           <div>
-            <div style="font-size:15px;font-weight:700;color:#F1F5FF;">💊 Active Therapy</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Current medications and treatment plan</div>
+            <div style="font-size:15px;font-weight:700;color:#F1F5FF;" data-i18n="dx.activeTherapy">💊 Active Therapy</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;" data-i18n="dx.currentMeds">Current medications and treatment plan</div>
           </div>
           <div id="therapy-count" style="background:rgba(139,111,232,0.2);border:0.5px solid rgba(139,111,232,0.4);border-radius:10px;padding:4px 10px;font-size:11px;font-weight:700;color:#C4B5FD;">0 active</div>
         </div>
         <div id="therapy-list-view" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
         <div style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:13px;margin-bottom:14px;">
-          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">+ Add Medication</div>
-          <input class="ti" id="therapy-med-inp" placeholder="e.g. Amlodipine 5mg" style="width:100%;margin-bottom:8px;"/>
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;" data-i18n="dx.addMedication">+ Add Medication</div>
+          <input class="ti" id="therapy-med-inp" placeholder="e.g. Amlodipine 5mg" data-i18n-ph="dx.phMed" style="width:100%;margin-bottom:8px;"/>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
             <select id="therapy-time-sel" style="padding:8px;border-radius:10px;border:0.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.07);color:#F1F5FF;font-size:12px;font-family:var(--font);">
-              <option value="Morning">🌅 Morning</option>
-              <option value="Lunch">☀️ Lunch</option>
-              <option value="Evening">🌙 Evening</option>
-              <option value="Night">⭐ Night</option>
-              <option value="As needed">⚡ As needed</option>
+              <option value="Morning" data-i18n="dx.morning">🌅 Morning</option>
+              <option value="Lunch" data-i18n="dx.lunch">☀️ Lunch</option>
+              <option value="Evening" data-i18n="dx.evening">🌙 Evening</option>
+              <option value="Night" data-i18n="dx.night">⭐ Night</option>
+              <option value="As needed" data-i18n="dx.asNeeded">⚡ As needed</option>
             </select>
-            <button onclick="addTherapyMed()" style="padding:8px;border-radius:10px;border:none;background:linear-gradient(135deg,#8B6FE8,#A78BFA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+ Add</button>
+            <button onclick="addTherapyMed()" style="padding:8px;border-radius:10px;border:none;background:linear-gradient(135deg,#8B6FE8,#A78BFA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="dx.add">+ Add</button>
           </div>
         </div>
         <button data-i18n="dx.therapyAnalysis" onclick="analyzeTherapy()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:10px;">🤖 AI Therapy Analysis</button>
         <div id="therapy-ai-resp" style="display:none;background:rgba(255,255,255,0.05);border:0.5px solid rgba(139,111,232,0.3);border-radius:14px;padding:13px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);display:flex;align-items:center;justify-content:center;font-size:13px;">🤖</div><div style="font-size:12px;font-weight:700;color:#F1F5FF;">AI Therapy Assessment</div></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);display:flex;align-items:center;justify-content:center;font-size:13px;">🤖</div><div style="font-size:12px;font-weight:700;color:#F1F5FF;" data-i18n="dx.therapyAssessment">AI Therapy Assessment</div></div>
           <div id="therapy-ai-text" style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;"></div>
         </div>
         <div style="height:16px;"></div>
@@ -6216,6 +6216,14 @@ var DH_I18N = {
   'home.wellnessTitle':{sq:'Wellness', mk:'Добросостојба', en:'Wellness'},
   'home.summaryTitle': {sq:'Përmbledhje', mk:'Преглед', en:'Summary'},
   'home.seeAll':       {sq:'Të gjitha ›', mk:'Сите ›', en:'See all ›'},
+  /* Diagnosis */
+  'diag.healthScoreLbl':{sq:'PIKËT E SHËNDETIT', mk:'ЗДРАВСТВЕН РЕЗУЛТАТ', en:'HEALTH SCORE'},
+  'diag.therapyLbl':   {sq:'TERAPIA', mk:'ТЕРАПИЈА', en:'THERAPY'},
+  'diag.active':       {sq:'aktive', mk:'активни', en:'active'},
+  'diag.verdict':      {sq:'Verdikti', mk:'Вердикт', en:'Verdict'},
+  'diag.profile':      {sq:'Profili', mk:'Профил', en:'Profile'},
+  'diag.report':       {sq:'Raporti', mk:'Извештај', en:'Report'},
+  'diag.therapy':      {sq:'Terapia', mk:'Терапија', en:'Therapy'},
   /* Wellness card */
   'wl.heart':    {sq:'Shëndeti i zemrës', mk:'Здравје на срце', en:'Heart Health'},
   'wl.sleep':    {sq:'Gjumi', mk:'Сон', en:'Sleep'},
@@ -6264,6 +6272,59 @@ var DH_I18N = {
   /* Diagnosis AI actions */
   'dx.genReport':      {sq:'🤖 Gjenero raport shëndetësor', mk:'🤖 Генерирај здравствен извештај', en:'🤖 Generate health report'},
   'dx.therapyAnalysis':{sq:'🤖 Analizë e Terapisë me AI', mk:'🤖 AI анализа на терапија', en:'🤖 AI Therapy Analysis'},
+  /* Diagnosis — Verdict tab */
+  'dx.pressStart':     {sq:'Shtyp Ri-analizo për të filluar', mk:'Притисни Повторно анализирај за почеток', en:'Press Re-Analyze to start'},
+  'dx.corrEngine':     {sq:'Motor korrelacioni — Të gjitha burimet', mk:'Корелациски мотор — Сите извори', en:'Correlation Engine — All data sources'},
+  'dx.aiRecs':         {sq:'🤖 Rekomandime AI', mk:'🤖 AI препораки', en:'🤖 AI Recommendations'},
+  'dx.pressGenRecs':   {sq:'Shtyp Ri-analizo për të gjeneruar rekomandime të personalizuara', mk:'Притисни Повторно анализирај за персонализирани препораки', en:'Press Re-Analyze to generate personalized recommendations'},
+  'dx.forDoctor':      {sq:'👨‍⚕️ Për Dr. Shabani', mk:'👨‍⚕️ За Др. Шабани', en:'👨‍⚕️ For Dr. Shabani'},
+  'dx.deepProfile':    {sq:'Analizë e thellë e profilit', mk:'Длабинска анализа на профил', en:'Deep Profile Analysis'},
+  'dx.deepHealth':     {sq:'🔬 Analizë e thellë shëndetësore', mk:'🔬 Длабинска здравствена анализа', en:'🔬 Deep Health Analysis'},
+  'dx.diagDeep':       {sq:'🏥 Thellim në diagnoza', mk:'🏥 Длабинско за дијагнози', en:'🏥 Diagnoses Deep Dive'},
+  'dx.therapyEff':     {sq:'💊 Efektiviteti i terapisë', mk:'💊 Ефикасност на терапија', en:'💊 Therapy Effectiveness'},
+  'dx.labAnalysis':    {sq:'🧪 Analizë e vlerave laboratorike', mk:'🧪 Анализа на лаб. вредности', en:'🧪 Lab Values Analysis'},
+  'dx.longRisk':       {sq:'⚠️ Vlerësim i rreziqeve afatgjata', mk:'⚠️ Проценка на долгорочни ризици', en:'⚠️ Long-term Risk Assessment'},
+  'dx.actionPlan':     {sq:'🎯 Plan veprimi', mk:'🎯 План за акција', en:'🎯 Action Plan'},
+  'dx.clinicalSummary':{sq:'👨‍⚕️ Përmbledhje klinike për Dr. Shabani', mk:'👨‍⚕️ Клиничко резиме за Др. Шабани', en:'👨‍⚕️ Clinical Summary for Dr. Shabani'},
+  /* Diagnosis — Profile tab */
+  'dx.pDiagnoses':     {sq:'🏥 Diagnozat', mk:'🏥 Дијагнози', en:'🏥 Diagnoses'},
+  'dx.pCurrentTherapy':{sq:'💊 Terapia aktuale', mk:'💊 Тековна терапија', en:'💊 Current Therapy'},
+  'dx.therapyNote':    {sq:'ℹ️ Medikamentet shtohen te tab-i <strong style="color:#3b82f6;">Therapy</strong> dhe shfaqen automatikisht këtu.', mk:'ℹ️ Лековите се додаваат во табот <strong style="color:#3b82f6;">Терапија</strong> и автоматски се прикажуваат тука.', en:'ℹ️ Medications are added in the <strong style="color:#3b82f6;">Therapy</strong> tab and shown here automatically.'},
+  'dx.pAllergies':     {sq:'⚠️ Alergjitë', mk:'⚠️ Алергии', en:'⚠️ Allergies'},
+  'dx.pLabValues':     {sq:'🧬 Vlerat laboratorike', mk:'🧬 Лаб. вредности', en:'🧬 Lab Values'},
+  'dx.pDocuments':     {sq:'📄 Dokumentet', mk:'📄 Документи', en:'📄 Documents'},
+  'dx.pEcgAnalysis':   {sq:'🫀 Analizë ECG', mk:'🫀 ЕКГ анализа', en:'🫀 ECG Analysis'},
+  'dx.ecgNote':        {sq:'Ngarko ECG nga smartwatch ose ring — Claude AI analizon dhe krahason me historikun (1 ECG / 24h)', mk:'Прикачи ЕКГ од паметен часовник или прстен — Claude AI анализира и споредува со историјата (1 ЕКГ / 24ч)', en:'Upload ECG from your smartwatch or ring — Claude AI analyzes and compares with your history (1 ECG / 24h)'},
+  'dx.ecgUpload':      {sq:'Ngarko & Analizo ECG', mk:'Прикачи и анализирај ЕКГ', en:'Upload & Analyze ECG'},
+  'dx.ecgResultHdr':   {sq:'🤖 Claude AI — Analizë ECG', mk:'🤖 Claude AI — ЕКГ анализа', en:'🤖 Claude AI — ECG Analysis'},
+  'dx.pEcgHistory':    {sq:'📋 Historiku i ECG', mk:'📋 Историја на ЕКГ', en:'📋 ECG History'},
+  'dx.diagnostics':    {sq:'Diagnostikë', mk:'Дијагностика', en:'Diagnostics'},
+  'dx.profileAssessment':{sq:'Claude AI — Vlerësim i profilit', mk:'Claude AI — Проценка на профил', en:'Claude AI — Profile Assessment'},
+  'dx.add':            {sq:'+ Shto', mk:'+ Додади', en:'+ Add'},
+  'dx.phDiag':         {sq:'Shto diagnozë...', mk:'Додади дијагноза...', en:'Add diagnosis...'},
+  'dx.phAllergy':      {sq:'Shto alergji...', mk:'Додади алергија...', en:'Add allergy...'},
+  'dx.phLab':          {sq:'p.sh. HbA1c: 5.9%...', mk:'пр. HbA1c: 5.9%...', en:'e.g. HbA1c: 5.9%...'},
+  'dx.phMed':          {sq:'p.sh. Amlodipinë 5mg', mk:'пр. Амлодипин 5mg', en:'e.g. Amlodipine 5mg'},
+  /* Diagnosis — Report tab */
+  'dx.weeklyReportTag':{sq:'📄 Raport javor', mk:'📄 Неделен извештај', en:'📄 Weekly Report'},
+  'dx.weeklyHealthReport':{sq:'Raport javor shëndetësor', mk:'Неделен здравствен извештај', en:'Weekly Health Report'},
+  'dx.dailyReadings':  {sq:'📅 Leximet ditore', mk:'📅 Дневни читања', en:'📅 Daily Readings'},
+  'dx.thDay':          {sq:'Dita', mk:'Ден', en:'Day'},
+  'dx.noReadings':     {sq:'Ende pa lexime — shto vitale për të dhënat javore', mk:'Сè уште нема читања — додади витални за неделни податоци', en:'No readings yet — add vitals to see weekly data'},
+  'dx.pressGenerate':  {sq:'Shtyp "Gjenero" për të krijuar raportin tënd javor me AI.', mk:'Притисни „Генерирај“ за да го создадеш твојот неделен AI извештај.', en:'Press "Generate" to create your weekly AI health report.'},
+  'dx.sendToDoctor':   {sq:'📤 Dërgo te Dr. Shabani', mk:'📤 Испрати до Др. Шабани', en:'📤 Send to Dr. Shabani'},
+  /* Diagnosis — Therapy tab */
+  'dx.activeTherapy':  {sq:'💊 Terapia aktive', mk:'💊 Активна терапија', en:'💊 Active Therapy'},
+  'dx.currentMeds':    {sq:'Medikamentet dhe plani aktual i trajtimit', mk:'Тековни лекови и план за лекување', en:'Current medications and treatment plan'},
+  'dx.addMedication':  {sq:'+ Shto medikament', mk:'+ Додади лек', en:'+ Add Medication'},
+  'dx.morning':        {sq:'🌅 Mëngjes', mk:'🌅 Утро', en:'🌅 Morning'},
+  'dx.lunch':          {sq:'☀️ Drekë', mk:'☀️ Ручек', en:'☀️ Lunch'},
+  'dx.evening':        {sq:'🌙 Mbrëmje', mk:'🌙 Вечер', en:'🌙 Evening'},
+  'dx.night':          {sq:'⭐ Natë', mk:'⭐ Ноќ', en:'⭐ Night'},
+  'dx.asNeeded':       {sq:'⚡ Sipas nevojës', mk:'⚡ По потреба', en:'⚡ As needed'},
+  'dx.therapyAssessment':{sq:'Vlerësim i terapisë me AI', mk:'AI проценка на терапија', en:'AI Therapy Assessment'},
+  'dx.noMeds':         {sq:'Ende pa medikamente.<br>Shtoji te tab-i Profile.', mk:'Сè уште нема лекови.<br>Додади ги во табот Профил.', en:'No medications added yet.<br>Add them in the Profile tab.'},
+  'dx.activeBadge':    {sq:'Aktiv ✓', mk:'Активен ✓', en:'Active ✓'},
   /* Menu / Settings */
   'menu.profile':       {sq:'Profili Im', mk:'Мој профил', en:'My Profile'},
   'menu.subscription':  {sq:'Abonimi', mk:'Претплата', en:'Subscription'},
@@ -6307,10 +6368,20 @@ function applyLang(lang){
       var k=el.getAttribute('data-i18n'), o=DH_I18N[k];
       if(o && o[DH_LANG]) el.textContent=o[DH_LANG];
     });
+    document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
+      var k=el.getAttribute('data-i18n-ph'), o=DH_I18N[k];
+      if(o && o[DH_LANG]) el.setAttribute('placeholder', o[DH_LANG]);
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+      var k=el.getAttribute('data-i18n-html'), o=DH_I18N[k];
+      if(o && o[DH_LANG]) el.innerHTML=o[DH_LANG];
+    });
     document.querySelectorAll('.dh-langbtn').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-lang')===DH_LANG); });
   }catch(e){}
   /* Rifresko tekstet që vendosen me JS (jo data-i18n) */
   try{ if(typeof renderAlarms==='function' && document.getElementById('alTitle')) renderAlarms(); }catch(e){}
+  try{ if(typeof updateDiagHeader==='function') updateDiagHeader(); }catch(e){}
+  try{ if(typeof renderTherapyList==='function' && document.getElementById('therapy-count')) renderTherapyList(); }catch(e){}
 }
 document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ try{ applyLang(); }catch(e){} }, 60); });
 
@@ -7908,9 +7979,9 @@ function renderTherapyList(){
     if(v && !seen[v]){ seen[v]=1; meds.push(v); }
   });
   list.innerHTML = '';
-  if(countEl) countEl.textContent = meds.length + ' active';
+  if(countEl) countEl.textContent = meds.length + ' ' + (typeof dhT==='function'?dhT('diag.active'):'active');
   if(meds.length===0){
-    list.innerHTML='<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:12px;">No medications added yet.<br>Add them in the Profile tab.</div>';
+    list.innerHTML='<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:12px;">'+(typeof dhT==='function'?dhT('dx.noMeds'):'No medications added yet.<br>Add them in the Profile tab.')+'</div>';
     return;
   }
   var colors = {'Morning':'#FCD34D','Lunch':'#93C5FD','Evening':'#C4B5FD','Night':'#A5B4FC','As needed':'#4ADE80'};
@@ -7927,7 +7998,7 @@ function renderTherapyList(){
     item.innerHTML='<div style="width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💊</div>'
       +'<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#F1F5FF;margin-bottom:2px;">'+(parts[0]||med).trim()+'</div>'
       +'<div style="font-size:11px;color:rgba(255,255,255,0.5);">'+icon+' '+(parts[1]||timeKey).trim()+'</div></div>'
-      +'<div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(255,255,255,0.1);color:'+color+';">Active ✓</div>'
+      +'<div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(255,255,255,0.1);color:'+color+';">'+(typeof dhT==='function'?dhT('dx.activeBadge'):'Active ✓')+'</div>'
       +'<button onclick="removeTherapyMed(this)" title="Hiq terapinë" style="width:26px;height:26px;border-radius:8px;border:none;background:rgba(239,68,68,0.12);color:#F87171;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;">×</button>';
     list.appendChild(item);
   });
@@ -10953,7 +11024,7 @@ function updateDiagHeader(){
     if(v && !seen[v]){ seen[v]=1; count++; }
   });
   var thEl = document.getElementById('diagHeaderTherapy');
-  if(thEl) thEl.textContent = count + ' active';
+  if(thEl) thEl.textContent = count + ' ' + (typeof dhT==='function'?dhT('diag.active'):'active');
 
   /* Score from last engine result (numër i thjeshtë) */
   var score = parseInt(localStorage.getItem('dh_last_score')||'') || '--';
