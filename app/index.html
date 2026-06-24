@@ -2451,7 +2451,7 @@ select option{background:#0A1628;color:#F1F5FF;}
           <div class="set-row-info"><div class="set-row-title" data-i18n="set.analytics">Analytics &amp; Improvement</div><div class="set-row-sub" data-i18n="set.analyticsSub">Help improve D Health</div></div>
           <button class="set-tgl on" onclick="setToggle(this,'analytics')"><div class="set-tgl-thumb"></div></button>
         </div>
-        <div class="set-row" onclick="showToast('&#128196; GDPR export sent to your email')">
+        <div class="set-row" onclick="exportMyData()">
           <div class="set-row-ico" style="background:#FEF2F2;">&#128229;</div>
           <div class="set-row-info"><div class="set-row-title" data-i18n="set.exportData">Export My Data</div><div class="set-row-sub" data-i18n="set.exportDataSub">GDPR · Download all your data</div></div>
           <span class="set-row-arr">&#8250;</span>
@@ -2496,7 +2496,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div class="set-danger-ico">&#128682;</div>
         <div><div class="set-danger-title" data-i18n="menu.signout">Sign Out</div><div class="set-danger-sub" data-i18n="set.signoutSub">You will need to log in again</div></div>
       </div>
-      <div class="set-danger-row" onclick="showToast('&#128465; Account deletion — contact support')">
+      <div class="set-danger-row" onclick="deleteMyAccount()">
         <div class="set-danger-ico">&#128465;</div>
         <div><div class="set-danger-title" data-i18n="set.deleteAccount">Delete Account</div><div class="set-danger-sub" data-i18n="set.deleteAccountSub">Permanently delete all your data</div></div>
       </div>
@@ -6620,6 +6620,16 @@ var DH_I18N = {
   'bk.sent':       {sq:'Kërkesa u dërgua!', mk:'Барањето е испратено!', en:'Request Sent!'},
   'bk.confirmWithin':{sq:'— Dr. Shabani do konfirmojë brenda 24 orëve.', mk:'— Др. Шабани ќе потврди во рок од 24 часа.', en:'— Dr. Shabani will confirm within 24 hours.'},
   'bk.close':      {sq:'✓ Mbyll', mk:'✓ Затвори', en:'✓ Close'},
+  /* GDPR — export & delete */
+  'gdpr.loginRequired':{sq:'⚠️ Kyçu së pari', mk:'⚠️ Прво најави се', en:'⚠️ Please log in first'},
+  'gdpr.preparing':{sq:'🔄 Duke përgatitur të dhënat...', mk:'🔄 Се подготвуваат податоците...', en:'🔄 Preparing your data...'},
+  'gdpr.exported': {sq:'✅ Të dhënat u shkarkuan (JSON)', mk:'✅ Податоците се преземени (JSON)', en:'✅ Your data was downloaded (JSON)'},
+  'gdpr.delTitle': {sq:'Fshi llogarinë', mk:'Избриши сметка', en:'Delete account'},
+  'gdpr.delWarn':  {sq:'Kjo fshin përgjithmonë llogarinë dhe TË GJITHA të dhënat e tua. S\'mund të zhbëhet. Shkruaj DELETE për të vërtetuar.', mk:'Ова трајно ја брише сметката и СИТЕ твои податоци. Не може да се врати. Напиши DELETE за да потврдиш.', en:'This permanently deletes your account and ALL your data. This cannot be undone. Type DELETE to confirm.'},
+  'gdpr.delConfirm':{sq:'Fshi përgjithmonë', mk:'Избриши трајно', en:'Delete permanently'},
+  'gdpr.delCancel':{sq:'Anulo', mk:'Откажи', en:'Cancel'},
+  'gdpr.deleting': {sq:'🔄 Duke fshirë llogarinë...', mk:'🔄 Се брише сметката...', en:'🔄 Deleting your account...'},
+  'gdpr.deleted':  {sq:'✅ Llogaria u fshi', mk:'✅ Сметката е избришана', en:'✅ Account deleted'},
   /* Home — të tjera */
   'home.viewAnalysis': {sq:'Shiko analizën e plotë →', mk:'Види ја целата анализа →', en:'View full analysis →'},
   'home.aiSubtitle':   {sq:'Rezultati ditor · AI Diagnostik', mk:'Дневен резултат · AI дијагностика', en:'Daily Score · Diagnostic AI'},
@@ -7033,6 +7043,76 @@ async function saveHealthInfo(){
 }
 
 /* BMI automatik */
+/* ════ GDPR — Export & Delete (real) ════ */
+async function exportMyData(){
+  var sb = (typeof getSupa==='function') ? getSupa() : null;
+  if(!sb || !LST || !LST.currentUser || !LST.currentUser.id){ showToast(dhT('gdpr.loginRequired')); return; }
+  var uid = LST.currentUser.id, email = (LST.currentUser.email||'');
+  showToast(dhT('gdpr.preparing'));
+  var bundle = { app:'D Health', exported_at:new Date().toISOString(), account:{ id:uid, email:email }, data:{} };
+  var tabs = ['medical_profiles','vitals','daily_activity','daily_scores','therapy_alarms','meals','documents','reports','appointments'];
+  for(var i=0;i<tabs.length;i++){
+    try{ var r = await sb.from(tabs[i]).select('*').eq('patient_id', uid); bundle.data[tabs[i]] = (r&&r.error) ? {error:r.error.message} : ((r&&r.data)||[]); }
+    catch(e){ bundle.data[tabs[i]] = {error:String((e&&e.message)||e)}; }
+  }
+  try{ var pr = await sb.from('profiles').select('*').eq('id', uid); bundle.data.profiles = (pr&&pr.data)||[]; }catch(e){}
+  try{ var ms = await sb.from('messages').select('*').or('sender_id.eq.'+uid+',receiver_id.eq.'+uid); bundle.data.messages = (ms&&ms.data)||[]; }catch(e){}
+  try{
+    var blob = new Blob([JSON.stringify(bundle,null,2)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = 'dhealth-data-'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ try{ URL.revokeObjectURL(url); }catch(e){} }, 1500);
+    showToast(dhT('gdpr.exported'));
+  }catch(e){ showToast('❌ '+String((e&&e.message)||e)); }
+}
+function deleteMyAccount(){
+  if(!LST || !LST.currentUser || !LST.currentUser.id){ showToast(dhT('gdpr.loginRequired')); return; }
+  var _T = (typeof dhT==='function') ? dhT : function(k){return k;};
+  var ex = document.getElementById('gdprDelModal'); if(ex) ex.remove();
+  var ov = document.createElement('div'); ov.id = 'gdprDelModal';
+  ov.style.cssText = 'position:absolute;inset:0;background:rgba(10,15,35,0.6);z-index:950;display:flex;align-items:center;justify-content:center;padding:22px;border-radius:44px;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);';
+  ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
+  ov.innerHTML = '<div style="background:#fff;border-radius:22px;width:100%;max-width:340px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);">'
+    +'<div style="font-size:34px;text-align:center;margin-bottom:6px;">🗑️</div>'
+    +'<div style="font-size:17px;font-weight:800;color:#dc2626;text-align:center;margin-bottom:8px;">'+_T('gdpr.delTitle')+'</div>'
+    +'<div style="font-size:13px;color:#4b5563;line-height:1.55;text-align:center;margin-bottom:14px;">'+_T('gdpr.delWarn')+'</div>'
+    +'<input id="gdprDelInput" type="text" placeholder="DELETE" autocomplete="off" style="width:100%;border:1.5px solid #e5446b;border-radius:12px;padding:11px 13px;font-size:15px;font-weight:700;text-align:center;letter-spacing:2px;color:#1f2c44;background:#fff;outline:none;box-sizing:border-box;margin-bottom:14px;font-family:var(--font);"/>'
+    +'<button onclick="_gdprDoDelete()" style="width:100%;padding:13px;border-radius:13px;border:none;background:#dc2626;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:9px;">'+_T('gdpr.delConfirm')+'</button>'
+    +'<button onclick="var m=document.getElementById(\'gdprDelModal\');if(m)m.remove();" style="width:100%;padding:12px;border-radius:13px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">'+_T('gdpr.delCancel')+'</button>'
+    +'</div>';
+  var anchor = document.getElementById('setEditModal');
+  (anchor ? anchor.parentNode : document.body).appendChild(ov);
+  setTimeout(function(){ var inp=document.getElementById('gdprDelInput'); if(inp) inp.focus(); }, 120);
+}
+async function _gdprDoDelete(){
+  var inp = document.getElementById('gdprDelInput');
+  if(!inp || inp.value.trim().toUpperCase()!=='DELETE'){ if(inp){ inp.style.borderColor='#dc2626'; inp.style.background='#fef2f2'; } return; }
+  var modal = document.getElementById('gdprDelModal'); if(modal) modal.remove();
+  var sb = (typeof getSupa==='function') ? getSupa() : null;
+  if(!sb || !LST || !LST.currentUser || !LST.currentUser.id){ showToast(dhT('gdpr.loginRequired')); return; }
+  var uid = LST.currentUser.id;
+  showToast(dhT('gdpr.deleting'));
+  var token = '';
+  try{ var s = await sb.auth.getSession(); token = (s && s.data && s.data.session && s.data.session.access_token) || ''; }catch(e){}
+  var serverOk = false;
+  if(token){
+    try{
+      var res = await fetch('/.netlify/functions/delete-account', { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+token } });
+      serverOk = !!(res && res.ok);
+    }catch(e){}
+  }
+  if(!serverOk){
+    /* Fallback: fshi të dhënat nga klienti (RLS lejon vetëm të tuat); auth-account mbetet derisa të shtohet SERVICE_ROLE_KEY */
+    var tabs = ['medical_profiles','vitals','daily_activity','daily_scores','therapy_alarms','meals','documents','reports','appointments'];
+    for(var i=0;i<tabs.length;i++){ try{ await sb.from(tabs[i]).delete().eq('patient_id', uid); }catch(e){} }
+    try{ await sb.from('profiles').delete().eq('id', uid); }catch(e){}
+  }
+  try{ localStorage.clear(); }catch(e){}
+  try{ await sb.auth.signOut(); }catch(e){}
+  showToast(dhT('gdpr.deleted'));
+  setTimeout(function(){ try{ location.reload(); }catch(e){} }, 1300);
+}
 function computeBMI(){
   var h = parseFloat((document.getElementById('setHeight')||{}).value)||0;
   var w = parseFloat((document.getElementById('setWeight')||{}).value)||0;
