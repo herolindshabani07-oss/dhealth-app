@@ -10559,14 +10559,15 @@ async function diagDevices(){
   if(Health){
     try{ var avail = await Health.isHealthAvailable(); L.push('  Health available: ' + JSON.stringify(avail)); }catch(e){ L.push('  isHealthAvailable ERROR: ' + (e.message||e)); }
     try{ if(Health.checkHealthPermissions){ var pp = await Health.checkHealthPermissions({ permissions:['READ_STEPS','READ_ACTIVE_CALORIES','READ_HEART_RATE'] }); L.push('  Permissions: ' + JSON.stringify(pp)); } }catch(e){ L.push('  checkPermissions: ' + (e.message||e)); }
-    /* RAW read: çfarë kthen vërtet Health Connect për hapat sot (0 records = Samsung s'po shkruan; records po sum=0 = problem parsimi) */
-    try{
-      if(Health.queryAggregated){
-        var _s = new Date(); _s.setHours(0,0,0,0);
-        var ra = await Health.queryAggregated({ startDate:_s.toISOString(), endDate:new Date().toISOString(), dataType:'steps', bucket:'day' });
-        L.push('  RAW steps (sot): ' + JSON.stringify(ra));
+    /* RAW reads: çfarë kthen vërtet Health Connect për çdo tip sot (që të dimë emrat e saktë të dataType-ve) */
+    if(Health.queryAggregated){
+      var _s = new Date(); _s.setHours(0,0,0,0); var _e = new Date().toISOString(); var _ss = _s.toISOString();
+      var _types = ['steps','distance','active-calories','total-calories','heart-rate','calories'];
+      for(var _t=0; _t<_types.length; _t++){
+        try{ var ra = await Health.queryAggregated({ startDate:_ss, endDate:_e, dataType:_types[_t], bucket:'day' }); L.push('  RAW '+_types[_t]+': ' + JSON.stringify(ra)); }
+        catch(e){ L.push('  RAW '+_types[_t]+' ERROR: ' + (e.message||e)); }
       }
-    }catch(e){ L.push('  RAW steps ERROR: ' + (e.message||e)); }
+    }
   }
   var Ble = (typeof getBle==='function') ? getBle() : null;
   L.push('BLE plugin (D Health Ring): ' + (Ble ? 'i regjistruar ✅' : 'MUNGON ❌'));
@@ -10734,9 +10735,11 @@ async function syncHealthConnect(opts){
 
   try{
     var steps     = Math.round(await agg('steps'));
-    var calories  = Math.round(await agg('active-calories'));   /* plugin: 'active-calories', jo 'calories' */
-    /* Distanca s'mbështetet nga queryAggregated i këtij plugin-i → e marrim nga workouts (poshtë) ose unaza/manual */
-    var distance  = 0;
+    var calories  = Math.round(await agg('active-calories'));   /* plugin: 'active-calories' */
+    if(!calories) calories = Math.round(await agg('total-calories'));  /* disa pajisje shkruajnë total, jo active */
+    /* Distanca: Health Connect e ruan në METRA → kthe në km */
+    var distanceM = await agg('distance');
+    var distance  = distanceM > 0 ? Math.round(distanceM/1000*100)/100 : 0;
 
     /* HR mesatar nga workouts (nëse ka) */
     var hr = 0;
