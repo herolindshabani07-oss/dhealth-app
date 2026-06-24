@@ -10713,6 +10713,8 @@ async function connectHealthConnect(){
 
 async function syncHealthConnect(opts){
   opts = (opts && typeof opts==='object') ? opts : {};
+  if(window._hcSyncTs && (Date.now()-window._hcSyncTs) < 3000){ return; }  /* anti-dublim: mos ri-sync brenda 3s */
+  window._hcSyncTs = Date.now();
   var CONN_KEY = opts.connKey || 'connect_gfit';   /* iOS → 'connect_apple' */
   var SRC      = opts.source  || 'health_connect';  /* iOS → 'apple_health' */
   var Health = getHealthPlugin();
@@ -10783,9 +10785,9 @@ async function syncHealthConnect(opts){
     /* Ruaj në Supabase */
     try{
       var sb = getSupa();
-      if(sb && LST.currentUser && LST.currentUser.id){
+      if(sb && LST.currentUser && LST.currentUser.id && hr>0){  /* vetëm HR real → vitals; hapat/kalorit shkojnë te daily_activity (upsert, pa dublime) */
         sb.from('vitals').insert({
-          patient_id: LST.currentUser.id, hr: hr||null, steps: steps||null,
+          patient_id: LST.currentUser.id, hr: hr,
           source: SRC, recorded_at: new Date().toISOString()
         });
       }
