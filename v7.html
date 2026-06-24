@@ -2245,8 +2245,8 @@ select option{background:#0A1628;color:#F1F5FF;}
     </div>
     <div style="margin:12px 16px 0;background:var(--pul);border-radius:16px;padding:13px;border:0.5px solid rgba(139,111,232,0.2);display:flex;align-items:center;gap:10px;">
       <div style="font-size:24px;">📅</div>
-      <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:var(--purple);">Next Appointment</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Dr. Herolind Shabani · Within 2 weeks</div></div>
-      <button style="padding:7px 13px;border-radius:10px;background:var(--purple);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);" onclick="openBkModal()">&#128197; Book →</button>
+      <div style="flex:1;"><div style="font-size:12px;font-weight:700;color:var(--purple);" data-i18n="bk.next">Next Appointment</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;" data-i18n="bk.nextDoctor">Dr. Herolind Shabani · Within 2 weeks</div></div>
+      <button style="padding:7px 13px;border-radius:10px;background:var(--purple);color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);" onclick="openBkModal()" data-i18n="bk.bookBtn">&#128197; Book →</button>
     </div>
 
   <!-- BOOKING MODAL -->
@@ -2254,8 +2254,8 @@ select option{background:#0A1628;color:#F1F5FF;}
     <div class="bk-sheet">
       <div class="bk-handle"></div>
       <div class="bk-hdr">
-        <div class="bk-title">&#128197; Book Appointment</div>
-        <div class="bk-sub">Dr. Herolind Shabani &middot; E Hënë–E Premte &middot; 08:00–19:00</div>
+        <div class="bk-title" data-i18n="bk.title">&#128197; Book Appointment</div>
+        <div class="bk-sub" data-i18n="bk.subHours">Dr. Herolind Shabani &middot; E Hënë–E Premte &middot; 08:00–19:00</div>
       </div>
       <div class="bk-body" id="bkBody">
         <div id="bkStep1">
@@ -2267,22 +2267,22 @@ select option{background:#0A1628;color:#F1F5FF;}
           <div class="bk-cal-grid" id="bkDayHdr"></div>
           <div class="bk-cal-grid" id="bkDaysGrid"></div>
           <div id="bkSlotsWrap" style="display:none;">
-            <div class="bk-slots-title">&#128336; Zgjidhni orën</div>
+            <div class="bk-slots-title" data-i18n="bk.pickTime">&#128336; Zgjidhni orën</div>
             <div class="bk-slots" id="bkSlots"></div>
           </div>
           <div id="bkReasonWrap" style="display:none;">
-            <div class="bk-slots-title">&#128203; Arsyeja e vizitës (opsionale)</div>
-            <textarea class="bk-reason" id="bkReason" rows="3" placeholder="p.sh. Kontroll BP, rinovim recetë, rezultate laboratori..."></textarea>
-            <button class="bk-confirm" id="bkConfirmBtn" onclick="bkSubmit()">&#9989; Dërgo Kërkesën</button>
-            <button class="bk-cancel-btn" onclick="closeBkModal()">Anulo</button>
+            <div class="bk-slots-title" data-i18n="bk.reason">&#128203; Arsyeja e vizitës (opsionale)</div>
+            <textarea class="bk-reason" id="bkReason" rows="3" placeholder="p.sh. Kontroll BP, rinovim recetë, rezultate laboratori..." data-i18n-ph="bk.reasonPh"></textarea>
+            <button class="bk-confirm" id="bkConfirmBtn" onclick="bkSubmit()" data-i18n="bk.send">&#9989; Dërgo Kërkesën</button>
+            <button class="bk-cancel-btn" onclick="closeBkModal()" data-i18n="bk.cancel">Anulo</button>
           </div>
         </div>
         <div id="bkSuccess" style="display:none;">
           <div class="bk-success">
             <div class="bk-success-ico">&#128197;&#10024;</div>
-            <div class="bk-success-title">Request Sent!</div>
+            <div class="bk-success-title" data-i18n="bk.sent">Request Sent!</div>
             <div class="bk-success-sub" id="bkSuccessText">Dr. Shabani do të konfirmojë takimin brenda 24 orëve.</div>
-            <button class="bk-confirm" style="margin-top:18px;" onclick="closeBkModal()">&#10003; Mbyll</button>
+            <button class="bk-confirm" style="margin-top:18px;" onclick="closeBkModal()" data-i18n="bk.close">&#10003; Mbyll</button>
           </div>
         </div>
       </div>
@@ -6559,6 +6559,20 @@ var DH_I18N = {
   'ep.bmiOver':    {sq:'Mbipeshë ⚠️', mk:'Прекумерна ⚠️', en:'Overweight ⚠️'},
   'ep.bmiObese':   {sq:'Obezitet 🚨', mk:'Дебелина 🚨', en:'Obese 🚨'},
   'lm.title':      {sq:'Zgjidh gjuhën', mk:'Избери јазик', en:'Choose language'},
+  /* Booking modal */
+  'bk.next':       {sq:'Takimi i ardhshëm', mk:'Следен термин', en:'Next Appointment'},
+  'bk.nextDoctor': {sq:'Dr. Herolind Shabani · Brenda 2 javëve', mk:'Др. Херолинд Шабани · За 2 недели', en:'Dr. Herolind Shabani · Within 2 weeks'},
+  'bk.bookBtn':    {sq:'📅 Rezervo →', mk:'📅 Закажи →', en:'📅 Book →'},
+  'bk.title':      {sq:'📅 Rezervo takim', mk:'📅 Закажи термин', en:'📅 Book Appointment'},
+  'bk.subHours':   {sq:'Dr. Herolind Shabani · E Hënë–E Premte · 08:00–19:00', mk:'Др. Херолинд Шабани · Пон–Пет · 08:00–19:00', en:'Dr. Herolind Shabani · Mon–Fri · 08:00–19:00'},
+  'bk.pickTime':   {sq:'🕐 Zgjidhni orën', mk:'🕐 Изберете време', en:'🕐 Pick a time'},
+  'bk.reason':     {sq:'📋 Arsyeja e vizitës (opsionale)', mk:'📋 Причина за посета (опционално)', en:'📋 Reason for visit (optional)'},
+  'bk.reasonPh':   {sq:'p.sh. Kontroll BP, rinovim recete, rezultate laboratori...', mk:'пр. Контрола на притисок, обнова на рецепт, лаб. резултати...', en:'e.g. BP check, prescription renewal, lab results...'},
+  'bk.send':       {sq:'✅ Dërgo kërkesën', mk:'✅ Испрати барање', en:'✅ Send Request'},
+  'bk.cancel':     {sq:'Anulo', mk:'Откажи', en:'Cancel'},
+  'bk.sent':       {sq:'Kërkesa u dërgua!', mk:'Барањето е испратено!', en:'Request Sent!'},
+  'bk.confirmWithin':{sq:'— Dr. Shabani do konfirmojë brenda 24 orëve.', mk:'— Др. Шабани ќе потврди во рок од 24 часа.', en:'— Dr. Shabani will confirm within 24 hours.'},
+  'bk.close':      {sq:'✓ Mbyll', mk:'✓ Затвори', en:'✓ Close'},
   /* Home — të tjera */
   'home.viewAnalysis': {sq:'Shiko analizën e plotë →', mk:'Види ја целата анализа →', en:'View full analysis →'},
   'home.aiSubtitle':   {sq:'Rezultati ditor · AI Diagnostik', mk:'Дневен резултат · AI дијагностика', en:'Daily Score · Diagnostic AI'},
@@ -7490,9 +7504,9 @@ async function bkSubmit(){
   if(succ)  succ.style.display  = 'block';
 
   var succTxt = document.getElementById('bkSuccessText');
-  if(succTxt) succTxt.textContent = '📅 '+nicDate+' ora '+bkSelTime+' — Dr. Herolind Shabani do konfirmojë brenda 24 orëve.';
+  if(succTxt) succTxt.textContent = '📅 '+nicDate+' · '+bkSelTime+' '+(typeof dhT==='function'?dhT('bk.confirmWithin'):'— Dr. Shabani will confirm within 24 hours.');
 
-  if(btn){ btn.disabled=false; btn.textContent='✓ Mbyll'; btn.onclick=closeBkModal; }
+  if(btn){ btn.disabled=false; btn.textContent=(typeof dhT==='function'?dhT('bk.close'):'✓ Close'); btn.onclick=closeBkModal; }
 
   addRecentAlert('📅','#EBF3FF','Booking Sent','Kërkesë: '+nicDate+' ora '+bkSelTime+' — pret konfirmimin.','Tani', function(){ openNotifSheet(); });
   showToast('📅 Kërkesa u dërgua! Dr. Shabani do konfirmojë brenda 24h.');
