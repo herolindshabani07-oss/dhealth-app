@@ -4941,11 +4941,35 @@ var LANGS = {
 };
 
 function openLangModal(){
-  document.getElementById('langModal').style.display = 'flex';
+  var m = document.getElementById('langModal');
+  if(!m){
+    m = document.createElement('div');
+    m.id = 'langModal';
+    m.style.cssText = 'position:absolute;inset:0;background:rgba(10,15,35,0.45);z-index:900;display:none;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);';
+    m.addEventListener('click', function(e){ closeLangModal(e); });
+    var anchor = document.getElementById('setEditModal');
+    (anchor ? anchor.parentNode : document.body).appendChild(m);
+  }
+  var _T = (typeof dhT==='function') ? dhT : function(k){return k;};
+  var cur = (typeof DH_LANG!=='undefined' && DH_LANG) || (typeof currentLang!=='undefined' ? currentLang : 'sq');
+  var langs = [['sq','Shqip','🇦🇱'],['mk','Македонски','🇲🇰'],['en','English','🇬🇧']];
+  var rows = langs.map(function(L){
+    var sel = L[0]===cur;
+    return '<button onclick="selectLang(\''+L[0]+'\')" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:14px;border:1.5px solid '+(sel?'#3b82f6':'rgba(120,150,190,.25)')+';background:'+(sel?'#eef4fc':'#f7faff')+';color:#1f2c44;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);margin-bottom:10px;">'
+      +'<span style="font-size:22px;">'+L[2]+'</span><span style="flex:1;text-align:left;">'+L[1]+'</span>'
+      +(sel?'<span style="color:#3b82f6;font-size:18px;font-weight:700;">✓</span>':'')+'</button>';
+  }).join('');
+  m.innerHTML = '<div onclick="event.stopPropagation()" style="background:#ffffff;border-radius:24px 24px 44px 44px;width:100%;padding:18px 16px 28px;box-shadow:0 -12px 40px rgba(40,80,140,.18);animation:slideUp .3s ease;">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">'
+    +'<div style="font-size:16px;font-weight:700;color:#1f2c44;">'+_T('lm.title')+'</div>'
+    +'<button onclick="closeLangModal(null)" style="width:28px;height:28px;border-radius:9px;border:none;background:#eef2fa;font-size:14px;cursor:pointer;color:#7387a4;">✕</button></div>'
+    +rows+'</div>';
+  m.style.display = 'flex';
 }
 function closeLangModal(e){
-  if(e && e.target !== document.getElementById('langModal')) return;
-  document.getElementById('langModal').style.display = 'none';
+  var m = document.getElementById('langModal'); if(!m) return;
+  if(e && e.target !== m) return;
+  m.style.display = 'none';
 }
 
 function selectLang(code){
@@ -5110,11 +5134,17 @@ function gatedAction(feature){
 
 /* ── PAYWALL ── */
 function showPaywall(feature){
-  var pw = ACCESS.paywalls[feature] || {icon:'🔒',title:'Premium Feature',desc:'This feature requires an upgrade.',plan:'premium'};
-  document.getElementById('pw-icon').textContent = pw.icon;
-  document.getElementById('pw-title').textContent = pw.title;
-  document.getElementById('pw-desc').textContent = pw.desc;
-  document.getElementById('paywallModal').style.display = 'flex';
+  var pw = ACCESS.paywalls[feature] || {icon:'🔒',title:'Premium',desc:'This feature requires Premium.',plan:'premium'};
+  var modal = document.getElementById('paywallModal');
+  if(!modal){
+    try{ showToast('🔒 '+pw.title+' — Premium ($1.99/muaj)'); }catch(e){}
+    try{ switchScreen('subscription'); }catch(e){}
+    return;
+  }
+  var ic=document.getElementById('pw-icon'); if(ic) ic.textContent = pw.icon;
+  var ti=document.getElementById('pw-title'); if(ti) ti.textContent = pw.title;
+  var de=document.getElementById('pw-desc'); if(de) de.textContent = pw.desc;
+  modal.style.display = 'flex';
 }
 function closePaywall(e){
   if(e && e.target !== document.getElementById('paywallModal')) return;
@@ -6528,6 +6558,7 @@ var DH_I18N = {
   'ep.bmiNormal':  {sq:'Normal ✅', mk:'Нормална ✅', en:'Normal ✅'},
   'ep.bmiOver':    {sq:'Mbipeshë ⚠️', mk:'Прекумерна ⚠️', en:'Overweight ⚠️'},
   'ep.bmiObese':   {sq:'Obezitet 🚨', mk:'Дебелина 🚨', en:'Obese 🚨'},
+  'lm.title':      {sq:'Zgjidh gjuhën', mk:'Избери јазик', en:'Choose language'},
   /* Home — të tjera */
   'home.viewAnalysis': {sq:'Shiko analizën e plotë →', mk:'Види ја целата анализа →', en:'View full analysis →'},
   'home.aiSubtitle':   {sq:'Rezultati ditor · AI Diagnostik', mk:'Дневен резултат · AI дијагностика', en:'Daily Score · Diagnostic AI'},
