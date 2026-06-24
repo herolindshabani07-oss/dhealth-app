@@ -10559,6 +10559,14 @@ async function diagDevices(){
   if(Health){
     try{ var avail = await Health.isHealthAvailable(); L.push('  Health available: ' + JSON.stringify(avail)); }catch(e){ L.push('  isHealthAvailable ERROR: ' + (e.message||e)); }
     try{ if(Health.checkHealthPermissions){ var pp = await Health.checkHealthPermissions({ permissions:['READ_STEPS','READ_ACTIVE_CALORIES','READ_HEART_RATE'] }); L.push('  Permissions: ' + JSON.stringify(pp)); } }catch(e){ L.push('  checkPermissions: ' + (e.message||e)); }
+    /* RAW read: çfarë kthen vërtet Health Connect për hapat sot (0 records = Samsung s'po shkruan; records po sum=0 = problem parsimi) */
+    try{
+      if(Health.queryAggregated){
+        var _s = new Date(); _s.setHours(0,0,0,0);
+        var ra = await Health.queryAggregated({ startDate:_s.toISOString(), endDate:new Date().toISOString(), dataType:'steps', bucket:'day' });
+        L.push('  RAW steps (sot): ' + JSON.stringify(ra));
+      }
+    }catch(e){ L.push('  RAW steps ERROR: ' + (e.message||e)); }
   }
   var Ble = (typeof getBle==='function') ? getBle() : null;
   L.push('BLE plugin (D Health Ring): ' + (Ble ? 'i regjistruar ✅' : 'MUNGON ❌'));
