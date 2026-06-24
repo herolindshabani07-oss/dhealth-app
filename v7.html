@@ -10486,7 +10486,9 @@ document.addEventListener('DOMContentLoaded', function(){
 /* ════ FITBIT OAUTH 2.0 INTEGRATION ════ */
 var FITBIT_CONFIG = {
   clientId: '23VJNX',
-  redirectUri: 'https://relaxed-pegasus-1e887c.netlify.app/',
+  get redirectUri(){
+    return window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
+  },
   scope: 'activity heartrate location nutrition profile sleep weight oxygen_saturation respiratory_rate cardio_fitness'
 };
 
@@ -10535,27 +10537,43 @@ function getHealthPlugin(){ return getNativePlugin('HealthPlugin'); }
 /* Diagnostikë e lidhjes së pajisjeve — tregon ku ndërpritet zinxhiri (alert i dukshëm) */
 async function diagDevices(){
   var L = [];
-  L.push('Capacitor: ' + (window.Capacitor ? 'PO' : 'JO ❌'));
-  L.push('isNativeApp: ' + (isNativeApp() ? 'PO ✅' : 'JO ❌ (po sillet si web)'));
+  /* ── WEB / OAuth (punon në browser dhe app) ── */
+  L.push('═══ WEB / OAuth ═══');
+  L.push('Online: ' + (navigator.onLine ? 'PO ✅' : 'JO ❌'));
+  L.push('Origin: ' + window.location.origin);
+  try{ L.push('GFit redirect: ' + GFIT_CONFIG.redirectUri); }catch(e){ L.push('GFit redirect: err'); }
+  L.push('  → regjistroje këtë te Google Cloud Console');
+  L.push('GFit token: ' + (localStorage.getItem('gfit_token') ? 'PREZENT ✅' : 'mungon'));
+  try{ L.push('Fitbit redirect: ' + FITBIT_CONFIG.redirectUri); }catch(e){ L.push('Fitbit redirect: err'); }
+  L.push('  → regjistroje këtë te Fitbit App settings');
+  L.push('Fitbit token: ' + (localStorage.getItem('fitbit_token') ? 'PREZENT ✅' : 'mungon'));
+  L.push('');
+  /* ── NATIVE (Android/iOS) ── */
+  L.push('═══ NATIVE (Android/iOS) ═══');
+  L.push('Capacitor: ' + (window.Capacitor ? 'PO' : 'JO ❌ (po xhiron si web)'));
+  L.push('isNativeApp: ' + (isNativeApp() ? 'PO ✅' : 'JO ❌'));
   try{ L.push('Platform: ' + ((window.Capacitor && window.Capacitor.getPlatform) ? window.Capacitor.getPlatform() : '?')); }catch(e){}
-  L.push('registerPlugin: ' + (window.Capacitor && typeof window.Capacitor.registerPlugin==='function' ? 'PO' : 'JO'));
-  try{ L.push('Plugins: ' + (window.Capacitor && window.Capacitor.Plugins ? Object.keys(window.Capacitor.Plugins).join(',') : '-')); }catch(e){ L.push('Plugins: err'); }
+  try{ L.push('Plugins: ' + (window.Capacitor && window.Capacitor.Plugins ? (Object.keys(window.Capacitor.Plugins).join(',')||'(bosh)') : '-')); }catch(e){ L.push('Plugins: err'); }
   var Health = getHealthPlugin();
-  L.push('HealthPlugin: ' + (Health ? 'i regjistruar ✅' : 'MUNGON ❌'));
+  L.push('HealthPlugin (Health Connect): ' + (Health ? 'i regjistruar ✅' : 'MUNGON ❌'));
   if(Health){
-    try{
-      var avail = await Health.isHealthAvailable();
-      L.push('Health available: ' + JSON.stringify(avail));
-    }catch(e){ L.push('isHealthAvailable ERROR: ' + (e.message||e)); }
-    try{
-      if(Health.checkHealthPermissions){
-        var pp = await Health.checkHealthPermissions({ permissions:['READ_STEPS','READ_ACTIVE_CALORIES','READ_HEART_RATE'] });
-        L.push('Permissions: ' + JSON.stringify(pp));
-      }
-    }catch(e){ L.push('checkPermissions: ' + (e.message||e)); }
+    try{ var avail = await Health.isHealthAvailable(); L.push('  Health available: ' + JSON.stringify(avail)); }catch(e){ L.push('  isHealthAvailable ERROR: ' + (e.message||e)); }
+    try{ if(Health.checkHealthPermissions){ var pp = await Health.checkHealthPermissions({ permissions:['READ_STEPS','READ_ACTIVE_CALORIES','READ_HEART_RATE'] }); L.push('  Permissions: ' + JSON.stringify(pp)); } }catch(e){ L.push('  checkPermissions: ' + (e.message||e)); }
   }
   var Ble = (typeof getBle==='function') ? getBle() : null;
-  L.push('BLE plugin: ' + (Ble ? 'i regjistruar ✅' : 'MUNGON ❌'));
+  L.push('BLE plugin (D Health Ring): ' + (Ble ? 'i regjistruar ✅' : 'MUNGON ❌'));
+  L.push('');
+  /* ── Interpretim: ku ndërpritet zinxhiri ── */
+  L.push('═══ KU NDËRPRITET ═══');
+  if(!window.Capacitor){
+    L.push('→ Po xhiron si WEB. Vetëm Google Fit + Fitbit (OAuth) mund të punojnë këtu.');
+    L.push('  Health Connect / Apple Health kërkojnë app NATIV.');
+  } else if(!Health){
+    L.push('→ App NATIV, por HealthPlugin MUNGON → s\'është bundle-uar te APK.');
+    L.push('  Health Connect s\'punon dot. Duhet ta shtosh plugin-in te builds nativ.');
+  } else {
+    L.push('→ HealthPlugin OK ✅. Nëse s\'merr të dhëna → kontrollo Permissions më lart.');
+  }
   alert('🔍 DIAGNOSTIKË PAJISJESH\n\n' + L.join('\n') + '\n\n(Dërgoja këtë tekst Claude-it)');
 }
 
