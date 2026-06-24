@@ -4046,7 +4046,54 @@ function closeDrop(){var m=document.getElementById('dropMenu');if(m)m.classList.
 document.addEventListener('click',function(e){var b=document.getElementById('dotsBtn'),m=document.getElementById('dropMenu');if(b&&!b.contains(e.target)&&m&&!m.contains(e.target))m.classList.remove('open');});
 
 /* ════════════════════ TOAST ════════════════════ */
-function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
+var TOAST_I18N = {
+  '✅ Vitals u ruajtën!':{sq:'✅ Vitals u ruajtën!', mk:'✅ Виталните се зачувани!', en:'✅ Vitals saved!'},
+  '✅ Personal info saved!':{sq:'✅ Të dhënat personale u ruajtën!', mk:'✅ Личните податоци се зачувани!', en:'✅ Personal info saved!'},
+  '✅ Health info saved!':{sq:'✅ Të dhënat shëndetësore u ruajtën!', mk:'✅ Здравствените податоци се зачувани!', en:'✅ Health info saved!'},
+  '✅ Password changed!':{sq:'✅ Fjalëkalimi u ndryshua!', mk:'✅ Лозинката е променета!', en:'✅ Password changed!'},
+  '✅ Password updated!':{sq:'✅ Fjalëkalimi u përditësua!', mk:'✅ Лозинката е ажурирана!', en:'✅ Password updated!'},
+  '✅ Card saved!':{sq:'✅ Karta u ruajt!', mk:'✅ Картичката е зачувана!', en:'✅ Card saved!'},
+  '✅ Foto u ndryshua!':{sq:'✅ Foto u ndryshua!', mk:'✅ Фотографијата е променета!', en:'✅ Photo updated!'},
+  '✅ Kontakti i urgjencës u ruajt!':{sq:'✅ Kontakti i urgjencës u ruajt!', mk:'✅ Итниот контакт е зачуван!', en:'✅ Emergency contact saved!'},
+  '✅ Dokumenti u ruajt në llogari!':{sq:'✅ Dokumenti u ruajt në llogari!', mk:'✅ Документот е зачуван во сметката!', en:'✅ Document saved to your account!'},
+  '🗑️ Dokumenti u fshi':{sq:'🗑️ Dokumenti u fshi', mk:'🗑️ Документот е избришан', en:'🗑️ Document deleted'},
+  '✅ Sinkronizuar':{sq:'✅ Sinkronizuar', mk:'✅ Синхронизирано', en:'✅ Synced'},
+  '✅ Signed out successfully':{sq:'✅ Dolët me sukses', mk:'✅ Успешно одјавени', en:'✅ Signed out successfully'},
+  '✅ ECG u analizua me sukses!':{sq:'✅ ECG u analizua me sukses!', mk:'✅ ЕКГ е успешно анализирано!', en:'✅ ECG analyzed successfully!'},
+  '✅ Raporti u dërgua te Dr. Shabani!':{sq:'✅ Raporti u dërgua te Dr. Shabani!', mk:'✅ Извештајот е испратен до Др. Шабани!', en:'✅ Report sent to Dr. Shabani!'},
+  '✅ Connected successfully!':{sq:'✅ U lidh me sukses!', mk:'✅ Успешно поврзано!', en:'✅ Connected successfully!'},
+  '✅ Health Connect u lidh!':{sq:'✅ Health Connect u lidh!', mk:'✅ Health Connect е поврзан!', en:'✅ Health Connect connected!'},
+  '✅ Google Fit connected!':{sq:'✅ Google Fit u lidh!', mk:'✅ Google Fit е поврзан!', en:'✅ Google Fit connected!'},
+  '✅ Apple Health u lidh!':{sq:'✅ Apple Health u lidh!', mk:'✅ Apple Health е поврзан!', en:'✅ Apple Health connected!'},
+  '✅ Fitbit connected successfully!':{sq:'✅ Fitbit u lidh me sukses!', mk:'✅ Fitbit е успешно поврзан!', en:'✅ Fitbit connected successfully!'},
+  '✅ D Health Ring u lidh!':{sq:'✅ D Health Ring u lidh!', mk:'✅ D Health Ring е поврзан!', en:'✅ D Health Ring connected!'},
+  '💍 D Health Ring u shkëput':{sq:'💍 D Health Ring u shkëput', mk:'💍 D Health Ring е исклучен', en:'💍 D Health Ring disconnected'},
+  'Google Fit disconnected':{sq:'Google Fit u shkëput', mk:'Google Fit е исклучен', en:'Google Fit disconnected'},
+  '✅ Stripe u lidh!':{sq:'✅ Stripe u lidh!', mk:'✅ Stripe е поврзан!', en:'✅ Stripe connected!'},
+  '✅ PayPal u lidh!':{sq:'✅ PayPal u lidh!', mk:'✅ PayPal е поврзан!', en:'✅ PayPal connected!'},
+  '✅ Google Pay u lidh!':{sq:'✅ Google Pay u lidh!', mk:'✅ Google Pay е поврзан!', en:'✅ Google Pay connected!'},
+  '⚠️ No internet':{sq:'⚠️ Pa internet', mk:'⚠️ Нема интернет', en:'⚠️ No internet'},
+  '⚠️ Lidhja me serverin mungon':{sq:'⚠️ Lidhja me serverin mungon', mk:'⚠️ Нема врска со серверот', en:'⚠️ No server connection'},
+  '⚠️ Please fill all fields':{sq:'⚠️ Plotëso të gjitha fushat', mk:'⚠️ Пополни ги сите полиња', en:'⚠️ Please fill all fields'},
+  '⚠️ Please enter your name':{sq:'⚠️ Fut emrin tënd', mk:'⚠️ Внеси го твоето име', en:'⚠️ Please enter your name'},
+  '⚠️ Passwords do not match':{sq:'⚠️ Fjalëkalimet nuk përputhen', mk:'⚠️ Лозинките не се совпаѓаат', en:'⚠️ Passwords do not match'},
+  '⚠️ Password must be at least 8 characters':{sq:'⚠️ Fjalëkalimi duhet të paktën 8 karaktere', mk:'⚠️ Лозинката мора барем 8 знаци', en:'⚠️ Password must be at least 8 characters'},
+  '⚠️ Zgjidhni datën dhe orën!':{sq:'⚠️ Zgjidhni datën dhe orën!', mk:'⚠️ Изберете датум и време!', en:'⚠️ Select a date and time!'},
+  '⚠️ Enter medication name':{sq:'⚠️ Fut emrin e medikamentit', mk:'⚠️ Внеси име на лек', en:'⚠️ Enter medication name'},
+  '⚠️ Gjenero raportin së pari':{sq:'⚠️ Gjenero raportin së pari', mk:'⚠️ Прво генерирај извештај', en:'⚠️ Generate the report first'},
+  '❌ Connection error':{sq:'❌ Gabim lidhjeje', mk:'❌ Грешка во врската', en:'❌ Connection error'},
+  '❌ Login dështoi':{sq:'❌ Login dështoi', mk:'❌ Најавата не успеа', en:'❌ Login failed'},
+  '🔄 Duke ngarkuar...':{sq:'🔄 Duke ngarkuar...', mk:'🔄 Се вчитува...', en:'🔄 Loading...'},
+  '🔄 Duke rifreskuar cilësinë e ajrit...':{sq:'🔄 Duke rifreskuar cilësinë e ajrit...', mk:'🔄 Се освежува квалитетот на воздух...', en:'🔄 Refreshing air quality...'},
+  '🌍 Air quality updated!':{sq:'🌍 Cilësia e ajrit u rifreskua!', mk:'🌍 Квалитетот на воздух е освежен!', en:'🌍 Air quality updated!'},
+  '🗑️ Terapia u hoq (edhe nga Kalendari & Njoftimet)':{sq:'🗑️ Terapia u hoq (edhe nga Kalendari & Njoftimet)', mk:'🗑️ Терапијата е отстранета (и од Календар и Известувања)', en:'🗑️ Therapy removed (also from Calendar & Notifications)'},
+  '✓ Marked as taken!':{sq:'✓ Shënuar si marrë!', mk:'✓ Означено како земено!', en:'✓ Marked as taken!'},
+  '✓ All notifications cleared':{sq:'✓ Të gjitha njoftimet u pastruan', mk:'✓ Сите известувања се исчистени', en:'✓ All notifications cleared'}
+};
+function showToast(msg){
+  try{ var L=(typeof DH_LANG!=='undefined'&&DH_LANG)||'sq'; if(TOAST_I18N[msg] && TOAST_I18N[msg][L]) msg=TOAST_I18N[msg][L]; }catch(e){}
+  var t=document.getElementById('toast'); if(!t) return; t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2200);
+}
 
 /* ════════════════════ PROFILE BUILDER ════════════════════ */
 function getProfile(){
@@ -6634,6 +6681,7 @@ function applyLang(lang){
   try{ if(typeof initSettings==='function' && document.getElementById('setPlanSub')) initSettings(); }catch(e){}
   try{ if(typeof updateNotifBadge==='function' && document.getElementById('notifBadge')) updateNotifBadge(); }catch(e){}
   try{ if(typeof computeBMI==='function' && document.getElementById('setBmiVal')) computeBMI(); }catch(e){}
+  try{ if(typeof bkRenderCalendar==='function' && document.getElementById('bkMonthLbl') && document.getElementById('bkMonthLbl').textContent) bkRenderCalendar(); }catch(e){}
   try{ if(typeof airState!=='undefined' && airState.statusKey){ var _s=dhT(airState.statusKey); ['aqiStatus','aqiStatusBig'].forEach(function(id){ var e=document.getElementById(id); if(e) e.textContent=_s; }); if(airState.cityGeneric){ var _c=document.getElementById('aqiCityLbl2'); if(_c) _c.textContent=dhT('aq.yourLocation'); } } }catch(e){}
 }
 document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ try{ applyLang(); }catch(e){} }, 60); });
@@ -7339,8 +7387,19 @@ var bkYear, bkMonth, bkSelDate=null, bkSelTime=null;
 var SUPA_URL_BK = 'https://ppcvzvvlnaxiljjmdihk.supabase.co';
 var SUPA_KEY_BK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwY3Z6dnZsbmF4aWxqam1kaWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNjM1MjYsImV4cCI6MjA5MTkzOTUyNn0.iS1Fb80nxf6t5zsTk5loiNoPpg2kEj7_nCifWQZHJTo';
 
-var BK_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var BK_DAYS_SQ = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+var BK_MONTHS_I18N = {
+  en:['January','February','March','April','May','June','July','August','September','October','November','December'],
+  sq:['Janar','Shkurt','Mars','Prill','Maj','Qershor','Korrik','Gusht','Shtator','Tetor','Nëntor','Dhjetor'],
+  mk:['Јануари','Февруари','Март','Април','Мај','Јуни','Јули','Август','Септември','Октомври','Ноември','Декември']
+};
+var BK_DAYS_I18N = {
+  en:['Su','Mo','Tu','We','Th','Fr','Sa'],
+  sq:['Di','Hë','Ma','Më','En','Pr','Sh'],
+  mk:['Не','По','Вт','Ср','Че','Пе','Са']
+};
+function _bkLang(){ var L=(typeof DH_LANG!=='undefined'&&DH_LANG)||'sq'; return BK_MONTHS_I18N[L]?L:'en'; }
+var BK_MONTHS = BK_MONTHS_I18N.en;
+var BK_DAYS_SQ = BK_DAYS_I18N.en;
 
 function openBkModal(){
   var now = new Date();
@@ -7367,11 +7426,11 @@ function closeBkOverlay(e){
 
 function bkRenderCalendar(){
   var lbl = document.getElementById('bkMonthLbl');
-  if(lbl) lbl.textContent = BK_MONTHS[bkMonth] + ' ' + bkYear;
+  if(lbl) lbl.textContent = BK_MONTHS_I18N[_bkLang()][bkMonth] + ' ' + bkYear;
 
   /* Day headers */
   var hdr = document.getElementById('bkDayHdr');
-  if(hdr) hdr.innerHTML = BK_DAYS_SQ.map(function(d){
+  if(hdr) hdr.innerHTML = BK_DAYS_I18N[_bkLang()].map(function(d){
     return '<div class="bk-cal-dh">'+d+'</div>';
   }).join('');
 
