@@ -10739,9 +10739,10 @@ async function syncHealthConnect(opts){
     var steps     = Math.round(await agg('steps'));
     var calories  = Math.round(await agg('active-calories'));   /* plugin: 'active-calories' */
     if(!calories) calories = Math.round(await agg('total-calories'));  /* disa pajisje shkruajnë total, jo active */
-    /* Distanca: Health Connect e ruan në METRA → kthe në km */
+    /* Distanca: HC s'ka total ditor (bucket pa 'value') → vlerëso nga hapat (~0.762m/hap) */
     var distanceM = await agg('distance');
-    var distance  = distanceM > 0 ? Math.round(distanceM/1000*100)/100 : 0;
+    var distance  = distanceM > 0 ? Math.round(distanceM/1000*100)/100
+                                  : (steps > 0 ? Math.round(steps*0.762/1000*100)/100 : 0);
 
     /* HR mesatar nga workouts (nëse ka) */
     var hr = 0;
