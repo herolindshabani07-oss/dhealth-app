@@ -2516,14 +2516,14 @@ select option{background:#0A1628;color:#F1F5FF;}
 <div id="setEditModal" style="display:none;position:absolute;inset:0;background:rgba(10,15,35,0.55);z-index:800;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);" onclick="setCloseEdit(event)">
   <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:24px 24px 44px 44px;width:100%;max-height:90%;display:flex;flex-direction:column;animation:slideUp 0.3s ease;">
     <div style="padding:12px 18px;border-bottom:0.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;">
-      <div style="font-size:15px;font-weight:700;color:#F1F5FF;">✏️ Edit Profile</div>
+      <div style="font-size:15px;font-weight:700;color:#F1F5FF;" data-i18n="ep.title">✏️ Edit Profile</div>
       <button onclick="setCloseEdit(null)" style="width:28px;height:28px;border-radius:9px;border:none;background:var(--bg);font-size:14px;cursor:pointer;color:rgba(255,255,255,0.5);">✕</button>
     </div>
     <!-- Tabs -->
     <div style="display:flex;padding:10px 14px;gap:6px;flex-shrink:0;border-bottom:0.5px solid var(--border);">
-      <button id="setTab-info" onclick="switchSetTab('info')" style="flex:1;padding:8px;border-radius:10px;border:none;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">👤 Personal Info</button>
-      <button id="setTab-pwd" onclick="switchSetTab('pwd')" style="flex:1;padding:8px;border-radius:10px;border:none;background:var(--bg);color:rgba(255,255,255,0.5);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">🔒 Password</button>
-      <button id="setTab-health" onclick="switchSetTab('health')" style="flex:1;padding:8px;border-radius:10px;border:none;background:var(--bg);color:rgba(255,255,255,0.5);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">🏥 Health Info</button>
+      <button id="setTab-info" onclick="switchSetTab('info')" data-i18n="ep.tabInfo" style="flex:1;padding:8px;border-radius:10px;border:none;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">👤 Personal Info</button>
+      <button id="setTab-pwd" onclick="switchSetTab('pwd')" data-i18n="ep.tabPwd" style="flex:1;padding:8px;border-radius:10px;border:none;background:var(--bg);color:rgba(255,255,255,0.5);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">🔒 Password</button>
+      <button id="setTab-health" onclick="switchSetTab('health')" data-i18n="ep.tabHealth" style="flex:1;padding:8px;border-radius:10px;border:none;background:var(--bg);color:rgba(255,255,255,0.5);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">🏥 Health Info</button>
     </div>
     <!-- Body -->
     <div style="flex:1;overflow-y:auto;padding:16px;">
@@ -2536,73 +2536,73 @@ select option{background:#0A1628;color:#F1F5FF;}
             <div id="setEditAvatar" style="width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff;background-size:cover;background-position:center;">👤</div>
             <div style="position:absolute;bottom:-2px;right:-2px;width:26px;height:26px;border-radius:50%;background:#3B7DD8;border:2px solid #1B2030;display:flex;align-items:center;justify-content:center;font-size:12px;">📷</div>
           </div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:7px;">Trokit për të ndryshuar foton</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:7px;" data-i18n="ep.tapPhoto">Trokit për të ndryshuar foton</div>
           <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(this)">
         </div>
         <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Full Name</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.fullName">Full Name</div>
           <input id="setEditName" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
         <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Email</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.email">Email</div>
           <input id="setEditEmail" readonly style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:rgba(255,255,255,0.6);background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value="" placeholder="email@example.com"/>
         </div>
         <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Date of Birth</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.dob">Date of Birth</div>
           <input type="date" id="setEditDob" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value=""/>
         </div>
         <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Phone</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.phone">Phone</div>
           <input id="setEditPhone" type="tel" placeholder="+383 44 123 456" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
         <div style="margin-bottom:16px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Gender</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.gender">Gender</div>
           <select id="setEditGender" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;">
-            <option value="female">Female</option>
-            <option value="male">Male</option>
-            <option value="other">Other / Prefer not to say</option>
+            <option value="female" data-i18n="ep.female">Female</option>
+            <option value="male" data-i18n="ep.male">Male</option>
+            <option value="other" data-i18n="ep.other">Other / Prefer not to say</option>
           </select>
         </div>
-        <button onclick="savePersonalInfo()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">💾 Save Personal Info</button>
+        <button onclick="savePersonalInfo()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="ep.savePersonal">💾 Save Personal Info</button>
       </div>
 
       <!-- PASSWORD -->
       <div id="setPane-pwd" style="display:none;">
-        <div style="background:rgba(249,115,22,0.08);border-radius:12px;padding:11px 13px;margin-bottom:14px;font-size:12px;color:var(--orange);line-height:1.5;">⚠️ You will be logged out after changing your password.</div>
+        <div style="background:rgba(249,115,22,0.08);border-radius:12px;padding:11px 13px;margin-bottom:14px;font-size:12px;color:var(--orange);line-height:1.5;" data-i18n="ep.pwdWarn">⚠️ You will be logged out after changing your password.</div>
         <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Current Password</div>
-          <input id="setOldPwd" type="password" placeholder="Enter current password" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.currentPwd">Current Password</div>
+          <input id="setOldPwd" type="password" placeholder="Enter current password" data-i18n-ph="ep.phCurrentPwd" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
         <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">New Password</div>
-          <input id="setNewPwd" type="password" placeholder="Min 8 characters" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.newPwd">New Password</div>
+          <input id="setNewPwd" type="password" placeholder="Min 8 characters" data-i18n-ph="ep.phNewPwd" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
         <div style="margin-bottom:16px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Confirm New Password</div>
-          <input id="setConfPwd" type="password" placeholder="Repeat new password" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.confirmPwd">Confirm New Password</div>
+          <input id="setConfPwd" type="password" placeholder="Repeat new password" data-i18n-ph="ep.phConfirmPwd" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
-        <button onclick="savePassword()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#DC2626,#F97316);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">🔒 Change Password</button>
+        <button onclick="savePassword()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#DC2626,#F97316);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="ep.changePwd">🔒 Change Password</button>
       </div>
 
       <!-- HEALTH INFO -->
       <div id="setPane-health" style="display:none;">
         <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Height (cm)</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.height">Height (cm)</div>
           <input id="setHeight" type="number" placeholder="170" oninput="computeBMI()" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
         <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Weight (kg)</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.weight">Weight (kg)</div>
           <input id="setWeight" type="number" placeholder="70" oninput="computeBMI()" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
         <!-- BMI AUTOMATIK -->
         <div id="setBmiCard" style="margin-bottom:11px;background:rgba(45,200,160,0.08);border:0.5px solid rgba(45,200,160,0.25);border-radius:12px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;">
-          <div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;">BMI (automatik)</div><div id="setBmiCat" style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;">Fut gjatësinë dhe peshën</div></div>
+          <div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;" data-i18n="ep.bmiAuto">BMI (automatik)</div><div id="setBmiCat" style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;" data-i18n="ep.bmiHint">Fut gjatësinë dhe peshën</div></div>
           <div id="setBmiVal" style="font-size:22px;font-weight:800;color:#2DC8A0;">--</div>
         </div>
         <div style="margin-bottom:11px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Blood Type</div>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.bloodType">Blood Type</div>
           <select id="setBloodType" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;">
-            <option value="">Select blood type</option>
+            <option value="" data-i18n="ep.selectBlood">Select blood type</option>
             <option value="A+">A+</option><option value="A-">A-</option>
             <option value="B+">B+</option><option value="B-">B-</option>
             <option value="AB+">AB+</option><option value="AB-">AB-</option>
@@ -2610,10 +2610,10 @@ select option{background:#0A1628;color:#F1F5FF;}
           </select>
         </div>
         <div style="margin-bottom:16px;">
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Emergency Contact</div>
-          <input id="setEmergency" type="tel" placeholder="Name & phone number" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="set.emergency">Emergency Contact</div>
+          <input id="setEmergency" type="tel" placeholder="Name & phone number" data-i18n-ph="ep.phEmergency" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
         </div>
-        <button onclick="saveHealthInfo()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">💾 Save Health Info</button>
+        <button onclick="saveHealthInfo()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="ep.saveHealth">💾 Save Health Info</button>
       </div>
 
       <!-- INTEGRATIONS -->
@@ -6493,6 +6493,41 @@ var DH_I18N = {
   'nt.clearAll':    {sq:'🗑 Pastro të gjitha njoftimet', mk:'🗑 Исчисти ги сите известувања', en:'🗑 Clear All Notifications'},
   'nt.unread':      {sq:'të palexuara', mk:'непрочитани', en:'unread'},
   'nt.allRead':     {sq:'Të gjitha të lexuara', mk:'Сите прочитани', en:'All read'},
+  /* Edit Profile modal */
+  'ep.title':      {sq:'✏️ Ndrysho profilin', mk:'✏️ Уреди профил', en:'✏️ Edit Profile'},
+  'ep.tabInfo':    {sq:'👤 Personale', mk:'👤 Лични', en:'👤 Personal Info'},
+  'ep.tabPwd':     {sq:'🔒 Fjalëkalimi', mk:'🔒 Лозинка', en:'🔒 Password'},
+  'ep.tabHealth':  {sq:'🏥 Shëndeti', mk:'🏥 Здравје', en:'🏥 Health Info'},
+  'ep.tapPhoto':   {sq:'Trokit për të ndryshuar foton', mk:'Допри за промена на фотографијата', en:'Tap to change photo'},
+  'ep.fullName':   {sq:'Emri i plotë', mk:'Цело име', en:'Full Name'},
+  'ep.email':      {sq:'Email', mk:'Е-пошта', en:'Email'},
+  'ep.dob':        {sq:'Datëlindja', mk:'Дата на раѓање', en:'Date of Birth'},
+  'ep.phone':      {sq:'Telefoni', mk:'Телефон', en:'Phone'},
+  'ep.gender':     {sq:'Gjinia', mk:'Пол', en:'Gender'},
+  'ep.female':     {sq:'Femër', mk:'Женски', en:'Female'},
+  'ep.male':       {sq:'Mashkull', mk:'Машки', en:'Male'},
+  'ep.other':      {sq:'Tjetër / Parapëlqej të mos them', mk:'Друго / Не сакам да кажам', en:'Other / Prefer not to say'},
+  'ep.savePersonal':{sq:'💾 Ruaj të dhënat personale', mk:'💾 Зачувај лични податоци', en:'💾 Save Personal Info'},
+  'ep.pwdWarn':    {sq:'⚠️ Do të dilni pasi të ndryshoni fjalëkalimin.', mk:'⚠️ Ќе бидете одјавени по промена на лозинката.', en:'⚠️ You will be logged out after changing your password.'},
+  'ep.currentPwd': {sq:'Fjalëkalimi aktual', mk:'Тековна лозинка', en:'Current Password'},
+  'ep.phCurrentPwd':{sq:'Fut fjalëkalimin aktual', mk:'Внеси тековна лозинка', en:'Enter current password'},
+  'ep.newPwd':     {sq:'Fjalëkalimi i ri', mk:'Нова лозинка', en:'New Password'},
+  'ep.phNewPwd':   {sq:'Min 8 karaktere', mk:'Мин. 8 знаци', en:'Min 8 characters'},
+  'ep.confirmPwd': {sq:'Konfirmo fjalëkalimin e ri', mk:'Потврди нова лозинка', en:'Confirm New Password'},
+  'ep.phConfirmPwd':{sq:'Përsërit fjalëkalimin e ri', mk:'Повтори нова лозинка', en:'Repeat new password'},
+  'ep.changePwd':  {sq:'🔒 Ndrysho fjalëkalimin', mk:'🔒 Промени лозинка', en:'🔒 Change Password'},
+  'ep.height':     {sq:'Gjatësia (cm)', mk:'Висина (cm)', en:'Height (cm)'},
+  'ep.weight':     {sq:'Pesha (kg)', mk:'Тежина (kg)', en:'Weight (kg)'},
+  'ep.bmiAuto':    {sq:'BMI (automatik)', mk:'BMI (автоматски)', en:'BMI (automatic)'},
+  'ep.bmiHint':    {sq:'Fut gjatësinë dhe peshën', mk:'Внеси висина и тежина', en:'Enter height and weight'},
+  'ep.bloodType':  {sq:'Grupi i gjakut', mk:'Крвна група', en:'Blood Type'},
+  'ep.selectBlood':{sq:'Zgjidh grupin e gjakut', mk:'Избери крвна група', en:'Select blood type'},
+  'ep.phEmergency':{sq:'Emër & numër telefoni', mk:'Име и телефонски број', en:'Name & phone number'},
+  'ep.saveHealth': {sq:'💾 Ruaj të dhënat shëndetësore', mk:'💾 Зачувај здравствени податоци', en:'💾 Save Health Info'},
+  'ep.bmiUnder':   {sq:'Nënpeshë', mk:'Поднормална тежина', en:'Underweight'},
+  'ep.bmiNormal':  {sq:'Normal ✅', mk:'Нормална ✅', en:'Normal ✅'},
+  'ep.bmiOver':    {sq:'Mbipeshë ⚠️', mk:'Прекумерна ⚠️', en:'Overweight ⚠️'},
+  'ep.bmiObese':   {sq:'Obezitet 🚨', mk:'Дебелина 🚨', en:'Obese 🚨'},
   /* Home — të tjera */
   'home.viewAnalysis': {sq:'Shiko analizën e plotë →', mk:'Види ја целата анализа →', en:'View full analysis →'},
   'home.aiSubtitle':   {sq:'Rezultati ditor · AI Diagnostik', mk:'Дневен резултат · AI дијагностика', en:'Daily Score · Diagnostic AI'},
@@ -6553,6 +6588,7 @@ function applyLang(lang){
   try{ if(typeof applyProfileMode==='function' && document.getElementById('moreScreenTitle')) applyProfileMode(_profileMode); }catch(e){}
   try{ if(typeof initSettings==='function' && document.getElementById('setPlanSub')) initSettings(); }catch(e){}
   try{ if(typeof updateNotifBadge==='function' && document.getElementById('notifBadge')) updateNotifBadge(); }catch(e){}
+  try{ if(typeof computeBMI==='function' && document.getElementById('setBmiVal')) computeBMI(); }catch(e){}
   try{ if(typeof airState!=='undefined' && airState.statusKey){ var _s=dhT(airState.statusKey); ['aqiStatus','aqiStatusBig'].forEach(function(id){ var e=document.getElementById(id); if(e) e.textContent=_s; }); if(airState.cityGeneric){ var _c=document.getElementById('aqiCityLbl2'); if(_c) _c.textContent=dhT('aq.yourLocation'); } } }catch(e){}
 }
 document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ try{ applyLang(); }catch(e){} }, 60); });
@@ -6914,17 +6950,18 @@ function computeBMI(){
     var bmi = w / Math.pow(h/100, 2);
     var b = Math.round(bmi*10)/10;
     var cat, col;
-    if(bmi<18.5){ cat='Nënpeshë'; col='#60A5FA'; }
-    else if(bmi<25){ cat='Normal ✅'; col='#2DC8A0'; }
-    else if(bmi<30){ cat='Mbipeshë ⚠️'; col='#F97316'; }
-    else { cat='Obezitet 🚨'; col='#DC2626'; }
+    var _T=(typeof dhT==='function')?dhT:function(k){return k;};
+    if(bmi<18.5){ cat=_T('ep.bmiUnder'); col='#60A5FA'; }
+    else if(bmi<25){ cat=_T('ep.bmiNormal'); col='#2DC8A0'; }
+    else if(bmi<30){ cat=_T('ep.bmiOver'); col='#F97316'; }
+    else { cat=_T('ep.bmiObese'); col='#DC2626'; }
     valEl.textContent = b;
     valEl.style.color = col;
-    if(catEl) catEl.textContent = cat;
+    if(catEl){ catEl.removeAttribute('data-i18n'); catEl.textContent = cat; }
     localStorage.setItem('dh_bmi', String(b));
   } else {
     valEl.textContent='--'; valEl.style.color='#2DC8A0';
-    if(catEl) catEl.textContent='Fut gjatësinë dhe peshën';
+    if(catEl){ catEl.setAttribute('data-i18n','ep.bmiHint'); catEl.textContent=(typeof dhT==='function'?dhT('ep.bmiHint'):'Fut gjatësinë dhe peshën'); }
   }
 }
 
