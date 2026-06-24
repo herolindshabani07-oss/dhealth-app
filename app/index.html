@@ -10737,8 +10737,8 @@ async function syncHealthConnect(opts){
 
   try{
     var steps     = Math.round(await agg('steps'));
-    var calories  = Math.round(await agg('active-calories'));   /* plugin: 'active-calories' */
-    if(!calories) calories = Math.round(await agg('total-calories'));  /* disa pajisje shkruajnë total, jo active */
+    var calories  = Math.round(await agg('active-calories'));   /* HC active-calories (zakonisht bosh nga Samsung) */
+    if(!calories && steps > 0) calories = Math.round(steps * 0.04);  /* kalori AKTIVE të vlerësuara nga hapat (~0.04 kcal/hap) — jo totali ditor */
     /* Distanca: HC s'ka total ditor (bucket pa 'value') → vlerëso nga hapat (~0.762m/hap) */
     var distanceM = await agg('distance');
     var distance  = distanceM > 0 ? Math.round(distanceM/1000*100)/100
