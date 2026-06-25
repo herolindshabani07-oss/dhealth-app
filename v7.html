@@ -2662,7 +2662,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <!-- BILLING TOGGLE -->
     <div style="display:flex;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:3px;margin-bottom:16px;border:0.5px solid rgba(255,255,255,0.12);">
       <button id="btn-monthly" onclick="setBilling('monthly')" style="flex:1;padding:9px;border-radius:11px;border:none;background:var(--white);font-size:12px;font-weight:700;color:#F1F5FF;cursor:pointer;font-family:var(--font);box-shadow:0 2px 8px rgba(0,0,0,0.06);" data-i18n="sub.monthly">Monthly</button>
-      <button id="btn-annual" onclick="setBilling('annual')" style="flex:1;padding:9px;border-radius:11px;border:none;background:transparent;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font);"><span data-i18n="sub.annual">Annual</span> <span style="background:var(--al);color:var(--accent);font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;margin-left:3px;">-30%</span></button>
+      <button id="btn-annual" onclick="setBilling('annual')" style="flex:1;padding:9px;border-radius:11px;border:none;background:transparent;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font);"><span data-i18n="sub.annual">Annual</span> <span style="background:var(--al);color:var(--accent);font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;margin-left:3px;">-15%</span></button>
     </div>
 
     <!-- FREE PLAN -->
@@ -2691,11 +2691,12 @@ select option{background:#0A1628;color:#F1F5FF;}
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
         <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p1">Gjithçka nga Free</span></div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n-html="sub.p2"><strong>Health BOT Verdict</strong> — score AI</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n-html="sub.p2"><strong>D Health Verdict</strong> — AI Score</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n-html="sub.p11"><strong>Nutrition Today</strong> — këshilla ushqimore AI</span></div>
         <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p3">Profil mjekësor i plotë</span></div>
         <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p4">Vitals History 90 ditë</span></div>
         <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p5">Alarme terapie të pakufizuara</span></div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n-html="sub.p6"><strong>Dr. Shabani — konsulta pa limit</strong></span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n-html="sub.p6"><strong>Dr. Shabani — 5 konsulta mujore</strong></span></div>
         <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n-html="sub.p7"><strong>ECG upload + analizë Claude AI</strong></span></div>
         <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p8">Raport javor + mujor AI + PDF</span></div>
         <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p9">Air Quality alerts personale</span></div>
@@ -5254,10 +5255,17 @@ function goToSubscription(){
 
 /* ── SELECT PLAN ── */
 function selectPlan(plan){
+  if(plan==='premium'){
+    /* Premium requires a real, on-chain verified payment — never granted for free.
+       Route to the payment sheet on the crypto tab (the live method). */
+    try{ openPaymentModal(); switchPayTab('crypto'); }
+    catch(e){ try{ switchScreen('subscription'); }catch(_e){} }
+    return;
+  }
   ACCESS.currentPlan = plan;
   updatePlanUI();
-  var names = {free:'Free Plan', premium:'Premium ⭐'};
-  showToast('✅ Plan changed to '+names[plan]+'!');
+  var names = {free:'Free Plan'};
+  showToast('✅ Plan changed to '+(names[plan]||plan)+'!');
   setTimeout(function(){ switchScreen('more'); }, 800);
 }
 
@@ -5265,7 +5273,7 @@ function selectPlan(plan){
 function setBilling(type){
   ACCESS.billing = type;
   var prices = type==='annual'
-    ? {premium:'$1.39'}
+    ? {premium:'$1.69'}
     : {premium:'$1.99'};
   var ppEl = document.getElementById('premium-price'); if(ppEl) ppEl.textContent = prices.premium;
   var btnM = document.getElementById('btn-monthly');
@@ -6564,15 +6572,16 @@ var DH_I18N = {
   'sub.f4':{sq:'Health Score bazik (pa detaj AI)', mk:'Основен Health Score (без AI детали)', en:'Basic Health Score (no AI detail)'},
   'sub.premiumDesc':{sq:'Për pacientë individualë', mk:'За индивидуални пациенти', en:'For individual patients'},
   'sub.p1':{sq:'Gjithçka nga Free', mk:'Сè од Free', en:'Everything from Free'},
-  'sub.p2':{sq:'<strong>Health BOT Verdict</strong> — score AI', mk:'<strong>Health BOT Verdict</strong> — AI оценка', en:'<strong>Health BOT Verdict</strong> — AI score'},
+  'sub.p2':{sq:'<strong>D Health Verdict</strong> — AI Score', mk:'<strong>D Health Verdict</strong> — AI Score', en:'<strong>D Health Verdict</strong> — AI Score'},
   'sub.p3':{sq:'Profil mjekësor i plotë', mk:'Целосен медицински профил', en:'Full medical profile'},
   'sub.p4':{sq:'Vitals History 90 ditë', mk:'Vitals History 90 дена', en:'Vitals History 90 days'},
   'sub.p5':{sq:'Alarme terapie të pakufizuara', mk:'Неограничени аларми за терапија', en:'Unlimited therapy alarms'},
-  'sub.p6':{sq:'<strong>Dr. Shabani — konsulta pa limit</strong>', mk:'<strong>Др. Шабани — неограничени консултации</strong>', en:'<strong>Dr. Shabani — unlimited consultations</strong>'},
+  'sub.p6':{sq:'<strong>Dr. Shabani — 5 konsulta mujore</strong>', mk:'<strong>Др. Шабани — 5 консултации месечно</strong>', en:'<strong>Dr. Shabani — 5 consultations/month</strong>'},
   'sub.p7':{sq:'<strong>ECG upload + analizë Claude AI</strong>', mk:'<strong>ЕКГ прикачување + Claude AI анализа</strong>', en:'<strong>ECG upload + Claude AI analysis</strong>'},
   'sub.p8':{sq:'Raport javor + mujor AI + PDF', mk:'Неделен + месечен AI извештај + PDF', en:'Weekly + monthly AI report + PDF'},
   'sub.p9':{sq:'Air Quality alerts personale', mk:'Лични Air Quality предупредувања', en:'Personal Air Quality alerts'},
   'sub.p10':{sq:'Prioritet support 24/7', mk:'Приоритетна поддршка 24/7', en:'Priority support 24/7'},
+  'sub.p11':{sq:'<strong>Nutrition Today</strong> — këshilla ushqimore AI', mk:'<strong>Nutrition Today</strong> — AI совети за исхрана', en:'<strong>Nutrition Today</strong> — AI meal advice'},
   'sub.getPremium':{sq:'Merr Premium', mk:'Земи Premium', en:'Get Premium'},
   'sub.ringDesc':{sq:'Pajisje · auto-sync 24/7', mk:'Уред · auto-sync 24/7', en:'Device · auto-sync 24/7'},
   'sub.ring1':{sq:'HR, SpO₂, hapa & gjumë 24/7', mk:'HR, SpO₂, чекори и сон 24/7', en:'HR, SpO₂, steps & sleep 24/7'},
