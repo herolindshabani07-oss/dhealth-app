@@ -3387,16 +3387,15 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div style="background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:13px;margin-bottom:14px;">
           <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;" data-i18n="dx.addMedication">+ Add Medication</div>
           <input class="ti" id="therapy-med-inp" placeholder="e.g. Amlodipine 5mg" data-i18n-ph="dx.phMed" style="width:100%;margin-bottom:8px;"/>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
-            <select id="therapy-time-sel" style="padding:8px;border-radius:10px;border:0.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.07);color:#F1F5FF;font-size:12px;font-family:var(--font);">
-              <option value="Morning" data-i18n="dx.morning">🌅 Morning</option>
-              <option value="Lunch" data-i18n="dx.lunch">☀️ Lunch</option>
-              <option value="Evening" data-i18n="dx.evening">🌙 Evening</option>
-              <option value="Night" data-i18n="dx.night">⭐ Night</option>
-              <option value="As needed" data-i18n="dx.asNeeded">⚡ As needed</option>
-            </select>
-            <button onclick="addTherapyMed()" style="padding:8px;border-radius:10px;border:none;background:linear-gradient(135deg,#8B6FE8,#A78BFA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="dx.add">+ Add</button>
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:6px;" data-i18n="dx.pickTimes">Pick one or more times:</div>
+          <div id="therapy-slot-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;">
+            <span class="tchip" data-slot="Morning" data-active="0" onclick="_togTherapySlot(this)" data-i18n="dx.morning" style="padding:6px 11px;border-radius:9px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;user-select:none;">🌅 Morning</span>
+            <span class="tchip" data-slot="Lunch" data-active="0" onclick="_togTherapySlot(this)" data-i18n="dx.lunch" style="padding:6px 11px;border-radius:9px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;user-select:none;">☀️ Lunch</span>
+            <span class="tchip" data-slot="Evening" data-active="0" onclick="_togTherapySlot(this)" data-i18n="dx.evening" style="padding:6px 11px;border-radius:9px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;user-select:none;">🌙 Evening</span>
+            <span class="tchip" data-slot="Night" data-active="0" onclick="_togTherapySlot(this)" data-i18n="dx.night" style="padding:6px 11px;border-radius:9px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;user-select:none;">⭐ Night</span>
+            <span class="tchip" data-slot="As needed" data-active="0" onclick="_togTherapySlot(this)" data-i18n="dx.asNeeded" style="padding:6px 11px;border-radius:9px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;user-select:none;">⚡ As needed</span>
           </div>
+          <button onclick="addTherapyMed()" style="width:100%;padding:9px;border-radius:10px;border:none;background:linear-gradient(135deg,#8B6FE8,#A78BFA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="dx.add">+ Add</button>
         </div>
         <button data-i18n="dx.therapyAnalysis" onclick="analyzeTherapy()" style="width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:10px;">🤖 AI Therapy Analysis</button>
         <div id="therapy-ai-resp" style="display:none;background:rgba(255,255,255,0.05);border:0.5px solid rgba(139,111,232,0.3);border-radius:14px;padding:13px;">
@@ -6520,6 +6519,7 @@ var DH_I18N = {
   'dx.activeTherapy':  {sq:'💊 Terapia aktive', mk:'💊 Активна терапија', en:'💊 Active Therapy'},
   'dx.currentMeds':    {sq:'Medikamentet dhe plani aktual i trajtimit', mk:'Тековни лекови и план за лекување', en:'Current medications and treatment plan'},
   'dx.addMedication':  {sq:'+ Shto medikament', mk:'+ Додади лек', en:'+ Add Medication'},
+  'dx.pickTimes':      {sq:'Zgjidh një ose disa orë:', mk:'Избери едно или повеќе времиња:', en:'Pick one or more times:'},
   'dx.morning':        {sq:'🌅 Mëngjes', mk:'🌅 Утро', en:'🌅 Morning'},
   'dx.lunch':          {sq:'☀️ Drekë', mk:'☀️ Ручек', en:'☀️ Lunch'},
   'dx.evening':        {sq:'🌙 Mbrëmje', mk:'🌙 Вечер', en:'🌙 Evening'},
@@ -8529,6 +8529,24 @@ function switchDiagS(tab){
   if(tab==='therapy') setTimeout(renderTherapyList, 100);
 }
 
+/* etiketa e slotit nga ora (e përkthyer) */
+function _therapySlotLabel(tm){
+  var slotByTime={'08:00':'Morning','13:00':'Lunch','19:00':'Evening','22:00':'Night','09:00':'As needed'};
+  var keyByName={'Morning':'dx.morning','Lunch':'dx.lunch','Evening':'dx.evening','Night':'dx.night','As needed':'dx.asNeeded'};
+  var s=slotByTime[tm];
+  if(s){ return (typeof dhT==='function')?dhT(keyByName[s]):s; }
+  return '💊 '+ft(tm);
+}
+/* oraret e një medikamenti, të nxjerra nga alarmet (burim i vetëm) */
+function _therapyTimesFor(med){
+  var times={};
+  Object.keys(alarms).forEach(function(k){
+    (alarms[k]||[]).forEach(function(a){
+      if((a.name||'').split('·')[0].trim().toLowerCase()===med.toLowerCase()) times[a.time]=1;
+    });
+  });
+  return Object.keys(times).sort();
+}
 function renderTherapyList(){
   var list = document.getElementById('therapy-list-view');
   var countEl = document.getElementById('therapy-count');
@@ -8536,8 +8554,8 @@ function renderTherapyList(){
   var tags = document.querySelectorAll('#ds-therapy-tags .tag2, #prof-therapy-tags .tag2, #therapy-tags .tag2');
   var seen = {}; var meds = [];
   Array.from(tags).forEach(function(t){
-    var v = t.textContent.replace('x','').replace('×','').trim();
-    if(v && !seen[v]){ seen[v]=1; meds.push(v); }
+    var name = t.textContent.replace('x','').replace('×','').split('·')[0].trim();   /* emër pa slot (heq legacy "· Slot") */
+    if(name && !seen[name.toLowerCase()]){ seen[name.toLowerCase()]=1; meds.push(name); }
   });
   list.innerHTML = '';
   if(countEl) countEl.textContent = meds.length + ' ' + (typeof dhT==='function'?dhT('diag.active'):'active');
@@ -8545,21 +8563,16 @@ function renderTherapyList(){
     list.innerHTML='<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:12px;">'+(typeof dhT==='function'?dhT('dx.noMeds'):'No medications added yet.<br>Add them in the Profile tab.')+'</div>';
     return;
   }
-  var colors = {'Morning':'#FCD34D','Lunch':'#93C5FD','Evening':'#C4B5FD','Night':'#A5B4FC','As needed':'#4ADE80'};
-  var icons  = {'Morning':'🌅','Lunch':'☀️','Evening':'🌙','Night':'⭐','As needed':'⚡'};
   meds.forEach(function(med){
-    var timeKey = 'Morning';
-    Object.keys(colors).forEach(function(k){ if(med.toLowerCase().indexOf(k.toLowerCase())>-1) timeKey=k; });
-    var color = colors[timeKey]||'#C4B5FD';
-    var icon  = icons[timeKey]||'💊';
+    var timeArr = _therapyTimesFor(med);
+    var slotsLabel = timeArr.length ? timeArr.map(_therapySlotLabel).join('&nbsp;&nbsp;·&nbsp;&nbsp;') : '<span style="opacity:.55">—</span>';
     var item = document.createElement('div');
     item.style.cssText='background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.12);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:11px;';
     item.setAttribute('data-med', med);
-    var parts = med.split('·');
     item.innerHTML='<div style="width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💊</div>'
-      +'<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#F1F5FF;margin-bottom:2px;">'+(parts[0]||med).trim()+'</div>'
-      +'<div style="font-size:11px;color:rgba(255,255,255,0.5);">'+icon+' '+(parts[1]||timeKey).trim()+'</div></div>'
-      +'<div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(255,255,255,0.1);color:'+color+';">'+(typeof dhT==='function'?dhT('dx.activeBadge'):'Active ✓')+'</div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:#F1F5FF;margin-bottom:2px;">'+med+'</div>'
+      +'<div style="font-size:11px;color:rgba(255,255,255,0.5);">'+slotsLabel+'</div></div>'
+      +'<div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(255,255,255,0.1);color:#C4B5FD;">'+(typeof dhT==='function'?dhT('dx.activeBadge'):'Active ✓')+'</div>'
       +'<button onclick="removeTherapyMed(this)" title="Hiq terapinë" style="width:26px;height:26px;border-radius:8px;border:none;background:rgba(239,68,68,0.12);color:#F87171;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;">×</button>';
     list.appendChild(item);
   });
@@ -8571,7 +8584,7 @@ function removeTherapyMed(btn){
   ['ds-therapy-tags','prof-therapy-tags','therapy-tags'].forEach(function(id){
     var w=document.getElementById(id); if(!w) return;
     w.querySelectorAll('.tag2').forEach(function(t){
-      if(t.textContent.replace('×','').trim()===med) t.remove();
+      if(t.textContent.replace('×','').split('·')[0].trim().toLowerCase()===String(med).toLowerCase()) t.remove();
     });
   });
   renderTherapyList();
@@ -8602,24 +8615,43 @@ function syncTherapyToProfile(){
   });
 }
 
+/* ─ chip-at multi-select të orëve ─ */
+function _togTherapySlot(el){
+  var on = el.getAttribute('data-active')==='1';
+  el.setAttribute('data-active', on?'0':'1');
+  if(on){ el.style.background='rgba(255,255,255,0.06)'; el.style.color='rgba(255,255,255,0.7)'; el.style.borderColor='rgba(255,255,255,0.18)'; }
+  else  { el.style.background='linear-gradient(135deg,#8B6FE8,#A78BFA)'; el.style.color='#fff'; el.style.borderColor='transparent'; }
+}
+function _getTherapySlots(){
+  return Array.from(document.querySelectorAll('#therapy-slot-chips .tchip'))
+    .filter(function(c){ return c.getAttribute('data-active')==='1'; })
+    .map(function(c){ return c.getAttribute('data-slot'); });
+}
+function _clearTherapySlots(){
+  document.querySelectorAll('#therapy-slot-chips .tchip').forEach(function(c){
+    c.setAttribute('data-active','0');
+    c.style.background='rgba(255,255,255,0.06)'; c.style.color='rgba(255,255,255,0.7)'; c.style.borderColor='rgba(255,255,255,0.18)';
+  });
+}
 function addTherapyMed(){
   var inp = document.getElementById('therapy-med-inp');
-  var sel = document.getElementById('therapy-time-sel');
   if(!inp||!inp.value.trim()){ showToast('⚠️ Enter medication name'); return; }
-  var slot = sel?sel.value:'Morning';
-  var val = inp.value.trim()+' · '+slot;
-  inp.value='';
-  /* Shto te ds-therapy-tags */
+  var med = inp.value.trim();
+  var slots = _getTherapySlots();
+  if(!slots.length){ showToast('⚠️ Zgjidh të paktën një orë'); return; }
+  inp.value=''; _clearTherapySlots();
+  /* një tag = vetëm emri i medikamentit (oraret janë alarmet) */
   var el = document.getElementById('ds-therapy-tags');
-  if(el){
+  if(el && !Array.from(el.querySelectorAll('.tag2')).some(function(t){ return t.textContent.replace('×','').split('·')[0].trim().toLowerCase()===med.toLowerCase(); })){
     var span=document.createElement('span');
     span.className='tag2 t';
-    span.innerHTML=val+' <span class="tx" onclick="this.parentElement.remove();renderTherapyList()">×</span>';
+    span.innerHTML=med+' <span class="tx" onclick="this.parentElement.remove();renderTherapyList()">×</span>';
     el.appendChild(span);
   }
-  setTimeout(renderTherapyList,100);
-  try{ linkTherapyToAlarm(val, slot); }catch(e){}   /* → Kalendar + Njoftime */
-  showToast('💊 '+val+' — u shtua te Kalendari & Njoftimet');
+  /* një alarm për çdo orë e zgjedhur */
+  slots.forEach(function(slot){ try{ linkTherapyToAlarm(med, slot); }catch(e){} });
+  setTimeout(renderTherapyList,120);
+  showToast('💊 '+med+' ('+slots.join(', ')+') — u shtua');
   try{ updateIndicatorBadge(); }catch(e){}
   try{ syncMedicalProfile(); }catch(e){}
 }
@@ -8632,7 +8664,7 @@ function linkTherapyToAlarm(label, slot){
   var col = colorMap[slot] || 'purple';
   var k = dk(sY, sM, sD);                         /* i njëjti çelës që lexojnë renderCal & renderNotifAlarms */
   if(!alarms[k]) alarms[k] = [];
-  var exists = alarms[k].some(function(a){ return (a.name||'').toLowerCase() === String(label).toLowerCase(); });
+  var exists = alarms[k].some(function(a){ return (a.name||'').toLowerCase() === String(label).toLowerCase() && a.time === t; });
   if(!exists){
     alarms[k].push({name:label, time:t, color:col, on:true, therapy:true});
     try{ scheduleTherapyNotif(label, t); }catch(e){}   /* zile reale native */
@@ -8648,15 +8680,16 @@ function linkTherapyToAlarm(label, slot){
 }
 /* Heq alarmin përkatës kur hiqet terapia (lidhje e dyanshme) */
 function unlinkTherapyAlarm(label){
-  var lo = String(label||'').toLowerCase();
+  var lo = String(label||'').split('·')[0].trim().toLowerCase();   /* emër pa slot */
   Object.keys(alarms).forEach(function(k){
-    (alarms[k]||[]).forEach(function(a){ if((a.name||'').toLowerCase()===lo){ try{ cancelTherapyNotif(a.name, a.time); }catch(e){} } });
-    alarms[k] = (alarms[k]||[]).filter(function(a){ return (a.name||'').toLowerCase() !== lo; });
+    (alarms[k]||[]).forEach(function(a){ if((a.name||'').split('·')[0].trim().toLowerCase()===lo){ try{ cancelTherapyNotif(a.name, a.time); }catch(e){} } });
+    alarms[k] = (alarms[k]||[]).filter(function(a){ return (a.name||'').split('·')[0].trim().toLowerCase() !== lo; });
     if(!alarms[k].length) delete alarms[k];
   });
   var sb = getSupa();
   if(sb && LST.currentUser && LST.currentUser.id){
-    try{ sb.from('therapy_alarms').delete().eq('patient_id',LST.currentUser.id).eq('name',label); }catch(e){}
+    /* heq të gjitha alarmet e këtij medikamenti (emri ose "emri · slot") */
+    try{ sb.from('therapy_alarms').delete().eq('patient_id',LST.currentUser.id).ilike('name', String(label).split('·')[0].trim()+'%'); }catch(e){}
   }
   try{ renderCal(); }catch(e){}
   try{ renderNotifAlarms(); }catch(e){}
