@@ -4,13 +4,11 @@
 
    Required env vars (Netlify → Site settings → Environment variables):
      SUPABASE_SERVICE_ROLE_KEY   (already set — service_role key)
-     ETHERSCAN_API_KEY           (free from etherscan.io → API Keys; BscScan data is
-                                  now served via Etherscan API V2 with chainid=56.
-                                  Legacy name BSCSCAN_API_KEY is also accepted.)
-   Optional env vars:
-     BSC_API_BASE     default https://api.etherscan.io/v2/api
-     BSC_CHAIN_ID     default 56  (BNB Smart Chain)
+   Reads BSC directly from public RPC nodes — NO Etherscan/BscScan API key needed
+   (Etherscan V2 free tier does not cover BSC). Optional env vars:
+     BSC_RPC_URL      comma-separated RPC endpoints (default Binance + public nodes)
      PAY_PRICE_PREMIUM default 1.39  (set LOW e.g. 0.5 for the mini-test, then restore)
+     PAY_MIN_CONF      default 3
      PAY_MIN_CONF      default 3     (block confirmations required)
      ADMIN_EMAIL       default herolind30@gmail.com  (payment notification)
      RESEND_API_KEY    (already set for welcome-email) — enables the notification email
@@ -83,19 +81,32 @@ exports.handler = async function (event) {
   const TOKEN = TOKENS[asset];
   if (!TOKEN) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Unsupported asset (USDT/USDC only)', code: 'bad_asset' }) };
 
-  /* 3) Config / secrets — BscScan data is served via Etherscan API V2 (chainid=56). */
+  /* 3) Config — read BSC directly from public RPC nodes (no API key, no chain limits).
+     (Etherscan V2 free tier does NOT cover BSC, so we use the chain's own RPC.) */
   const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const APIKEY  = process.env.ETHERSCAN_API_KEY || process.env.BSCSCAN_API_KEY;
   if (!SERVICE) return { statusCode: 503, headers, body: JSON.stringify({ error: 'Server not configured (service key)', code: 'no_service_key' }) };
-  if (!APIKEY)  return { statusCode: 503, headers, body: JSON.stringify({ error: 'Server not configured (Etherscan/BscScan key)', code: 'no_bscscan_key' }) };
 
-  const API_BASE = process.env.BSC_API_BASE || 'https://api.etherscan.io/v2/api';
-  const CHAIN_ID = process.env.BSC_CHAIN_ID || '56';     // 56 = BNB Smart Chain
-  const CHAIN_Q  = '?chainid=' + CHAIN_ID;
+  const RPC_URLS = (process.env.BSC_RPC_URL ||
+    'https://bsc-dataseed.binance.org,https://bsc-dataseed1.defibit.io,https://bsc.publicnode.com,https://bsc-dataseed1.ninicoin.io')
+    .split(',').map(function (s) { return s.trim(); }).filter(Boolean);
   const PRICE    = Number(process.env.PAY_PRICE_PREMIUM || 1.39);
   const MIN_CONF = Number(process.env.PAY_MIN_CONF || 3);
   const required = toUnits(PRICE, TOKEN.decimals);
   const svc = { apikey: SERVICE, Authorization: 'Bearer ' + SERVICE, 'Content-Type': 'application/json' };
+
+  /* JSON-RPC against the BSC public nodes — tries each until one answers */
+  async function rpc(method, params) {
+    let lastErr;
+    for (const url of RPC_URLS) {
+      try {
+        const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: method, params: params }) });
+        const j = await r.json();
+        if (j && Object.prototype.hasOwnProperty.call(j, 'result')) return j.result;
+        lastErr = (j && j.error && j.error.message) || 'rpc error';
+      } catch (e) { lastErr = e.message; }
+    }
+    throw new Error(lastErr || 'all RPC nodes failed');
+  }
 
   /* 4) Dedup — reject a tx_hash that was already claimed */
   try {
@@ -106,23 +117,20 @@ exports.handler = async function (event) {
     }
   } catch (e) { /* non-fatal — unique constraint still protects */ }
 
-  /* 5) Read the transaction receipt from BscScan */
+  /* 5) Read the transaction receipt directly from a BSC node */
   let receipt;
   try {
-    const r = await fetch(API_BASE + CHAIN_Q + '&module=proxy&action=eth_getTransactionReceipt&txhash=' + txHash + '&apikey=' + APIKEY);
-    const j = await r.json();
-    receipt = j && j.result;
-    if (!receipt) return { statusCode: 404, headers, body: JSON.stringify({ error: 'Transaction not found yet — wait for confirmation and retry', code: 'tx_pending' }) };
+    receipt = await rpc('eth_getTransactionReceipt', [txHash]);
   } catch (e) {
-    return { statusCode: 502, headers, body: JSON.stringify({ error: 'Chain lookup failed: ' + e.message }) };
+    return { statusCode: 502, headers, body: JSON.stringify({ error: 'Chain lookup failed: ' + e.message, code: 'chain_error' }) };
   }
+  if (!receipt || typeof receipt !== 'object') return { statusCode: 404, headers, body: JSON.stringify({ error: 'Transaction not found yet — wait for confirmation and retry', code: 'tx_pending' }) };
   if (receipt.status !== '0x1') return { statusCode: 400, headers, body: JSON.stringify({ error: 'Transaction failed on-chain', code: 'tx_failed' }) };
 
   /* 6) Confirmations */
   try {
-    const bn = await fetch(API_BASE + CHAIN_Q + '&module=proxy&action=eth_blockNumber&apikey=' + APIKEY);
-    const bj = await bn.json();
-    const current = parseInt(bj.result, 16);
+    const cur = await rpc('eth_blockNumber', []);
+    const current = parseInt(cur, 16);
     const txBlock = parseInt(receipt.blockNumber, 16);
     const conf = current - txBlock + 1;
     if (conf < MIN_CONF) return { statusCode: 425, headers, body: JSON.stringify({ error: 'Not enough confirmations yet (' + conf + '/' + MIN_CONF + ') — retry in a moment', code: 'low_conf', confirmations: conf }) };
