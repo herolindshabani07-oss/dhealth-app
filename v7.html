@@ -3500,7 +3500,7 @@ select option{background:#0A1628;color:#F1F5FF;}
 <div id="paymentModal" style="display:none;position:absolute;inset:0;background:rgba(10,15,35,0.55);z-index:9000;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);" onclick="closePaymentModal(event)">
   <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:24px 24px 44px 44px;width:100%;max-height:90%;display:flex;flex-direction:column;animation:slideUp 0.3s ease;">
     <div style="padding:12px 18px;border-bottom:0.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;">
-      <div style="font-size:15px;font-weight:700;color:#F1F5FF;">💳 Payments</div>
+      <div style="font-size:15px;font-weight:700;color:#F1F5FF;" data-i18n="pay.title">💳 Payments</div>
       <button onclick="closePaymentModal(null)" style="width:28px;height:28px;border-radius:9px;border:none;background:var(--bg);font-size:14px;cursor:pointer;">✕</button>
     </div>
     <div style="flex:1;overflow-y:auto;padding:16px;">
@@ -3534,42 +3534,42 @@ select option{background:#0A1628;color:#F1F5FF;}
             <div><div style="font-size:9px;color:rgba(255,255,255,0.6);">EXPIRES</div><div style="font-size:12px;font-weight:700;color:#fff;" id="cardExpPreview">MM/YY</div></div>
           </div>
         </div>
-        <div style="margin-bottom:11px;"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Card Number</div><input id="payCardNum" type="tel" maxlength="19" placeholder="1234 5678 9012 3456" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);outline:none;box-sizing:border-box;" oninput="formatCardNum(this)" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/></div>
-        <div style="margin-bottom:11px;"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Card Holder</div><input id="payCardName" type="text" placeholder="Your Name" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);outline:none;box-sizing:border-box;" oninput="document.getElementById('cardNamePreview').textContent=this.value.toUpperCase()||'YOUR NAME'" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/></div>
+        <div style="margin-bottom:11px;"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="pay.cardNum">Card Number</div><input id="payCardNum" type="tel" maxlength="19" placeholder="1234 5678 9012 3456" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);outline:none;box-sizing:border-box;" oninput="formatCardNum(this)" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/></div>
+        <div style="margin-bottom:11px;"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="pay.cardHolder">Card Holder</div><input id="payCardName" type="text" placeholder="Your Name" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);outline:none;box-sizing:border-box;" oninput="document.getElementById('cardNamePreview').textContent=this.value.toUpperCase()||'YOUR NAME'" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
-          <div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Expiry</div><input id="payCardExp" type="tel" maxlength="5" placeholder="MM/YY" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);outline:none;box-sizing:border-box;" oninput="formatExpiry(this)" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/></div>
-          <div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">CVV</div><input id="payCardCvv" type="tel" maxlength="3" placeholder="•••" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/></div>
+          <div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="pay.expiry">Expiry</div><input id="payCardExp" type="tel" maxlength="5" placeholder="MM/YY" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);outline:none;box-sizing:border-box;" oninput="formatExpiry(this)" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/></div>
+          <div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="pay.cvv">CVV</div><input id="payCardCvv" type="tel" maxlength="3" placeholder="•••" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/></div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:10px;padding:10px 13px;margin-bottom:14px;"><span>🔒</span><span style="font-size:11px;color:rgba(255,255,255,0.5);">Your payment info is encrypted and secure.</span></div>
-        <button onclick="savePaymentCard()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">💳 Save Card</button>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:10px;padding:10px 13px;margin-bottom:14px;"><span>🔒</span><span style="font-size:11px;color:rgba(255,255,255,0.5);" data-i18n="pay.secure">Your payment info is encrypted and secure.</span></div>
+        <button onclick="savePaymentCard()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="pay.saveCard">💳 Save Card</button>
       </div>
       <div id="payPane-gpay" style="display:none;text-align:center;padding:20px 0;">
         <div style="width:64px;height:64px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 4px 16px rgba(0,0,0,0.2);">
           <span style="font-size:30px;font-weight:800;background:linear-gradient(90deg,#4285F4,#EA4335,#FBBC05,#34A853);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">G</span>
         </div>
-        <div style="font-size:14px;font-weight:700;color:#F1F5FF;margin-bottom:8px;">Pay with Google Pay</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;">Pagesë e shpejtë dhe e sigurt me kartën e ruajtur në Google.</div>
+        <div style="font-size:14px;font-weight:700;color:#F1F5FF;margin-bottom:8px;" data-i18n="pay.gpayTitle">Pay with Google Pay</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;" data-i18n="pay.gpayDesc">Pagesë e shpejtë dhe e sigurt me kartën e ruajtur në Google.</div>
         <button onclick="connectGooglePay()" style="width:100%;padding:14px;border-radius:14px;border:none;background:#000;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;"><svg width="22" height="22" viewBox="0 0 24 24"><path fill="#4285F4" d="M23 12.25c0-.79-.07-1.54-.2-2.27H12v4.3h6.18a5.28 5.28 0 01-2.29 3.46v2.88h3.7C21.46 18.6 23 15.7 23 12.25z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1.03 7.6-2.78l-3.7-2.88c-1.03.69-2.35 1.1-3.9 1.1-3 0-5.54-2.02-6.45-4.74H1.72v2.97A11.99 11.99 0 0012 24z"/><path fill="#FBBC05" d="M5.55 14.7a7.2 7.2 0 010-4.6V7.13H1.72a12 12 0 000 9.74l3.83-2.97z"/><path fill="#EA4335" d="M12 4.75c1.69 0 3.2.58 4.4 1.72l3.28-3.28C17.7 1.2 15.1 0 12 0 7.34 0 3.31 2.69 1.72 6.13l3.83 2.97C6.46 6.4 9 4.75 12 4.75z"/></svg><span style="color:#fff;font-size:15px;font-weight:600;">Pay</span></button>
       </div>
       <div id="payPane-paypal" style="display:none;text-align:center;padding:20px 0;">
         <div style="width:64px;height:64px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 4px 16px rgba(0,0,0,0.2);">
           <svg width="30" height="34" viewBox="0 0 38 46"><path fill="#002991" d="M30 11c.7 4.4-2.6 9.5-9.3 9.5h-4.3c-.6 0-1.1.4-1.2 1L13.7 33H7.2c-.5 0-.8-.4-.7-.9L11 4.6c.1-.6.6-1 1.2-1h11.3c3.2 0 5.9 1.7 6.5 4.4z"/><path fill="#60CDFF" d="M32.8 14.5c-.9 4.6-4.6 7.6-9.6 7.6h-3.8c-.6 0-1.1.4-1.2 1l-1.9 12h-4.8c-.5 0-.8-.4-.7-.9l.6-3.7c.1-.5.6-.9 1.2-.9h2.5c5 0 8.7-3 9.6-7.6.4-2 .2-3.7-.6-5 2 1 3.2 2.9 3 6z"/></svg>
         </div>
-        <div style="font-size:14px;font-weight:700;color:#F1F5FF;margin-bottom:8px;">Pay with PayPal</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;">Do të ridrejtohesh te PayPal në mënyrë të sigurt.</div>
+        <div style="font-size:14px;font-weight:700;color:#F1F5FF;margin-bottom:8px;" data-i18n="pay.paypalTitle">Pay with PayPal</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;" data-i18n="pay.paypalDesc">Do të ridrejtohesh te PayPal në mënyrë të sigurt.</div>
         <button onclick="connectPayPal()" style="width:100%;padding:14px;border-radius:14px;border:none;background:#003087;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;"><span style="font-style:italic;font-weight:800;font-size:16px;"><span style="color:#fff;">Pay</span><span style="color:#60CDFF;">Pal</span></span></button>
       </div>
       <div id="payPane-stripe" style="display:none;text-align:center;padding:20px 0;">
         <div style="width:64px;height:64px;border-radius:18px;background:#635BFF;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 6px 18px rgba(99,91,255,0.35);">
           <svg width="36" height="36" viewBox="0 0 24 24"><path d="M11.4 9.6c0-.55.45-.76 1.05-.76 1 0 2.15.35 3 .85V7.06c-.95-.38-1.9-.53-3-.53-2.45 0-4.1 1.28-4.1 3.42 0 3.34 4.6 2.8 4.6 4.24 0 .54-.47.72-1.15.72-1.05 0-2.4-.43-3.43-1.02v2.65c1.15.5 2.3.7 3.43.7 2.5 0 4.25-1.24 4.25-3.4-.02-3.6-4.65-2.96-4.65-4.24z" fill="#fff"/></svg>
         </div>
-        <div style="font-size:14px;font-weight:700;color:#F1F5FF;margin-bottom:8px;">Pay with Stripe</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;">Pagesë e sigurt me kartë përmes Stripe Checkout.</div>
+        <div style="font-size:14px;font-weight:700;color:#F1F5FF;margin-bottom:8px;" data-i18n="pay.stripeTitle">Pay with Stripe</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;" data-i18n="pay.stripeDesc">Pagesë e sigurt me kartë përmes Stripe Checkout.</div>
         <button onclick="connectStripe()" style="width:100%;padding:14px;border-radius:14px;border:none;background:#635BFF;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M11.4 9.6c0-.55.45-.76 1.05-.76 1 0 2.15.35 3 .85V7.06c-.95-.38-1.9-.53-3-.53-2.45 0-4.1 1.28-4.1 3.42 0 3.34 4.6 2.8 4.6 4.24 0 .54-.47.72-1.15.72-1.05 0-2.4-.43-3.43-1.02v2.65c1.15.5 2.3.7 3.43.7 2.5 0 4.25-1.24 4.25-3.4-.02-3.6-4.65-2.96-4.65-4.24z" fill="#fff"/></svg><span style="color:#fff;font-size:15px;font-weight:700;">Pay with Stripe</span></button>
       </div>
       <div id="payPane-crypto" style="display:none;">
-        <div style="font-size:13px;font-weight:700;color:#F1F5FF;margin-bottom:4px;text-align:center;">Pay with Stablecoin</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;text-align:center;">Select a stablecoin to pay securely</div>
+        <div style="font-size:13px;font-weight:700;color:#F1F5FF;margin-bottom:4px;text-align:center;" data-i18n="pay.cryptoTitle">Pay with Stablecoin</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;text-align:center;" data-i18n="pay.cryptoDesc">Select a stablecoin to pay securely</div>
         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
           <button onclick="selectCrypto('USDT')" id="cryptoBtn-USDT" style="display:flex;align-items:center;gap:12px;padding:13px;background:rgba(255,255,255,0.07);backdrop-filter:blur(8px);border-radius:14px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-family:var(--font);"><div style="width:40px;height:40px;border-radius:12px;background:#26A17B;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 2000 2000" width="24" height="24"><circle cx="1000" cy="1000" r="1000" fill="#26A17B"/><path d="M1123.42 985.6c-6.5.42-40.2 2.52-115.54 2.52-60.1 0-102.44-1.82-117.64-2.52-232.2-10.22-405.16-50.5-405.16-98.98s172.96-88.74 405.16-99.1v157.8c15.4 1.12 58.58 3.64 118.62 3.64 72.1 0 108.14-2.94 114.56-3.64V787.02c231.78 10.36 404.32 50.64 404.32 98.98s-172.54 88.6-404.32 98.6zm0-213.42V617h323.28V400.5H553.3V617h323.26v155.2c-262.96 12.18-460.5 64.82-460.5 128.04s197.54 115.82 460.5 128.04v458.48h246.86V1028.3c262.54-12.18 459.8-64.82 459.8-128.04 0-63.22-197.26-115.86-459.8-128.08z" fill="white"/></svg></div><div style="flex:1;text-align:left;"><div style="font-size:13px;font-weight:700;">USDT</div><div style="font-size:11px;color:rgba(255,255,255,0.5);">Tether · TRC20/ERC20</div></div><div style="font-size:11px;font-weight:700;color:#26A17B;">Stablecoin</div></button>
           <button onclick="selectCrypto('USDC')" id="cryptoBtn-USDC" style="display:flex;align-items:center;gap:12px;padding:13px;background:rgba(255,255,255,0.07);backdrop-filter:blur(8px);border-radius:14px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-family:var(--font);"><div style="width:40px;height:40px;border-radius:12px;background:#2775CA;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 48 48" width="24" height="24"><circle cx="24" cy="24" r="24" fill="#2775CA"/><path d="M29.3 28.4c0-2.7-1.6-3.6-4.8-4-2.4-.3-2.9-.9-2.9-2s.8-1.7 2.4-1.7c1.4 0 2.2.5 2.6 1.6.1.2.3.4.5.4h1.1c.3 0 .5-.2.5-.5v-.1c-.3-1.7-1.7-3-3.5-3.2v-1.8c0-.3-.2-.5-.6-.6h-1c-.3 0-.5.2-.6.6v1.8c-2.3.3-3.8 1.8-3.8 3.7 0 2.6 1.5 3.5 4.7 3.9 2.2.4 3 .8 3 2.1s-1.1 2.1-2.7 2.1c-2.1 0-2.8-.9-3-1.9-.1-.3-.3-.4-.5-.4h-1.2c-.3 0-.5.2-.5.5v.1c.3 1.9 1.5 3.2 4 3.5V34c0 .3.2.5.6.6h1c.3 0 .5-.2.6-.6v-1.8c2.3-.4 3.8-1.9 3.8-3.9l-.2.1z" fill="white"/></svg></div><div style="flex:1;text-align:left;"><div style="font-size:13px;font-weight:700;">USDC</div><div style="font-size:11px;color:rgba(255,255,255,0.5);">USD Coin · Circle</div></div><div style="font-size:11px;font-weight:700;color:#2775CA;">Stablecoin</div></button>
@@ -3577,7 +3577,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div id="cryptoAddress" style="display:none;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:14px;margin-bottom:14px;">
           <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:6px;" id="cryptoCoinLabel">Address</div>
           <div id="cryptoAddressTxt" style="font-size:11px;color:#F1F5FF;word-break:break-all;font-family:monospace;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:10px;padding:10px;border:0.5px solid rgba(255,255,255,0.12);"></div>
-          <button onclick="copyCryptoAddress()" style="width:100%;margin-top:10px;padding:10px;border-radius:11px;border:none;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">📋 Copy Address</button>
+          <button onclick="copyCryptoAddress()" style="width:100%;margin-top:10px;padding:10px;border-radius:11px;border:none;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="pay.copyAddr">📋 Copy Address</button>
         </div>
       </div>
       <div style="height:16px;"></div>
@@ -3589,32 +3589,32 @@ select option{background:#0A1628;color:#F1F5FF;}
 <div id="devicesModal" style="display:none;position:absolute;inset:0;background:rgba(10,15,35,0.55);z-index:9000;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);" onclick="closeDevicesModal(event)">
   <div style="background:linear-gradient(160deg,#ffffff,#eef4fc);border-radius:24px 24px 44px 44px;width:100%;max-height:90%;display:flex;flex-direction:column;animation:slideUp 0.3s ease;box-shadow:0 -10px 40px rgba(40,80,140,.25);">
     <div style="padding:12px 18px;border-bottom:1px solid rgba(120,150,190,.16);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;">
-      <div style="font-size:15px;font-weight:700;color:#1f2c44;">📡 Connected Devices</div>
+      <div style="font-size:15px;font-weight:700;color:#1f2c44;" data-i18n="dev.title">📡 Connected Devices</div>
       <button onclick="closeDevicesModal(null)" style="width:28px;height:28px;border-radius:9px;border:none;background:#eef2fa;font-size:14px;cursor:pointer;color:#7387a4;">✕</button>
     </div>
     <div style="flex:1;overflow-y:auto;padding:14px 16px 20px;">
-      <div style="font-size:12px;color:#7387a4;margin-bottom:14px;">Lidh dhe menaxho burimet e të dhënave shëndetësore.</div>
+      <div style="font-size:12px;color:#7387a4;margin-bottom:14px;" data-i18n="dev.intro">Lidh dhe menaxho burimet e të dhënave shëndetësore.</div>
       <div onclick="closeDevicesModal(null);connectGoogleFit();" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(120,150,190,.16);box-shadow:0 2px 8px rgba(70,120,190,.08);margin-bottom:10px;cursor:pointer;">
         <div style="width:42px;height:42px;border-radius:12px;background:#fff;border:1px solid rgba(120,150,190,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 512 512" width="26" height="26"><defs><linearGradient id="ghL2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EA4335"/><stop offset="1" stop-color="#FBBC04"/></linearGradient><linearGradient id="ghR2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4285F4"/><stop offset="1" stop-color="#34A853"/></linearGradient></defs><path d="M256 396 C140 312 86 246 86 184 C86 140 120 110 160 110 C195 110 230 130 256 168 L256 396 Z" fill="url(#ghL2)"/><path d="M256 396 C372 312 426 246 426 184 C426 140 392 110 352 110 C317 110 282 130 256 168 L256 396 Z" fill="url(#ghR2)"/><path d="M194 232 L240 278 L324 194" fill="none" stroke="#fff" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">Health Connect</div><div style="font-size:11px;color:#7387a4;" id="dev-gfit-status">Not connected</div></div>
+        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">Health Connect</div><div style="font-size:11px;color:#7387a4;" id="dev-gfit-status" data-i18n="dev.notConn">Not connected</div></div>
         <span style="color:#aab8cf;font-size:18px;">&#8250;</span>
       </div>
       <div onclick="closeDevicesModal(null);connectAppleHealth();" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(120,150,190,.16);box-shadow:0 2px 8px rgba(70,120,190,.08);margin-bottom:10px;cursor:pointer;">
         <div style="width:42px;height:42px;border-radius:12px;background:#fff;border:1px solid rgba(120,150,190,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 512 512" width="30" height="30"><defs><linearGradient id="ahg2" x1="0" y1="0" x2="1" y2="0"><stop offset="0.5" stop-color="#F3F3F5"/><stop offset="0.5" stop-color="#E7E7EA"/></linearGradient></defs><rect x="40" y="40" width="432" height="432" rx="112" fill="url(#ahg2)"/><path d="M256 388 C180 334 148 282 148 233 C148 198 175 174 206 174 C228 174 246 187 256 208 C266 187 284 174 306 174 C337 174 364 198 364 233 C364 282 332 334 256 388 Z" fill="#E63950"/></svg></div>
-        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">Apple Health</div><div style="font-size:11px;color:#7387a4;" id="dev-apple-status">iOS only</div></div>
+        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">Apple Health</div><div style="font-size:11px;color:#7387a4;" id="dev-apple-status" data-i18n="dev.iosOnly">iOS only</div></div>
         <span style="color:#aab8cf;font-size:18px;">&#8250;</span>
       </div>
       <div onclick="closeDevicesModal(null);connectFitbit();" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(120,150,190,.16);box-shadow:0 2px 8px rgba(70,120,190,.08);margin-bottom:10px;cursor:pointer;">
         <div style="width:42px;height:42px;border-radius:12px;background:#fff;border:1px solid rgba(120,150,190,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 512 512" width="27" height="27"><rect x="188" y="34" width="136" height="152" rx="46" fill="#EFA63C"/><rect x="188" y="326" width="136" height="152" rx="46" fill="#EFA63C"/><rect x="146" y="120" width="220" height="272" rx="52" fill="#2E3A54" stroke="#E2E8F2" stroke-width="14"/><text x="250" y="276" font-family="Arial,Helvetica,sans-serif" font-size="58" font-weight="700" fill="#FFFFFF" text-anchor="middle">12:10</text></svg></div>
-        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">Fitbit</div><div style="font-size:11px;color:#7387a4;" id="dev-fitbit-status">Not connected</div></div>
+        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">Fitbit</div><div style="font-size:11px;color:#7387a4;" id="dev-fitbit-status" data-i18n="dev.notConn">Not connected</div></div>
         <span style="color:#aab8cf;font-size:18px;">&#8250;</span>
       </div>
       <div onclick="closeDevicesModal(null);ringConnect();" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(120,150,190,.16);box-shadow:0 2px 8px rgba(70,120,190,.08);cursor:pointer;">
         <div style="width:42px;height:42px;border-radius:12px;background:#fff;border:1px solid rgba(120,150,190,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 512 512" width="28" height="28"><defs><linearGradient id="drg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2BE6A0"/><stop offset="0.5" stop-color="#1BBFD6"/><stop offset="1" stop-color="#0AA6F2"/></linearGradient></defs><path d="M135 72 A80 80 0 0 1 212 168 C206 205 168 218 168 257 C168 296 206 322 211 358 A76 76 0 0 1 135 438 A76 76 0 0 1 59 358 C64 322 102 296 102 257 C102 218 64 205 58 168 A80 80 0 0 1 135 72 Z" fill="none" stroke="url(#drg2)" stroke-width="44" stroke-linejoin="round" stroke-linecap="round"/><circle cx="392" cy="300" r="92" fill="none" stroke="url(#drg2)" stroke-width="44"/></svg></div>
-        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">D Health Ring</div><div style="font-size:11px;color:#7387a4;">Së shpejti — COLMI R02</div></div>
-        <span style="background:#ede4ff;color:#7c4dff;font-size:9px;font-weight:700;padding:3px 9px;border-radius:9px;white-space:nowrap;">Së shpejti</span>
+        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">D Health Ring</div><div style="font-size:11px;color:#7387a4;" data-i18n="dev.ringSoon">Së shpejti — COLMI R02</div></div>
+        <span style="background:#ede4ff;color:#7c4dff;font-size:9px;font-weight:700;padding:3px 9px;border-radius:9px;white-space:nowrap;" data-i18n="dev.soon">Së shpejti</span>
       </div>
-      <button onclick="diagDevices()" style="width:100%;margin-top:14px;padding:11px;border-radius:12px;border:1px dashed rgba(120,150,190,.4);background:rgba(255,255,255,.6);color:#5d7290;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">🔍 Diagnostikë lidhjeje</button>
+      <button onclick="diagDevices()" style="width:100%;margin-top:14px;padding:11px;border-radius:12px;border:1px dashed rgba(120,150,190,.4);background:rgba(255,255,255,.6);color:#5d7290;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="dev.diag">🔍 Diagnostikë lidhjeje</button>
     </div>
   </div>
 </div>
@@ -3623,16 +3623,16 @@ select option{background:#0A1628;color:#F1F5FF;}
 <div id="emergencyModal" style="display:none;position:absolute;inset:0;background:rgba(10,15,35,0.55);z-index:9000;align-items:flex-end;border-radius:44px;backdrop-filter:blur(4px);" onclick="closeEmergencyModal(event)">
   <div style="background:linear-gradient(160deg,#ffffff,#eef4fc);border-radius:24px 24px 44px 44px;width:100%;max-height:90%;display:flex;flex-direction:column;animation:slideUp 0.3s ease;box-shadow:0 -10px 40px rgba(40,80,140,.25);">
     <div style="padding:12px 18px;border-bottom:1px solid rgba(120,150,190,.16);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;">
-      <div style="font-size:15px;font-weight:700;color:#1f2c44;">🚨 Emergency Contact</div>
+      <div style="font-size:15px;font-weight:700;color:#1f2c44;" data-i18n="em.title">🚨 Emergency Contact</div>
       <button onclick="closeEmergencyModal(null)" style="width:28px;height:28px;border-radius:9px;border:none;background:#eef2fa;font-size:14px;cursor:pointer;color:#7387a4;">✕</button>
     </div>
     <div style="flex:1;overflow-y:auto;padding:16px;">
-      <div style="font-size:12px;color:#7387a4;margin-bottom:14px;">Personi që njoftohet në rast urgjence + grupi i gjakut. Ruhet vetëm në pajisjen tënde.</div>
-      <div style="margin-bottom:11px;"><div style="font-size:10px;font-weight:700;color:#7387a4;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Full Name</div><input id="emgName" type="text" placeholder="p.sh. Arta Shabani" style="width:100%;border:1.5px solid rgba(120,150,190,.25);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);color:#1f2c44;background:#f1f6fc;outline:none;box-sizing:border-box;"/></div>
-      <div style="margin-bottom:11px;"><div style="font-size:10px;font-weight:700;color:#7387a4;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Phone</div><input id="emgPhone" type="tel" placeholder="+383 4x xxx xxx" style="width:100%;border:1.5px solid rgba(120,150,190,.25);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);color:#1f2c44;background:#f1f6fc;outline:none;box-sizing:border-box;"/></div>
-      <div style="margin-bottom:11px;"><div style="font-size:10px;font-weight:700;color:#7387a4;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Relationship</div><input id="emgRelation" type="text" placeholder="p.sh. Bashkëshorte, Prind, Mik" style="width:100%;border:1.5px solid rgba(120,150,190,.25);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);color:#1f2c44;background:#f1f6fc;outline:none;box-sizing:border-box;"/></div>
-      <div style="margin-bottom:18px;"><div style="font-size:10px;font-weight:700;color:#7387a4;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Blood Type</div><select id="emgBlood" style="width:100%;border:1.5px solid rgba(120,150,190,.25);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);color:#1f2c44;background:#f1f6fc;outline:none;box-sizing:border-box;"><option value="">—</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
-      <button onclick="saveEmergency()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);">Save Emergency Contact</button>
+      <div style="font-size:12px;color:#7387a4;margin-bottom:14px;" data-i18n="em.intro">Personi që njoftohet në rast urgjence + grupi i gjakut. Ruhet vetëm në pajisjen tënde.</div>
+      <div style="margin-bottom:11px;"><div style="font-size:10px;font-weight:700;color:#7387a4;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.fullName">Full Name</div><input id="emgName" type="text" placeholder="p.sh. Arta Shabani" data-i18n-ph="em.phName" style="width:100%;border:1.5px solid rgba(120,150,190,.25);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);color:#1f2c44;background:#f1f6fc;outline:none;box-sizing:border-box;"/></div>
+      <div style="margin-bottom:11px;"><div style="font-size:10px;font-weight:700;color:#7387a4;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.phone">Phone</div><input id="emgPhone" type="tel" placeholder="+383 4x xxx xxx" style="width:100%;border:1.5px solid rgba(120,150,190,.25);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);color:#1f2c44;background:#f1f6fc;outline:none;box-sizing:border-box;"/></div>
+      <div style="margin-bottom:11px;"><div style="font-size:10px;font-weight:700;color:#7387a4;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="em.relationship">Relationship</div><input id="emgRelation" type="text" placeholder="p.sh. Bashkëshorte, Prind, Mik" data-i18n-ph="em.phRelation" style="width:100%;border:1.5px solid rgba(120,150,190,.25);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);color:#1f2c44;background:#f1f6fc;outline:none;box-sizing:border-box;"/></div>
+      <div style="margin-bottom:18px;"><div style="font-size:10px;font-weight:700;color:#7387a4;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.bloodType">Blood Type</div><select id="emgBlood" style="width:100%;border:1.5px solid rgba(120,150,190,.25);border-radius:12px;padding:11px 13px;font-size:14px;font-family:var(--font);color:#1f2c44;background:#f1f6fc;outline:none;box-sizing:border-box;"><option value="">—</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+      <button onclick="saveEmergency()" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="em.save">Save Emergency Contact</button>
       <div style="height:14px;"></div>
     </div>
   </div>
@@ -4088,7 +4088,51 @@ var TOAST_I18N = {
   '🌍 Air quality updated!':{sq:'🌍 Cilësia e ajrit u rifreskua!', mk:'🌍 Квалитетот на воздух е освежен!', en:'🌍 Air quality updated!'},
   '🗑️ Terapia u hoq (edhe nga Kalendari & Njoftimet)':{sq:'🗑️ Terapia u hoq (edhe nga Kalendari & Njoftimet)', mk:'🗑️ Терапијата е отстранета (и од Календар и Известувања)', en:'🗑️ Therapy removed (also from Calendar & Notifications)'},
   '✓ Marked as taken!':{sq:'✓ Shënuar si marrë!', mk:'✓ Означено како земено!', en:'✓ Marked as taken!'},
-  '✓ All notifications cleared':{sq:'✓ Të gjitha njoftimet u pastruan', mk:'✓ Сите известувања се исчистени', en:'✓ All notifications cleared'}
+  '✓ All notifications cleared':{sq:'✓ Të gjitha njoftimet u pastruan', mk:'✓ Сите известувања се исчистени', en:'✓ All notifications cleared'},
+  'ℹ️ Kjo ECG nuk u ruajt si dokument (e vjetër).':{sq:'ℹ️ Kjo ECG nuk u ruajt si dokument (e vjetër).', mk:'ℹ️ Ова ЕКГ не е зачувано како документ (старо).', en:'ℹ️ This ECG was not saved as a document (old).'},
+  'ℹ️ Parametrat ekzistojnë tashmë te Lab Values':{sq:'ℹ️ Parametrat ekzistojnë tashmë te Lab Values', mk:'ℹ️ Параметрите веќе постојат во Lab Values', en:'ℹ️ Parameters already exist in Lab Values'},
+  '⌚ D Health Watch — së shpejti! Do të njoftohesh.':{sq:'⌚ D Health Watch — së shpejti! Do të njoftohesh.', mk:'⌚ D Health Watch — наскоро! Ќе бидеш известен.', en:'⌚ D Health Watch — coming soon! You\'ll be notified.'},
+  '⏳ Vetëm 1 ECG në 24 orë — provo sërish nesër.':{sq:'⏳ Vetëm 1 ECG në 24 orë — provo sërish nesër.', mk:'⏳ Само 1 ЕКГ на 24 часа — пробај пак утре.', en:'⏳ Only 1 ECG per 24h — try again tomorrow.'},
+  '⚠️ ECG ka anomali — shikoni analizën!':{sq:'⚠️ ECG ka anomali — shikoni analizën!', mk:'⚠️ ЕКГ има аномалии — погледни ја анализата!', en:'⚠️ ECG has anomalies — check the analysis!'},
+  '⚠️ Google Fit session skadoi. Po ridrejtohesh...':{sq:'⚠️ Google Fit session skadoi. Po ridrejtohesh...', mk:'⚠️ Google Fit сесијата истече. Се пренасочуваш...', en:'⚠️ Google Fit session expired. Redirecting...'},
+  '⚠️ Google Fit: duhet ri-autorizim. Po ridrejtohesh...':{sq:'⚠️ Google Fit: duhet ri-autorizim. Po ridrejtohesh...', mk:'⚠️ Google Fit: потребна е повторна авторизација. Се пренасочуваш...', en:'⚠️ Google Fit: re-authorization needed. Redirecting...'},
+  '⚠️ Instalo "Health Connect" nga Play Store dhe provo prapë':{sq:'⚠️ Instalo "Health Connect" nga Play Store dhe provo prapë', mk:'⚠️ Инсталирај „Health Connect“ од Play Store и пробај пак', en:'⚠️ Install "Health Connect" from Play Store and try again'},
+  '⚠️ Kyçu për ta parë ECG-në':{sq:'⚠️ Kyçu për ta parë ECG-në', mk:'⚠️ Најави се за да го видиш ЕКГ-то', en:'⚠️ Log in to view the ECG'},
+  '⚠️ Kyçu për të dërguar raportin':{sq:'⚠️ Kyçu për të dërguar raportin', mk:'⚠️ Најави се за да го испратиш извештајот', en:'⚠️ Log in to send the report'},
+  '⚠️ Kyçu për të ruajtur dokumentet':{sq:'⚠️ Kyçu për të ruajtur dokumentet', mk:'⚠️ Најави се за да ги зачуваш документите', en:'⚠️ Log in to save documents'},
+  '❌ Google login dështoi':{sq:'❌ Google login dështoi', mk:'❌ Google најавата не успеа', en:'❌ Google login failed'},
+  '🍎 Apple Health punon vetëm në app-in iOS (iPhone).':{sq:'🍎 Apple Health punon vetëm në app-in iOS (iPhone).', mk:'🍎 Apple Health работи само на iOS апликацијата (iPhone).', en:'🍎 Apple Health works only in the iOS app (iPhone).'},
+  '💍 D Health Ring — së shpejti! Do të njoftohesh.':{sq:'💍 D Health Ring — së shpejti! Do të njoftohesh.', mk:'💍 D Health Ring — наскоро! Ќе бидеш известен.', en:'💍 D Health Ring — coming soon! You\'ll be notified.'},
+  '💍 Lidhja me unazën punon vetëm te app-i Android':{sq:'💍 Lidhja me unazën punon vetëm te app-i Android', mk:'💍 Поврзувањето со прстенот работи само на Android', en:'💍 Ring connection works only in the Android app'},
+  '📅 Kërkesa u dërgua! Dr. Shabani do konfirmojë brenda 24h.':{sq:'📅 Kërkesa u dërgua! Dr. Shabani do konfirmojë brenda 24h.', mk:'📅 Барањето е испратено! Др. Шабани ќе потврди во рок од 24ч.', en:'📅 Request sent! Dr. Shabani will confirm within 24h.'},
+  '📧 Email u ridërgua!':{sq:'📧 Email u ridërgua!', mk:'📧 Е-поштата е препратена!', en:'📧 Email resent!'},
+  '🔄 Duke lexuar D Health Ring...':{sq:'🔄 Duke lexuar D Health Ring...', mk:'🔄 Се чита D Health Ring...', en:'🔄 Reading D Health Ring...'},
+  '🔄 Duke lexuar Health Connect...':{sq:'🔄 Duke lexuar Health Connect...', mk:'🔄 Се чита Health Connect...', en:'🔄 Reading Health Connect...'},
+  '🔄 Duke sinkronizuar Google Fit...':{sq:'🔄 Duke sinkronizuar Google Fit...', mk:'🔄 Се синхронизира Google Fit...', en:'🔄 Syncing Google Fit...'},
+  '🔄 U rifreskua. Lidh një burim (Google Fit) për sync automatik të hapave.':{sq:'🔄 U rifreskua. Lidh një burim (Google Fit) për sync automatik të hapave.', mk:'🔄 Освежено. Поврзи извор (Google Fit) за автоматски sync на чекори.', en:'🔄 Refreshed. Connect a source (Google Fit) for automatic step sync.'},
+  '🔬 Duke lexuar parametrat e analizave...':{sq:'🔬 Duke lexuar parametrat e analizave...', mk:'🔬 Се читаат лабораториските параметри...', en:'🔬 Reading lab parameters...'},
+  '🔵 Duke kërkuar D Health Ring...':{sq:'🔵 Duke kërkuar D Health Ring...', mk:'🔵 Се бара D Health Ring...', en:'🔵 Searching for D Health Ring...'},
+  '🗑 Vakti u fshi (lokal + cloud)':{sq:'🗑 Vakti u fshi (lokal + cloud)', mk:'🗑 Оброкот е избришан (локално + cloud)', en:'🗑 Meal deleted (local + cloud)'},
+  '🚨 ECG kritike! Konsultohuni me Dr. Shabani!':{sq:'🚨 ECG kritike! Konsultohuni me Dr. Shabani!', mk:'🚨 Критично ЕКГ! Консултирај се со Др. Шабани!', en:'🚨 Critical ECG! Consult Dr. Shabani!'},
+  'Call feature coming soon':{sq:'Funksioni i telefonatës — së shpejti', mk:'Функцијата за повик — наскоро', en:'Call feature coming soon'},
+  '⚠️ AI analysis is being configured. Try manual entry.':{sq:'⚠️ Analiza AI po konfigurohet. Provo futje manuale.', mk:'⚠️ AI анализата се конфигурира. Пробај рачно внесување.', en:'⚠️ AI analysis is being configured. Try manual entry.'},
+  '⚠️ Fitbit token expired. Please reconnect.':{sq:'⚠️ Token-i i Fitbit skadoi. Rilidhu.', mk:'⚠️ Fitbit токенот истече. Поврзи се повторно.', en:'⚠️ Fitbit token expired. Please reconnect.'},
+  '⚠️ Please enter meal name':{sq:'⚠️ Fut emrin e vaktit', mk:'⚠️ Внеси име на оброк', en:'⚠️ Please enter meal name'},
+  '⚠️ Please select a date':{sq:'⚠️ Zgjidh një datë', mk:'⚠️ Избери датум', en:'⚠️ Please select a date'},
+  '⚠️ Please select a reason':{sq:'⚠️ Zgjidh një arsye', mk:'⚠️ Избери причина', en:'⚠️ Please select a reason'},
+  '✅ Appointment confirmed by Dr. Shabani!':{sq:'✅ Takimi u konfirmua nga Dr. Shabani!', mk:'✅ Терминот е потврден од Др. Шабани!', en:'✅ Appointment confirmed by Dr. Shabani!'},
+  '❌ Appointment declined — please choose another date':{sq:'❌ Takimi u refuzua — zgjidh një datë tjetër', mk:'❌ Терминот е одбиен — избери друг датум', en:'❌ Appointment declined — please choose another date'},
+  '💬 New message from Dr. Shabani!':{sq:'💬 Mesazh i ri nga Dr. Shabani!', mk:'💬 Нова порака од Др. Шабани!', en:'💬 New message from Dr. Shabani!'},
+  '📅 Booking request sent! Waiting for Dr. Shabani confirmation.':{sq:'📅 Kërkesa u dërgua! Po pritet konfirmimi nga Dr. Shabani.', mk:'📅 Барањето е испратено! Се чека потврда од Др. Шабани.', en:'📅 Booking request sent! Waiting for Dr. Shabani confirmation.'},
+  '📋 Address copied!':{sq:'📋 Adresa u kopjua!', mk:'📋 Адресата е копирана!', en:'📋 Address copied!'},
+  '🔄 Fitbit data synced!':{sq:'🔄 Të dhënat e Fitbit u sinkronizuan!', mk:'🔄 Fitbit податоците се синхронизирани!', en:'🔄 Fitbit data synced!'},
+  '🔌 Fitbit disconnected':{sq:'🔌 Fitbit u shkëput', mk:'🔌 Fitbit е исклучен', en:'🔌 Fitbit disconnected'},
+  '🔒 Premium required':{sq:'🔒 Kërkohet Premium', mk:'🔒 Потребно е Premium', en:'🔒 Premium required'},
+  '🗑 Booking request cancelled':{sq:'🗑 Kërkesa për takim u anulua', mk:'🗑 Барањето за термин е откажано', en:'🗑 Booking request cancelled'},
+  '🔬 Deep Profile Analysis complete!':{sq:'🔬 Analiza e thellë e profilit përfundoi!', mk:'🔬 Длабинската анализа на профил заврши!', en:'🔬 Deep Profile Analysis complete!'},
+  '📤 ECG sent to Dr. Herolind Shabani!':{sq:'📤 ECG u dërgua te Dr. Herolind Shabani!', mk:'📤 ЕКГ е испратено до Др. Херолинд Шабани!', en:'📤 ECG sent to Dr. Herolind Shabani!'},
+  '✅ Kontakti i urgjencës u ruajt!':{sq:'✅ Kontakti i urgjencës u ruajt!', mk:'✅ Итниот контакт е зачуван!', en:'✅ Emergency contact saved!'},
+  '✅ Stripe u lidh!':{sq:'✅ Stripe u lidh!', mk:'✅ Stripe е поврзан!', en:'✅ Stripe connected!'}
 };
 function showToast(msg){
   try{ var L=(typeof DH_LANG!=='undefined'&&DH_LANG)||'sq'; if(TOAST_I18N[msg] && TOAST_I18N[msg][L]) msg=TOAST_I18N[msg][L]; }catch(e){}
@@ -6630,6 +6674,39 @@ var DH_I18N = {
   'gdpr.delCancel':{sq:'Anulo', mk:'Откажи', en:'Cancel'},
   'gdpr.deleting': {sq:'🔄 Duke fshirë llogarinë...', mk:'🔄 Се брише сметката...', en:'🔄 Deleting your account...'},
   'gdpr.deleted':  {sq:'✅ Llogaria u fshi', mk:'✅ Сметката е избришана', en:'✅ Account deleted'},
+  /* Emergency contact modal */
+  'em.title':      {sq:'🚨 Kontakti i urgjencës', mk:'🚨 Итен контакт', en:'🚨 Emergency Contact'},
+  'em.intro':      {sq:'Personi që njoftohet në rast urgjence + grupi i gjakut. Ruhet vetëm në pajisjen tënde.', mk:'Лицето што се известува при итен случај + крвна група. Се чува само на твојот уред.', en:'The person to notify in an emergency + blood type. Stored only on your device.'},
+  'em.phName':     {sq:'p.sh. Arta Shabani', mk:'пр. Арта Шабани', en:'e.g. Arta Shabani'},
+  'em.relationship':{sq:'Lidhja', mk:'Врска', en:'Relationship'},
+  'em.phRelation': {sq:'p.sh. Bashkëshorte, Prind, Mik', mk:'пр. Сопруга, Родител, Пријател', en:'e.g. Spouse, Parent, Friend'},
+  'em.save':       {sq:'Ruaj kontaktin e urgjencës', mk:'Зачувај итен контакт', en:'Save Emergency Contact'},
+  /* Payments modal */
+  'pay.title':     {sq:'💳 Pagesat', mk:'💳 Плаќања', en:'💳 Payments'},
+  'pay.cardNum':   {sq:'Numri i kartës', mk:'Број на картичка', en:'Card Number'},
+  'pay.cardHolder':{sq:'Mbajtësi i kartës', mk:'Носител на картичка', en:'Card Holder'},
+  'pay.expiry':    {sq:'Skadenca', mk:'Истекува', en:'Expiry'},
+  'pay.cvv':       {sq:'CVV', mk:'CVV', en:'CVV'},
+  'pay.secure':    {sq:'Të dhënat e pagesës janë të enkriptuara dhe të sigurta.', mk:'Податоците за плаќање се шифрирани и безбедни.', en:'Your payment info is encrypted and secure.'},
+  'pay.saveCard':  {sq:'💳 Ruaj kartën', mk:'💳 Зачувај картичка', en:'💳 Save Card'},
+  'pay.gpayTitle': {sq:'Paguaj me Google Pay', mk:'Плати со Google Pay', en:'Pay with Google Pay'},
+  'pay.gpayDesc':  {sq:'Pagesë e shpejtë dhe e sigurt me kartën e ruajtur në Google.', mk:'Брзо и безбедно плаќање со картичка зачувана во Google.', en:'Fast and secure payment with the card saved in Google.'},
+  'pay.paypalTitle':{sq:'Paguaj me PayPal', mk:'Плати со PayPal', en:'Pay with PayPal'},
+  'pay.paypalDesc':{sq:'Do të ridrejtohesh te PayPal në mënyrë të sigurt.', mk:'Ќе бидеш пренасочен кон PayPal на безбеден начин.', en:'You will be securely redirected to PayPal.'},
+  'pay.stripeTitle':{sq:'Paguaj me Stripe', mk:'Плати со Stripe', en:'Pay with Stripe'},
+  'pay.stripeDesc':{sq:'Pagesë e sigurt me kartë përmes Stripe Checkout.', mk:'Безбедно плаќање со картичка преку Stripe Checkout.', en:'Secure card payment via Stripe Checkout.'},
+  'pay.cryptoTitle':{sq:'Paguaj me Stablecoin', mk:'Плати со Stablecoin', en:'Pay with Stablecoin'},
+  'pay.cryptoDesc':{sq:'Zgjidh një stablecoin për të paguar në mënyrë të sigurt', mk:'Избери stablecoin за безбедно плаќање', en:'Select a stablecoin to pay securely'},
+  'pay.copyAddr':  {sq:'📋 Kopjo adresën', mk:'📋 Копирај адреса', en:'📋 Copy Address'},
+  /* Connected devices modal */
+  'dev.title':     {sq:'📡 Pajisjet e lidhura', mk:'📡 Поврзани уреди', en:'📡 Connected Devices'},
+  'dev.intro':     {sq:'Lidh dhe menaxho burimet e të dhënave shëndetësore.', mk:'Поврзи и управувај со изворите на здравствени податоци.', en:'Connect and manage your health data sources.'},
+  'dev.diag':      {sq:'🔍 Diagnostikë lidhjeje', mk:'🔍 Дијагностика на врска', en:'🔍 Connection diagnostics'},
+  'dev.ringSoon':  {sq:'Së shpejti — COLMI R02', mk:'Наскоро — COLMI R02', en:'Coming soon — COLMI R02'},
+  'dev.soon':      {sq:'Së shpejti', mk:'Наскоро', en:'Coming soon'},
+  'dev.connected': {sq:'I lidhur ✓', mk:'Поврзан ✓', en:'Connected ✓'},
+  'dev.notConn':   {sq:'I palidhur', mk:'Не е поврзан', en:'Not connected'},
+  'dev.iosOnly':   {sq:'Vetëm iOS', mk:'Само iOS', en:'iOS only'},
   /* Home — të tjera */
   'home.viewAnalysis': {sq:'Shiko analizën e plotë →', mk:'Види ја целата анализа →', en:'View full analysis →'},
   'home.aiSubtitle':   {sq:'Rezultati ditor · AI Diagnostik', mk:'Дневен резултат · AI дијагностика', en:'Daily Score · Diagnostic AI'},
@@ -9712,11 +9789,11 @@ function openDevicesModal(){ var m=document.getElementById('devicesModal'); if(!
 function closeDevicesModal(e){ if(e && e.target!==document.getElementById('devicesModal')) return; var m=document.getElementById('devicesModal'); if(m) m.style.display='none'; }
 function _devConn(key){ var v=localStorage.getItem(key); return v==='true'||v==='1'; }
 function updateDeviceStatuses(){
-  var set=function(id,on){ var el=document.getElementById(id); if(!el) return; el.textContent=on?'Connected ✓':'Not connected'; el.style.color=on?'#15a06a':'#7387a4'; };
+  var set=function(id,on){ var el=document.getElementById(id); if(!el) return; el.textContent=on?dhT('dev.connected'):dhT('dev.notConn'); el.style.color=on?'#15a06a':'#7387a4'; };
   set('dev-gfit-status',   _devConn('connect_gfit'));
   set('dev-fitbit-status', _devConn('connect_fitbit'));
   var a=document.getElementById('dev-apple-status');
-  if(a){ if(_devConn('connect_apple')){ a.textContent='Connected ✓'; a.style.color='#15a06a'; } else { a.textContent='iOS only'; a.style.color='#7387a4'; } }
+  if(a){ if(_devConn('connect_apple')){ a.textContent=dhT('dev.connected'); a.style.color='#15a06a'; } else { a.textContent=dhT('dev.iosOnly'); a.style.color='#7387a4'; } }
 }
 
 /* ═══ EMERGENCY CONTACT ═══ */
