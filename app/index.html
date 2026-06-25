@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Health BOT — Complete App</title>
+<title>D Health AI — Complete App</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
@@ -2504,7 +2504,7 @@ select option{background:#0A1628;color:#F1F5FF;}
 
     <div class="set-version">
       D Health v2.0.4 &middot; build 17 Jun<br>
-      Powered by Claude AI &middot; Anthropic<br>
+      Powered by JH Group &amp; Anthropic<br>
       &#169; 2026 D Health. All rights reserved.
     </div>
 
@@ -3032,7 +3032,7 @@ select option{background:#0A1628;color:#F1F5FF;}
 <!-- GLOBAL LOADER -->
 <div id="globalLoader">
   <div class="gl-logo">&#127973;</div>
-  <div style="font-size:16px;font-weight:700;color:#F1F5FF;">Health BOT</div>
+  <div style="font-size:16px;font-weight:700;color:#F1F5FF;">D Health AI</div>
   <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;">Loading your health data...</div>
   <div class="gl-dots">
     <div class="gl-dot"></div>
@@ -3895,7 +3895,7 @@ function drDocReply(msg){
       ? ('Presioni juaj i fundit: <strong>'+vitalsState.sys+'/'+vitalsState.dia+' mmHg</strong>.<br><br>Rekomandoj:<br>\u2022 Krip\u00eb &lt;2g/dit\u00eb<br>\u2022 Ushtrimi 30min/dit\u00eb<br>\u2022 Monitorim ditor')
       : 'Ende nuk keni regjistruar presionin. Shtoni nj\u00eb matje te Vitals p\u00ebr analiz\u00eb t\u00eb personalizuar.';
   } else if(m.includes('amlodip')||m.includes('mjekim')||m.includes('medication')){
-    r='P\u00ebr pyetje rreth medikamenteve tuaja, ju lutem konsultohuni me mjekun tuaj ose shtoni terapin\u00eb tuaj n\u00eb profilin e Health BOT p\u00ebr analiza t\u00eb personalizuara.';
+    r='P\u00ebr pyetje rreth medikamenteve tuaja, ju lutem konsultohuni me mjekun tuaj ose shtoni terapin\u00eb tuaj n\u00eb profilin e D Health AI p\u00ebr analiza t\u00eb personalizuara.';
   } else if(m.includes('glukoz')||m.includes('glucose')||m.includes('diabet')){
     r='Glucose values not yet recorded. Please enter your latest glucose reading in Vitals to get a personalized analysis.';
   } else if(m.includes('appointment')||m.includes('vizit')||m.includes('takim')){
@@ -4221,7 +4221,7 @@ function getProfile(){
     'LATEST ECG ANALYSIS:\n'+ecgStr+'\n\n'+
     'NOTES: '+notes;
 }
-var BASE_SYS='You are Health BOT, an advanced medical AI with full access to the patient\'s medical profile.\n\n'+
+var BASE_SYS='You are D Health AI, an advanced medical AI with full access to the patient\'s medical profile.\n\n'+
   'INSTRUCTIONS:\n- Respond in the SAME language the user writes in (Albanian or English)\n- Reference actual values and diagnoses — be specific\n- Be empathetic, warm, and professional\n- Use **bold** for key values\n- For serious concerns, recommend Dr. Shabani\n- Keep responses focused (3-4 paragraphs max)\n\n';
 /* Direktiva e gjuhës për verdiktet AI (Run Vital, Diagnostics, Health Report, Therapy) — ndjek gjuhën e zgjedhur */
 function aiLangDirective(){
@@ -5005,7 +5005,7 @@ var LANGS = {
     flag:'🇬🇧', name:'English',
     greeting:'Good morning ☀️', helloName:'Hello,',
     homeTab:'Home', chatTab:'Chat', vitalsTab:'Vitals', calendarTab:'Calendar', moreTab:'More',
-    aiDoctor:'AI Doctor', healthBot:'Health BOT',
+    aiDoctor:'AI Doctor', healthBot:'D Health AI',
     verdict:'Verdict', profile:'Profile', report:'Report', connect:'Connect', chat:'Chat',
     today:'Today\'s Insight', bp:'Blood Pressure', glucose:'Blood Glucose',
     heartRate:'Heart Rate', oxygen:'Oxygen Level', sleep:'Sleep', steps:'Steps',
@@ -5017,7 +5017,7 @@ var LANGS = {
     flag:'🇦🇱', name:'Shqip',
     greeting:'Mirëmëngjes ☀️', helloName:'Mirë se vjen,',
     homeTab:'Kryefaqja', chatTab:'Bisedë', vitalsTab:'Shenjat', calendarTab:'Kalendar', moreTab:'Më shumë',
-    aiDoctor:'Mjek AI', healthBot:'Health BOT',
+    aiDoctor:'Mjek AI', healthBot:'D Health AI',
     verdict:'Verdikti', profile:'Profili', report:'Raporti', connect:'Lidhja', chat:'Bisedë',
     today:'Insight i Sotëm', bp:'Presioni i Gjakut', glucose:'Glukoza',
     heartRate:'Heart Rate', oxygen:'Oxygen', sleep:'Sleep', steps:'Steps',
@@ -5029,7 +5029,7 @@ var LANGS = {
     flag:'🇲🇰', name:'Македонски',
     greeting:'Добро утро ☀️', helloName:'Добредојде, Елена',
     homeTab:'Почетна', chatTab:'Разговор', vitalsTab:'Витали', calendarTab:'Календар', moreTab:'Повеќе',
-    aiDoctor:'АИ Доктор', healthBot:'Health BOT',
+    aiDoctor:'АИ Доктор', healthBot:'D Health AI',
     verdict:'Верди', profile:'Профил', report:'Извештај', connect:'Поврзи', chat:'Разговор',
     today:'Денешен Увид', bp:'Крвен Притисок', glucose:'Гликоза',
     heartRate:'Пулс', oxygen:'Кислород', sleep:'Сон', steps:'Чекори',
@@ -5125,7 +5125,7 @@ function applyTranslations(L){
   if(tabAi) tabAi.innerHTML = '🩺 ' + L.aiDoctor;
   if(tabBot) tabBot.innerHTML = '🏥 ' + L.healthBot;
 
-  // Health BOT section tabs
+  // D Health AI section tabs
   var bstV = document.getElementById('bst-verdict');
   var bstP = document.getElementById('bst-profile');
   var bstR = document.getElementById('bst-report');
@@ -5178,11 +5178,11 @@ var ACCESS = {
 
   // What each feature requires
   gates: {
-    verdict:  'premium',   // Health BOT Verdict — Premium+
+    verdict:  'premium',   // D Health Verdict — Premium+
     report:   'premium',   // Weekly Reports — now Premium
     connect:  'free',      // Google Fit / Apple Health — FREE
     private:  'premium',   // Dr. Shabani — now Premium
-    botchat:  'premium',   // Health BOT chat — Premium+
+    botchat:  'premium',   // D Health AI chat — Premium+
     profile:  'free',      // Medical profile — FREE
     alarms:   'free',      // Calendar alarms — FREE
     history:  'premium',   // Vitals History — Premium+
@@ -5206,11 +5206,11 @@ var ACCESS = {
 
   // Paywall content per feature
   paywalls: {
-    verdict:  {icon:'📊', title:'Health BOT Verdict', desc:'Analizë e plotë shëndetësore me AI, score 0-100 dhe rekomandime — kërkon Premium ($3/muaj).', plan:'premium'},
+    verdict:  {icon:'📊', title:'D Health Verdict', desc:'Analizë e plotë shëndetësore me AI, score 0-100 dhe rekomandime — kërkon Premium ($3/muaj).', plan:'premium'},
     report:   {icon:'📄', title:'Raport Javor AI',    desc:'Raporte profesionale javore me trendet e BP, glukozës dhe terapisë — kërkon Premium ($3/muaj).', plan:'premium'},
     connect:  {icon:'🔗', title:'App Integrations',   desc:'Sync me Google Fit dhe Apple Health — i disponueshëm falas për të gjithë!', plan:'free'},
     private:  {icon:'🔒', title:'Dr. Herolind Shabani', desc:'Konsultë private e enkriptuar me Dr. Shabani — kërkon Premium ($3/muaj).', plan:'premium'},
-    botchat:  {icon:'🤖', title:'Health BOT AI Chat', desc:'Chato me Health BOT-in personal që njeh profilin tënd të plotë mjekësor — kërkon Premium ($3/muaj).', plan:'premium'},
+    botchat:  {icon:'🤖', title:'D Health AI Chat', desc:'Chato me D Health AI personal që njeh profilin tënd të plotë mjekësor — kërkon Premium ($3/muaj).', plan:'premium'},
     history:  {icon:'📈', title:'Vitals History',     desc:'Shiko trendet e vitaleve 30 dhe 90 ditë — kërkon Premium ($3/muaj).', plan:'premium'},
     ecg:      {icon:'🫀', title:'ECG Analizë AI',     desc:'Ngarko ECG nga smartwatch dhe analizoje me Claude AI — kërkon Premium ($3/muaj).', plan:'premium'},
   }
@@ -5360,7 +5360,7 @@ function updatePlanUI(){
     if(frBtn){ frBtn.textContent = _T('sub.currentPlanBtn'); }
   }
 
-  // Also update Health BOT tab — show lock on restricted sections
+  // Also update D Health AI tab — show lock on restricted sections
   var bstVerdict = document.getElementById('bst-verdict');
   var bstReport = document.getElementById('bst-report');
   if(bstVerdict) bstVerdict.textContent = ACCESS.can('verdict') ? '📊 Verdict' : '🔒 Verdict';
@@ -6530,7 +6530,7 @@ var DH_I18N = {
   'set.current':       {sq:'Aktual:', mk:'Тековен:', en:'Current:'},
   'set.planFreeName':  {sq:'Plani Falas', mk:'Бесплатен план', en:'Free Plan'},
   'set.planFreeDesc':  {sq:'Vitale, AI Doctor, Google Fit & Apple Health', mk:'Витални, AI Doctor, Google Fit & Apple Health', en:'Vitals, AI Doctor, Google Fit & Apple Health'},
-  'set.planPremiumDesc':{sq:'Health BOT AI · Raporte · Profil i plotë', mk:'Health BOT AI · Извештаи · Целосен профил', en:'Health BOT AI · Reports · Full profile'},
+  'set.planPremiumDesc':{sq:'D Health AI · Raporte · Profil i plotë', mk:'D Health AI · Извештаи · Целосен профил', en:'D Health AI · Reports · Full profile'},
   'set.planFreeSub':   {sq:'Falas — Përmirëso për veçoritë AI', mk:'Бесплатно — Надгради за AI', en:'Free — Upgrade for AI features'},
   'set.account':       {sq:'Llogaria', mk:'Сметка', en:'Account'},
   'set.personalInfo':  {sq:'Të dhënat personale', mk:'Лични информации', en:'Personal Information'},
