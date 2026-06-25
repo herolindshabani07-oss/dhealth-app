@@ -1913,6 +1913,9 @@ select option{background:#0A1628;color:#F1F5FF;}
 #screen-vitals .vbig-inp,#screen-vitals input{color:#1f2c44!important}
 #screen-vitals input::placeholder{color:#aab6c8!important}
 #screen-vitals [style*="color:#F1F5FF"],#screen-vitals [style*="color:#fff"]:not(.enter-trig):not([class*="trig"]){color:#1f2c44!important}
+/* karta e errët "Meal Risk" rri me tekst të bardhë edhe te ekrani i çelët (2 ID → mund override-in e :not) */
+#screen-vitals #compensationCard [style*="color:#fff"],#screen-home #compensationCard [style*="color:#fff"],#compensationCard [style*="color:#fff"]{color:#fff!important}
+#screen-vitals #compensationCard [style*="color:#F1F5FF"],#compensationCard [style*="color:#F1F5FF"]{color:#fff!important}
 #screen-vitals [style*="rgba(255,255,255,0.45)"],#screen-vitals [style*="rgba(255,255,255,0.5)"],#screen-vitals [style*="rgba(255,255,255,0.6)"]{color:#7387a4!important}
 #screen-vitals [style*="rgba(255,255,255,0.4)"]{color:#9aa9c0!important}
 #screen-vitals [style*="rgba(255,255,255,0.7)"]{color:#5d7290!important}
@@ -11873,19 +11876,19 @@ function showMealResult(){
   var hi = currentMealAnalysis.health_impact;
   if(hiEl && hi && hi.summary){
     var cfg = {
-      worsen:  {bg:'rgba(220,38,38,0.12)',  bd:'rgba(220,38,38,0.35)',  c:'#FCA5A5', ico:'🔻', lbl:'KEQËSON gjendjen'},
-      improve: {bg:'rgba(34,197,94,0.12)',  bd:'rgba(34,197,94,0.35)',  c:'#86EFAC', ico:'🔺', lbl:'PËRMIRËSON gjendjen'},
-      neutral: {bg:'rgba(245,158,11,0.12)', bd:'rgba(245,158,11,0.35)', c:'#FCD34D', ico:'➖', lbl:'NEUTRAL'}
-    }[(hi.level||'neutral')] || {bg:'rgba(245,158,11,0.12)',bd:'rgba(245,158,11,0.35)',c:'#FCD34D',ico:'➖',lbl:'NEUTRAL'};
+      worsen:  {bg:'rgba(220,38,38,0.10)',  bd:'rgba(220,38,38,0.30)',  c:'#B91C1C', ico:'🔻', lbl:'KEQËSON gjendjen'},
+      improve: {bg:'rgba(34,197,94,0.10)',  bd:'rgba(34,197,94,0.30)',  c:'#15803D', ico:'🔺', lbl:'PËRMIRËSON gjendjen'},
+      neutral: {bg:'rgba(245,158,11,0.10)', bd:'rgba(245,158,11,0.30)', c:'#B45309', ico:'➖', lbl:'NEUTRAL'}
+    }[(hi.level||'neutral')] || {bg:'rgba(245,158,11,0.10)',bd:'rgba(245,158,11,0.30)',c:'#B45309',ico:'➖',lbl:'NEUTRAL'};
     var tips = (hi.tips&&hi.tips.length)
-      ? '<div style="margin-top:7px;font-size:11px;color:rgba(255,255,255,0.85);line-height:1.6;">'
+      ? '<div style="margin-top:7px;font-size:11px;color:#5d7290;line-height:1.6;">'
         + hi.tips.map(function(t){return '• '+t;}).join('<br>')+'</div>'
       : '';
     hiEl.style.display='block';
     hiEl.innerHTML =
       '<div style="background:'+cfg.bg+';border:0.5px solid '+cfg.bd+';border-radius:14px;padding:11px 13px;">'
       + '<div style="font-size:11px;font-weight:800;color:'+cfg.c+';letter-spacing:0.3px;margin-bottom:5px;">'+cfg.ico+' '+cfg.lbl+'</div>'
-      + '<div style="font-size:12px;color:rgba(255,255,255,0.92);line-height:1.6;">'+esc(hi.summary)+'</div>'
+      + '<div style="font-size:12px;color:#3a4a63;line-height:1.6;">'+esc(hi.summary)+'</div>'
       + tips
       + '</div>';
   } else if(hiEl){ hiEl.style.display='none'; hiEl.innerHTML=''; }
