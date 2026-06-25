@@ -10968,44 +10968,35 @@ async function syncHealthConnect(opts){
   try{
     var steps     = Math.round(await agg('steps'));
 
-    /* ── Lexo workout-et REALE të Samsung-ut: kalori + distancë + HR (jo llogaritje me peshë) ── */
-    var hr = 0, woCal = 0, woDistM = 0, hadCal = false, hadDist = false;
-    function _num(v){ if(v && typeof v==='object') v = (v.value!=null?v.value:(v.quantity!=null?v.quantity:0)); return Number(v)||0; }
+    /* HR mesatar nga workouts (nëse ka) */
+    var hr = 0;
     try{
       var w = await Health.queryWorkouts({
         startDate: iso(start), endDate: iso(end), includeHeartRate: true, includeRoute: false
       });
       var wk = (w && w.workouts) || [];
       var hrs = [];
-      wk.forEach(function(x){
-        (x.heartRate || []).forEach(function(h){ var b = h.bpm || h.value; if(b) hrs.push(b); });
-        var c = _num(x.calories!=null?x.calories:(x.totalEnergyBurned!=null?x.totalEnergyBurned:(x.energy!=null?x.energy:(x.kcal!=null?x.kcal:(x.activeEnergyBurned!=null?x.activeEnergyBurned:0)))));
-        if(c>0){ woCal += c; hadCal = true; }
-        var d = _num(x.distance!=null?x.distance:(x.totalDistance!=null?x.totalDistance:0));
-        if(d>0){ woDistM += d; hadDist = true; }
-      });
+      wk.forEach(function(x){ (x.heartRate || []).forEach(function(h){ var b = h.bpm || h.value; if(b) hrs.push(b); }); });
       if(hrs.length) hr = Math.round(hrs.reduce(function(a,b){return a+b;},0) / hrs.length);
     }catch(e){ console.warn('queryWorkouts', e); }
 
-    /* ── Distanca: vlera REALE e Samsung-ut (workout) nëse ka; përndryshe vlerëso nga hapat ── */
+    /* Distanca DITORE: HC s'jep total (bosh) → vlerëso nga hapat (~0.762m/hap) */
     var distanceM = await agg('distance');
-    var distance  = hadDist ? Math.round(woDistM/1000*100)/100
-                  : (distanceM > 0 ? Math.round(distanceM/1000*100)/100
-                  : (steps > 0 ? Math.round(steps*0.762/1000*100)/100 : 0));
+    var distance  = distanceM > 0 ? Math.round(distanceM/1000*100)/100
+                                  : (steps > 0 ? Math.round(steps*0.762/1000*100)/100 : 0);
 
-    /* ── Kalori: VLERA REALE e Samsung-ut (workout) — jo llogaritje me peshë.
-       Vetëm nëse s'ka workout fare, biem te vlerësimi peshë×distancë. ── */
-    var calories = Math.round(await agg('active-calories'));   /* zakonisht bosh */
-    if(hadCal){
-      calories = Math.round(woCal);
-    } else if(!calories && steps > 0){
+    /* Kalori AKTIVE DITORE: Health Connect s'ia jep plugin-it active-calories (bosh, konfirmuar),
+       ndaj e vlerësojmë nga distanca + pesha, KALIBRUAR te ritmi i Samsung-ut "Activity calories"
+       (~0.80 kcal/kg/km). Dysheme = vlerësimi i vjetër steps×0.04. */
+    var calories = Math.round(await agg('active-calories'));
+    if(!calories && steps > 0){
       var _w = parseFloat((document.getElementById('setWeight')||{}).value) || 70;
-      calories = Math.round(_w * distance * 0.9);
+      calories = Math.round(_w * distance * 0.80);
       var _floor = Math.round(steps * 0.04);
       if(calories < _floor) calories = _floor;
     }
 
-    console.log('🟢 HealthConnect → steps:', steps, '| hr:', hr, '| cal:', calories, '(real workout='+hadCal+') | dist:', distance, '(real workout='+hadDist+')');
+    console.log('🟢 HealthConnect → steps:', steps, '| hr:', hr, '| cal:', calories, '| dist:', distance);
 
     if(steps > 0) vitalsState.steps = steps;
     if(hr    > 0) vitalsState.hr    = hr;
