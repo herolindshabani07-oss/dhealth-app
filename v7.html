@@ -9874,6 +9874,8 @@ async function verifyCryptoPayment(){
   var btn=document.getElementById('cryptoVerifyBtn'); var orig=btn?btn.textContent:'';
   if(btn){ btn.disabled=true; btn.textContent=(L==='sq'?'🔄 Duke verifikuar...':L==='mk'?'🔄 Се верификува...':'🔄 Verifying...'); }
   try{
+    var sb=(typeof getSupa==='function')?getSupa():(window._sbc||null);
+    if(!sb){ var nc=(L==='sq'?'⚠️ Kyçu përsëri dhe provo':L==='mk'?'⚠️ Најави се повторно и пробај':'⚠️ Please log in again and retry'); _cryptoStatus('err', nc); showToast(nc); throw new Error('no client'); }
     var sess=await sb.auth.getSession(); var token=sess&&sess.data&&sess.data.session&&sess.data.session.access_token;
     if(!token){ _cryptoStatus('err', _CRYPTO_ERR.no_service_key[L]); showToast(_CRYPTO_ERR.no_service_key[L]); throw new Error('no session'); }
     var resp=await fetch('/.netlify/functions/verify-bep20',{ method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify({ tx_hash:hash, asset:_selectedCrypto||'USDT', plan:'premium' }) });
