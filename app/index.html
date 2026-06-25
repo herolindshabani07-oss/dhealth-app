@@ -4859,9 +4859,18 @@ function removeAlarm(key, idx){
   var _a = alarms[key][idx];
   var name = _a ? _a.name : 'alarm';
   if(_a){ try{ cancelTherapyNotif(_a.name, _a.time); }catch(e){} }
+  /* fshi edhe nga Supabase që të mos kthehet pas reload-it */
+  try{
+    var sb = getSupa();
+    if(sb && _a){
+      if(_a.supaId){ sb.from('therapy_alarms').delete().eq('id', _a.supaId); }
+      else if(LST.currentUser && LST.currentUser.id){ sb.from('therapy_alarms').delete().eq('patient_id', LST.currentUser.id).eq('name', _a.name).eq('time', _a.time); }
+    }
+  }catch(e){}
   alarms[key].splice(idx, 1);
   if(alarms[key].length === 0) delete alarms[key];
   renderCal();
+  try{ renderNotifAlarms(); updateNotifBadge(); }catch(e){}
   showToast('🗑 ' + name + ' removed');
 }
 function ft(t){var p=t.split(':');var h=parseInt(p[0]);var ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+p[1]+' '+ap;}
@@ -4929,6 +4938,8 @@ function saveAlarm(){
   var t = document.getElementById('alTm').value || '08:00';
   var k = dk(sY, sM, sD);
   if(!alarms[k]) alarms[k] = [];
+  /* dedup — i njëjti emër + orë në të njëjtën ditë s'shtohet dy herë */
+  if(alarms[k].some(function(a){ return (a.name||'').toLowerCase()===n.toLowerCase() && a.time===t; })){ showToast('ℹ️ Ky alarm ekziston tashmë'); closeMod(); return; }
   var newAlarm = {name:n, time:t, color:pC, on:true};
   alarms[k].push(newAlarm);
   try{ scheduleTherapyNotif(n, t); }catch(e){}   /* zile reale native */
@@ -6880,9 +6891,14 @@ function renderNotifAlarms(){
       +'<div class="nalarm-info"><div class="nalarm-name">'+a.name+'</div>'
       +'<div class="nalarm-time">'+ft(a.time)+' &middot; '+p.l+'</div></div>'
       +'<button class="altg '+(a.on?'on':'off')+'" onclick="togNAl('+i+',this)"></button>'
+      +'<button onclick="removeNotifAlarm('+i+')" title="Hiq alarmin" style="width:24px;height:24px;border-radius:8px;border:none;background:rgba(239,68,68,0.1);color:#DC2626;font-size:14px;font-weight:700;cursor:pointer;margin-left:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">&times;</button>'
       +'</div>';
   });
   list.innerHTML=h;
+}
+function removeNotifAlarm(i){
+  var today=dk(sY,sM,sD);
+  removeAlarm(today, i);   /* heq nga memoria + Supabase + rifreskon */
 }
 function togNAl(i,btn){
   var today=dk(sY,sM,sD);
@@ -9606,17 +9622,21 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
       dbAlarms.forEach(function(a){
         var dateKey = a.alarm_date ? _isoToDk(a.alarm_date) : _isoToDk(today);
         if(!alarms[dateKey]) alarms[dateKey] = [];
-        /* Mos shto duplicate */
-        var exists = alarms[dateKey].some(function(ex){ return ex.supaId === a.id; });
-        if(!exists){
-          alarms[dateKey].push({
-            supaId: a.id,
-            name:   a.name,
-            time:   a.time,
-            color:  a.color || 'blue',
-            on:     a.active !== false
-          });
+        /* skip nëse i njëjti rresht DB është ngarkuar tashmë */
+        if(alarms[dateKey].some(function(ex){ return ex.supaId === a.id; })) return;
+        /* dedup sipas përmbajtjes: i njëjti emër+orë në të njëjtën ditë = dublikat i mbetur → fshije nga DB njëherë e mirë */
+        var contentDup = alarms[dateKey].some(function(ex){ return (ex.name||'').toLowerCase()===(a.name||'').toLowerCase() && ex.time===a.time; });
+        if(contentDup){
+          try{ sb.from('therapy_alarms').delete().eq('id', a.id); }catch(e){}
+          return;
         }
+        alarms[dateKey].push({
+          supaId: a.id,
+          name:   a.name,
+          time:   a.time,
+          color:  a.color || 'blue',
+          on:     a.active !== false
+        });
       });
       try{ renderCal(); renderNotifAlarms(); }catch(e){}
       try{ rescheduleAllTherapyNotifs(); }catch(e){}   /* ri-planifiko zilet native */
