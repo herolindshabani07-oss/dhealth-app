@@ -2702,7 +2702,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p9">Air Quality alerts personale</span></div>
         <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#F1F5FF;"><span style="color:#60A5FA;font-weight:700;">✓</span> <span data-i18n="sub.p10">Prioritet support 24/7</span></div>
       </div>
-      <button onclick="selectPlan('premium')" style="width:100%;padding:12px;border-radius:13px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="sub.getPremium">Get Premium</button>
+      <button id="btn-getPremium" onclick="selectPlan('premium')" style="width:100%;padding:12px;border-radius:13px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="sub.getPremium">Get Premium</button>
     </div>
 
     <!-- D HEALTH RING — coming soon -->
@@ -2754,8 +2754,8 @@ select option{background:#0A1628;color:#F1F5FF;}
           <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tManualVitals">Manual Vitals</td><td style="text-align:center;color:var(--accent);">✓</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
           <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">AI Doctor</td><td style="text-align:center;color:var(--accent);">✓</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
           <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">Google Fit / Apple Health</td><td style="text-align:center;color:var(--accent);">✓</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
-          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tAlarms">Therapy Alarms</td><td style="text-align:center;color:rgba(255,255,255,0.5);" data-i18n="sub.v3max">3 max</td><td style="text-align:center;color:var(--accent);">∞</td></tr>
-          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">Health BOT AI</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
+          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tAlarms">Therapy Alarms</td><td style="text-align:center;color:var(--accent);">∞</td><td style="text-align:center;color:var(--accent);">∞</td></tr>
+          <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;">D Health AI</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
           <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tFullProfile">Full Profile</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
           <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tHistory">Vitals History</td><td style="text-align:center;color:rgba(255,255,255,0.5);" data-i18n="sub.v7days">7 ditë</td><td style="text-align:center;color:var(--accent);" data-i18n="sub.v90days">90 ditë</td></tr>
           <tr style="border-top:0.5px solid var(--border);"><td style="padding:7px 0;color:#F1F5FF;" data-i18n="sub.tWeeklyReport">Raport Javor AI</td><td style="text-align:center;color:rgba(255,255,255,0.3);">✗</td><td style="text-align:center;color:var(--accent);">✓</td></tr>
@@ -5257,6 +5257,8 @@ function goToSubscription(){
 /* ── SELECT PLAN ── */
 function selectPlan(plan){
   if(plan==='premium'){
+    /* Already Premium → don't re-open the paid offer */
+    if(ACCESS.currentPlan==='premium'){ try{ showToast(dhT('sub.alreadyPremium')); }catch(e){} return; }
     /* Premium requires a real, on-chain verified payment — never granted for free.
        Route to the payment sheet on the crypto tab (the live method). */
     try{ openPaymentModal(); switchPayTab('crypto'); }
@@ -5346,6 +5348,17 @@ function updatePlanUI(){
       el.innerHTML = '<span style="background:'+color+';color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;margin-left:4px;">'+reqPlan.toUpperCase()+'</span>';
     }
   });
+
+  // Plan-card buttons reflect the current plan (no re-buying Premium once active)
+  var gpBtn = document.getElementById('btn-getPremium');
+  var frBtn = document.getElementById('free-btn');
+  if(plan==='premium'){
+    if(gpBtn){ gpBtn.textContent = _T('sub.planActive'); gpBtn.style.background='rgba(45,200,160,0.18)'; gpBtn.style.color='#15a06a'; gpBtn.style.cursor='default'; gpBtn.style.boxShadow='none'; }
+    if(frBtn){ frBtn.textContent = _T('sub.downgrade'); }
+  } else {
+    if(gpBtn){ gpBtn.textContent = _T('sub.getPremium'); gpBtn.style.background='linear-gradient(135deg,#3B7DD8,#8B6FE8)'; gpBtn.style.color='#fff'; gpBtn.style.cursor='pointer'; }
+    if(frBtn){ frBtn.textContent = _T('sub.currentPlanBtn'); }
+  }
 
   // Also update Health BOT tab — show lock on restricted sections
   var bstVerdict = document.getElementById('bst-verdict');
@@ -6569,7 +6582,7 @@ var DH_I18N = {
   'sub.currentPlanBtn':{sq:'Plani aktual', mk:'Тековен план', en:'Current Plan'},
   'sub.f1':{sq:'Vitale manuale (BP, Glukozë, HR)', mk:'Витални рачно (BP, Гликоза, HR)', en:'Vital signs manual input (BP, Glucose, HR)'},
   'sub.f2':{sq:'AI Doctor — pyetje të përgjithshme, Sync manual', mk:'AI Doctor — општи прашања, рачен Sync', en:'AI Doctor — general questions, Manual Sync'},
-  'sub.f3':{sq:'Kalendar terapie (max 3 alarme)', mk:'Календар за терапија (макс. 3 аларми)', en:'Therapy calendar (max 3 alarms)'},
+  'sub.f3':{sq:'Kalendar terapie (alarme të pakufizuara)', mk:'Календар за терапија (неограничени аларми)', en:'Therapy calendar (unlimited alarms)'},
   'sub.f4':{sq:'Health Score bazik (pa detaj AI)', mk:'Основен Health Score (без AI детали)', en:'Basic Health Score (no AI detail)'},
   'sub.premiumDesc':{sq:'Për pacientë individualë', mk:'За индивидуални пациенти', en:'For individual patients'},
   'sub.p1':{sq:'Gjithçka nga Free', mk:'Сè од Free', en:'Everything from Free'},
@@ -6584,6 +6597,9 @@ var DH_I18N = {
   'sub.p10':{sq:'Prioritet support 24/7', mk:'Приоритетна поддршка 24/7', en:'Priority support 24/7'},
   'sub.p11':{sq:'<strong>Nutrition Today</strong> — këshilla ushqimore AI', mk:'<strong>Nutrition Today</strong> — AI совети за исхрана', en:'<strong>Nutrition Today</strong> — AI meal advice'},
   'sub.getPremium':{sq:'Merr Premium', mk:'Земи Premium', en:'Get Premium'},
+  'sub.planActive':{sq:'✓ Plani aktiv', mk:'✓ Активен план', en:'✓ Active plan'},
+  'sub.downgrade':{sq:'Kalo te Free', mk:'Префрли на Free', en:'Switch to Free'},
+  'sub.alreadyPremium':{sq:'⭐ Ke tashmë Premium aktiv', mk:'⭐ Веќе имаш активен Premium', en:'⭐ You already have Premium'},
   'sub.ringDesc':{sq:'Pajisje · auto-sync 24/7', mk:'Уред · auto-sync 24/7', en:'Device · auto-sync 24/7'},
   'sub.ring1':{sq:'HR, SpO₂, hapa & gjumë 24/7', mk:'HR, SpO₂, чекори и сон 24/7', en:'HR, SpO₂, steps & sleep 24/7'},
   'sub.ring2':{sq:'Auto-sync Bluetooth — pa input manual', mk:'Auto-sync Bluetooth — без рачен внес', en:'Auto-sync Bluetooth — no manual input'},
