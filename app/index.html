@@ -3579,6 +3579,12 @@ select option{background:#0A1628;color:#F1F5FF;}
           <div id="cryptoAddressTxt" style="font-size:11px;color:#F1F5FF;word-break:break-all;font-family:monospace;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:10px;padding:10px;border:0.5px solid rgba(255,255,255,0.12);"></div>
           <button onclick="copyCryptoAddress()" style="width:100%;margin-top:10px;padding:10px;border-radius:11px;border:none;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="pay.copyAddr">📋 Copy Address</button>
         </div>
+        <div id="cryptoVerifyBox" style="display:none;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:14px;margin-bottom:14px;">
+          <div style="font-size:12px;font-weight:700;color:#F1F5FF;margin-bottom:4px;" data-i18n="pay.verifyTitle">After paying, confirm here</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:10px;" data-i18n="pay.verifyDesc">Paste the transaction hash (TxID) from your wallet. We verify it on-chain and activate Premium automatically.</div>
+          <input id="cryptoTxHash" type="text" placeholder="0x..." style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:13px;font-family:monospace;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+          <button id="cryptoVerifyBtn" onclick="verifyCryptoPayment()" style="width:100%;margin-top:10px;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#15a06a,#2DC8A0);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="pay.verifyBtn">✅ Verify payment</button>
+        </div>
       </div>
       <div style="height:16px;"></div>
     </div>
@@ -6698,6 +6704,10 @@ var DH_I18N = {
   'pay.cryptoTitle':{sq:'Paguaj me Stablecoin', mk:'Плати со Stablecoin', en:'Pay with Stablecoin'},
   'pay.cryptoDesc':{sq:'Zgjidh një stablecoin për të paguar në mënyrë të sigurt', mk:'Избери stablecoin за безбедно плаќање', en:'Select a stablecoin to pay securely'},
   'pay.copyAddr':  {sq:'📋 Kopjo adresën', mk:'📋 Копирај адреса', en:'📋 Copy Address'},
+  'pay.bep20net':  {sq:'BEP20 (BSC) Adresa', mk:'BEP20 (BSC) Адреса', en:'BEP20 (BSC) Address'},
+  'pay.verifyTitle':{sq:'Pas pagesës, konfirmo këtu', mk:'По плаќањето, потврди тука', en:'After paying, confirm here'},
+  'pay.verifyDesc':{sq:'Ngjit hash-in e transaksionit (TxID) nga wallet-i yt. E verifikojmë on-chain dhe aktivizojmë Premium-in automatikisht.', mk:'Залепи го хешот на трансакцијата (TxID) од твојот паричник. Го верификуваме on-chain и активираме Premium автоматски.', en:'Paste the transaction hash (TxID) from your wallet. We verify it on-chain and activate Premium automatically.'},
+  'pay.verifyBtn': {sq:'✅ Verifiko pagesën', mk:'✅ Потврди го плаќањето', en:'✅ Verify payment'},
   /* Connected devices modal */
   'dev.title':     {sq:'📡 Pajisjet e lidhura', mk:'📡 Поврзани уреди', en:'📡 Connected Devices'},
   'dev.intro':     {sq:'Lidh dhe menaxho burimet e të dhënave shëndetësore.', mk:'Поврзи и управувај со изворите на здравствени податоци.', en:'Connect and manage your health data sources.'},
@@ -9824,8 +9834,45 @@ function savePaymentCard(){ var num=(document.getElementById('payCardNum')||{}).
 function connectGooglePay(){ localStorage.setItem('dh_payment',JSON.stringify({type:'gpay'})); var sub=document.getElementById('payMethodSub'); if(sub)sub.textContent='Google Pay connected'; showToast('✅ Google Pay u lidh!'); document.getElementById('paymentModal').style.display='none'; }
 function connectPayPal(){ localStorage.setItem('dh_payment',JSON.stringify({type:'paypal'})); var sub=document.getElementById('payMethodSub'); if(sub)sub.textContent='PayPal connected'; showToast('✅ PayPal u lidh!'); document.getElementById('paymentModal').style.display='none'; }
 var _selectedCrypto='';
-function selectCrypto(coin){ _selectedCrypto=coin; var addresses={USDT:'TN3W4H6rK2ce4vX9YnFQHwKx7X3B5e3C9',USDC:'0x742d35Cc6634C0532925a3b844Bc454e4438f44e'}; ['USDT','USDC'].forEach(function(c){ var b=document.getElementById('cryptoBtn-'+c); if(b){b.style.borderColor=c===coin?'var(--primary)':'var(--border)';b.style.background=c===coin?'var(--pl)':'var(--white)';} }); var addr=document.getElementById('cryptoAddress'),txt=document.getElementById('cryptoAddressTxt'),lbl=document.getElementById('cryptoCoinLabel'); if(addr)addr.style.display='block'; if(txt)txt.textContent=addresses[coin]||''; if(lbl)lbl.textContent=coin+' Address'; showToast('✅ '+coin+' u zgjodh'); }
+/* Our Binance BEP20 (BNB Smart Chain) receiving address — same for USDT & USDC. */
+var DH_BEP20_ADDRESS='0x7baae749cbd2626d7826e3e5e036f5cd79524588';
+function selectCrypto(coin){ _selectedCrypto=coin; ['USDT','USDC'].forEach(function(c){ var b=document.getElementById('cryptoBtn-'+c); if(b){b.style.borderColor=c===coin?'var(--primary)':'var(--border)';b.style.background=c===coin?'var(--pl)':'var(--white)';} }); var addr=document.getElementById('cryptoAddress'),txt=document.getElementById('cryptoAddressTxt'),lbl=document.getElementById('cryptoCoinLabel'); if(addr)addr.style.display='block'; if(txt)txt.textContent=DH_BEP20_ADDRESS; if(lbl)lbl.textContent=coin+' · '+dhT('pay.bep20net'); var vb=document.getElementById('cryptoVerifyBox'); if(vb)vb.style.display='block'; showToast('✅ '+coin+' u zgjodh'); }
 function copyCryptoAddress(){ var txt=(document.getElementById('cryptoAddressTxt')||{}).textContent||''; if(txt)navigator.clipboard.writeText(txt).then(function(){showToast('📋 Address copied!');}).catch(function(){showToast('📋 '+txt.substring(0,20)+'...');}); }
+
+/* Verify a BEP20 USDT/USDC payment on-chain → activate Premium (server-side). */
+var _CRYPTO_ERR={
+  bad_hash:{sq:'⚠️ Hash i pavlefshëm — kopjo TxID-në e plotë (0x...)', mk:'⚠️ Невалиден хеш — копирај го целиот TxID (0x...)', en:'⚠️ Invalid hash — copy the full TxID (0x...)'},
+  tx_used:{sq:'⚠️ Ky transaksion është përdorur tashmë', mk:'⚠️ Оваа трансакција е веќе искористена', en:'⚠️ This transaction was already used'},
+  tx_pending:{sq:'⏳ Transaksioni s\'u gjet ende — prit konfirmimin dhe provo sërish', mk:'⏳ Трансакцијата сè уште не е најдена — почекај потврда и пробај пак', en:'⏳ Transaction not found yet — wait for confirmation and retry'},
+  low_conf:{sq:'⏳ Pak konfirmime ende — provo pas pak sekondash', mk:'⏳ Сè уште малку потврди — пробај по неколку секунди', en:'⏳ Not enough confirmations yet — retry in a few seconds'},
+  tx_failed:{sq:'❌ Transaksioni dështoi në blockchain', mk:'❌ Трансакцијата не успеа на blockchain', en:'❌ Transaction failed on-chain'},
+  no_match:{sq:'❌ S\'u gjet pagesë e mjaftueshme te adresa jonë në këtë transaksion', mk:'❌ Не е најдено доволно плаќање до нашата адреса во оваа трансакција', en:'❌ No sufficient payment to our address found in this transaction'},
+  no_bscscan_key:{sq:'⚠️ Verifikimi s\'është konfiguruar ende (BscScan)', mk:'⚠️ Верификацијата сè уште не е конфигурирана (BscScan)', en:'⚠️ Verification not configured yet (BscScan)'},
+  no_service_key:{sq:'⚠️ Serveri s\'është konfiguruar ende', mk:'⚠️ Серверот сè уште не е конфигуриран', en:'⚠️ Server not configured yet'}
+};
+async function verifyCryptoPayment(){
+  var L=(typeof DH_LANG!=='undefined'&&DH_LANG)||'sq';
+  var inp=document.getElementById('cryptoTxHash'); var hash=(inp?inp.value:'').trim().toLowerCase();
+  if(!/^0x[0-9a-f]{64}$/.test(hash)){ showToast(_CRYPTO_ERR.bad_hash[L]); return; }
+  var btn=document.getElementById('cryptoVerifyBtn'); var orig=btn?btn.textContent:'';
+  if(btn){ btn.disabled=true; btn.textContent=(L==='sq'?'🔄 Duke verifikuar...':L==='mk'?'🔄 Се верификува...':'🔄 Verifying...'); }
+  try{
+    var sess=await sb.auth.getSession(); var token=sess&&sess.data&&sess.data.session&&sess.data.session.access_token;
+    if(!token){ showToast(_CRYPTO_ERR.no_service_key[L]); throw new Error('no session'); }
+    var resp=await fetch('/.netlify/functions/verify-bep20',{ method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify({ tx_hash:hash, asset:_selectedCrypto||'USDT', plan:'premium' }) });
+    var data=await resp.json().catch(function(){return {};});
+    if(resp.ok && data.ok){
+      ACCESS.currentPlan='premium'; try{updatePlanUI();}catch(e){}
+      try{ if(LST.currentUser) LST.currentUser.plan='premium'; }catch(e){}
+      showToast(L==='sq'?'✅ Pagesa u konfirmua — Premium u aktivizua!':L==='mk'?'✅ Плаќањето е потврдено — Premium е активиран!':'✅ Payment confirmed — Premium activated!');
+      var m=document.getElementById('paymentModal'); if(m)m.style.display='none';
+    } else {
+      var msg=(_CRYPTO_ERR[data.code] && _CRYPTO_ERR[data.code][L]) || ('⚠️ '+(data.error||'Verification failed'));
+      showToast(msg);
+    }
+  }catch(e){ /* toast already shown for known cases */ }
+  finally{ if(btn){ btn.disabled=false; btn.textContent=orig||dhT('pay.verifyBtn'); } }
+}
 
 
 

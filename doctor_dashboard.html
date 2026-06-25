@@ -230,6 +230,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <div class="sb-nav-item" onclick="showView('stats')"><span class="sb-nav-icon">📊</span> Statistics</div>
       <div class="sb-nav-item" onclick="showView('chat')"><span class="sb-nav-icon">💬</span> Chat <span style="margin-left:auto;background:rgba(45,200,160,0.3);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;" id="chatBadge">0</span></div>
       <div class="sb-nav-item" onclick="showView('appointments')"><span class="sb-nav-icon">📅</span> Appointments <span style="margin-left:auto;background:rgba(139,111,232,0.3);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;" id="aptCount">0</span></div>
+      <div class="sb-nav-item" onclick="showView('payments')"><span class="sb-nav-icon">💳</span> Payments <span style="margin-left:auto;background:rgba(45,200,160,0.3);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;display:none;" id="payCount">0</span></div>
     </div>
     <div class="sb-footer">
       <div class="sb-doctor">
@@ -351,6 +352,30 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
         </div>
         <div class="patients-table" id="aptList">
           <div class="loading"><div class="spin"></div> Loading...</div>
+        </div>
+      </div>
+
+      <!-- PAYMENTS -->
+      <div id="paymentsSection" style="display:none;">
+        <div class="section-hdr">
+          <div class="section-title">💳 Payments</div>
+          <button onclick="loadPayments()" style="padding:8px 14px;border-radius:11px;border:1px solid var(--border);background:var(--white);font-size:12px;cursor:pointer;font-family:var(--font);">↻ Refresh</button>
+        </div>
+        <div class="stats-row" style="margin-bottom:16px;">
+          <div class="stat-card"><div class="stat-icon" style="background:rgba(45,200,160,0.12);">✅</div><div class="stat-val" id="payStatCount">—</div><div class="stat-lbl">Confirmed Payments</div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:rgba(59,125,216,0.1);">💵</div><div class="stat-val" id="payStatTotal">—</div><div class="stat-lbl">Total Received</div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:rgba(139,111,232,0.1);">📅</div><div class="stat-val" id="payStat30">—</div><div class="stat-lbl">Last 30 days</div></div>
+        </div>
+        <div class="patients-table">
+          <div class="pt-hdr" style="grid-template-columns:1.6fr 0.7fr 0.7fr 0.9fr 1fr 0.8fr;">
+            <div class="pt-col">User</div>
+            <div class="pt-col">Method</div>
+            <div class="pt-col">Asset</div>
+            <div class="pt-col">Amount</div>
+            <div class="pt-col">Date</div>
+            <div class="pt-col">Status</div>
+          </div>
+          <div id="payList"><div class="loading"><div class="spin"></div> Loading payments...</div></div>
         </div>
       </div>
     </div>
@@ -487,6 +512,7 @@ async function doLogin() {
   btn.disabled = false;
   btn.textContent = 'Sign In as Doctor';
   loadPatients();
+  try{ _initPaymentsRealtime(); }catch(e){}
 
   /* Auto-refresh appointments çdo 3 sekonda */
   var _currentView = 'patients';
@@ -700,6 +726,7 @@ function invitePatient() {
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('dashboard').style.display = 'flex';
       loadPatients();
+      try{ _initPaymentsRealtime(); }catch(e){}
     }
   }
 })();
@@ -1130,17 +1157,72 @@ function closePD(e){
 /* Update showView to include chat */
 var _origShowView = showView;
 showView = function(view){
+  window._currentView = view; _currentView = view;
   document.querySelectorAll('.sb-nav-item').forEach(function(el){el.classList.remove('active');});
   event.currentTarget.classList.add('active');
   document.getElementById('patientsSection').style.display = view==='patients' ? 'block' : 'none';
   document.getElementById('alertsSection').style.display = view==='alerts' ? 'block' : 'none';
   document.getElementById('chatSection').style.display = view==='chat' ? 'block' : 'none';
   document.getElementById('appointmentsSection').style.display = view==='appointments' ? 'block' : 'none';
-  var titles = {patients:'👥 My Patients', alerts:'🚨 Active Alerts', reports:'📄 Reports', stats:'📊 Statistics', appointments:'📅 Appointments', chat:'💬 Patient Chat'};
+  var paySec = document.getElementById('paymentsSection'); if(paySec) paySec.style.display = view==='payments' ? 'block' : 'none';
+  /* the patient stats row at the top only makes sense on the Patients view */
+  var statsRow = document.getElementById('statsRow'); if(statsRow) statsRow.style.display = (view==='payments') ? 'none' : 'flex';
+  var titles = {patients:'👥 My Patients', alerts:'🚨 Active Alerts', reports:'📄 Reports', stats:'📊 Statistics', appointments:'📅 Appointments', chat:'💬 Patient Chat', payments:'💳 Payments'};
   document.getElementById('viewTitle').textContent = titles[view]||'';
   if(view==='appointments') loadAppointments();
   if(view==='chat') loadChatPatients();
+  if(view==='payments'){ loadPayments(); var pc=document.getElementById('payCount'); if(pc){ pc.style.display='none'; pc.textContent='0'; } }
 };
+
+/* ═══ PAYMENTS ═══ */
+function _payFmtDate(s){ try{ var d=new Date(s); return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){ return s||''; } }
+async function loadPayments(){
+  var list = document.getElementById('payList');
+  if(list) list.innerHTML = '<div class="loading"><div class="spin"></div> Loading payments...</div>';
+  var res = await sb.from('payments').select('*').order('created_at',{ascending:false}).limit(200);
+  if(res.error){ if(list) list.innerHTML = '<div style="padding:24px;text-align:center;color:#94a3b8;">No payments yet, or table not set up.<br><span style="font-size:11px;">'+res.error.message+'</span></div>'; return; }
+  var rows = res.data || [];
+  /* stats */
+  var confirmed = rows.filter(function(r){return r.status==='confirmed';});
+  var total = confirmed.reduce(function(a,r){return a + (Number(r.amount)||0);},0);
+  var since = Date.now() - 30*24*3600*1000;
+  var last30 = confirmed.filter(function(r){return new Date(r.created_at).getTime() >= since;}).reduce(function(a,r){return a + (Number(r.amount)||0);},0);
+  var setT=function(id,v){var e=document.getElementById(id); if(e) e.textContent=v;};
+  setT('payStatCount', confirmed.length);
+  setT('payStatTotal', '$'+total.toFixed(2));
+  setT('payStat30', '$'+last30.toFixed(2));
+  if(!rows.length){ if(list) list.innerHTML = '<div style="padding:24px;text-align:center;color:#94a3b8;">No payments yet.</div>'; return; }
+  var html = rows.map(function(r){
+    var st = r.status==='confirmed' ? '<span style="background:rgba(45,200,160,0.15);color:#15a06a;font-size:11px;font-weight:700;padding:3px 10px;border-radius:9px;">✅ Confirmed</span>'
+           : r.status==='rejected' ? '<span style="background:rgba(239,68,68,0.12);color:#dc2626;font-size:11px;font-weight:700;padding:3px 10px;border-radius:9px;">❌ Rejected</span>'
+           : '<span style="background:rgba(249,115,22,0.12);color:#ea580c;font-size:11px;font-weight:700;padding:3px 10px;border-radius:9px;">⏳ Pending</span>';
+    var txLink = r.tx_hash ? '<a href="https://bscscan.com/tx/'+r.tx_hash+'" target="_blank" style="color:#3B7DD8;font-size:10px;text-decoration:none;">tx ↗</a>' : '';
+    var net = r.network ? ' · '+r.network : '';
+    return '<div class="pt-row" style="grid-template-columns:1.6fr 0.7fr 0.7fr 0.9fr 1fr 0.8fr;align-items:center;">'+
+      '<div class="pt-col" style="font-weight:600;">'+(r.email||r.user_id||'—')+' '+txLink+'</div>'+
+      '<div class="pt-col">'+(r.method||'—')+'</div>'+
+      '<div class="pt-col">'+(r.asset||'—')+net+'</div>'+
+      '<div class="pt-col" style="font-weight:700;">'+(r.amount!=null?Number(r.amount).toFixed(2):'—')+'</div>'+
+      '<div class="pt-col" style="font-size:11px;color:#64748b;">'+_payFmtDate(r.created_at)+'</div>'+
+      '<div class="pt-col">'+st+'</div>'+
+    '</div>';
+  }).join('');
+  if(list) list.innerHTML = html;
+}
+
+/* Live notifications — even when you're on another view, the badge lights up */
+function _initPaymentsRealtime(){
+  try{
+    sb.channel('payments-live')
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'payments' }, function(payload){
+        var pc = document.getElementById('payCount');
+        if(_currentView==='payments'){ loadPayments(); }
+        else if(pc){ pc.style.display='inline-block'; pc.textContent = (parseInt(pc.textContent||'0',10)+1); }
+        try{ var p=payload.new||{}; console.log('💰 New payment:', p.email, p.amount, p.asset); }catch(e){}
+      })
+      .subscribe();
+  }catch(e){ console.warn('payments realtime not available', e); }
+}
 
 </script>
 </body>
