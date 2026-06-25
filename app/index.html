@@ -498,7 +498,7 @@ select option{background:#0A1628;color:#F1F5FF;}
 .upfl{height:100%;border-radius:3px;background:var(--primary);transition:width 0.3s;}
 
 /* TOAST */
-.toast{position:absolute;bottom:95px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.85);backdrop-filter:blur(12px);color:#fff;font-size:12px;font-weight:500;padding:9px 18px;border-radius:20px;white-space:nowrap;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:400;}
+.toast{position:absolute;bottom:95px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.85);backdrop-filter:blur(12px);color:#fff;font-size:12px;font-weight:500;padding:9px 18px;border-radius:20px;white-space:nowrap;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:99999;}
 .toast.show{opacity:1;}
 
 /* SPIN */
@@ -3581,8 +3581,9 @@ select option{background:#0A1628;color:#F1F5FF;}
         </div>
         <div id="cryptoVerifyBox" style="display:none;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:11px;margin-bottom:10px;">
           <div style="font-size:12px;font-weight:700;color:#F1F5FF;margin-bottom:6px;" data-i18n="pay.verifyTitle">After paying, confirm here</div>
-          <input id="cryptoTxHash" type="text" placeholder="0x... (TxID)" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:13px;font-family:monospace;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
-          <button id="cryptoVerifyBtn" onclick="verifyCryptoPayment()" style="width:100%;margin-top:9px;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#15a06a,#2DC8A0);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="pay.verifyBtn">✅ Verify payment</button>
+          <input id="cryptoTxHash" type="text" placeholder="0x... (TxID)" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:13px;font-family:monospace;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();verifyCryptoPayment();}"/>
+          <button id="cryptoVerifyBtn" type="button" onclick="verifyCryptoPayment()" style="width:100%;margin-top:9px;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#15a06a,#2DC8A0);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);" data-i18n="pay.verifyBtn">✅ Verify payment</button>
+          <div id="cryptoVerifyStatus" style="display:none;margin-top:8px;padding:9px 11px;border-radius:10px;font-size:12px;font-weight:600;line-height:1.4;"></div>
           <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:7px;line-height:1.4;" data-i18n="pay.verifyDesc">Paste the transaction hash (TxID) from your wallet. We verify it on-chain and activate Premium automatically.</div>
         </div>
         <div style="height:60px;"></div>
@@ -9859,27 +9860,42 @@ var _CRYPTO_ERR={
   no_bscscan_key:{sq:'⚠️ Verifikimi s\'është konfiguruar ende (BscScan)', mk:'⚠️ Верификацијата сè уште не е конфигурирана (BscScan)', en:'⚠️ Verification not configured yet (BscScan)'},
   no_service_key:{sq:'⚠️ Serveri s\'është konfiguruar ende', mk:'⚠️ Серверот сè уште не е конфигуриран', en:'⚠️ Server not configured yet'}
 };
+function _cryptoStatus(kind, msg){
+  var el=document.getElementById('cryptoVerifyStatus'); if(!el) return;
+  if(!msg){ el.style.display='none'; return; }
+  var c = kind==='ok' ? {bg:'rgba(45,200,160,0.18)',fg:'#0f7a55'} : kind==='err' ? {bg:'rgba(239,68,68,0.15)',fg:'#c0392b'} : {bg:'rgba(59,125,216,0.15)',fg:'#1e5fba'};
+  el.style.display='block'; el.style.background=c.bg; el.style.color=c.fg; el.textContent=msg;
+}
 async function verifyCryptoPayment(){
   var L=(typeof DH_LANG!=='undefined'&&DH_LANG)||'sq';
-  var inp=document.getElementById('cryptoTxHash'); var hash=(inp?inp.value:'').trim().toLowerCase();
-  if(!/^0x[0-9a-f]{64}$/.test(hash)){ showToast(_CRYPTO_ERR.bad_hash[L]); return; }
+  var inp=document.getElementById('cryptoTxHash'); var hash=(inp?inp.value:'').trim().toLowerCase().replace(/\s+/g,'');
+  _cryptoStatus('info', L==='sq'?'🔄 Duke verifikuar...':L==='mk'?'🔄 Се верификува...':'🔄 Verifying...');
+  if(!/^0x[0-9a-f]{64}$/.test(hash)){ _cryptoStatus('err', _CRYPTO_ERR.bad_hash[L]); showToast(_CRYPTO_ERR.bad_hash[L]); return; }
   var btn=document.getElementById('cryptoVerifyBtn'); var orig=btn?btn.textContent:'';
   if(btn){ btn.disabled=true; btn.textContent=(L==='sq'?'🔄 Duke verifikuar...':L==='mk'?'🔄 Се верификува...':'🔄 Verifying...'); }
   try{
     var sess=await sb.auth.getSession(); var token=sess&&sess.data&&sess.data.session&&sess.data.session.access_token;
-    if(!token){ showToast(_CRYPTO_ERR.no_service_key[L]); throw new Error('no session'); }
+    if(!token){ _cryptoStatus('err', _CRYPTO_ERR.no_service_key[L]); showToast(_CRYPTO_ERR.no_service_key[L]); throw new Error('no session'); }
     var resp=await fetch('/.netlify/functions/verify-bep20',{ method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify({ tx_hash:hash, asset:_selectedCrypto||'USDT', plan:'premium' }) });
     var data=await resp.json().catch(function(){return {};});
     if(resp.ok && data.ok){
       ACCESS.currentPlan='premium'; try{updatePlanUI();}catch(e){}
       try{ if(LST.currentUser) LST.currentUser.plan='premium'; }catch(e){}
-      showToast(L==='sq'?'✅ Pagesa u konfirmua — Premium u aktivizua!':L==='mk'?'✅ Плаќањето е потврдено — Premium е активиран!':'✅ Payment confirmed — Premium activated!');
-      var m=document.getElementById('paymentModal'); if(m)m.style.display='none';
+      var okMsg=(L==='sq'?'✅ Pagesa u konfirmua — Premium u aktivizua!':L==='mk'?'✅ Плаќањето е потврдено — Premium е активиран!':'✅ Payment confirmed — Premium activated!');
+      _cryptoStatus('ok', okMsg); showToast(okMsg);
+      setTimeout(function(){ var m=document.getElementById('paymentModal'); if(m)m.style.display='none'; _cryptoStatus('info',''); }, 1800);
     } else {
       var msg=(_CRYPTO_ERR[data.code] && _CRYPTO_ERR[data.code][L]) || ('⚠️ '+(data.error||'Verification failed'));
-      showToast(msg);
+      _cryptoStatus('err', msg); showToast(msg);
     }
-  }catch(e){ /* toast already shown for known cases */ }
+  }catch(e){
+    /* never leave the user stuck on "Verifying..." — if no result status was set, show a generic error */
+    var stEl=document.getElementById('cryptoVerifyStatus');
+    if(stEl && (String(stEl.style.background).indexOf('59, 125, 216')>-1 || stEl.style.display==='none')){
+      var em=(L==='sq'?'⚠️ S\'u lidh dot me serverin — provo sërish':L==='mk'?'⚠️ Не може да се поврзе со серверот — пробај пак':'⚠️ Could not reach the server — try again');
+      _cryptoStatus('err', em); showToast(em);
+    }
+  }
   finally{ if(btn){ btn.disabled=false; btn.textContent=orig||dhT('pay.verifyBtn'); } }
 }
 
