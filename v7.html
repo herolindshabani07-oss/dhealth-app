@@ -6119,6 +6119,7 @@ function getSupa(){
   if(window._dhFetchPatched) return; window._dhFetchPatched = true;
   var _origFetch = window.fetch.bind(window);
   window.fetch = async function(url, opts){
+    var _isClaude=false;
     try{
       var u = (typeof url === 'string') ? url : (url && url.url) || '';
       /* Native (APK): s'ka server lokal → ridrejto thirrjet relative te funksionet në domenin absolut */
@@ -6126,6 +6127,7 @@ function getSupa(){
         url = 'https://dhealth.app' + url; u = url;
       }
       if(u.indexOf('/.netlify/functions/claude') !== -1){
+        _isClaude=true;
         opts = opts || {};
         var h = {}; if(opts.headers){ for(var k in opts.headers){ h[k]=opts.headers[k]; } }
         var sb = getSupa();
@@ -6148,6 +6150,17 @@ function getSupa(){
         }catch(e){}
       }
     }catch(e){}
+    /* Timeout client-side: një thirrje AI e ngecur (rrjet i dobët) s'duhet të rrotullojë spinner-in pafundësisht.
+       30s > limiti ~10s i serverit, pra s'i ndërpret thirrjet legjitime — vetëm lidhjet vërtet të ngecura. */
+    if(_isClaude && typeof AbortController!=='undefined' && opts && !opts.signal){
+      try{
+        var _ctrl=new AbortController(); opts.signal=_ctrl.signal;
+        var _to=setTimeout(function(){ try{_ctrl.abort();}catch(e){} }, 30000);
+        var _p=_origFetch(url, opts);
+        _p.then(function(){clearTimeout(_to);}, function(){clearTimeout(_to);});
+        return _p;
+      }catch(e){}
+    }
     return _origFetch(url, opts);
   };
 })();
