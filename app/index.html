@@ -9057,11 +9057,9 @@ async function analyzeTherapy(){
   respEl.style.display='block';
   textEl.innerHTML='<div class="dh-skel-wrap"><div class="dh-skel" style="width:72%"></div><div class="dh-skel"></div><div class="dh-skel" style="width:90%"></div><div class="dh-skel" style="width:58%"></div></div>';
   try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:700,system:BASE_SYS+getProfile(),messages:[{role:'user',content:'Analyze my therapy in the context of my COMPLETE profile above (diagnoses, lab values, allergies, vitals, and 7-day history). Provide: 1) drug–drug and drug–condition interaction check, 2) optimal timing for each medication, 3) whether the therapy fits my current vitals and trends, 4) any gaps or risks. Use bullet points •.'}]})});
-    var d=await r.json();
-    var tx=d.content&&d.content[0]&&d.content[0].text;
-    if(tx) textEl.innerHTML=tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-    else throw new Error();
+    var _rnd=_streamRenderer(textEl);
+    await streamClaudeText({model:'claude-sonnet-4-5',max_tokens:700,system:BASE_SYS+getProfile(),messages:[{role:'user',content:'Analyze my therapy in the context of my COMPLETE profile above (diagnoses, lab values, allergies, vitals, and 7-day history). Provide: 1) drug–drug and drug–condition interaction check, 2) optimal timing for each medication, 3) whether the therapy fits my current vitals and trends, 4) any gaps or risks. Use bullet points •.'}]}, _rnd.on);
+    _rnd.flush();
   }catch(e){ textEl.innerHTML='<span style="color:rgba(255,255,255,0.5);">⚠️ Check connection and try again.</span>'; }
   btn.disabled=false; btn.textContent=dhT('dx.therapyAnalysis');
 }
@@ -9204,22 +9202,14 @@ async function generateWeeklyReport(btn){
   var localReport = buildLocalReport(history);
 
   try{
-    var r = await fetch('/.netlify/functions/claude',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-5',
-        max_tokens:800,
-        system: 'You are D Health AI Doctor. Write concise weekly health reports.',
-        messages:[{role:'user',content:'Generate a professional weekly health report.\n\n'+weekData+'\n\nPatient profile: '+getProfile()+'\n\nBe specific, medical, and encouraging. If no data, give guidance on what to track.'}]
-      })
-    });
-    var raw = await r.text();
-    if(!r.ok || !raw || raw.trim().charAt(0)==='<') throw new Error('offline');
-    var d = JSON.parse(raw);
-    var tx = d.content&&d.content[0]&&d.content[0].text;
-    if(!tx) throw new Error('empty');
-    textEl.innerHTML = tx.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    var _rnd=_streamRenderer(textEl);
+    await streamClaudeText({
+      model:'claude-sonnet-4-5',
+      max_tokens:800,
+      system: 'You are D Health AI Doctor. Write concise weekly health reports.',
+      messages:[{role:'user',content:'Generate a professional weekly health report.\n\n'+weekData+'\n\nPatient profile: '+getProfile()+'\n\nBe specific, medical, and encouraging. If no data, give guidance on what to track.'}]
+    }, _rnd.on);
+    _rnd.flush();
   }catch(e){
     // Fallback: raport lokal real nga të dhënat — butoni gjithmonë prodhon diçka
     textEl.innerHTML = localReport + '<div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,0.35);">⚙️ Raport lokal (AI jashtë linje)</div>';
@@ -9238,9 +9228,9 @@ async function generateDiagReport(){
   card.style.display='block';
   var now=new Date(); if(time) time.textContent='Generated '+now.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,system:BASE_SYS+getProfile(),messages:[{role:'user',content:'Generate a professional weekly medical report using ONLY my real data from the profile above (diagnoses, therapy, labs, today\'s vitals and 7-day history). Include: weekly summary of vital trends, therapy adherence and effectiveness assessment, correlations between conditions/therapy/vitals, and prioritized recommendations. Be structured and concise. Do not invent data.'}]})});
-    var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);
-    text.innerHTML=(d.content&&d.content[0]?d.content[0].text:'Failed.').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+    var _rnd=_streamRenderer(text);
+    await streamClaudeText({model:'claude-sonnet-4-5',max_tokens:800,system:BASE_SYS+getProfile(),messages:[{role:'user',content:'Generate a professional weekly medical report using ONLY my real data from the profile above (diagnoses, therapy, labs, today\'s vitals and 7-day history). Include: weekly summary of vital trends, therapy adherence and effectiveness assessment, correlations between conditions/therapy/vitals, and prioritized recommendations. Be structured and concise. Do not invent data.'}]}, _rnd.on);
+    _rnd.flush();
   }catch(e){text.innerHTML='❌ Connection error.';}
   btn.disabled=false; btn.innerHTML=dhT('dx.genReport');
 }
