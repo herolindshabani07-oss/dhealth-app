@@ -517,6 +517,8 @@ select option{background:#0A1628;color:#F1F5FF;}
 .dh-empty .ic{width:48px;height:48px;border-radius:16px;background:rgba(120,150,190,.12);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:7px;}
 .dh-empty .t{font-size:13px;font-weight:700;color:#5d7290;}
 .dh-empty .s{font-size:11px;color:#9aabc4;line-height:1.5;}
+.dh-empty-cta{margin-top:11px;padding:8px 16px;border-radius:11px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff!important;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);box-shadow:0 5px 14px rgba(59,125,216,.3);transition:transform .12s;}
+.dh-empty-cta:active{transform:scale(.95);}
 .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.6);}
 .dot:nth-child(1){animation:td 1.2s 0s infinite;}
 .dot:nth-child(2){animation:td 1.2s 0.2s infinite;}
@@ -2987,7 +2989,7 @@ select option{background:#0A1628;color:#F1F5FF;}
     <!-- LOG TABLE -->
     <div class="vh-log">
       <div class="vh-log-hdr">&#128203; Recent Readings</div>
-      <div id="vh-log-empty" style="text-align:center;padding:16px 0;font-size:12px;color:rgba(255,255,255,0.4);">No readings recorded yet. Add your first vitals to see history.</div>
+      <div id="vh-log-empty" class="dh-empty"><div class="ic">📈</div><div class="t" data-i18n="em.noReadingsT">No readings yet</div><div class="s" data-i18n="em.noReadingsS">Add your first vitals to see history</div></div>
     </div>
 
     <!-- DAILY ACTIVITY LOG -->
@@ -3485,7 +3487,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         <div class="wt" id="rpt-readings-table">
           <div class="wt-row hdr"><div class="wt-cell" data-i18n="dx.thDay">Day</div><div class="wt-cell">BP mmHg</div><div class="wt-cell">Glucose</div><div class="wt-cell">HR bpm</div></div>
           <div id="rpt-readings-body">
-            <div style="text-align:center;padding:16px;color:rgba(255,255,255,0.3);font-size:12px;" data-i18n="dx.noReadings">No readings yet — add vitals to see weekly data</div>
+            <div class="dh-empty"><div class="ic">📅</div><div class="t" data-i18n="em.noReadingsT">No readings yet</div><div class="s" data-i18n="dx.noReadings">No readings yet — add vitals to see weekly data</div></div>
           </div>
         </div>
 
@@ -4159,11 +4161,18 @@ function pushRecentAlert(icon, iconBg, title, msg){
   renderRecentAlerts();
   _updateNotifDot();
 }
+/* ════ Empty-state i njësuar: ikonë miqësore + tekst + (opsional) buton veprimi ════ */
+function dhEmpty(icon,title,sub,ctaLabel,ctaOnclick){
+  return '<div class="dh-empty"><div class="ic">'+icon+'</div><div class="t">'+title+'</div>'
+    + (sub?'<div class="s">'+sub+'</div>':'')
+    + ((ctaLabel&&ctaOnclick)?'<button class="dh-empty-cta" onclick="'+ctaOnclick+'">'+ctaLabel+'</button>':'')
+    + '</div>';
+}
 function renderRecentAlerts(){
   var list = document.getElementById('recentAlertsList');
   if(!list) return;
   var a=_getRecentAlerts();
-  if(!a.length){ list.innerHTML='<div style="text-align:center;padding:18px 0;font-size:12px;color:#7387a4;">No recent alerts</div>'; return; }
+  if(!a.length){ list.innerHTML=dhEmpty('🔔', dhT('em.noAlertsT'), dhT('em.noAlertsS')); return; }
   var h='';
   a.forEach(function(it){
     h+='<div class="notif-item unread">'
@@ -5021,7 +5030,7 @@ function _dkToISO(k){ var p=String(k).split('-'); if(p.length<3) return k; var y
 function _isoToDk(iso){ var p=String(iso).split('T')[0].split('-'); if(p.length<3) return iso; var y=+p[0],m=+p[1]-1,d=+p[2]; return y+'-'+m+'-'+d; }
 function gPer(t){var h=parseInt(t.split(':')[0]);if(h>=5&&h<12)return{l:'Morning',c:'pm'};if(h>=12&&h<18)return{l:'Daytime',c:'pd'};return{l:'Evening',c:'pe'};}
 function renderCal(){document.getElementById('calTitle').textContent=months[cM]+' '+cY;var g=document.getElementById('calGrid');g.innerHTML='';var first=new Date(cY,cM,1).getDay(),days=new Date(cY,cM+1,0).getDate(),prev=new Date(cY,cM,0).getDate();for(var i=0;i<first;i++){var d=document.createElement('div');d.className='cd om';d.innerHTML='<span class="cdn2">'+(prev-first+1+i)+'</span>';g.appendChild(d);}for(var d=1;d<=days;d++){var el=document.createElement('div');el.className='cd';if(d===9&&cM===3&&cY===2026)el.className+=' tod';else if(d===sD&&cM===sM&&cY===sY)el.className+=' sel';var k=dk(cY,cM,d);if(alarms[k]&&alarms[k].length)el.className+=' ha';el.innerHTML='<span class="cdn2">'+d+'</span>';(function(day){el.onclick=function(){sD=day;sM=cM;sY=cY;renderCal();};})(d);g.appendChild(el);}renderAlarms();}
-function renderAlarms(){var k=dk(sY,sM,sD);document.getElementById('alTitle').textContent=dhT('cal.alarms')+' — '+months[sM].slice(0,3)+' '+sD;var list=document.getElementById('alList');list.innerHTML='';var arr=alarms[k]||[];if(!arr.length){var e=document.createElement('div');e.style='text-align:center;padding:10px 0;font-size:12px;color:rgba(255,255,255,0.5);';e.textContent=dhT('cal.noAlarms');list.appendChild(e);return;}arr.forEach(function(a,i){var p=gPer(a.time);var item=document.createElement('div');item.className='ali';item.innerHTML='<div class="ald" style="background:'+cMap[a.color]+';"></div><div class="alf"><div class="alnm">'+a.name+'</div><div class="altr"><span class="altm">'+ft(a.time)+'</span><span class="alpb '+p.c+'">'+p.l+'</span></div></div><div style="display:flex;align-items:center;gap:6px;"><button class="altg '+(a.on?'on':'off')+'" onclick="togA(\''+k+'\','+i+',this)"></button><button onclick="removeAlarm(\''+k+'\','+i+')" style="width:24px;height:24px;border-radius:8px;border:none;background:rgba(239,68,68,0.1);color:#DC2626;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Remove">×</button></div>';list.appendChild(item);});}
+function renderAlarms(){var k=dk(sY,sM,sD);document.getElementById('alTitle').textContent=dhT('cal.alarms')+' — '+months[sM].slice(0,3)+' '+sD;var list=document.getElementById('alList');list.innerHTML='';var arr=alarms[k]||[];if(!arr.length){list.innerHTML=dhEmpty('⏰', dhT('em.noAlarmsT'), dhT('em.noAlarmsS'));return;}arr.forEach(function(a,i){var p=gPer(a.time);var item=document.createElement('div');item.className='ali';item.innerHTML='<div class="ald" style="background:'+cMap[a.color]+';"></div><div class="alf"><div class="alnm">'+a.name+'</div><div class="altr"><span class="altm">'+ft(a.time)+'</span><span class="alpb '+p.c+'">'+p.l+'</span></div></div><div style="display:flex;align-items:center;gap:6px;"><button class="altg '+(a.on?'on':'off')+'" onclick="togA(\''+k+'\','+i+',this)"></button><button onclick="removeAlarm(\''+k+'\','+i+')" style="width:24px;height:24px;border-radius:8px;border:none;background:rgba(239,68,68,0.1);color:#DC2626;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Remove">×</button></div>';list.appendChild(item);});}
 
 function removeAlarm(key, idx){
   if(!alarms[key]) return;
@@ -6855,6 +6864,13 @@ var DH_I18N = {
   'em.noMealsS':       {sq:'Trokit "+ Shto vakt" për të nisur', mk:'Допри „+ Додади оброк" за почеток', en:'Tap "+ Add Meal" to start tracking'},
   'em.noAlarmsT':      {sq:'Asnjë alarm sot', mk:'Нема аларми денес', en:'No alarms today'},
   'em.noAlarmsS':      {sq:'Shto terapinë te Diagnoza ose Kalendari', mk:'Додади терапија во Дијагноза или Календар', en:'Add therapy in Diagnosis or the Calendar'},
+  'em.noAlertsT':      {sq:'Asnjë njoftim', mk:'Нема известувања', en:'No alerts yet'},
+  'em.noAlertsS':      {sq:'Njoftimet shëndetësore do të shfaqen këtu', mk:'Здравствените известувања ќе се појават тука', en:'Your health alerts will appear here'},
+  'em.noEcgT':         {sq:'Asnjë ECG ende', mk:'Сè уште нема ЕКГ', en:'No ECG yet'},
+  'em.noEcgS':         {sq:'Ngarko një ECG më lart për analizë', mk:'Прикачи ЕКГ погоре за анализа', en:'Upload an ECG above to analyze'},
+  'em.noReadingsT':    {sq:'Ende pa lexime', mk:'Сè уште нема читања', en:'No readings yet'},
+  'em.noReadingsS':    {sq:'Shto vitalet e tua të para për të parë historikun', mk:'Додади ги твоите први витални за историја', en:'Add your first vitals to see history'},
+  'em.addVitals':      {sq:'+ Shto vitale', mk:'+ Додади витални', en:'+ Add vitals'},
   'dx.activeBadge':    {sq:'Aktiv ✓', mk:'Активен ✓', en:'Active ✓'},
   /* Menu / Settings */
   'menu.profile':       {sq:'Profili Im', mk:'Мој профил', en:'My Profile'},
@@ -8714,7 +8730,7 @@ function renderECGHistory(){
     var cBorder = isLight ? 'rgba(120,150,190,0.18)' : 'var(--border)';
     if(ecgHistory.length===0){
       list.innerHTML = isLight
-        ? '<div style="font-size:11px;color:#7387a4;padding:6px 2px;">'+(typeof dhT==='function'?dhT('dx.noEcgYet'):'No ECG analyzed yet — upload one above.')+'</div>'
+        ? dhEmpty('💓', dhT('em.noEcgT'), dhT('em.noEcgS'))
         : '';
       return;
     }
@@ -9095,7 +9111,7 @@ function loadDiagScreenChart(){
   }
 
   if(history.length === 0){
-    body.innerHTML = '<div style="text-align:center;padding:16px;color:rgba(255,255,255,0.3);font-size:12px;">No readings yet — add vitals to see weekly data</div>';
+    body.innerHTML = dhEmpty('📊', dhT('em.noReadingsT'), dhT('em.noReadingsS'), dhT('em.addVitals'), "switchScreen('vitals')");
     return;
   }
 
@@ -9135,7 +9151,7 @@ function renderReportReadings(){
     }
   }catch(e){}
   if(!rows.length){
-    body.innerHTML = '<div style="text-align:center;padding:16px;color:rgba(255,255,255,0.3);font-size:12px;">No readings yet — add vitals to see weekly data</div>';
+    body.innerHTML = dhEmpty('📊', dhT('em.noReadingsT'), dhT('em.noReadingsS'), dhT('em.addVitals'), "switchScreen('vitals')");
     return;
   }
   body.innerHTML = rows.map(function(v){
