@@ -4161,6 +4161,29 @@ function pushRecentAlert(icon, iconBg, title, msg){
   renderRecentAlerts();
   _updateNotifDot();
 }
+/* ════ Animacion count-up i numrit (Health Score) — momenti "wow" kur zbulohet ════ */
+function animateCount(el, to, dur){
+  if(!el) return;
+  to = parseInt(to,10); if(isNaN(to)){ return; }
+  dur = dur || 900;
+  try{ if(el._cntRAF) cancelAnimationFrame(el._cntRAF); }catch(e){}
+  try{ if(el._cntTO) clearTimeout(el._cntTO); }catch(e){}
+  /* GARANCI: vendos vlerën përfundimtare edhe nëse rAF s'fionon (tab në sfond, throttling) → score-i del gjithmonë */
+  el._cntTO = setTimeout(function(){ el.textContent = to; el._cntTO=null; }, dur + 150);
+  /* respekto prefers-reduced-motion ose mungesë rAF */
+  try{ if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent = to; return; } }catch(e){}
+  if(typeof requestAnimationFrame!=='function'){ el.textContent = to; return; }
+  var from = 0, start = null;
+  function ease(t){ return 1 - Math.pow(1 - t, 3); } /* easeOutCubic */
+  function step(ts){
+    if(start===null) start = ts;
+    var p = Math.min((ts - start) / dur, 1);
+    el.textContent = Math.round(from + (to - from) * ease(p));
+    if(p < 1) el._cntRAF = requestAnimationFrame(step);
+    else { el.textContent = to; el._cntRAF = null; try{ clearTimeout(el._cntTO); el._cntTO=null; }catch(e){} }
+  }
+  el._cntRAF = requestAnimationFrame(step);
+}
 /* ════ Empty-state i njësuar: ikonë miqësore + tekst + (opsional) buton veprimi ════ */
 function dhEmpty(icon,title,sub,ctaLabel,ctaOnclick){
   return '<div class="dh-empty"><div class="ic">'+icon+'</div><div class="t">'+title+'</div>'
@@ -10605,7 +10628,7 @@ function renderEngineResult(result, data){
   var stEl   = document.getElementById('eng-status-txt');
   var dateEl = document.getElementById('ds-date');
   if(circle){ circle.style.background='linear-gradient(135deg,'+scoreColor+','+scoreColor+'aa)'; circle.style.boxShadow='0 8px 20px '+scoreGlow; }
-  if(numEl)  numEl.textContent = score;
+  if(numEl)  animateCount(numEl, score);
   if(stEl)   stEl.textContent = score>=75 ? '✅ Good Health Status' : score>=50 ? '⚠️ Fair Health Status' : '🚨 Poor Health Status';
   if(dateEl){ var now=new Date(); dateEl.textContent = now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
 
@@ -10876,7 +10899,7 @@ function renderDailyScore(score, messages){
   else               tier={label:'🚨 Critical — Rest!',  badge:'CRITICAL',   bg:'#DC2626', badgeBg:'rgba(220,38,38,0.3)',   emoji:'🚨'};
 
   if(circle){ circle.style.borderColor=tier.bg; circle.style.background='rgba('+(score>=75?'45,200,160':score>=60?'96,165,250':score>=45?'249,115,22':'220,38,38')+',0.2)'; }
-  if(numEl)  numEl.textContent = score;
+  if(numEl)  animateCount(numEl, score);
   if(mainEl){ mainEl.textContent = tier.label; mainEl.style.color = tier.bg; }
   if(badge){
     badge.style.display='inline-block';
@@ -12769,7 +12792,7 @@ function renderVIE(res){
   var status = document.getElementById('vieStatus');
   var sub    = document.getElementById('vieSubtitle');
   if(circle){ circle.style.borderColor=color; circle.style.background='rgba('+(score>=75?'45,200,160':score>=50?'249,115,22':'220,38,38')+',0.2)'; }
-  if(numEl)  numEl.textContent = score;
+  if(numEl)  animateCount(numEl, score);
   if(status){ status.textContent = res.status||'Analysis complete'; status.style.color=color; }
   if(sub)    sub.textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
 
