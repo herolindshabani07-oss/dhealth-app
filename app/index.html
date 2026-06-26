@@ -10759,26 +10759,48 @@ function getHealthPlugin(){ return getNativePlugin('HealthPlugin'); }
 
 /* Diagnostikë e lidhjes së pajisjeve — tregon ku ndërpritet zinxhiri (alert i dukshëm) */
 async function diagDevices(){
+  var _DL = (typeof DH_LANG!=='undefined' && DH_LANG) || 'sq';
+  var _DT = {
+    title:    {sq:'🔍 DIAGNOSTIKË PAJISJESH', mk:'🔍 ДИЈАГНОСТИКА НА УРЕДИ', en:'🔍 DEVICE DIAGNOSTICS'},
+    breaks:   {sq:'KU NDËRPRITET', mk:'КАДЕ СЕ ПРЕКИНУВА', en:'WHERE IT BREAKS'},
+    yes:      {sq:'PO ✅', mk:'ДА ✅', en:'YES ✅'},
+    no:       {sq:'JO ❌', mk:'НЕ ❌', en:'NO ❌'},
+    online:   {sq:'Online', mk:'Онлајн', en:'Online'},
+    regGoogle:{sq:'  → regjistroje këtë te Google Cloud Console', mk:'  → регистрирај го ова во Google Cloud Console', en:'  → register this in Google Cloud Console'},
+    regFitbit:{sq:'  → regjistroje këtë te Fitbit App settings', mk:'  → регистрирај го ова во Fitbit App settings', en:'  → register this in Fitbit App settings'},
+    present:  {sq:'PREZENT ✅', mk:'ПРИСУТЕН ✅', en:'PRESENT ✅'},
+    missing:  {sq:'mungon', mk:'недостасува', en:'missing'},
+    reg:      {sq:'i regjistruar ✅', mk:'регистриран ✅', en:'registered ✅'},
+    notReg:   {sq:'MUNGON ❌', mk:'НЕДОСТАСУВА ❌', en:'MISSING ❌'},
+    webRun:   {sq:'JO ❌ (po xhiron si web)', mk:'НЕ ❌ (работи како web)', en:'NO ❌ (running as web)'},
+    brkWeb1:  {sq:'→ Po xhiron si WEB. Vetëm Google Fit + Fitbit (OAuth) mund të punojnë këtu.', mk:'→ Работи како WEB. Само Google Fit + Fitbit (OAuth) работат тука.', en:'→ Running as WEB. Only Google Fit + Fitbit (OAuth) work here.'},
+    brkWeb2:  {sq:'  Health Connect / Apple Health kërkojnë app NATIV.', mk:'  Health Connect / Apple Health бараат НАТИВНА апликација.', en:'  Health Connect / Apple Health require a NATIVE app.'},
+    brkNo1:   {sq:'→ App NATIV, por HealthPlugin MUNGON → s\'është bundle-uar te APK.', mk:'→ Нативна апликација, но HealthPlugin НЕДОСТАСУВА → не е спакуван во APK.', en:'→ NATIVE app, but HealthPlugin is MISSING → not bundled in the APK.'},
+    brkNo2:   {sq:'  Health Connect s\'punon dot. Duhet ta shtosh plugin-in te builds nativ.', mk:'  Health Connect не работи. Додај го pluginот во нативниот build.', en:'  Health Connect cannot work. Add the plugin to the native build.'},
+    brkOk:    {sq:'→ HealthPlugin OK ✅. Nëse s\'merr të dhëna → kontrollo Permissions më lart.', mk:'→ HealthPlugin OK ✅. Ако нема податоци → провери Permissions погоре.', en:'→ HealthPlugin OK ✅. If no data → check Permissions above.'},
+    footer:   {sq:'📋 Raportoje te mbështetja D Health', mk:'📋 Пријави го ова до поддршката на D Health', en:'📋 Report this to D Health support'}
+  };
+  function dt(k){ return (_DT[k] && (_DT[k][_DL]||_DT[k].en)) || k; }
   var L = [];
   /* ── WEB / OAuth (punon në browser dhe app) ── */
   L.push('═══ WEB / OAuth ═══');
-  L.push('Online: ' + (navigator.onLine ? 'PO ✅' : 'JO ❌'));
+  L.push(dt('online') + ': ' + (navigator.onLine ? dt('yes') : dt('no')));
   L.push('Origin: ' + window.location.origin);
   try{ L.push('GFit redirect: ' + GFIT_CONFIG.redirectUri); }catch(e){ L.push('GFit redirect: err'); }
-  L.push('  → regjistroje këtë te Google Cloud Console');
-  L.push('GFit token: ' + (localStorage.getItem('gfit_token') ? 'PREZENT ✅' : 'mungon'));
+  L.push(dt('regGoogle'));
+  L.push('GFit token: ' + (localStorage.getItem('gfit_token') ? dt('present') : dt('missing')));
   try{ L.push('Fitbit redirect: ' + FITBIT_CONFIG.redirectUri); }catch(e){ L.push('Fitbit redirect: err'); }
-  L.push('  → regjistroje këtë te Fitbit App settings');
-  L.push('Fitbit token: ' + (localStorage.getItem('fitbit_token') ? 'PREZENT ✅' : 'mungon'));
+  L.push(dt('regFitbit'));
+  L.push('Fitbit token: ' + (localStorage.getItem('fitbit_token') ? dt('present') : dt('missing')));
   L.push('');
   /* ── NATIVE (Android/iOS) ── */
   L.push('═══ NATIVE (Android/iOS) ═══');
-  L.push('Capacitor: ' + (window.Capacitor ? 'PO' : 'JO ❌ (po xhiron si web)'));
-  L.push('isNativeApp: ' + (isNativeApp() ? 'PO ✅' : 'JO ❌'));
+  L.push('Capacitor: ' + (window.Capacitor ? dt('yes') : dt('webRun')));
+  L.push('isNativeApp: ' + (isNativeApp() ? dt('yes') : dt('no')));
   try{ L.push('Platform: ' + ((window.Capacitor && window.Capacitor.getPlatform) ? window.Capacitor.getPlatform() : '?')); }catch(e){}
   try{ L.push('Plugins: ' + (window.Capacitor && window.Capacitor.Plugins ? (Object.keys(window.Capacitor.Plugins).join(',')||'(bosh)') : '-')); }catch(e){ L.push('Plugins: err'); }
   var Health = getHealthPlugin();
-  L.push('HealthPlugin (Health Connect): ' + (Health ? 'i regjistruar ✅' : 'MUNGON ❌'));
+  L.push('HealthPlugin (Health Connect): ' + (Health ? dt('reg') : dt('notReg')));
   if(Health){
     try{ var avail = await Health.isHealthAvailable(); L.push('  Health available: ' + JSON.stringify(avail)); }catch(e){ L.push('  isHealthAvailable ERROR: ' + (e.message||e)); }
     try{ if(Health.checkHealthPermissions){ var pp = await Health.checkHealthPermissions({ permissions:['READ_STEPS','READ_ACTIVE_CALORIES','READ_HEART_RATE'] }); L.push('  Permissions: ' + JSON.stringify(pp)); } }catch(e){ L.push('  checkPermissions: ' + (e.message||e)); }
@@ -10803,20 +10825,20 @@ async function diagDevices(){
     }
   }
   var Ble = (typeof getBle==='function') ? getBle() : null;
-  L.push('BLE plugin (D Health Ring): ' + (Ble ? 'i regjistruar ✅' : 'MUNGON ❌'));
+  L.push('BLE plugin (D Health Ring): ' + (Ble ? dt('reg') : dt('notReg')));
   L.push('');
   /* ── Interpretim: ku ndërpritet zinxhiri ── */
-  L.push('═══ KU NDËRPRITET ═══');
+  L.push('═══ ' + dt('breaks') + ' ═══');
   if(!window.Capacitor){
-    L.push('→ Po xhiron si WEB. Vetëm Google Fit + Fitbit (OAuth) mund të punojnë këtu.');
-    L.push('  Health Connect / Apple Health kërkojnë app NATIV.');
+    L.push(dt('brkWeb1'));
+    L.push(dt('brkWeb2'));
   } else if(!Health){
-    L.push('→ App NATIV, por HealthPlugin MUNGON → s\'është bundle-uar te APK.');
-    L.push('  Health Connect s\'punon dot. Duhet ta shtosh plugin-in te builds nativ.');
+    L.push(dt('brkNo1'));
+    L.push(dt('brkNo2'));
   } else {
-    L.push('→ HealthPlugin OK ✅. Nëse s\'merr të dhëna → kontrollo Permissions më lart.');
+    L.push(dt('brkOk'));
   }
-  alert('🔍 DIAGNOSTIKË PAJISJESH\n\n' + L.join('\n') + '\n\n(Dërgoja këtë tekst mbështetjes)');
+  alert(dt('title') + '\n\n' + L.join('\n') + '\n\n' + dt('footer'));
 }
 
 /* ═══════════════ D HEALTH RING — COLMI R02 (Bluetooth LE) ═══════════════
