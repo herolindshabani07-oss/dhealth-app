@@ -1413,7 +1413,7 @@ select option{background:#0A1628;color:#F1F5FF;}
       <div class="ob-lbl" data-i18n="ep.gender">Gender</div>
       <select id="ob-gender" class="ob-sel"><option value="female" data-i18n="ep.female">Female</option><option value="male" data-i18n="ep.male">Male</option><option value="other" data-i18n="ep.other">Other</option></select>
       <div class="ob-lbl" data-i18n="ep.dob">Date of Birth</div>
-      <input id="ob-dob" type="date" class="ob-in"/>
+      <div class="dob-grp" data-dob="ob-dob" style="display:flex;gap:8px;margin-bottom:12px;"><select id="ob-dob-d" class="ob-sel" style="margin-bottom:0;flex:1;" onchange="dobCompose('ob-dob')"></select><select id="ob-dob-m" class="ob-sel" style="margin-bottom:0;flex:1;" onchange="dobCompose('ob-dob')"></select><select id="ob-dob-y" class="ob-sel" style="margin-bottom:0;flex:1.2;" onchange="dobCompose('ob-dob')"></select></div><input type="hidden" id="ob-dob"/>
       <div style="display:flex;gap:10px;">
         <div style="flex:1;"><div class="ob-lbl" data-i18n="ep.height">Height (cm)</div><input id="ob-height" type="number" placeholder="170" class="ob-in"/></div>
         <div style="flex:1;"><div class="ob-lbl" data-i18n="ep.weight">Weight (kg)</div><input id="ob-weight" type="number" placeholder="70" class="ob-in"/></div>
@@ -2627,7 +2627,7 @@ select option{background:#0A1628;color:#F1F5FF;}
         </div>
         <div style="margin-bottom:11px;">
           <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.dob">Date of Birth</div>
-          <input type="date" id="setEditDob" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" value=""/>
+          <div class="dob-grp" data-dob="setEditDob" style="display:flex;gap:8px;"><select id="setEditDob-d" style="flex:1;border:1.5px solid var(--border);border-radius:12px;padding:11px 9px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onchange="dobCompose('setEditDob')"></select><select id="setEditDob-m" style="flex:1;border:1.5px solid var(--border);border-radius:12px;padding:11px 9px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onchange="dobCompose('setEditDob')"></select><select id="setEditDob-y" style="flex:1.2;border:1.5px solid var(--border);border-radius:12px;padding:11px 9px;font-size:14px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;box-sizing:border-box;" onchange="dobCompose('setEditDob')"></select></div><input type="hidden" id="setEditDob" value=""/>
         </div>
         <div style="margin-bottom:11px;">
           <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;" data-i18n="ep.phone">Phone</div>
@@ -6321,6 +6321,7 @@ function obShow(){
   var el=document.getElementById('onboarding'); if(!el) return;
   el.classList.add('show');
   try{ var n=(LST.currentUser&&LST.currentUser.name)||''; var ni=document.getElementById('ob-name'); if(ni&&!ni.value) ni.value=n; }catch(e){}
+  try{ dobInit(); dobSync('ob-dob'); }catch(e){}
   try{ applyLang(DH_LANG); }catch(e){}
 }
 function obRender(){
@@ -6367,6 +6368,30 @@ function obFinish(skipped){
   try{ switchScreen('home'); }catch(e){}
   try{ showToast(dhT('ob.saved')); }catch(e){}
 }
+
+/* ════ DATËLINDJA — 3 menu (Ditë/Muaj/Vit): vit me një prekje, tekst i dukshëm ════ */
+function dobInit(){
+  var T=(typeof dhT==='function')?dhT:function(k){return k;};
+  document.querySelectorAll('.dob-grp').forEach(function(g){
+    var pre=g.getAttribute('data-dob');
+    var d=document.getElementById(pre+'-d'), m=document.getElementById(pre+'-m'), y=document.getElementById(pre+'-y');
+    if(d&&d.options.length<=1){ var h='<option value="">'+T('ob.day')+'</option>'; for(var i=1;i<=31;i++)h+='<option value="'+i+'">'+i+'</option>'; d.innerHTML=h; }
+    if(m&&m.options.length<=1){ var h2='<option value="">'+T('ob.month')+'</option>'; for(var j=1;j<=12;j++)h2+='<option value="'+j+'">'+j+'</option>'; m.innerHTML=h2; }
+    if(y&&y.options.length<=1){ var h3='<option value="">'+T('ob.year')+'</option>'; var cy=new Date().getFullYear(); for(var k=cy-5;k>=1920;k--)h3+='<option value="'+k+'">'+k+'</option>'; y.innerHTML=h3; }
+  });
+}
+function dobCompose(pre){
+  var d=document.getElementById(pre+'-d'), m=document.getElementById(pre+'-m'), y=document.getElementById(pre+'-y'), hid=document.getElementById(pre);
+  if(hid){ hid.value=(d&&m&&y&&d.value&&m.value&&y.value)?(y.value+'-'+('0'+m.value).slice(-2)+'-'+('0'+d.value).slice(-2)):''; }
+}
+function dobSync(pre){
+  try{ dobInit(); }catch(e){}
+  var hid=document.getElementById(pre), iso=hid?hid.value:'';
+  var d=document.getElementById(pre+'-d'), m=document.getElementById(pre+'-m'), y=document.getElementById(pre+'-y');
+  if(iso&&/^\d{4}-\d{2}-\d{2}/.test(iso)){ var p=iso.split('-'); if(y)y.value=String(parseInt(p[0],10)); if(m)m.value=String(parseInt(p[1],10)); if(d)d.value=String(parseInt(p[2],10)); }
+  else { if(d)d.value=''; if(m)m.value=''; if(y)y.value=''; }
+}
+try{ window.addEventListener('load', function(){ setTimeout(function(){ try{dobInit();}catch(e){} }, 700); }); }catch(e){}
 
 /* Dërgo email mirëseardhjeje (përdoruesit e rinj OAuth) — pa bllokuar UI-në */
 function sendWelcomeEmail(email, name){
@@ -6884,6 +6909,9 @@ var DH_I18N = {
   'ob.openApp':    {sq:'Hap D Health', mk:'Отвори D Health', en:'Open D Health'},
   'ob.skip':       {sq:'Kalo tani', mk:'Прескокни', en:'Skip for now'},
   'ob.saved':      {sq:'✅ Profili u ruajt — mirë se erdhe!', mk:'✅ Профилот е зачуван — добредојде!', en:'✅ Profile saved — welcome!'},
+  'ob.day':        {sq:'Ditë', mk:'Ден', en:'Day'},
+  'ob.month':      {sq:'Muaj', mk:'Месец', en:'Month'},
+  'ob.year':       {sq:'Vit', mk:'Година', en:'Year'},
   'ep.bmiAuto':    {sq:'BMI (automatik)', mk:'BMI (автоматски)', en:'BMI (automatic)'},
   'ep.bmiHint':    {sq:'Fut gjatësinë dhe peshën', mk:'Внеси висина и тежина', en:'Enter height and weight'},
   'ep.bloodType':  {sq:'Grupi i gjakut', mk:'Крвна група', en:'Blood Type'},
@@ -7297,6 +7325,7 @@ function loadSettingsData(){
     if(n && !stored.name && LST.currentUser.name) n.value = LST.currentUser.name;
     if(em && !stored.email && LST.currentUser.email) em.value = LST.currentUser.email;
   }
+  try{ dobSync('setEditDob'); }catch(e){}
 }
 async function savePersonalInfo(){
   var name  = document.getElementById('setEditName').value.trim();
