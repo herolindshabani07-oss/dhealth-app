@@ -519,6 +519,9 @@ select option{background:#0A1628;color:#F1F5FF;}
 .dh-empty .s{font-size:11px;color:#9aabc4;line-height:1.5;}
 .dh-empty-cta{margin-top:11px;padding:8px 16px;border-radius:11px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff!important;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);box-shadow:0 5px 14px rgba(59,125,216,.3);transition:transform .12s;}
 .dh-empty-cta:active{transform:scale(.95);}
+/* a11y: zgjeron zonën e prekjes te butonat e vegjël ikonë në ≥44px PA ndryshuar pamjen/layout-in */
+.a11y-tap{position:relative;}
+.a11y-tap::after{content:"";position:absolute;top:50%;left:50%;width:100%;height:100%;min-width:44px;min-height:44px;transform:translate(-50%,-50%);}
 .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.6);}
 .dot:nth-child(1){animation:td 1.2s 0s infinite;}
 .dot:nth-child(2){animation:td 1.2s 0.2s infinite;}
@@ -4184,6 +4187,31 @@ function animateCount(el, to, dur){
   }
   el._cntRAF = requestAnimationFrame(step);
 }
+/* ════ a11y: shton aria-label te butonat me vetëm-ikonë + zgjeron zonën e prekjes (≥44px) ════ */
+function dhA11y(root){
+  try{
+    var SYM={'×':'Mbyll','✕':'Mbyll','✖':'Mbyll','‹':'Kthehu','〈':'Kthehu','🔔':'Njoftimet','⋮':'Më shumë','⚙':'Cilësimet','＋':'Shto','›':'Hap'};
+    (root||document).querySelectorAll('button').forEach(function(b){
+      var raw=(b.textContent||'').trim();
+      var hasSvg=!!b.querySelector('svg'), hasSpan=!!b.querySelector('span');
+      /* aria-label kur s'ka tekst të lexueshëm */
+      if(!b.getAttribute('aria-label')){
+        if(SYM[raw]) b.setAttribute('aria-label', SYM[raw]);
+        else if(!raw && hasSvg && !hasSpan){
+          var oc=(b.getAttribute('onclick')||'');
+          if(/close|mbyll|hide/i.test(oc)) b.setAttribute('aria-label','Mbyll');
+          else if(/goBack|back|kthe/i.test(oc)) b.setAttribute('aria-label','Kthehu');
+          else if(/notif|njoft/i.test(oc)) b.setAttribute('aria-label','Njoftimet');
+        }
+      }
+      /* zona e prekjes vetëm te butonat ikonë (simbol ose vetëm-svg, jo nav-i me etiketë) */
+      var sym = raw.length>0 && raw.length<=2 && !/[a-z0-9]/i.test(raw);
+      var svgOnly = !raw && hasSvg && !hasSpan;
+      if(sym || svgOnly) b.classList.add('a11y-tap');
+    });
+  }catch(e){}
+}
+try{ window.addEventListener('load', function(){ setTimeout(function(){ try{dhA11y();}catch(e){} }, 400); }); }catch(e){}
 /* ════ Empty-state i njësuar: ikonë miqësore + tekst + (opsional) buton veprimi ════ */
 function dhEmpty(icon,title,sub,ctaLabel,ctaOnclick){
   return '<div class="dh-empty"><div class="ic">'+icon+'</div><div class="t">'+title+'</div>'
