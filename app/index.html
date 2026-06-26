@@ -3174,7 +3174,13 @@ select option{background:#0A1628;color:#F1F5FF;}
     <!-- Score + Therapy -->
     <div class="diag-score-row">
       <div class="diag-score-box">
-        <div style="font-size:20px;">📊</div>
+        <div style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.2 L19.5 5 V11 C19.5 15.8 16.2 19.3 12 21.8 C7.8 19.3 4.5 15.8 4.5 11 V5 Z" fill="#2196F3"/>
+            <circle cx="12" cy="10.4" r="4.4" fill="#fff"/>
+            <path d="M9.8 10.4 L11.4 12 L14.3 8.6" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
         <div><div data-i18n="diag.healthScoreLbl" style="font-size:9px;color:rgba(255,255,255,0.6);">HEALTH SCORE</div><div id="diagHeaderScore" style="font-size:15px;font-weight:700;color:#FCD34D;">--/100</div></div>
       </div>
       <div class="diag-score-box">
