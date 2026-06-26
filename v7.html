@@ -6006,6 +6006,17 @@ function getSupa(){
           if(tok) h['Authorization'] = 'Bearer ' + tok;
         }
         opts.headers = h;
+        /* Injekto direktivën e gjuhës te ÇDO thirrje AI → raportet (Vitals/Diagnosis/ECG/Chat/verdict) ndjekin gjuhën e zgjedhur (currentLang) */
+        try{
+          if(opts.body && typeof opts.body === 'string' && typeof aiLangDirective === 'function'){
+            var _bo = JSON.parse(opts.body);
+            var _dir = aiLangDirective();
+            if(_bo && typeof _bo === 'object' && _dir){
+              var _sys = (typeof _bo.system === 'string') ? _bo.system : '';
+              if(_sys.indexOf(_dir) !== 0){ _bo.system = _dir + _sys; opts.body = JSON.stringify(_bo); }
+            }
+          }
+        }catch(e){}
       }
     }catch(e){}
     return _origFetch(url, opts);
@@ -6500,6 +6511,7 @@ var DH_I18N = {
   'dx.pDocuments':     {sq:'📄 Dokumentet', mk:'📄 Документи', en:'📄 Documents'},
   'dx.pEcgAnalysis':   {sq:'🫀 Analizë ECG', mk:'🫀 ЕКГ анализа', en:'🫀 ECG Analysis'},
   'dx.ecgNote':        {sq:'Ngarko ECG nga smartwatch ose ring — D Health AI analizon dhe krahason me historikun (1 ECG / 24h)', mk:'Прикачи ЕКГ од паметен часовник или прстен — D Health AI анализира и споредува со историјата (1 ЕКГ / 24ч)', en:'Upload ECG from your smartwatch or ring — D Health AI analyzes and compares with your history (1 ECG / 24h)'},
+  'dx.noEcgYet':       {sq:'Asnjë ECG i analizuar ende — ngarko një ECG më lart.', mk:'Сè уште нема анализирано ЕКГ — прикачи едно погоре.', en:'No ECG analyzed yet — upload one above.'},
   'dx.ecgUpload':      {sq:'Ngarko & Analizo ECG', mk:'Прикачи и анализирај ЕКГ', en:'Upload & Analyze ECG'},
   'dx.ecgResultHdr':   {sq:'🤖 D Health AI — Analizë ECG', mk:'🤖 D Health AI — ЕКГ анализа', en:'🤖 D Health AI — ECG Analysis'},
   'dx.pEcgHistory':    {sq:'📋 Historiku i ECG', mk:'📋 Историја на ЕКГ', en:'📋 ECG History'},
@@ -8365,7 +8377,7 @@ function renderECGHistory(){
     var cBorder = isLight ? 'rgba(120,150,190,0.18)' : 'var(--border)';
     if(ecgHistory.length===0){
       list.innerHTML = isLight
-        ? '<div style="font-size:11px;color:#7387a4;padding:6px 2px;">Asnjë ECG i analizuar ende — ngarko një ECG më lart.</div>'
+        ? '<div style="font-size:11px;color:#7387a4;padding:6px 2px;">'+(typeof dhT==='function'?dhT('dx.noEcgYet'):'No ECG analyzed yet — upload one above.')+'</div>'
         : '';
       return;
     }
