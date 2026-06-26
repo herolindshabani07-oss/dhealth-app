@@ -6408,6 +6408,25 @@ function dobSync(pre){
 }
 try{ window.addEventListener('load', function(){ setTimeout(function(){ try{dobInit();}catch(e){} }, 700); }); }catch(e){}
 
+/* ════ MIKRO-ANIMACION SUKSESI — checkmark që vizatohet + puls + vibrim ════ */
+function dhSuccess(msg){
+  try{
+    if(!document.getElementById('dhFxStyle')){
+      var st=document.createElement('style'); st.id='dhFxStyle';
+      st.textContent='#dhFx{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;pointer-events:none;}#dhFx.on{display:flex;}#dhFx .dhfx-card{display:flex;flex-direction:column;align-items:center;gap:14px;animation:dhfxIn .42s cubic-bezier(.18,1.4,.5,1) both;}#dhFx .dhfx-ring{position:relative;width:98px;height:98px;border-radius:50%;background:linear-gradient(160deg,#2DC8A0,#1da587);display:flex;align-items:center;justify-content:center;box-shadow:0 18px 44px rgba(45,200,160,.5);}#dhFx .dhfx-ring::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:3px solid rgba(45,200,160,.55);animation:dhfxPulse .85s ease-out forwards;}#dhFx .dhfx-check{width:54px;height:54px;}#dhFx .dhfx-check path{stroke-dasharray:30;stroke-dashoffset:30;animation:dhfxDraw .42s .16s ease forwards;}#dhFx .dhfx-msg{font-weight:700;color:#fff;font-size:14.5px;text-align:center;max-width:80vw;background:rgba(18,28,48,.82);padding:8px 17px;border-radius:22px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 8px 24px rgba(0,0,0,.25);}@keyframes dhfxIn{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}@keyframes dhfxPulse{0%{transform:scale(.82);opacity:.85}100%{transform:scale(1.55);opacity:0}}@keyframes dhfxDraw{to{stroke-dashoffset:0}}';
+      document.head.appendChild(st);
+    }
+    var fx=document.getElementById('dhFx');
+    if(!fx){ fx=document.createElement('div'); fx.id='dhFx'; document.body.appendChild(fx); }
+    clearTimeout(fx._t);
+    var safe=(msg||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    fx.innerHTML='<div class="dhfx-card"><div class="dhfx-ring"><svg class="dhfx-check" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4 4 9-9" stroke="#fff" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'+(safe?('<div class="dhfx-msg">'+safe+'</div>'):'')+'</div>';
+    fx.classList.add('on');
+    fx._t=setTimeout(function(){ fx.classList.remove('on'); }, 1350);
+    try{ if(navigator.vibrate) navigator.vibrate([18,40,22]); }catch(e){}
+  }catch(e){}
+}
+
 /* Dërgo email mirëseardhjeje (përdoruesit e rinj OAuth) — pa bllokuar UI-në */
 function sendWelcomeEmail(email, name){
   if(!email) return;
@@ -7368,6 +7387,7 @@ async function savePersonalInfo(){
     }catch(e){ console.log('Profile save error:', e.message); }
   }
   showToast('✅ Personal info saved!');
+  try{ dhSuccess(); }catch(e){}
   try{updateMoreProfile();}catch(e){}
   document.getElementById('setEditModal').style.display='none';
 }
@@ -10200,6 +10220,7 @@ async function verifyCryptoPayment(){
       try{ if(LST.currentUser) LST.currentUser.plan='premium'; }catch(e){}
       var okMsg=(L==='sq'?'✅ Pagesa u konfirmua — Premium u aktivizua!':L==='mk'?'✅ Плаќањето е потврдено — Premium е активиран!':'✅ Payment confirmed — Premium activated!');
       _cryptoStatus('ok', okMsg); showToast(okMsg);
+      try{ dhSuccess(okMsg.replace(/^✅\s*/,'')); }catch(e){}
       setTimeout(function(){ var m=document.getElementById('paymentModal'); if(m)m.style.display='none'; _cryptoStatus('info',''); }, 1800);
     } else {
       var msg=(_CRYPTO_ERR[data.code] && _CRYPTO_ERR[data.code][L]) || ('⚠️ '+(data.error||'Verification failed'));
@@ -12176,6 +12197,7 @@ function confirmAddMeal(){
   saveMeal(meal);
   closeNutritionModal(null);
   showToast('✅ '+meal.name+' added! +'+meal.cal+' kcal');
+  try{ dhSuccess(); }catch(e){}
   /* Run risk check + AI suggestion after meal added */
   setTimeout(function(){ foodRiskCheck(meal); }, 600);
   setTimeout(function(){ try{ aiMealSuggestion(meal); }catch(e){} }, 700);
@@ -12208,6 +12230,7 @@ function addManualMeal(){
   saveMeal(meal);
   closeNutritionModal(null);
   showToast('✅ '+meal.name+' added!');
+  try{ dhSuccess(); }catch(e){}
   setTimeout(function(){ foodRiskCheck(meal); }, 600);
   setTimeout(function(){ try{ aiMealSuggestion(meal); }catch(e){} }, 700);
 }
