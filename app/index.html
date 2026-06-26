@@ -1367,6 +1367,74 @@ select option{background:#0A1628;color:#F1F5FF;}
   </div>
 </div>
 
+<!-- ════ ONBOARDING WIZARD (përdoruesit e rinj) ════ -->
+<style>
+#onboarding{display:none;position:fixed;inset:0;z-index:99998;background:linear-gradient(165deg,#1e3a8a 0%,#3b7dd8 100%);font-family:'DM Sans',sans-serif;padding:18px;align-items:center;justify-content:center;}
+#onboarding.show{display:flex;}
+.ob-card{width:100%;max-width:430px;background:#fff;border-radius:26px;padding:22px 20px 20px;box-shadow:0 24px 64px rgba(0,0,0,.32);max-height:94vh;overflow-y:auto;}
+.ob-dots{display:flex;gap:6px;margin-bottom:20px;}
+.ob-dots i{flex:1;height:5px;border-radius:3px;background:#e3eaf3;transition:background .25s;}
+.ob-dots i.on{background:linear-gradient(90deg,#3B7DD8,#8B6FE8);}
+.ob-h{font-size:20px;font-weight:800;color:#1f2c44;margin:0 0 6px;letter-spacing:-.3px;}
+.ob-sub{font-size:13px;color:#6b7a93;line-height:1.55;margin:0 0 18px;}
+.ob-lbl{font-size:10px;font-weight:700;color:#8094b3;text-transform:uppercase;letter-spacing:.5px;margin:0 0 5px;}
+.ob-in,.ob-sel{width:100%;border:1.5px solid #dfe6f0;border-radius:12px;padding:11px 13px;font-size:14px;color:#1f2c44;background:#f6f9fd;font-family:'DM Sans',sans-serif;outline:none;box-sizing:border-box;margin-bottom:12px;}
+.ob-in:focus,.ob-sel:focus{border-color:#3B7DD8;}
+.ob-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.ob-chip{display:inline-flex;align-items:center;gap:6px;background:#eef3fb;color:#1f2c44;font-size:12px;font-weight:600;padding:6px 11px;border-radius:9px;}
+.ob-chip b{cursor:pointer;color:#dc2626;font-weight:800;}
+.ob-row{display:flex;gap:8px;margin-bottom:14px;align-items:flex-start;}
+.ob-addbtn{padding:11px 14px;border-radius:11px;border:none;background:#3B7DD8;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0;}
+.ob-nav{display:flex;gap:10px;margin-top:18px;}
+.ob-back{flex:0 0 auto;padding:13px 18px;border-radius:14px;border:1.5px solid #dfe6f0;background:#fff;color:#6b7a93;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.ob-next{flex:1;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#3B7DD8,#8B6FE8);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.ob-skip{display:block;text-align:center;margin-top:12px;font-size:12px;color:#8094b3;cursor:pointer;}
+</style>
+<div id="onboarding">
+  <div class="ob-card">
+    <div class="ob-dots" id="obDots"><i></i><i></i><i></i><i></i></div>
+    <div class="ob-pane" data-ob="0">
+      <div style="text-align:center;"><div style="width:74px;height:74px;border-radius:22px;background:#f0f5fc;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 6px 18px rgba(70,120,190,.16);"><svg viewBox="0 0 48 48" width="46" height="46" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 6C17 4 9 8 9 16 5 17 4 23 8 26 5 30 9 36 15 35 17 41 23 43 24 40Z" fill="#42A5F5"/><path d="M24 6C31 4 39 8 39 16 43 17 44 23 40 26 43 30 39 36 33 35 31 41 25 43 24 40Z" fill="#FFA726"/><rect x="15" y="16" width="18" height="17" rx="6" fill="#7E57C2"/><text x="24" y="29" font-family="Arial,sans-serif" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">AI</text></svg></div></div>
+      <h2 class="ob-h" style="text-align:center;" data-i18n="ob.welcomeTitle">Welcome to D Health AI</h2>
+      <p class="ob-sub" style="text-align:center;" data-i18n="ob.welcomeSub">Let's personalize your profile in 1 minute so the AI knows you.</p>
+    </div>
+    <div class="ob-pane" data-ob="1" style="display:none;">
+      <h2 class="ob-h" data-i18n="ob.aboutTitle">About you</h2>
+      <p class="ob-sub" data-i18n="ob.aboutSub">This powers your AI verdicts and calorie tracking.</p>
+      <div class="ob-lbl" data-i18n="ep.fullName">Full Name</div>
+      <input id="ob-name" class="ob-in"/>
+      <div class="ob-lbl" data-i18n="ep.gender">Gender</div>
+      <select id="ob-gender" class="ob-sel"><option value="female" data-i18n="ep.female">Female</option><option value="male" data-i18n="ep.male">Male</option><option value="other" data-i18n="ep.other">Other</option></select>
+      <div class="ob-lbl" data-i18n="ep.dob">Date of Birth</div>
+      <input id="ob-dob" type="date" class="ob-in"/>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;"><div class="ob-lbl" data-i18n="ep.height">Height (cm)</div><input id="ob-height" type="number" placeholder="170" class="ob-in"/></div>
+        <div style="flex:1;"><div class="ob-lbl" data-i18n="ep.weight">Weight (kg)</div><input id="ob-weight" type="number" placeholder="70" class="ob-in"/></div>
+      </div>
+    </div>
+    <div class="ob-pane" data-ob="2" style="display:none;">
+      <h2 class="ob-h" data-i18n="ob.healthTitle">Your health</h2>
+      <p class="ob-sub" data-i18n="ob.healthSub">Add your diagnoses and medications — you can add more later.</p>
+      <div class="ob-lbl" data-i18n="ob.diagnoses">Diagnoses</div>
+      <div class="ob-chips" id="ob-diag-tags"></div>
+      <div class="ob-row"><input id="ob-diag-inp" class="ob-in" style="margin-bottom:0;" placeholder="e.g. Hypertension" onkeydown="if(event.key==='Enter'){event.preventDefault();obAddChip('ob-diag-tags','ob-diag-inp');}"/><button class="ob-addbtn" onclick="obAddChip('ob-diag-tags','ob-diag-inp')" data-i18n="dx.add">+ Add</button></div>
+      <div class="ob-lbl" data-i18n="ob.medications">Medications</div>
+      <div class="ob-chips" id="ob-med-tags"></div>
+      <div class="ob-row"><input id="ob-med-inp" class="ob-in" style="margin-bottom:0;" placeholder="e.g. Metformin 500mg" onkeydown="if(event.key==='Enter'){event.preventDefault();obAddChip('ob-med-tags','ob-med-inp');}"/><button class="ob-addbtn" onclick="obAddChip('ob-med-tags','ob-med-inp')" data-i18n="dx.add">+ Add</button></div>
+    </div>
+    <div class="ob-pane" data-ob="3" style="display:none;">
+      <div style="text-align:center;"><div style="width:74px;height:74px;border-radius:50%;background:#e9f9f1;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#2DC8A0"/><path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+      <h2 class="ob-h" style="text-align:center;" data-i18n="ob.doneTitle">All set! 🎉</h2>
+      <p class="ob-sub" style="text-align:center;" data-i18n="ob.doneSub">The AI now knows your profile. Let's go.</p>
+    </div>
+    <div class="ob-nav">
+      <button class="ob-back" id="obBack" onclick="obBack()" style="display:none;" data-i18n="ob.back">Back</button>
+      <button class="ob-next" id="obNext" onclick="obNext()" data-i18n="ob.start">Get started</button>
+    </div>
+    <span class="ob-skip" id="obSkip" onclick="obFinish(true)" style="display:none;" data-i18n="ob.skip">Skip for now</span>
+  </div>
+</div>
+
 <div class="device">
 <div class="notch"></div>
 <div class="toast" id="toast">✅ Updated!</div>
@@ -6212,7 +6280,7 @@ function llaunchApp() {
 /* Consent gate (AI/medical disclaimer) — duhet pranuar pas login-it para se të vazhdojë */
 function lconsentKey(){ var u=(typeof LST!=='undefined'&&LST.currentUser)||{}; return 'dh_consent_v1_'+(u.id||u.email||'guest'); }
 function lmaybeConsent(){
-  try{ if(localStorage.getItem(lconsentKey())==='1') return; }catch(e){}
+  try{ if(localStorage.getItem(lconsentKey())==='1'){ try{obMaybeStart();}catch(e){} return; } }catch(e){}
   var el=document.getElementById('lconsent'); if(!el) return;
   var c=document.getElementById('lconsentChk'); if(c) c.classList.remove('lon');
   var b=document.getElementById('lconsentBtn'); if(b) b.disabled=true;
@@ -6228,6 +6296,69 @@ function lconsentAccept(){
   var c=document.getElementById('lconsentChk'); if(!c||!c.classList.contains('lon')) return;
   try{ localStorage.setItem(lconsentKey(),'1'); }catch(e){}
   document.getElementById('lconsent').style.display='none';
+  try{ obMaybeStart(); }catch(e){}
+}
+
+/* ════ ONBOARDING WIZARD ════ */
+var _obStep=0;
+function obKey(){ var u=(typeof LST!=='undefined'&&LST.currentUser)||{}; return 'dh_onboarded_'+(u.id||u.email||'guest'); }
+function obMaybeStart(){
+  try{ if(localStorage.getItem(obKey())==='1') return; }catch(e){}
+  /* kalo për përdoruesit ekzistues që kanë tashmë të dhëna profili */
+  try{ var p=JSON.parse(localStorage.getItem('dh_profile')||'{}'); if(p.weight||p.height){ localStorage.setItem(obKey(),'1'); return; } }catch(e){}
+  var w=(document.getElementById('setWeight')||{}).value; if(w){ try{localStorage.setItem(obKey(),'1');}catch(e){} return; }
+  obShow();
+}
+function obShow(){
+  _obStep=0; obRender();
+  var el=document.getElementById('onboarding'); if(!el) return;
+  el.classList.add('show');
+  try{ var n=(LST.currentUser&&LST.currentUser.name)||''; var ni=document.getElementById('ob-name'); if(ni&&!ni.value) ni.value=n; }catch(e){}
+  try{ applyLang(DH_LANG); }catch(e){}
+}
+function obRender(){
+  document.querySelectorAll('#onboarding .ob-pane').forEach(function(p){ p.style.display = (parseInt(p.getAttribute('data-ob'),10)===_obStep)?'block':'none'; });
+  document.querySelectorAll('#obDots i').forEach(function(d,i){ d.classList.toggle('on', i<=_obStep); });
+  var bk=document.getElementById('obBack'); if(bk) bk.style.display = (_obStep>0 && _obStep<3)?'block':'none';
+  var sk=document.getElementById('obSkip'); if(sk) sk.style.display = (_obStep===2)?'block':'none';
+  var next=document.getElementById('obNext');
+  if(next){ var k=_obStep===0?'ob.start':_obStep===3?'ob.openApp':'ob.next'; next.setAttribute('data-i18n',k); next.textContent=(typeof dhT==='function')?dhT(k):next.textContent; }
+}
+function obBack(){ if(_obStep>0){ _obStep--; obRender(); } }
+function obNext(){ if(_obStep<3){ _obStep++; obRender(); } else { obFinish(false); } }
+function obAddChip(listId, inpId){
+  var inp=document.getElementById(inpId); var v=inp?inp.value.trim():''; if(!v) return;
+  var list=document.getElementById(listId);
+  if(list && !Array.from(list.children).some(function(c){ return (c.getAttribute('data-v')||'').toLowerCase()===v.toLowerCase(); })){
+    var sp=document.createElement('span'); sp.className='ob-chip'; sp.setAttribute('data-v', v);
+    sp.innerHTML=v+' <b onclick="this.parentElement.remove()">×</b>'; list.appendChild(sp);
+  }
+  if(inp) inp.value='';
+}
+function obFinish(skipped){
+  function gv(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
+  var name=gv('ob-name'), gender=(document.getElementById('ob-gender')||{}).value||'', dob=gv('ob-dob'), height=gv('ob-height'), weight=gv('ob-weight');
+  function sv(id,val){ var e=document.getElementById(id); if(e&&val!=='') e.value=val; }
+  sv('setEditName',name); sv('setEditGender',gender); sv('setEditDob',dob); sv('setHeight',height); sv('setWeight',weight);
+  try{ var p=JSON.parse(localStorage.getItem('dh_profile')||'{}'); if(name)p.name=name; if(gender)p.gender=gender; if(dob)p.dob=dob; if(height)p.height=height; if(weight)p.weight=weight; localStorage.setItem('dh_profile',JSON.stringify(p)); }catch(e){}
+  try{ var sb=getSupa(); if(sb&&LST.currentUser&&LST.currentUser.id){ var upd={}; if(name)upd.full_name=name; if(gender)upd.gender=gender; if(dob)upd.date_of_birth=dob; if(height)upd.height_cm=parseFloat(height); if(weight)upd.weight_kg=parseFloat(weight); if(Object.keys(upd).length) sb.from('profiles').update(upd).eq('id',LST.currentUser.id); } }catch(e){}
+  if(!skipped){
+    Array.from(document.querySelectorAll('#ob-diag-tags .ob-chip')).map(function(c){return c.getAttribute('data-v');}).forEach(function(d){
+      ['ds-diag-tags','prof-diag-tags'].forEach(function(lid){ var w=document.getElementById(lid); if(w&&!Array.from(w.querySelectorAll('.tag2')).some(function(t){return t.textContent.replace('×','').trim().toLowerCase()===d.toLowerCase();})){ var sp=document.createElement('span'); sp.className='tag2 t'; sp.innerHTML=d+' <span class="tx" onclick="this.parentElement.remove()">×</span>'; w.appendChild(sp); } });
+    });
+    Array.from(document.querySelectorAll('#ob-med-tags .ob-chip')).map(function(c){return c.getAttribute('data-v');}).forEach(function(m){
+      var w=document.getElementById('ds-therapy-tags'); if(w&&!Array.from(w.querySelectorAll('.tag2')).some(function(t){return t.textContent.replace('×','').split('·')[0].trim().toLowerCase()===m.toLowerCase();})){ var sp=document.createElement('span'); sp.className='tag2 t'; sp.innerHTML=m+' <span class="tx" onclick="this.parentElement.remove();renderTherapyList()">×</span>'; w.appendChild(sp); }
+    });
+    try{ syncMedicalProfile(); }catch(e){}
+    try{ renderTherapyList(); }catch(e){}
+  }
+  try{ computeBMI(); }catch(e){}
+  try{ updateMoreProfile(); }catch(e){}
+  try{ var hn=document.querySelector('.hname'); if(hn&&name) hn.textContent='Hello, '+name.split(' ')[0]; }catch(e){}
+  try{ localStorage.setItem(obKey(),'1'); }catch(e){}
+  var el=document.getElementById('onboarding'); if(el) el.classList.remove('show');
+  try{ switchScreen('home'); }catch(e){}
+  try{ showToast(dhT('ob.saved')); }catch(e){}
 }
 
 /* Dërgo email mirëseardhjeje (përdoruesit e rinj OAuth) — pa bllokuar UI-në */
@@ -6725,6 +6856,23 @@ var DH_I18N = {
   'ep.changePwd':  {sq:'🔒 Ndrysho fjalëkalimin', mk:'🔒 Промени лозинка', en:'🔒 Change Password'},
   'ep.height':     {sq:'Gjatësia (cm)', mk:'Висина (cm)', en:'Height (cm)'},
   'ep.weight':     {sq:'Pesha (kg)', mk:'Тежина (kg)', en:'Weight (kg)'},
+  /* Onboarding wizard */
+  'ob.welcomeTitle':{sq:'Mirë se erdhe te D Health AI', mk:'Добredojde на D Health AI', en:'Welcome to D Health AI'},
+  'ob.welcomeSub': {sq:'Le ta personalizojmë profilin tënd në 1 minutë — që AI-ja të të njohë.', mk:'Ајде да го персонализираме твојот профил за 1 минута — за AI да те познава.', en:'Let\'s personalize your profile in 1 minute so the AI knows you.'},
+  'ob.aboutTitle': {sq:'Pak për ty', mk:'Малку за тебе', en:'About you'},
+  'ob.aboutSub':   {sq:'Këto ushqejnë verdiktet AI dhe llogaritjen e kalorive.', mk:'Ова ги напојува AI извештаите и пресметката на калории.', en:'This powers your AI verdicts and calorie tracking.'},
+  'ob.healthTitle':{sq:'Shëndeti yt', mk:'Твоето здравје', en:'Your health'},
+  'ob.healthSub':  {sq:'Shto diagnozat dhe medikamentet — mund t\'i shtosh edhe më vonë.', mk:'Додади ги дијагнозите и лековите — можеш и подоцна.', en:'Add your diagnoses and medications — you can add more later.'},
+  'ob.diagnoses':  {sq:'Diagnozat', mk:'Дијагнози', en:'Diagnoses'},
+  'ob.medications':{sq:'Medikamentet', mk:'Лекови', en:'Medications'},
+  'ob.doneTitle':  {sq:'Gati! 🎉', mk:'Готово! 🎉', en:'All set! 🎉'},
+  'ob.doneSub':    {sq:'AI-ja tani njeh profilin tënd. Le t\'ia nisim.', mk:'AI сега го знае твојот профил. Ајде да започнеме.', en:'The AI now knows your profile. Let\'s go.'},
+  'ob.start':      {sq:'Fillo', mk:'Започни', en:'Get started'},
+  'ob.next':       {sq:'Vazhdo', mk:'Продолжи', en:'Continue'},
+  'ob.back':       {sq:'Mbrapa', mk:'Назад', en:'Back'},
+  'ob.openApp':    {sq:'Hap D Health', mk:'Отвори D Health', en:'Open D Health'},
+  'ob.skip':       {sq:'Kalo tani', mk:'Прескокни', en:'Skip for now'},
+  'ob.saved':      {sq:'✅ Profili u ruajt — mirë se erdhe!', mk:'✅ Профилот е зачуван — добредојде!', en:'✅ Profile saved — welcome!'},
   'ep.bmiAuto':    {sq:'BMI (automatik)', mk:'BMI (автоматски)', en:'BMI (automatic)'},
   'ep.bmiHint':    {sq:'Fut gjatësinë dhe peshën', mk:'Внеси висина и тежина', en:'Enter height and weight'},
   'ep.bloodType':  {sq:'Grupi i gjakut', mk:'Крвна група', en:'Blood Type'},
