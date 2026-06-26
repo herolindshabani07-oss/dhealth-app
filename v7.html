@@ -4380,6 +4380,51 @@ async function callClaude(systemExtra, userMsg, onSuccess, onError, loadingEl, r
 function fmt(t){return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');}
 
 /* ════ HELPER I VETËM PËR PANELET AI (kontekst i thellë getProfile, pa dyfishim) ════ */
+/* ════ STREAMING i AI-së: merr tekstin token-pas-token nga /claude (stream:true).
+   onText(full) thirret ndërsa teksti rritet. Nëse streaming-u dështon për çfarëdo arsye,
+   bie automatikisht te thirrja normale jo-stream — pra s'prishet kurrë. ════ */
+async function streamClaudeText(body, onText){
+  try{
+    var sbody = {}; for(var k in body){ sbody[k]=body[k]; } sbody.stream = true;
+    var r = await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sbody)});
+    if(!r.ok || !r.body || typeof r.body.getReader!=='function'){ throw new Error('no-stream '+(r&&r.status)); }
+    var reader=r.body.getReader(), dec=new TextDecoder(), full='', first=true;
+    while(true){
+      var res=await reader.read();
+      if(res.done) break;
+      var chunk=dec.decode(res.value,{stream:true});
+      if(first){
+        first=false;
+        var t=(chunk||'').replace(/^﻿/,'').trimStart();
+        /* Serveri ktheu JSON (gabim ose fallback) në vend të stream-it të tekstit → lexo gjithçka e parse-o */
+        if(t.charAt(0)==='{' || t.charAt(0)==='<'){
+          var rest=chunk; while(true){ var rr=await reader.read(); if(rr.done) break; rest+=dec.decode(rr.value,{stream:true}); }
+          if(rest.trim().charAt(0)==='<') throw new Error('AI unavailable');
+          var dj=JSON.parse(rest); if(dj.error) throw new Error(dj.error.message||'error');
+          var jt=dj.content&&dj.content[0]&&dj.content[0].text; if(!jt) throw new Error('Empty');
+          if(onText) onText(jt); return jt;
+        }
+      }
+      full+=chunk;
+      if(onText) onText(full);
+    }
+    if(!full) throw new Error('empty stream');
+    return full;
+  }catch(streamErr){
+    /* FALLBACK: thirrje normale jo-stream */
+    var r2=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    var raw=await r2.text(); if(raw.trim().charAt(0)==='<') throw new Error('AI unavailable');
+    var d=JSON.parse(raw); if(d.error) throw new Error(d.error.message||'error');
+    var tx=d.content&&d.content[0]&&d.content[0].text; if(!tx) throw new Error('Empty');
+    if(onText) onText(tx);
+    return tx;
+  }
+}
+/* Render i kursyer (throttle) për fmt() gjatë stream-it — shmang qindra rifreskime */
+function _streamRenderer(el){
+  var last=0, latest='';
+  return { on:function(full){ latest=full; var now=Date.now(); if(now-last>70){ last=now; el.innerHTML=fmt(full); } }, flush:function(){ el.innerHTML=fmt(latest); } };
+}
 async function aiPanel(opts){
   var btn  = (typeof opts.btn==='string') ? document.getElementById(opts.btn) : opts.btn;
   var resp = opts.resp ? document.getElementById(opts.resp) : null;
@@ -4397,12 +4442,9 @@ async function aiPanel(opts){
   if(err) err.classList.remove('vis');
   text.innerHTML='<div class="dh-skel-wrap"><div class="dh-skel" style="width:72%"></div><div class="dh-skel"></div><div class="dh-skel" style="width:90%"></div><div class="dh-skel" style="width:58%"></div></div>';
   try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:opts.maxTokens||900,system:BASE_SYS+getProfile(),messages:[{role:'user',content:opts.prompt}]})});
-    var rawT=await r.text(); if(rawT.trim().startsWith('<')) throw new Error('AI unavailable');
-    var d=JSON.parse(rawT); if(d.error) throw new Error(d.error.message);
-    var tx=d.content&&d.content[0]&&d.content[0].text; if(!tx) throw new Error('Empty');
-    text.innerHTML=fmt(tx);
+    var _rnd=_streamRenderer(text);
+    await streamClaudeText({model:'claude-sonnet-4-5',max_tokens:opts.maxTokens||900,system:BASE_SYS+getProfile(),messages:[{role:'user',content:opts.prompt}]}, _rnd.on);
+    _rnd.flush();
   }catch(e){
     if(err){ if(resp){ resp.style.display='none'; if(resp.classList) resp.classList.remove('vis'); } err.classList.add('vis'); }
     else text.innerHTML='❌ Connection error. Provo përsëri.';
@@ -4420,10 +4462,10 @@ async function runVerdictAI(){
   err.classList.remove('vis');resp.style.display='block';
   text.innerHTML='<div class="dh-skel-wrap"><div class="dh-skel" style="width:72%"></div><div class="dh-skel"></div><div class="dh-skel" style="width:90%"></div><div class="dh-skel" style="width:58%"></div></div>';
   try{
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1100,system:BASE_SYS+getProfile(),messages:[{role:'user',content:(vitalsState.sys>0 ? 'Provide a COMPREHENSIVE, DETAILED health verdict — a full report, NOT a brief summary (ignore any brevity limit in the instructions). Use clear **bold** section headers and bullet points. Cover: 1) HEALTH SCORE /100 with the reasoning behind it; 2) Overall status; 3) Detailed analysis of EACH vital sign (what it means for me, the trend, and the risk); 4) How EACH of my diagnoses is affected by my vitals and nutrition today; 5) Therapy effectiveness review for EACH medication; 6) 5-7 prioritized recommendations, each with a short reason why.' : 'Patient has not recorded vitals yet. Provide: 1) Welcome message, 2) What vitals to track and why, 3) General health advice based on their diagnoses and therapy, 4) Encourage them to start tracking. Keep it warm and motivating.')}]})});
-    var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);if(d.error)throw new Error();
-    var tx=d.content&&d.content[0]&&d.content[0].text;if(!tx)throw new Error();
-    text.innerHTML=fmt(tx);
+    var _vprompt=(vitalsState.sys>0 ? 'Provide a COMPREHENSIVE, DETAILED health verdict — a full report, NOT a brief summary (ignore any brevity limit in the instructions). Use clear **bold** section headers and bullet points. Cover: 1) HEALTH SCORE /100 with the reasoning behind it; 2) Overall status; 3) Detailed analysis of EACH vital sign (what it means for me, the trend, and the risk); 4) How EACH of my diagnoses is affected by my vitals and nutrition today; 5) Therapy effectiveness review for EACH medication; 6) 5-7 prioritized recommendations, each with a short reason why.' : 'Patient has not recorded vitals yet. Provide: 1) Welcome message, 2) What vitals to track and why, 3) General health advice based on their diagnoses and therapy, 4) Encourage them to start tracking. Keep it warm and motivating.');
+    var _vrnd=_streamRenderer(text);
+    await streamClaudeText({model:'claude-sonnet-4-5',max_tokens:1100,system:BASE_SYS+getProfile(),messages:[{role:'user',content:_vprompt}]}, _vrnd.on);
+    _vrnd.flush();
   }catch(e){resp.style.display='none';err.classList.add('vis');}
   btn.disabled=false;btn.innerHTML=dhT('dx.reAnalyze');
 }
@@ -6155,7 +6197,7 @@ function getSupa(){
     if(_isClaude && typeof AbortController!=='undefined' && opts && !opts.signal){
       try{
         var _ctrl=new AbortController(); opts.signal=_ctrl.signal;
-        var _to=setTimeout(function(){ try{_ctrl.abort();}catch(e){} }, 30000);
+        var _to=setTimeout(function(){ try{_ctrl.abort();}catch(e){} }, 45000);
         var _p=_origFetch(url, opts);
         _p.then(function(){clearTimeout(_to);}, function(){clearTimeout(_to);});
         return _p;
