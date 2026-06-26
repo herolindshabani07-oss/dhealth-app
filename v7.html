@@ -4387,25 +4387,21 @@ async function streamClaudeText(body, onText){
   try{
     var sbody = {}; for(var k in body){ sbody[k]=body[k]; } sbody.stream = true;
     var r = await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sbody)});
-    if(!r.ok || !r.body || typeof r.body.getReader!=='function'){ throw new Error('no-stream '+(r&&r.status)); }
-    var reader=r.body.getReader(), dec=new TextDecoder(), full='', first=true;
+    var ct = (r.headers.get('content-type')||'').toLowerCase();
+    /* Dallo me Content-Type (jo me sniffing) — teksti i streamuar mund të jetë vetë JSON (p.sh. Correlation Engine).
+       Nëse serveri s'streamoi (gabim ose jo-stream) kthen application/json → parse-o si mesazh i plotë. */
+    if(ct.indexOf('text/plain')===-1 || !r.body || typeof r.body.getReader!=='function'){
+      var raw0 = await r.text();
+      if(!r.ok || raw0.trim().charAt(0)==='<') throw new Error('AI unavailable ('+(r&&r.status)+')');
+      var dj = JSON.parse(raw0); if(dj.error) throw new Error(dj.error.message||'error');
+      var jt = dj.content&&dj.content[0]&&dj.content[0].text; if(jt==null) throw new Error('Empty');
+      if(onText) onText(jt); return jt;
+    }
+    var reader=r.body.getReader(), dec=new TextDecoder(), full='';
     while(true){
       var res=await reader.read();
       if(res.done) break;
-      var chunk=dec.decode(res.value,{stream:true});
-      if(first){
-        first=false;
-        var t=(chunk||'').replace(/^﻿/,'').trimStart();
-        /* Serveri ktheu JSON (gabim ose fallback) në vend të stream-it të tekstit → lexo gjithçka e parse-o */
-        if(t.charAt(0)==='{' || t.charAt(0)==='<'){
-          var rest=chunk; while(true){ var rr=await reader.read(); if(rr.done) break; rest+=dec.decode(rr.value,{stream:true}); }
-          if(rest.trim().charAt(0)==='<') throw new Error('AI unavailable');
-          var dj=JSON.parse(rest); if(dj.error) throw new Error(dj.error.message||'error');
-          var jt=dj.content&&dj.content[0]&&dj.content[0].text; if(!jt) throw new Error('Empty');
-          if(onText) onText(jt); return jt;
-        }
-      }
-      full+=chunk;
+      full += dec.decode(res.value,{stream:true});
       if(onText) onText(full);
     }
     if(!full) throw new Error('empty stream');
@@ -4413,9 +4409,9 @@ async function streamClaudeText(body, onText){
   }catch(streamErr){
     /* FALLBACK: thirrje normale jo-stream */
     var r2=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    var raw=await r2.text(); if(raw.trim().charAt(0)==='<') throw new Error('AI unavailable');
+    var raw=await r2.text(); if(!r2.ok || raw.trim().charAt(0)==='<') throw new Error('AI unavailable ('+(r2&&r2.status)+')');
     var d=JSON.parse(raw); if(d.error) throw new Error(d.error.message||'error');
-    var tx=d.content&&d.content[0]&&d.content[0].text; if(!tx) throw new Error('Empty');
+    var tx=d.content&&d.content[0]&&d.content[0].text; if(tx==null) throw new Error('Empty');
     if(onText) onText(tx);
     return tx;
   }
@@ -10549,22 +10545,14 @@ async function runCorrelationEngine(){
   + '"doctor_summary":"Brief summary for Dr. Shabani"}';
 
   try{
-    var r = await fetch('/.netlify/functions/claude',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-5',
-        max_tokens:1000,
-        system:'You are the D Health Correlation Engine. Respond ONLY with the requested JSON.',
-        messages:[{role:'user',content:prompt}]
-      })
+    /* Streaming → s'e kap kurrë limitin 10s (që shkaktonte 504 → fallback lokal i shkurtër) */
+    var txt = await streamClaudeText({
+      model:'claude-sonnet-4-5',
+      max_tokens:1000,
+      system:'You are the D Health Correlation Engine. Respond ONLY with the requested JSON.',
+      messages:[{role:'user',content:prompt}]
     });
-    var rawCE = await r.text();
-    if(rawCE.trim().startsWith('<')) throw new Error('AI server unavailable — provo përsëri pas pak.');
-    var resp = JSON.parse(rawCE);
-    if(resp.error){ throw new Error(resp.error.message); }
-    var txt = resp.content&&resp.content[0]&&resp.content[0].text||'{}';
-    txt = txt.replace(/```json|```/g,'').trim();
+    txt = (txt||'{}').replace(/```json|```/g,'').trim();
     var result = tryParseJSONLoose(txt);
     if(!result){
       /* AI nuk ktheu JSON të vlefshëm — fallback i pastër (KURRË JSON i papërpunuar te UI) */
@@ -12830,18 +12818,10 @@ function renderVIE(res){
 
 /* ════ CLAUDE FETCH HELPER — handles errors properly ════ */
 async function claudeFetch(body){
-  var r = await fetch('/.netlify/functions/claude',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(body)
-  });
-  var raw = await r.text();
-  if(!r.ok || raw.trim().startsWith('<')){
-    throw new Error('AI service unavailable ('+r.status+'). Please try again.');
-  }
-  var d = JSON.parse(raw);
-  if(d.error) throw new Error(d.error.message);
-  return d;
+  /* Përdor streaming → raporti i gjatë s'e kap kurrë limitin 10s të serverit (që shkaktonte 504 → fallback lokal).
+     Kthen të NJËJTËN formë si më parë, pra thirrësit s'ndryshojnë. streamClaudeText ka fallback automatik jo-stream. */
+  var full = await streamClaudeText(body);
+  return { content:[{ type:'text', text: full }] };
 }
 
 
