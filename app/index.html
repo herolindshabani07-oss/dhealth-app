@@ -6512,6 +6512,28 @@ var DH_I18N = {
   'dx.pEcgAnalysis':   {sq:'🫀 Analizë ECG', mk:'🫀 ЕКГ анализа', en:'🫀 ECG Analysis'},
   'dx.ecgNote':        {sq:'Ngarko ECG nga smartwatch ose ring — D Health AI analizon dhe krahason me historikun (1 ECG / 24h)', mk:'Прикачи ЕКГ од паметен часовник или прстен — D Health AI анализира и споредува со историјата (1 ЕКГ / 24ч)', en:'Upload ECG from your smartwatch or ring — D Health AI analyzes and compares with your history (1 ECG / 24h)'},
   'dx.noEcgYet':       {sq:'Asnjë ECG i analizuar ende — ngarko një ECG më lart.', mk:'Сè уште нема анализирано ЕКГ — прикачи едно погоре.', en:'No ECG analyzed yet — upload one above.'},
+  /* Meal Risk / compensation card */
+  'mr.title':      {sq:'⚠️ Rreziku i vaktit — ', mk:'⚠️ Ризик од оброк — ', en:'⚠️ Meal Risk — '},
+  'mr.pts':        {sq:'pikë', mk:'поени', en:'pts'},
+  'mr.compensate': {sq:'Kompenso me aktivitet', mk:'Компензирај со активност', en:'Compensate with activity'},
+  'mr.walking':    {sq:'Ecje', mk:'Одење', en:'Walking'},
+  'mr.cycling':    {sq:'Çiklizëm', mk:'Велосипед', en:'Cycling'},
+  'mr.running':    {sq:'Vrapim', mk:'Трчање', en:'Running'},
+  'mr.swimming':   {sq:'Not', mk:'Пливање', en:'Swimming'},
+  'mr.helpBP':     {sq:'Ky aktivitet ndihmon të normalizosh BP-në dhe glukozën', mk:'Оваа активност помага да се нормализира притисокот и гликозата', en:'This activity will help normalize your BP and glucose levels'},
+  'mr.offset':     {sq:'Kryeje këtë aktivitet për të kompensuar ndikimin e vaktit', mk:'Заврши ја оваа активност за да го компензираш ефектот на оброкот', en:'Complete this activity to offset the meal impact'},
+  'mr.gotIt':      {sq:'E mora — do kompensoj ✓', mk:'Разбрав — ќе компензирам ✓', en:'Got it — I will compensate ✓'},
+  'mr.alertFat':   {sq:'Yndyra {v}g (limit {l}g për {w})', mk:'Маснотии {v}g (лимит {l}g за {w})', en:'Fat {v}g (limit {l}g for your {w})'},
+  'mr.alertSodium':{sq:'Natriumi {v}mg (limit {l}mg — ngre BP brenda 2h)', mk:'Натриум {v}mg (лимит {l}mg — го крева притисокот за 2ч)', en:'Sodium {v}mg (limit {l}mg — raises BP within 2h)'},
+  'mr.alertSugar': {sq:'Sheqeri {v}g (limit {l}g për {w})', mk:'Шеќер {v}g (лимит {l}g за {w})', en:'Sugar {v}g (limit {l}g for your {w})'},
+  'mr.alertCal':   {sq:'{v} kcal — {e} kcal mbi rekomandimin për vakt', mk:'{v} kcal — {e} kcal над препораката по оброк', en:'{v} kcal — {e} kcal above recommended per meal'},
+  'mr.wHTA':       {sq:'HTA-në', mk:'ХТА', en:'HTA'},
+  'mr.wChol':      {sq:'kolesterolin', mk:'холестеролот', en:'cholesterol'},
+  'mr.wProfile':   {sq:'profilin', mk:'профилот', en:'profile'},
+  'mr.wDiabetes':  {sq:'diabetin', mk:'дијабетесот', en:'diabetes'},
+  'mr.worsen':     {sq:'KEQËSON gjendjen', mk:'ЈА ВЛОШУВА состојбата', en:'WORSENS your condition'},
+  'mr.improve':    {sq:'PËRMIRËSON gjendjen', mk:'ЈА ПОДОБРУВА состојбата', en:'IMPROVES your condition'},
+  'mr.neutral':    {sq:'NEUTRAL', mk:'НЕУТРАЛНО', en:'NEUTRAL'},
   'dx.ecgUpload':      {sq:'Ngarko & Analizo ECG', mk:'Прикачи и анализирај ЕКГ', en:'Upload & Analyze ECG'},
   'dx.ecgResultHdr':   {sq:'🤖 D Health AI — Analizë ECG', mk:'🤖 D Health AI — ЕКГ анализа', en:'🤖 D Health AI — ECG Analysis'},
   'dx.pEcgHistory':    {sq:'📋 Historiku i ECG', mk:'📋 Историја на ЕКГ', en:'📋 ECG History'},
@@ -11910,10 +11932,10 @@ function showMealResult(){
   var hi = currentMealAnalysis.health_impact;
   if(hiEl && hi && hi.summary){
     var cfg = {
-      worsen:  {bg:'rgba(220,38,38,0.10)',  bd:'rgba(220,38,38,0.30)',  c:'#B91C1C', ico:'🔻', lbl:'KEQËSON gjendjen'},
-      improve: {bg:'rgba(34,197,94,0.10)',  bd:'rgba(34,197,94,0.30)',  c:'#15803D', ico:'🔺', lbl:'PËRMIRËSON gjendjen'},
-      neutral: {bg:'rgba(245,158,11,0.10)', bd:'rgba(245,158,11,0.30)', c:'#B45309', ico:'➖', lbl:'NEUTRAL'}
-    }[(hi.level||'neutral')] || {bg:'rgba(245,158,11,0.10)',bd:'rgba(245,158,11,0.30)',c:'#B45309',ico:'➖',lbl:'NEUTRAL'};
+      worsen:  {bg:'rgba(220,38,38,0.10)',  bd:'rgba(220,38,38,0.30)',  c:'#B91C1C', ico:'🔻', lbl:dhT('mr.worsen')},
+      improve: {bg:'rgba(34,197,94,0.10)',  bd:'rgba(34,197,94,0.30)',  c:'#15803D', ico:'🔺', lbl:dhT('mr.improve')},
+      neutral: {bg:'rgba(245,158,11,0.10)', bd:'rgba(245,158,11,0.30)', c:'#B45309', ico:'➖', lbl:dhT('mr.neutral')}
+    }[(hi.level||'neutral')] || {bg:'rgba(245,158,11,0.10)',bd:'rgba(245,158,11,0.30)',c:'#B45309',ico:'➖',lbl:dhT('mr.neutral')};
     var tips = (hi.tips&&hi.tips.length)
       ? '<div style="margin-top:7px;font-size:11px;color:#5d7290;line-height:1.6;">'
         + hi.tips.map(function(t){return '• '+t;}).join('<br>')+'</div>'
@@ -12066,25 +12088,25 @@ function foodRiskCheck(meal){
   /* Kryqëzim vlera → diagnoza */
   if(meal.fat > fatLimit){
     var excess = meal.fat - fatLimit;
-    alerts.push({ icon:'🫀', color:'#FEF2F2', txt:'Fat '+meal.fat+'g (limit '+fatLimit+'g for your '+( hasHTA?'HTA':hasKolest?'cholesterol':'profile')+')' });
+    alerts.push({ icon:'🫀', color:'#FEF2F2', txt:dhT('mr.alertFat').replace('{v}',meal.fat).replace('{l}',fatLimit).replace('{w}', hasHTA?dhT('mr.wHTA'):hasKolest?dhT('mr.wChol'):dhT('mr.wProfile')) });
     scoreImpact -= Math.round(excess * 0.4);
     walkMins += Math.round(excess * 3);
   }
   if(meal.sodium > sodiumLimit){
     var excess = meal.sodium - sodiumLimit;
-    alerts.push({ icon:'🧂', color:'#FFF8EC', txt:'Sodium '+meal.sodium+'mg (limit '+sodiumLimit+'mg — raises BP within 2h)' });
+    alerts.push({ icon:'🧂', color:'#FFF8EC', txt:dhT('mr.alertSodium').replace('{v}',meal.sodium).replace('{l}',sodiumLimit) });
     scoreImpact -= Math.round(excess * 0.008);
     walkMins += Math.round(excess * 0.05);
   }
   if(meal.sugar > sugarLimit){
     var excess = meal.sugar - sugarLimit;
-    alerts.push({ icon:'🍬', color:'#FFF8EC', txt:'Sugar '+meal.sugar+'g (limit '+sugarLimit+'g for your '+(hasDiabet?'diabetes':'profile')+')' });
+    alerts.push({ icon:'🍬', color:'#FFF8EC', txt:dhT('mr.alertSugar').replace('{v}',meal.sugar).replace('{l}',sugarLimit).replace('{w}', hasDiabet?dhT('mr.wDiabetes'):dhT('mr.wProfile')) });
     scoreImpact -= Math.round(excess * 0.5);
     walkMins += Math.round(excess * 4);
   }
   if(meal.cal > calLimit){
     var excess = meal.cal - calLimit;
-    alerts.push({ icon:'🔥', color:'#FEF2F2', txt:''+meal.cal+' kcal — '+excess+' kcal above recommended per meal' });
+    alerts.push({ icon:'🔥', color:'#FEF2F2', txt:dhT('mr.alertCal').replace('{v}',meal.cal).replace('{e}',excess) });
     scoreImpact -= Math.round(excess * 0.015);
     walkMins += Math.round(excess * 0.12);
   }
@@ -12144,23 +12166,23 @@ function showCompensationCard(meal, alerts, scoreImpact, walkMins){
   }).join('');
 
   card.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
-    +'<div style="font-size:13px;font-weight:700;color:#fff;">⚠️ Meal Risk — '+meal.name+'</div>'
-    +'<div style="background:rgba(239,68,68,0.3);border-radius:8px;padding:2px 9px;font-size:11px;font-weight:700;color:#FCA5A5;">'+scoreImpact+' pts</div>'
+    +'<div style="font-size:13px;font-weight:700;color:#fff;">'+dhT('mr.title')+meal.name+'</div>'
+    +'<div style="background:rgba(239,68,68,0.3);border-radius:8px;padding:2px 9px;font-size:11px;font-weight:700;color:#FCA5A5;">'+scoreImpact+' '+dhT('mr.pts')+'</div>'
     +'</div>'
     + alertsHtml
-    +'<div style="margin-top:12px;margin-bottom:8px;font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;">Compensate with activity</div>'
+    +'<div style="margin-top:12px;margin-bottom:8px;font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;">'+dhT('mr.compensate')+'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">'
     +'<div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px;text-align:center;">'
-    +'<div style="font-size:20px;">🚶</div><div style="font-size:16px;font-weight:700;color:#fff;">'+walkMins+' min</div><div style="font-size:10px;color:rgba(255,255,255,0.6);">Walking</div></div>'
+    +'<div style="font-size:20px;">🚶</div><div style="font-size:16px;font-weight:700;color:#fff;">'+walkMins+' min</div><div style="font-size:10px;color:rgba(255,255,255,0.6);">'+dhT('mr.walking')+'</div></div>'
     +'<div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px;text-align:center;">'
-    +'<div style="font-size:20px;">🚴</div><div style="font-size:16px;font-weight:700;color:#fff;">'+bikeMins+' min</div><div style="font-size:10px;color:rgba(255,255,255,0.6);">Cycling</div></div>'
+    +'<div style="font-size:20px;">🚴</div><div style="font-size:16px;font-weight:700;color:#fff;">'+bikeMins+' min</div><div style="font-size:10px;color:rgba(255,255,255,0.6);">'+dhT('mr.cycling')+'</div></div>'
     +'<div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px;text-align:center;">'
-    +'<div style="font-size:20px;">🏃</div><div style="font-size:16px;font-weight:700;color:#fff;">'+runMins+' min</div><div style="font-size:10px;color:rgba(255,255,255,0.6);">Running</div></div>'
+    +'<div style="font-size:20px;">🏃</div><div style="font-size:16px;font-weight:700;color:#fff;">'+runMins+' min</div><div style="font-size:10px;color:rgba(255,255,255,0.6);">'+dhT('mr.running')+'</div></div>'
     +'<div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px;text-align:center;">'
-    +'<div style="font-size:20px;">🏊</div><div style="font-size:16px;font-weight:700;color:#fff;">'+swimMins+' min</div><div style="font-size:10px;color:rgba(255,255,255,0.6);">Swimming</div></div>'
+    +'<div style="font-size:20px;">🏊</div><div style="font-size:16px;font-weight:700;color:#fff;">'+swimMins+' min</div><div style="font-size:10px;color:rgba(255,255,255,0.6);">'+dhT('mr.swimming')+'</div></div>'
     +'</div>'
-    +'<div style="font-size:11px;color:rgba(255,255,255,0.5);text-align:center;margin-bottom:10px;">'+(hasImpactOnBP(alerts)?'This activity will help normalize your BP and glucose levels':'Complete this activity to offset the meal impact')+'</div>'
-    +'<button onclick="this.closest(\'#compensationCard\').remove()" style="width:100%;padding:8px;border-radius:12px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.6);font-size:12px;cursor:pointer;font-family:var(--font);">Got it — I will compensate ✓</button>';
+    +'<div style="font-size:11px;color:rgba(255,255,255,0.5);text-align:center;margin-bottom:10px;">'+(hasImpactOnBP(alerts)?dhT('mr.helpBP'):dhT('mr.offset'))+'</div>'
+    +'<button onclick="this.closest(\'#compensationCard\').remove()" style="width:100%;padding:8px;border-radius:12px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.6);font-size:12px;cursor:pointer;font-family:var(--font);">'+dhT('mr.gotIt')+'</button>';
 
   /* Shto pas listës së vakteve */
   var nutrList = document.getElementById('nutrMealsList');
