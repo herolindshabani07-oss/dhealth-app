@@ -1912,7 +1912,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
     </div>
     <div class="tabs">
       <button class="tab active" id="tab-ai" onclick="switchTab('ai')">🩺 AI Doctor</button>
-      <button class="tab" id="tab-bot" onclick="switchTab('bot')">🔒 Dr. Shabani</button>
+      <button class="tab" id="tab-bot" onclick="gatedAction('private')">🔒 Dr. Shabani</button>
     </div>
   </div>
 
@@ -3064,6 +3064,19 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 <!-- ══════════ PRIVATE ══════════ -->
 
 <div class="screen" id="screen-private" style="background:linear-gradient(180deg,#0A1628 0%,#0D2144 40%,#0A1628 100%);">
+  <!-- Mbulesa e KYÇJES — chat-i hapet vetëm gjatë terminit të konfirmuar -->
+  <div id="drLockOverlay" style="display:none;position:absolute;inset:0;z-index:40;background:linear-gradient(180deg,#0A1628 0%,#0D2144 45%,#0A1628 100%);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:34px 28px;">
+    <button onclick="switchScreen('more')" aria-label="Kthehu" style="position:absolute;top:16px;left:14px;width:40px;height:40px;border-radius:12px;border:none;background:rgba(255,255,255,0.1);color:#fff;font-size:20px;cursor:pointer;">&#8249;</button>
+    <div style="position:relative;margin-bottom:20px;">
+      <div style="width:94px;height:94px;border-radius:50%;background:rgba(255,255,255,0.08);border:2px solid rgba(139,111,232,0.4);display:flex;align-items:center;justify-content:center;font-size:44px;">&#128104;&#8205;&#9877;&#65039;</div>
+      <div style="position:absolute;bottom:-2px;right:-2px;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);display:flex;align-items:center;justify-content:center;font-size:17px;border:3px solid #0A1628;">&#128274;</div>
+    </div>
+    <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;">Dr. Herolind Shabani</div>
+    <div id="drLockTitle" style="font-size:15px;font-weight:700;color:#A78BFA;margin-bottom:11px;"></div>
+    <div id="drLockMsg" style="font-size:13px;color:rgba(255,255,255,0.62);line-height:1.65;max-width:300px;margin-bottom:14px;"></div>
+    <div id="drLockCountdown" style="display:none;font-size:13px;font-weight:700;color:#fff;background:rgba(139,111,232,0.18);border:1px solid rgba(139,111,232,0.35);padding:9px 16px;border-radius:12px;margin-bottom:20px;"></div>
+    <button id="drLockCta" onclick="openBkModal()" style="padding:14px 28px;border-radius:15px;border:none;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);box-shadow:0 12px 28px rgba(120,90,200,0.42);">&#128197; Rezervo takim</button>
+  </div>
   <div class="dr-status-bar">
     <span class="dr-status-time">9:41</span>
     <div class="dr-enc-badge">&#128274; End-to-End Encrypted</div>
@@ -4106,12 +4119,103 @@ function switchBS(s){
   if(target){ target.classList.add('active'); }
   if(tb){ tb.classList.add('active'); }
 }
-function openPriv(){
+/* ════ DR. SHABANI — chat i hapur VETËM gjatë terminit të KONFIRMUAR (10 min para → 30 min pas) ════ */
+var DOC_CHAT = { graceBefore: 10*60*1000, duration: 30*60*1000 };
+function _aptStartMs(a){
+  try{
+    if(!a || !a.appointment_date) return NaN;
+    var d = String(a.appointment_date).split('-').map(Number);   /* YYYY-MM-DD */
+    var t = String(a.appointment_time||'00:00').split(':').map(Number);
+    return new Date(d[0], (d[1]||1)-1, d[2]||1, t[0]||0, t[1]||0, 0).getTime();
+  }catch(e){ return NaN; }
+}
+function _fmtApt(a){
+  try{ var dd=new Date(_aptStartMs(a)); return dd.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' · '+(a.appointment_time||''); }catch(e){ return ''; }
+}
+async function getDocChatGate(){
+  try{
+    var sb=getSupa();
+    if(!sb || !LST || !LST.currentUser) return {open:false, code:'nobook'};
+    var q = sb.from('appointments').select('*');
+    if(LST.currentUser.email) q=q.eq('patient_email', LST.currentUser.email);
+    else if(LST.currentUser.id) q=q.eq('patient_id', LST.currentUser.id);
+    else return {open:false, code:'nobook'};
+    var res = await q;
+    var data = res && res.data;
+    if(!data || !data.length) return {open:false, code:'nobook'};
+    var now=Date.now(), current=null, nextUp=null, pending=false;
+    data.forEach(function(a){
+      var start=_aptStartMs(a); if(isNaN(start)) return;
+      var st=String(a.status||'').toLowerCase();
+      if(st==='pending') pending=true;
+      if(st==='confirmed'){
+        var from=start-DOC_CHAT.graceBefore, to=start+DOC_CHAT.duration;
+        if(now>=from && now<=to){ if(!current || start>_aptStartMs(current)) current=a; }
+        else if(start>now){ if(!nextUp || start<_aptStartMs(nextUp)) nextUp=a; }
+      }
+    });
+    if(current) return {open:true,  code:'open',    apt:current};
+    if(nextUp)  return {open:false, code:'early',   apt:nextUp};
+    if(pending) return {open:false, code:'pending'};
+    return {open:false, code:'nobook'};
+  }catch(e){ return {open:false, code:'nobook'}; }
+}
+var _drCountdownTimer=null;
+function applyDocChatGate(gate){
+  var ov=document.getElementById('drLockOverlay');
+  if(!ov) return;
+  var titleEl=document.getElementById('drLockTitle'), msgEl=document.getElementById('drLockMsg'),
+      cdEl=document.getElementById('drLockCountdown'), cta=document.getElementById('drLockCta');
+  if(_drCountdownTimer){ clearInterval(_drCountdownTimer); _drCountdownTimer=null; }
+  if(gate.open){ ov.style.display='none'; return; }
+  ov.style.display='flex';
+  if(cdEl) cdEl.style.display='none';
+  if(gate.code==='nobook'){
+    titleEl.textContent='Konsultë private';
+    msgEl.innerHTML='Bisedo me Dr. Shabani gjatë terminit tënd. Rezervo një takim për të nisur konsultimin.';
+    cta.style.display=''; cta.innerHTML='&#128197; Rezervo takim'; cta.setAttribute('onclick','openBkModal()');
+  } else if(gate.code==='pending'){
+    titleEl.textContent='Duke pritur konfirmimin';
+    msgEl.innerHTML='Takimi yt po pret konfirmimin nga Dr. Shabani.<br>Chat-i hapet gjatë terminit, pasi të konfirmohet.';
+    cta.style.display=''; cta.innerHTML='&#128197; Shiko / rezervo'; cta.setAttribute('onclick','openBkModal()');
+  } else if(gate.code==='early'){
+    titleEl.textContent='Chat-i hapet gjatë terminit';
+    msgEl.innerHTML='Konsultimi yt me Dr. Shabani është më<br><strong style="color:#fff;">'+_fmtApt(gate.apt)+'</strong>.<br>Do të njoftohesh kur të hapet.';
+    if(cdEl){ cdEl.style.display='block'; }
+    cta.style.display='none';
+    var tick=function(){
+      var ms=_aptStartMs(gate.apt)-DOC_CHAT.graceBefore-Date.now();
+      if(ms<=0){ if(cdEl) cdEl.textContent='Po hapet...'; if(_drCountdownTimer){clearInterval(_drCountdownTimer);_drCountdownTimer=null;} setTimeout(function(){ openPriv(); }, 1500); return; }
+      var dys=Math.floor(ms/86400000), h=Math.floor((ms%86400000)/3600000), m=Math.floor((ms%3600000)/60000);
+      if(cdEl) cdEl.textContent = dys>0 ? ('Hapet pas '+dys+' ditë '+h+'h') : (h>0 ? ('Hapet pas '+h+'h '+m+'min') : ('Hapet pas '+(m+1)+' min'));
+    };
+    tick(); _drCountdownTimer=setInterval(tick, 30000);
+  }
+}
+async function openPriv(){
   closeDrop();
   switchScreen('private');
   if(drPollInterval){ clearInterval(drPollInterval); drPollInterval=null; }
-  setTimeout(initDrShabaniChat, 100);
+  /* shfaq menjëherë mbulesën (deri sa të vijë përgjigja) që chat-i të mos shfaqet kurrë i kyçur */
+  var ov0=document.getElementById('drLockOverlay'); if(ov0) ov0.style.display='flex';
+  var gate = await getDocChatGate();
+  applyDocChatGate(gate);
+  if(gate.open){ setTimeout(initDrShabaniChat, 100); }
 }
+/* Auto-njoftim kur hapet dritarja e konsultimit (kontroll çdo 60s) */
+var _docChatNotified={};
+async function _docChatAutoCheck(){
+  try{
+    if(!LST || !LST.currentUser) return;
+    var gate=await getDocChatGate();
+    if(gate.open && gate.apt && !_docChatNotified[gate.apt.id]){
+      _docChatNotified[gate.apt.id]=1;
+      try{ pushRecentAlert('🩺','#EDE9FE','Konsultimi po fillon','Chat-i me Dr. Shabani është i hapur tani — bisedo me të.'); }catch(e){}
+      try{ showToast('🩺 Konsultimi me Dr. Shabani është i hapur!'); }catch(e){}
+    }
+  }catch(e){}
+}
+try{ setInterval(_docChatAutoCheck, 60000); }catch(e){}
 
 /* ===== Recent Alerts — të persistuara në localStorage ===== */
 function _getRecentAlerts(){ try{ return JSON.parse(localStorage.getItem('dh_recent_alerts')||'[]'); }catch(e){ return []; } }
@@ -5484,6 +5588,8 @@ var ACCESS = {
 
 /* ── GATED ACTION ── */
 function gatedAction(feature){
+  /* Dr. Shabani: jo më me premium — kyçet me REZERVIM + kohën e terminit (shih openPriv/getDocChatGate) */
+  if(feature==='private'){ openPriv(); return; }
   if(ACCESS.can(feature)){
     // Allow — route to correct screen
     if(feature==='verdict'){switchScreen('diagnostic');}
