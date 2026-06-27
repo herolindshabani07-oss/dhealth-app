@@ -1367,15 +1367,6 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div style="font-size:13px;color:rgba(255,255,255,0.4);">&#8250;</div>
       </div>
 
-      <!-- Fitbit -->
-      <div id="int-card-fitbit" style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:12px;" onclick="connectFitbit()">
-        <div style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">&#9201;</div>
-        <div style="flex:1;">
-          <div style="font-size:13px;font-weight:600;color:#fff;">Fitbit</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.6);" class="int-status">Activity · Sleep · HR</div>
-        </div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.4);">&#8250;</div>
-      </div>
     </div>
 
     <button class="llaunch" onclick="llaunchApp()" style="margin-bottom:10px;">&#128640; Open D Health</button>
@@ -1849,12 +1840,6 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">&#8250;</span></div>
     </div>
 
-    <!-- Fitbit -->
-    <div class="v7-wide" id="home-int-fitbit" onclick="connectFitbit()">
-      <div class="v7-wico" style="background:#fff!important;"><svg viewBox="0 0 512 512" width="35" height="35" xmlns="http://www.w3.org/2000/svg"><rect x="188" y="34" width="136" height="152" rx="46" fill="#EFA63C"/><rect x="188" y="326" width="136" height="152" rx="46" fill="#EFA63C"/><rect x="146" y="120" width="220" height="272" rx="52" fill="#2E3A54" stroke="#E2E8F2" stroke-width="14"/><rect x="360" y="232" width="22" height="48" rx="9" fill="#3C4C68"/><text x="250" y="276" font-family="Arial,Helvetica,sans-serif" font-size="58" font-weight="700" fill="#FFFFFF" text-anchor="middle">12:10</text></svg></div>
-      <div style="flex:1;min-width:0;"><div class="v7-wt1">Fitbit</div><div class="v7-wt2" id="ds-fitbit-status">Not connected</div></div>
-      <div class="v7-wr"><span style="color:#9aa9c0;font-size:18px;">&#8250;</span></div>
-    </div>
 
     <!-- D Health Ring (së shpejti) -->
     <div class="v7-wide" id="home-int-ring" onclick="ringConnect()">
@@ -2208,7 +2193,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <label for="ecgFileInput" style="border:2px dashed rgba(255,107,138,0.3);border-radius:14px;padding:14px;text-align:center;cursor:pointer;display:block;">
           <div style="font-size:28px;margin-bottom:6px;">🫀</div>
           <div style="font-size:12px;font-weight:600;color:#F1F5FF;margin-bottom:2px;">Upload ECG</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);">Apple Watch · Samsung · Fitbit · Smart Ring<br>JPG, PNG, PDF · Max 10MB</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);">Apple Watch · Samsung · Smart Ring<br>JPG, PNG, PDF · Max 10MB</div>
           <input type="file" id="ecgFileInput" accept="image/*,.pdf" style="display:none;" onchange="handleECGUpload(event)"/>
         </label>
         <div id="ecgHistoryList" style="margin-top:10px;"></div>
@@ -2538,7 +2523,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         </div>
         <div class="set-row" onclick="openDevicesModal()">
           <div class="set-row-ico" style="background:#E7F0FF;">&#128241;</div>
-          <div class="set-row-info"><div class="set-row-title" data-i18n="set.devices">Connected Devices</div><div class="set-row-sub" data-i18n="set.devicesSub">Health Connect · Fitbit · D Health Ring</div></div>
+          <div class="set-row-info"><div class="set-row-title" data-i18n="set.devices">Connected Devices</div><div class="set-row-sub" data-i18n="set.devicesSub">Health Connect · Apple Health · D Health Ring</div></div>
           <span class="set-row-arr">&#8250;</span>
         </div>
         <div class="set-row" onclick="openEmergencyModal()">
@@ -2755,7 +2740,6 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:14px;line-height:1.6;">Connect health apps to sync vitals automatically.</div>
         <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#E8F5E9;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💚</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Google Fit</div><div id="spGfit" style="font-size:11px;color:rgba(255,255,255,0.5);">Not connected</div></div><button id="spGfitBtn" onclick="toggleInteg('gfit')" style="padding:7px 14px;border-radius:10px;border:none;background:#34A853;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
         <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#FFF0F3;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">❤️</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Apple Health</div><div id="spApple" style="font-size:11px;color:rgba(255,255,255,0.5);">iOS only</div></div><button id="spAppleBtn" onclick="toggleInteg('apple')" style="padding:7px 14px;border-radius:10px;border:none;background:#FF2D55;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
-        <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:#E3F2FD;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">⌚</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Fitbit</div><div id="spFitbit" style="font-size:11px;color:rgba(255,255,255,0.5);">Not connected</div></div><button id="spFitbitBtn" onclick="connectFitbit()" style="padding:7px 14px;border-radius:10px;border:none;background:#00B0B9;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect</button></div>
         <div style="background:var(--al);border-radius:14px;padding:13px;display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:12px;background:rgba(45,200,160,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📝</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Manual Input</div><div style="font-size:11px;color:var(--accent);">Always active ✓</div></div><div style="padding:7px 14px;border-radius:10px;background:rgba(45,200,160,0.2);font-size:11px;font-weight:700;color:var(--accent);">Active</div></div>
       </div>
 
@@ -3600,16 +3584,6 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,0.5);line-height:1.5;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:10px;padding:8px 10px;">Available on iOS devices. Requires iPhone with Apple Health app installed.</div>
         <button id="appleModalBtn" onclick="toggleInteg('apple')" style="width:100%;margin-top:10px;padding:11px;border-radius:12px;border:none;background:#FF2D55;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect Apple Health</button>
       </div>
-      <!-- Fitbit -->
-      <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:16px;border:0.5px solid rgba(255,255,255,0.12);padding:14px;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:44px;height:44px;border-radius:14px;background:#E3F2FD;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">⌚</div>
-          <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#F1F5FF;">Fitbit</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">Activity, sleep tracking, heart rate</div></div>
-          <div id="fitbitStatusBadge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--bg);color:rgba(255,255,255,0.5);">Not connected</div>
-        </div>
-        <div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,0.5);line-height:1.5;background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:10px;padding:8px 10px;">Sync Fitbit activity, sleep and heart rate data automatically.</div>
-        <button id="fitbitModalBtn" onclick="connectFitbit()" style="width:100%;margin-top:10px;padding:11px;border-radius:12px;border:none;background:#00B0B9;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">Connect Fitbit</button>
-      </div>
       <!-- Manual -->
       <div style="background:var(--al);border-radius:16px;border:0.5px solid rgba(45,200,160,0.3);padding:14px;">
         <div style="display:flex;align-items:center;gap:12px;">
@@ -3749,11 +3723,6 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       <div onclick="closeDevicesModal(null);connectAppleHealth();" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(120,150,190,.16);box-shadow:0 2px 8px rgba(70,120,190,.08);margin-bottom:10px;cursor:pointer;">
         <div style="width:42px;height:42px;border-radius:12px;background:#fff;border:1px solid rgba(120,150,190,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 512 512" width="30" height="30"><defs><linearGradient id="ahg2" x1="0" y1="0" x2="1" y2="0"><stop offset="0.5" stop-color="#F3F3F5"/><stop offset="0.5" stop-color="#E7E7EA"/></linearGradient></defs><rect x="40" y="40" width="432" height="432" rx="112" fill="url(#ahg2)"/><path d="M256 388 C180 334 148 282 148 233 C148 198 175 174 206 174 C228 174 246 187 256 208 C266 187 284 174 306 174 C337 174 364 198 364 233 C364 282 332 334 256 388 Z" fill="#E63950"/></svg></div>
         <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">Apple Health</div><div style="font-size:11px;color:#7387a4;" id="dev-apple-status" data-i18n="dev.iosOnly">iOS only</div></div>
-        <span style="color:#5d7290;font-size:18px;">&#8250;</span>
-      </div>
-      <div onclick="closeDevicesModal(null);connectFitbit();" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(120,150,190,.16);box-shadow:0 2px 8px rgba(70,120,190,.08);margin-bottom:10px;cursor:pointer;">
-        <div style="width:42px;height:42px;border-radius:12px;background:#fff;border:1px solid rgba(120,150,190,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 512 512" width="27" height="27"><rect x="188" y="34" width="136" height="152" rx="46" fill="#EFA63C"/><rect x="188" y="326" width="136" height="152" rx="46" fill="#EFA63C"/><rect x="146" y="120" width="220" height="272" rx="52" fill="#2E3A54" stroke="#E2E8F2" stroke-width="14"/><text x="250" y="276" font-family="Arial,Helvetica,sans-serif" font-size="58" font-weight="700" fill="#FFFFFF" text-anchor="middle">12:10</text></svg></div>
-        <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#1f2c44;">Fitbit</div><div style="font-size:11px;color:#7387a4;" id="dev-fitbit-status" data-i18n="dev.notConn">Not connected</div></div>
         <span style="color:#5d7290;font-size:18px;">&#8250;</span>
       </div>
       <div onclick="closeDevicesModal(null);ringConnect();" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#fff;border:1px solid rgba(120,150,190,.16);box-shadow:0 2px 8px rgba(70,120,190,.08);cursor:pointer;">
@@ -6950,7 +6919,7 @@ var DH_I18N = {
   'set.payments':      {sq:'Pagesat', mk:'Плаќања', en:'Payments'},
   'set.paymentsSub':   {sq:'Karta · PayPal · G Pay · Stripe · Crypto', mk:'Картички · PayPal · G Pay · Stripe · Crypto', en:'Cards · PayPal · G Pay · Stripe · Crypto'},
   'set.devices':       {sq:'Pajisjet e lidhura', mk:'Поврзани уреди', en:'Connected Devices'},
-  'set.devicesSub':    {sq:'Health Connect · Fitbit · D Health Ring', mk:'Health Connect · Fitbit · D Health Ring', en:'Health Connect · Fitbit · D Health Ring'},
+  'set.devicesSub':    {sq:'Health Connect · Apple Health · D Health Ring', mk:'Health Connect · Apple Health · D Health Ring', en:'Health Connect · Apple Health · D Health Ring'},
   'set.emergency':     {sq:'Kontakti i urgjencës', mk:'Итен контакт', en:'Emergency Contact'},
   'set.appearance':    {sq:'Pamja & Gjuha', mk:'Изглед и јазик', en:'Appearance & Language'},
   'set.language':      {sq:'Gjuha', mk:'Јазик', en:'Language'},
@@ -9759,8 +9728,7 @@ var PLATFORM   = IS_IOS ? 'ios' : IS_ANDROID ? 'android' : 'web';
 /* Sistemi unifikat i storage — gjithmonë 'true' */
 var INTEGRATIONS = {
   gfit:   { name:'Google Fit',   color:'#34A853', key:'connect_gfit'   },
-  apple:  { name:'Apple Health', color:'#FF2D55', key:'connect_apple'  },
-  fitbit: { name:'Fitbit',       color:'#00B0B9', key:'connect_fitbit' }
+  apple:  { name:'Apple Health', color:'#FF2D55', key:'connect_apple'  }
 };
 
 function isConnected(type){
