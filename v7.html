@@ -6499,7 +6499,7 @@ function obFinish(skipped){
   function sv(id,val){ var e=document.getElementById(id); if(e&&val!=='') e.value=val; }
   sv('setEditName',name); sv('setEditGender',gender); sv('setEditDob',dob); sv('setHeight',height); sv('setWeight',weight);
   try{ var p=JSON.parse(localStorage.getItem('dh_profile')||'{}'); if(name)p.name=name; if(gender)p.gender=gender; if(dob)p.dob=dob; if(height)p.height=height; if(weight)p.weight=weight; localStorage.setItem('dh_profile',JSON.stringify(p)); }catch(e){}
-  try{ var sb=getSupa(); if(sb&&LST.currentUser&&LST.currentUser.id){ var upd={}; if(name)upd.full_name=name; if(gender)upd.gender=gender; if(dob)upd.date_of_birth=dob; if(height)upd.height_cm=parseFloat(height); if(weight)upd.weight_kg=parseFloat(weight); if(Object.keys(upd).length) sb.from('profiles').update(upd).eq('id',LST.currentUser.id); } }catch(e){}
+  try{ var sb=getSupa(); if(sb&&LST.currentUser&&LST.currentUser.id){ var upd={}; if(name)upd.full_name=name; if(gender)upd.gender=gender; if(dob)upd.date_of_birth=dob; if(height)upd.height_cm=parseFloat(height); if(weight)upd.weight_kg=parseFloat(weight); if(Object.keys(upd).length) sb.from('profiles').update(upd).eq('id',LST.currentUser.id).then(function(r){ if(r&&r.error) console.warn('onboarding profile save:', r.error.message); }); } }catch(e){}
   if(!skipped){
     Array.from(document.querySelectorAll('#ob-diag-tags .ob-chip')).map(function(c){return c.getAttribute('data-v');}).forEach(function(d){
       ['ds-diag-tags','prof-diag-tags'].forEach(function(lid){ var w=document.getElementById(lid); if(w&&!Array.from(w.querySelectorAll('.tag2')).some(function(t){return t.textContent.replace('×','').trim().toLowerCase()===d.toLowerCase();})){ var sp=document.createElement('span'); sp.className='tag2 t'; sp.innerHTML=d+' <span class="tx" onclick="this.parentElement.remove()">×</span>'; w.appendChild(sp); } });
@@ -11447,7 +11447,7 @@ async function syncHealthConnect(opts){
         sb.from('vitals').insert({
           patient_id: LST.currentUser.id, hr: hr,
           source: SRC, recorded_at: new Date().toISOString()
-        });
+        }).then(function(r){ if(r&&r.error) console.warn('vitals(HC) save:', r.error.message); });
       }
     }catch(se){}
 
@@ -11684,7 +11684,7 @@ async function syncGoogleFitData(){
           steps:       steps || null,
           source:      'google_fit',
           recorded_at: new Date().toISOString()
-        });
+        }).then(function(r){ if(r&&r.error) console.warn('vitals(gfit) save:', r.error.message); });
       }
     }catch(se){}
 
