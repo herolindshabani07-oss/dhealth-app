@@ -1906,7 +1906,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       <div style="position:relative;margin-left:auto;">
         <button class="dots-btn" id="dotsBtn" onclick="toggleDrop()">⋯</button>
         <div class="ddm" id="dropMenu">
-          <div class="ddi"><div class="ddico" style="background:var(--al);">📋</div><div style="font-size:13px;font-weight:600;">Chat History</div></div>
+          <div class="ddi" onclick="aiNewChat()"><div class="ddico" style="background:var(--al);">🆕</div><div style="font-size:13px;font-weight:600;" data-i18n="chat.newChat">New Chat</div></div>
         </div>
       </div>
     </div>
@@ -6938,6 +6938,8 @@ var DH_I18N = {
   'cal.sub':   {sq:'Orari i medikamenteve & alarmeve', mk:'Распоред на лекови и аларми', en:'Medication & alarm schedule'},
   /* Chat */
   'chat.quickQ': {sq:'Pyetje të Shpejta', mk:'Брзи прашања', en:'Quick Questions'},
+  'chat.newChat': {sq:'Bisedë e re', mk:'Нов разговор', en:'New Chat'},
+  'chat.newStarted': {sq:'Bisedë e re u nis', mk:'Нов разговор започна', en:'New chat started'},
   /* Auth (Sign In / Create Account) */
   'auth.welcomeBack': {sq:'Mirë se u ktheve', mk:'Добредојде назад', en:'Welcome back'},
   'auth.signinSub':   {sq:'Hyr për të vazhduar te llogaria', mk:'Најави се за да продолжиш', en:'Sign in to continue to your account'},
@@ -10534,6 +10536,17 @@ function aiMealAdvice(){
   else { try{ if(typeof switchScreen==='function') switchScreen('chat'); }catch(e){} }
 }
 function aiAddMsg(type,text){var list=document.getElementById('aiMsgsList');if(!list)return;var now=new Date();var t=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});var div=document.createElement('div');var fmt=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');if(type==='user'){div.className='mr u';div.innerHTML='<div class="bb u">'+fmt+'<span style="font-size:9px;opacity:0.6;margin-left:6px;">'+t+'</span></div>';}else{div.className='mr';div.innerHTML='<div class="mav">&#129338;</div><div class="bb ai">'+fmt+'<span style="font-size:9px;opacity:0.5;margin-left:6px;">'+t+'</span></div>';}list.appendChild(div);var w=document.getElementById('aiMsgsWrap');if(w)setTimeout(function(){w.scrollTop=99999;},50);}
+function aiNewChat(){
+  try{
+    aiHistory=[];
+    var list=document.getElementById('aiMsgsList');
+    if(list){ list.innerHTML='<div class="mr"><div class="mav">🩺</div><div class="bb ai">Hello! I\'m your <strong>AI Doctor</strong> — ask me any medical question or I can analyze your personal health profile. 🩺<br><br><span style="font-size:11px;color:rgba(255,255,255,0.5);">Powered by JH Group &amp; Anthropic</span></div></div>'; }
+    try{ var tp=document.getElementById('aiTyping'); if(tp) tp.style.display='none'; }catch(e){}
+    try{ closeDrop(); }catch(e){}
+    try{ var w=document.getElementById('aiMsgsWrap'); if(w) w.scrollTop=0; }catch(e){}
+    try{ showToast('🆕 '+(typeof dhT==='function'?dhT('chat.newStarted'):'New chat started')); }catch(e){}
+  }catch(e){}
+}
 async function sendAIMsg(){var inp=document.getElementById('aiInp');var txt=inp?inp.value.trim():'';if(!txt)return;inp.value='';aiAddMsg('user',txt);aiHistory.push({role:'user',content:txt});var tp=document.getElementById('aiTyping');if(tp)tp.style.display='block';var prof='';try{prof=getProfile();}catch(e){}var sys=getBaseSys()+'\n\nPATIENT PROFILE:\n'+prof;try{var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,tools:[{type:'web_search_20250305',name:'web_search'}],system:sys,messages:aiHistory})});var rawT=await r.text();if(rawT.trim().startsWith("<")){throw new Error("AI unavailable");}var d=JSON.parse(rawT);if(tp)tp.style.display='none';if(d.error){aiAddMsg('bot','Error: '+d.error.message);return;}var rt='';var su=false;if(d.content)d.content.forEach(function(b){if(b.type==='text')rt+=b.text;if(b.type==='tool_use'&&b.name==='web_search')su=true;});if(!rt)rt='No response. Try again.';if(su)rt+='\n\n*Search used*';aiHistory.push({role:'assistant',content:d.content||[{type:'text',text:rt}]});aiAddMsg('bot',rt);}catch(e){if(tp)tp.style.display='none';aiAddMsg('bot','Connection error. Check internet.');}}
 
 
