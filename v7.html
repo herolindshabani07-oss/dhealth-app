@@ -3482,7 +3482,9 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
             <input type="file" id="ecgFileInputProfile" accept="image/*,.pdf" style="display:none;" onchange="handleECGUpload(event)"/>
           </label>
         </div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin:8px 2px 0;line-height:1.5;" data-i18n="dx.uploadHint">📋 Analiza → vlerat dalin si "+ADD" te Lab Values · 🫀 ECG → analizë e ritmit (1 / 24h)</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin:8px 2px 0;line-height:1.5;" data-i18n="dx.uploadHint">📋 Analiza → vlerat dalin këtu si "+ADD" · 🫀 ECG → analizë e ritmit (1 / 24h)</div>
+        <!-- Chip-at e vlerave të nxjerra nga analiza (poshtë kutive) → "💾 Shto në profil" -->
+        <div id="ds-lab-chips"></div>
         <!-- RAPORTI ECG — premium -->
         <div id="ecgResultAreaProfile" style="display:none;margin-top:12px;background:linear-gradient(160deg,#0F1830 0%,#1A2547 55%,#0E1730 100%);border:1px solid rgba(120,160,235,0.26);border-radius:16px;padding:16px 15px;box-shadow:0 14px 34px rgba(8,16,44,0.5);position:relative;overflow:hidden;">
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#5CC8FF,#8B6FE8,#FF6B8A);"></div>
@@ -7089,7 +7091,7 @@ var DH_I18N = {
   'dx.labUpload':      {sq:'Analiza', mk:'Анализи', en:'Lab results'},
   'dx.labUploadSub':   {sq:'vlera laboratorike', mk:'лаб. вредности', en:'lab values'},
   'dx.ecgSub':         {sq:'ritmi i zemrës', mk:'ритам на срце', en:'heart rhythm'},
-  'dx.uploadHint':     {sq:'📋 Analiza → vlerat dalin si "+ADD" te Lab Values · 🫀 ECG → analizë e ritmit (1 / 24h)', mk:'📋 Анализи → вредностите се појавуваат како "+ADD" · 🫀 ЕКГ → анализа на ритам (1 / 24ч)', en:'📋 Lab → values appear as "+ADD" in Lab Values · 🫀 ECG → rhythm analysis (1 / 24h)'},
+  'dx.uploadHint':     {sq:'📋 Analiza → vlerat dalin këtu si "+ADD" · 🫀 ECG → analizë e ritmit (1 / 24h)', mk:'📋 Анализи → вредностите се појавуваат тука · 🫀 ЕКГ → анализа на ритам (1 / 24ч)', en:'📋 Lab → values appear here as "+ADD" · 🫀 ECG → rhythm analysis (1 / 24h)'},
   'dx.pEcgHistory':    {sq:'📋 Historiku i ECG', mk:'📋 Историја на ЕКГ', en:'📋 ECG History'},
   'dx.diagnostics':    {sq:'Diagnostikë', mk:'Дијагностика', en:'Diagnostics'},
   'dx.profileAssessment':{sq:'D Health AI — Vlerësim i profilit', mk:'D Health AI — Проценка на профил', en:'D Health AI — Profile Assessment'},
@@ -7099,6 +7101,9 @@ var DH_I18N = {
   'dx.phLab':          {sq:'p.sh. HbA1c: 5.9%...', mk:'пр. HbA1c: 5.9%...', en:'e.g. HbA1c: 5.9%...'},
   'lab.detected':      {sq:'Lexuar nga analiza — trokit për të shtuar', mk:'Прочитано од анализата — допри за додавање', en:'Detected from your lab — tap to add'},
   'lab.addAll':        {sq:'Shto të gjitha', mk:'Додади ги сите', en:'Add all'},
+  'lab.saveProfile':   {sq:'Shto në profil', mk:'Зачувај во профил', en:'Save to profile'},
+  'lab.savedProfile':  {sq:'U ruajt në profil', mk:'Зачувано во профил', en:'Saved to profile'},
+  'lab.allInProfile':  {sq:'Të gjitha tashmë në profil', mk:'Сите се веќе во профил', en:'All already in profile'},
   'dx.phMed':          {sq:'p.sh. Amlodipinë 5mg', mk:'пр. Амлодипин 5mg', en:'e.g. Amlodipine 5mg'},
   /* Diagnosis — Report tab */
   'dx.weeklyReportTag':{sq:'📄 Raport javor', mk:'📄 Неделен извештај', en:'📄 Weekly Report'},
@@ -9896,18 +9901,20 @@ function _addLabToSection(prefix, text){
 }
 function renderLabChips(labs, prefix){
   prefix = prefix || 'ds';
-  var anchor = document.getElementById(prefix+'-lab-tags');
-  if(!anchor){ prefix = (prefix==='ds')?'prof':'ds'; anchor=document.getElementById(prefix+'-lab-tags'); }
-  if(!anchor) return;
   var esc=function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); };
   var stripId = prefix+'-lab-chips';
   var strip = document.getElementById(stripId);
   if(!strip){
-    strip=document.createElement('div'); strip.id=stripId;
-    anchor.parentNode.insertBefore(strip, anchor);
-    strip.innerHTML = '<div style="font-size:10px;font-weight:700;color:#5CC8FF;text-transform:uppercase;letter-spacing:0.4px;margin:2px 0 8px;display:flex;align-items:center;gap:7px;"><span>🔬 '+dhT('lab.detected')+'</span><span style="flex:1;height:1px;background:rgba(120,160,220,0.22);"></span></div>'
-      + '<div class="lc-list" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px;"></div>'
-      + '<button type="button" onclick="addAllLabChips(\''+prefix+'\')" style="font-size:10.5px;font-weight:700;color:#5CC8FF;background:none;border:none;cursor:pointer;padding:0 0 6px;font-family:var(--font);">＋ '+dhT('lab.addAll')+'</button>';
+    /* Kontejner i para-vendosur (poshtë kutive Analiza/ECG); përndryshe fute mbi Lab Values */
+    var anchor = document.getElementById(prefix+'-lab-tags');
+    if(!anchor){ prefix=(prefix==='ds')?'prof':'ds'; stripId=prefix+'-lab-chips'; strip=document.getElementById(stripId); anchor=document.getElementById(prefix+'-lab-tags'); }
+    if(!strip){ if(!anchor) return; strip=document.createElement('div'); strip.id=stripId; anchor.parentNode.insertBefore(strip, anchor); }
+  }
+  if(!strip.querySelector('.lc-list')){
+    strip.style.cssText='margin-top:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(120,160,220,0.2);border-radius:14px;padding:12px;';
+    strip.innerHTML = '<div style="font-size:10px;font-weight:800;color:#5CC8FF;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 9px;display:flex;align-items:center;gap:7px;"><span>🔬 '+dhT('lab.detected')+'</span><span style="flex:1;height:1px;background:rgba(120,160,220,0.22);"></span></div>'
+      + '<div class="lc-list" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px;"></div>'
+      + '<button type="button" onclick="saveLabsToProfile(\''+prefix+'\')" style="width:100%;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#0D9488,#2DC8A0);color:#fff;font-size:12.5px;font-weight:800;cursor:pointer;font-family:var(--font);box-shadow:0 6px 16px rgba(13,148,136,0.3);">💾 '+dhT('lab.saveProfile')+'</button>';
   }
   var list = strip.querySelector('.lc-list'); if(!list) return;
   /* Dedup: ndaj chip-ave ekzistuese (upload me shumë dokumente) DHE ndaj Lab Values të shtuara tashmë */
@@ -9938,6 +9945,8 @@ function addLabChip(btn){
   var route=btn.getAttribute('data-route')||'';
   var value=btn.getAttribute('data-value')||'';
   var unit=btn.getAttribute('data-unit')||'';
+  /* Zëvendëso vlerën e vjetër të të njëjtit parametër (p.sh. glukoza e vjetër) që të mos ngelin dy */
+  if(route){ try{ _replaceRoutedLabTag(prefix, route); }catch(e){} }
   _addLabToSection(prefix, text);
   var routed='';
   if(route==='glu'){ var mv=_gluToMmol(value, unit); if(mv!=null && mv>0){ saveVitalDetail('glu', mv); routed='Glucose'; } }
@@ -9955,6 +9964,36 @@ function addLabChip(btn){
 function addAllLabChips(prefix){
   var strip=document.getElementById(prefix+'-lab-chips'); if(!strip) return;
   Array.prototype.slice.call(strip.querySelectorAll('.lab-chip')).forEach(function(b){ if(b.getAttribute('data-done')!=='1') addLabChip(b); });
+}
+/* Heq tag-at e vjetër të Lab Values që i përkasin të njëjtit vital (p.sh. glukoza e vjetër manuale) */
+function _replaceRoutedLabTag(prefix, route){
+  if(!route) return;
+  var listId = prefix+'-lab-tags';
+  var w = document.getElementById(listId); if(!w) return;
+  Array.prototype.slice.call(w.querySelectorAll('.tag2')).forEach(function(t){
+    var name = t.textContent.replace('×','').trim().split(/[:0-9]/)[0].trim();
+    if(routeLab(name) === route){ var x=t.querySelector('.tx'); if(x){ try{ rmTag(listId, x); }catch(e){ t.remove(); } } }
+  });
+}
+/* "💾 Shto në profil" — ruan të gjitha vlerat e nxjerra te Lab Values + i çon Glukozën/HbA1c te
+   Home & Vitals (mbishkruan të vjetrën) + persiston (medical profile + vitals). Diagnostic-u i merr të rejat. */
+function saveLabsToProfile(prefix){
+  prefix = prefix || 'ds';
+  var strip=document.getElementById(prefix+'-lab-chips'); if(!strip) return;
+  var chips=Array.prototype.slice.call(strip.querySelectorAll('.lab-chip'));
+  var added=0, vitals=[];
+  chips.forEach(function(b){
+    if(b.getAttribute('data-done')==='1') return;
+    var r=b.getAttribute('data-route');
+    addLabChip(b); added++;
+    if(r && vitals.indexOf(r)<0) vitals.push(r);
+  });
+  try{ saveMedicalProfileNow(); }catch(e){ try{ syncMedicalProfile(); }catch(e2){} }
+  try{ updateAllVitalsUI(); }catch(e){}
+  try{ saveVitalsToSupabase(); }catch(e){}
+  if(!added){ showToast('ℹ️ '+dhT('lab.allInProfile')); return; }
+  var vt=vitals.map(function(r){ return r==='glu'?'Glukoza':r==='hba1c'?'HbA1c':r; }).join(' & ');
+  showToast('💾 '+dhT('lab.savedProfile')+(vt?(' · '+vt+' → Home & Vitals'):''));
 }
 
 async function analyzeDsProfile(){
