@@ -4897,18 +4897,19 @@ async function saveVitalsToSupabase(){
 
 /* Ruajtje e medical_profiles e pavarur nga unique-constraint: lexo → update ose insert.
    Punon edhe nëse tabela s'ka unique index te patient_id (që e bllokon upsert+onConflict). */
-async function _upsertMedicalProfile(payload){
+async function _upsertMedicalProfile(payload, allowEmpty){
   var sb = getSupa();
   if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return;
   var uid = LST.currentUser.id;
   payload.patient_id = uid;
   payload.updated_at = new Date().toISOString();
-  /* MBROJTJE: mos ruaj profil krejt bosh (shmang mbishkrimin e të dhënave reale gjatë dritares clear→load në login) */
+  /* MBROJTJE: mos ruaj profil krejt bosh (shmang mbishkrimin e të dhënave reale gjatë dritares clear→load në login).
+     PËRJASHTIM: kur përdoruesi heq EKSPLICIT artikullin e fundit (allowEmpty=true), ruaje boshin që heqja të persistojë. */
   var pp = payload || {};
   var allEmpty = !(pp.diagnoses&&pp.diagnoses.length) && !(pp.therapy&&pp.therapy.length)
               && !(pp.allergies&&pp.allergies.length) && !(pp.lab_values&&pp.lab_values.length)
               && !(pp.notes && String(pp.notes).trim());
-  if(allEmpty){ console.log('skip medical_profiles save (krejt bosh) — mbrojtje nga mbishkrimi'); return; }
+  if(allEmpty && !allowEmpty){ console.log('skip medical_profiles save (krejt bosh) — mbrojtje nga mbishkrimi'); return; }
   /* Cache lokal (mbijeton Clear All edhe nëse Supabase nuk ngarkon në cold-start) */
   try{ localStorage.setItem('dh_cache_mp_'+uid, JSON.stringify({diagnoses:pp.diagnoses||[],therapy:pp.therapy||[],allergies:pp.allergies||[],lab_values:pp.lab_values||[],notes:pp.notes||''})); }catch(e){}
   try{
@@ -4937,6 +4938,22 @@ async function saveMedicalProfileToSupabase(){
     if(!diags.length && !therapy.length && !allergies.length && !labs.length) return;
     await _upsertMedicalProfile({ diagnoses:diags, therapy:therapy, allergies:allergies, lab_values:labs, notes:notes });
   }catch(e){ console.log('Medical profile Supabase error:', e.message); }
+}
+
+/* Ruajtje e MENJËHERSHME (pa debounce) që LEJON bosh — për HEQJE eksplicite nga përdoruesi,
+   që guard-i allEmpty të mos e kthejë artikullin e fundit pas relogin. */
+async function saveMedicalProfileNow(){
+  try{
+    var sb=getSupa(); if(!sb||!LST||!LST.currentUser||!LST.currentUser.id) return;
+    var get=function(ids){ var seen={},arr=[]; ids.forEach(function(id){ var el=document.getElementById(id); if(el) el.querySelectorAll('.tag2').forEach(function(t){ var v=t.textContent.replace('×','').trim(); if(v&&!seen[v.toLowerCase()]){seen[v.toLowerCase()]=1;arr.push(v);} }); }); return arr; };
+    await _upsertMedicalProfile({
+      diagnoses:  get(['diag-tags','prof-diag-tags','ds-diag-tags']),
+      therapy:    get(['therapy-tags','prof-therapy-tags','ds-therapy-tags']),
+      allergies:  get(['allergy-tags','prof-allergy-tags','ds-allergy-tags']),
+      lab_values: get(['lab-tags','prof-lab-tags','ds-lab-tags']),
+      notes: (document.getElementById('prof-notes')||{}).value || (document.getElementById('ds-notes')||{}).value || ''
+    }, true);  /* allowEmpty=true */
+  }catch(e){ console.warn('saveMedicalProfileNow:', e.message); }
 }
 
 /* Voice */
@@ -5028,8 +5045,10 @@ function rmTag(listId,el){ setTimeout(function(){try{updateDiagHeader();}catch(e
     w.querySelectorAll('.tag2').forEach(function(t){if(t.textContent.replace('×','').trim()===txt)t.remove();});
   });
   try{ updateIndicatorBadge(); }catch(e){}
-  /* Sync medical profile to Supabase */
-  setTimeout(syncMedicalProfile, 500);
+  /* Nëse është tag terapie → heq edhe alarmin e lidhur (Kalendari + Njoftimet) */
+  if(/therapy/i.test(listId)){ try{ unlinkTherapyAlarm(String(txt).split('·')[0].trim()); }catch(e){} try{ renderTherapyList(); }catch(e){} }
+  /* Ruajtje e menjëhershme që LEJON bosh → heqja e artikullit të fundit nuk kthehet pas relogin */
+  try{ saveMedicalProfileNow(); }catch(e){}
 }
 function addFile(){var names=['Kidney_Panel.pdf','Cholesterol.pdf','Urine_Test.pdf'];var n=names[Math.floor(Math.random()*3)];var list=document.getElementById('fl-list');var d=document.createElement('div');d.className='fl-item';d.innerHTML='<span style="font-size:16px;">📋</span><span class="fl-nm">'+n+'</span><span class="fl-sz">1.2MB</span><span class="fl-del" onclick="this.closest(\'.fl-item\').remove()">×</span>';list.appendChild(d);}
 
@@ -5064,8 +5083,8 @@ function removeAlarm(key, idx){
   try{
     var sb = getSupa();
     if(sb && _a){
-      if(_a.supaId){ sb.from('therapy_alarms').delete().eq('id', _a.supaId); }
-      else if(LST.currentUser && LST.currentUser.id){ sb.from('therapy_alarms').delete().eq('patient_id', LST.currentUser.id).eq('name', _a.name).eq('time', _a.time); }
+      if(_a.supaId){ sb.from('therapy_alarms').delete().eq('id', _a.supaId).then(function(r){ if(r&&r.error) console.warn('alarm del:', r.error.message); }); }
+      else if(LST.currentUser && LST.currentUser.id){ sb.from('therapy_alarms').delete().eq('patient_id', LST.currentUser.id).eq('name', _a.name).eq('time', _a.time).then(function(r){ if(r&&r.error) console.warn('alarm del:', r.error.message); }); }
     }
   }catch(e){}
   alarms[key].splice(idx, 1);
@@ -8981,7 +9000,7 @@ function removeTherapyMed(btn){
   renderTherapyList();
   try{ unlinkTherapyAlarm(med); }catch(e){}   /* heq edhe alarmin e lidhur */
   try{ updateIndicatorBadge(); }catch(e){}
-  try{ syncMedicalProfile(); }catch(e){}
+  try{ saveMedicalProfileNow(); }catch(e){}   /* ruajtje e menjëhershme (lejon bosh) → s'kthehet pas relogin */
   showToast('🗑️ Terapia u hoq (edhe nga Kalendari & Njoftimet)');
 }
 
@@ -9080,7 +9099,7 @@ function unlinkTherapyAlarm(label){
   var sb = getSupa();
   if(sb && LST.currentUser && LST.currentUser.id){
     /* heq të gjitha alarmet e këtij medikamenti (emri ose "emri · slot") */
-    try{ sb.from('therapy_alarms').delete().eq('patient_id',LST.currentUser.id).ilike('name', String(label).split('·')[0].trim()+'%'); }catch(e){}
+    try{ sb.from('therapy_alarms').delete().eq('patient_id',LST.currentUser.id).ilike('name', String(label).split('·')[0].trim()+'%').then(function(r){ if(r&&r.error) console.warn('therapy del:', r.error.message); }); }catch(e){}
   }
   try{ renderCal(); }catch(e){}
   try{ renderNotifAlarms(); }catch(e){}
@@ -10040,7 +10059,7 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
         /* dedup sipas përmbajtjes: i njëjti emër+orë në të njëjtën ditë = dublikat i mbetur → fshije nga DB njëherë e mirë */
         var contentDup = alarms[dateKey].some(function(ex){ return (ex.name||'').toLowerCase()===(a.name||'').toLowerCase() && ex.time===a.time; });
         if(contentDup){
-          try{ sb.from('therapy_alarms').delete().eq('id', a.id); }catch(e){}
+          try{ sb.from('therapy_alarms').delete().eq('id', a.id).then(function(r){ if(r&&r.error) console.warn('alarm dedup del:', r.error.message); }); }catch(e){}
           return;
         }
         alarms[dateKey].push({
