@@ -1861,6 +1861,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       </div>
 
     </div>
+    <div style="text-align:right;margin:-12px 4px 14px;"><span id="aqiSource" style="font-size:9px;color:#9fb0c8;letter-spacing:.2px;">© OpenWeather</span></div>
     <div style="display:none">
       <span id="aqiCircle"></span><span id="dailyScoreCircle"></span><span id="dailyScoreMain"></span><span id="dailyScoreBadge"></span><span id="dailyScoreBarWrap"><span id="dailyScoreBar"></span></span><span id="dailyScoreBenefits"><span id="dailyScoreBenefitsList"></span></span><span id="homeIndicators"></span><span id="platformBanner"></span><span id="dataSourcesCount"></span>
     </div>
@@ -8772,6 +8773,23 @@ async function loadAirQuality(){
     if(pos){ lat = pos.latitude; lon = pos.longitude; city = dhT('aq.yourLocation'); airState.cityGeneric = true; }
   }catch(e){}
 
+  /* Provider PRIMAR: OpenWeather (lejon përdorim komercial; çelësi i fshehur në
+     Netlify Function /weather). Një thirrje → AQI + temp + lagështi bashkë. */
+  try{
+    var ow = await _fetchOpenWeather(lat, lon);
+    if(ow && ow.aqi != null){
+      airState.city = city;
+      var _set = function(id,v){ var e=document.getElementById(id); if(e && v!=null) e.textContent = v; };
+      _set('aqiTemp', ow.temp); _set('aqiFeels', ow.feels_like); _set('aqiHumidity', ow.humidity); _set('aqiWind', ow.wind);
+      var hl = document.getElementById('aqiHumLbl');
+      if(hl && ow.humidity!=null){ var rh=ow.humidity; hl.textContent = dhT(rh<35?'ins.dry':(rh>65?'ins.humid':'ins.comfortable')); }
+      _setAqiSource('© OpenWeather');
+      setAQI(ow.aqi, (ow.pm25!=null?ow.pm25:(ow.aqi*0.38).toFixed(1)), aqiVal, aqiStatus, aqiDesc, aqiPm, aqiCircle, aqiTime);
+      return;
+    }
+  }catch(e){ console.log('OpenWeather error:', e.message); }
+
+  /* FALLBACK (përkohshëm, para se të vihet OPENWEATHER_KEY): Open-Meteo (falas, jokomercial) */
   try{ _fetchAQIWeather(lat, lon); }catch(e){}
 
   try {
@@ -8783,6 +8801,7 @@ async function loadAirQuality(){
       var aqi  = Math.round(data.current.us_aqi);
       var pm25 = (data.current.pm2_5 != null) ? Math.round(data.current.pm2_5 * 10) / 10 : (aqi*0.38).toFixed(1);
       airState.city = city;
+      _setAqiSource('© Open-Meteo');
       setAQI(aqi, pm25, aqiVal, aqiStatus, aqiDesc, aqiPm, aqiCircle, aqiTime);
       return;
     }
@@ -8793,6 +8812,20 @@ async function loadAirQuality(){
   var fpm25 = (faqi * 0.38).toFixed(1);
   setAQI(faqi, fpm25, aqiVal, aqiStatus, aqiDesc, aqiPm, aqiCircle, aqiTime);
 }
+
+/* Thirr proxy-n tonë (OpenWeather). Kthen {aqi,pm25,temp,feels_like,humidity,wind}
+   ose null nëse çelësi s'është vendosur ende / gabim → bie te Open-Meteo. */
+async function _fetchOpenWeather(lat, lon){
+  try{
+    var res = await fetch('/.netlify/functions/weather?lat='+lat+'&lon='+lon);
+    if(!res.ok) return null;            // 503 no_key, 502 upstream, etj.
+    var d = await res.json();
+    if(!d || d.ok !== true) return null;
+    return d;
+  }catch(e){ return null; }
+}
+/* Atribut i dukshëm i burimit (kërkesë e licencës) */
+function _setAqiSource(txt){ var e=document.getElementById('aqiSource'); if(e) e.textContent = txt; }
 
 async function _fetchAQIWeather(lat, lon){
   try{
