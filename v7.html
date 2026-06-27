@@ -4184,6 +4184,41 @@ function dhA11y(root){
   }catch(e){}
 }
 try{ window.addEventListener('load', function(){ setTimeout(function(){ try{dhA11y();}catch(e){} }, 400); }); }catch(e){}
+
+/* ════ Fsheh nav-in lundrues kur shkruan në një fushë teksti (tastiera hapet) ════
+   Rregullon mbulimin e fushës nga navbar-i te Chat, Diagnosis→Therapy, e kudo. */
+(function(){
+  function isTextField(el){
+    if(!el) return false;
+    var t=el.tagName;
+    if(t==='TEXTAREA') return true;
+    if(t==='INPUT'){ var ty=(el.type||'text').toLowerCase(); return !/^(checkbox|radio|button|submit|reset|range|file|color|image)$/.test(ty); }
+    return false;
+  }
+  function setNav(hide){
+    /* Inline + !important → mposht çdo rregull CSS; pa prekur transform-in (qendërzimi translateX(-50%)) */
+    var navs=document.querySelectorAll('.bn, .v7-nav');
+    navs.forEach(function(n){
+      if(hide){
+        n.style.setProperty('opacity','0','important');
+        n.style.setProperty('visibility','hidden','important');
+        n.style.setProperty('pointer-events','none','important');
+        n.style.setProperty('transition','opacity .18s ease','important');
+      }else{
+        n.style.removeProperty('opacity');
+        n.style.removeProperty('visibility');
+        n.style.removeProperty('pointer-events');
+        n.style.removeProperty('transition');
+      }
+    });
+  }
+  document.addEventListener('focusin', function(e){ if(isTextField(e.target)) setNav(true); });
+  document.addEventListener('focusout', function(e){
+    if(!isTextField(e.target)) return;
+    /* prit pak: nëse fokusi shkon te një fushë tjetër teksti, mbaje të fshehur */
+    setTimeout(function(){ if(!isTextField(document.activeElement)) setNav(false); }, 120);
+  });
+})();
 /* ════ Empty-state i njësuar: ikonë miqësore + tekst + (opsional) buton veprimi ════ */
 function dhEmpty(icon,title,sub,ctaLabel,ctaOnclick){
   return '<div class="dh-empty"><div class="ic">'+icon+'</div><div class="t">'+title+'</div>'
