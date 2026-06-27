@@ -3244,7 +3244,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div style="font-size:22px;margin-bottom:5px;">📎</div>
         <div style="font-size:12px;color:rgba(255,255,255,0.5);">Upload lab results, ECG, reports</div>
         <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">PDF, JPG, PNG · Max 10MB</div>
-        <input type="file" id="prof-file-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handleProfFileUpload(event)"/>
+        <input type="file" id="prof-file-input" accept=".pdf,.jpg,.jpeg,.png" multiple style="display:none;" onchange="handleProfFileUpload(event)"/>
       </label>
 
       <div class="divr"></div>
@@ -3473,7 +3473,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
             <span style="font-size:23px;line-height:1;">📋</span>
             <span style="font-size:12.5px;font-weight:800;" data-i18n="dx.labUpload">Analiza</span>
             <span style="font-size:9px;opacity:0.92;" data-i18n="dx.labUploadSub">vlera laboratorike</span>
-            <input type="file" id="ds-lab-file" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handleDsFileUpload(event)"/>
+            <input type="file" id="ds-lab-file" accept=".pdf,.jpg,.jpeg,.png" multiple style="display:none;" onchange="handleDsFileUpload(event)"/>
           </label>
           <label for="ecgFileInputProfile" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:14px 8px;border-radius:14px;background:linear-gradient(135deg,#FF6B8A,#8B6FE8);color:#fff;cursor:pointer;text-align:center;box-shadow:0 8px 20px rgba(139,111,232,0.32);">
             <span style="font-size:23px;line-height:1;">🫀</span>
@@ -4453,7 +4453,7 @@ var TOAST_I18N = {
   'ℹ️ Kjo ECG nuk u ruajt si dokument (e vjetër).':{sq:'ℹ️ Kjo ECG nuk u ruajt si dokument (e vjetër).', mk:'ℹ️ Ова ЕКГ не е зачувано како документ (старо).', en:'ℹ️ This ECG was not saved as a document (old).'},
   'ℹ️ Parametrat ekzistojnë tashmë te Lab Values':{sq:'ℹ️ Parametrat ekzistojnë tashmë te Lab Values', mk:'ℹ️ Параметрите веќе постојат во Lab Values', en:'ℹ️ Parameters already exist in Lab Values'},
   '⌚ D Health Watch — së shpejti! Do të njoftohesh.':{sq:'⌚ D Health Watch — së shpejti! Do të njoftohesh.', mk:'⌚ D Health Watch — наскоро! Ќе бидеш известен.', en:'⌚ D Health Watch — coming soon! You\'ll be notified.'},
-  '⏳ Vetëm 1 ECG në 24 orë — provo sërish nesër.':{sq:'⏳ Vetëm 1 ECG në 24 orë — provo sërish nesër.', mk:'⏳ Само 1 ЕКГ на 24 часа — пробај пак утре.', en:'⏳ Only 1 ECG per 24h — try again tomorrow.'},
+  '⏳ Maksimumi 3 ECG në 24 orë — provo sërish nesër.':{sq:'⏳ Maksimumi 3 ECG në 24 orë — provo sërish nesër.', mk:'⏳ Максимум 3 ЕКГ на 24 часа — пробај пак утре.', en:'⏳ Max 3 ECG per 24h — try again tomorrow.'},
   '⚠️ ECG ka anomali — shikoni analizën!':{sq:'⚠️ ECG ka anomali — shikoni analizën!', mk:'⚠️ ЕКГ има аномалии — погледни ја анализата!', en:'⚠️ ECG has anomalies — check the analysis!'},
   '⚠️ Google Fit session skadoi. Po ridrejtohesh...':{sq:'⚠️ Google Fit session skadoi. Po ridrejtohesh...', mk:'⚠️ Google Fit сесијата истече. Се пренасочуваш...', en:'⚠️ Google Fit session expired. Redirecting...'},
   '⚠️ Google Fit: duhet ri-autorizim. Po ridrejtohesh...':{sq:'⚠️ Google Fit: duhet ri-autorizim. Po ridrejtohesh...', mk:'⚠️ Google Fit: потребна е повторна авторизација. Се пренасочуваш...', en:'⚠️ Google Fit: re-authorization needed. Redirecting...'},
@@ -8894,13 +8894,16 @@ document.addEventListener('DOMContentLoaded', function(){
 /* ════ ECG ANALYSIS SYSTEM ════ */
 var ecgHistory = JSON.parse(localStorage.getItem('ecg_history') || '[]');
 
-/* Vetëm 1 ngarkesë ECG në 24 orë */
+/* Limit: maksimumi 3 ngarkesa ECG në 24 orë (një analizë mund të ketë disa fleta) */
+var ECG_DAILY_MAX = 3;
 function ecgUploadedWithin24h(){
   try{
     var arr = JSON.parse(localStorage.getItem('ecg_history') || '[]');
+    var n = 0;
     for(var i=arr.length-1; i>=0; i--){
-      if(arr[i] && arr[i].ts && (Date.now() - arr[i].ts) < 24*60*60*1000) return true;
+      if(arr[i] && arr[i].ts && (Date.now() - arr[i].ts) < 24*60*60*1000) n++;
     }
+    return n >= ECG_DAILY_MAX;
   }catch(e){}
   return false;
 }
@@ -8926,9 +8929,9 @@ async function handleECGUpload(event){
     return;
   }
 
-  /* Limit: vetëm 1 ECG në 24 orë */
+  /* Limit: maksimumi 3 ECG në 24 orë */
   if(ecgUploadedWithin24h()){
-    showToast('⏳ Vetëm 1 ECG në 24 orë — provo sërish nesër.');
+    showToast('⏳ Maksimumi 3 ECG në 24 orë — provo sërish nesër.');
     try{ event.target.value=''; }catch(e){}
     return;
   }
