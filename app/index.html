@@ -10952,8 +10952,8 @@ async function calcDailyScore(silent){
   if(refreshEl) refreshEl.textContent = '⏳ Calculating...';
 
   /* Merr te dhenat */
-  var steps = parseInt((document.getElementById('da-steps')||{}).textContent||'0'||'0'.replace(',',''))||0;
-  var cal   = parseInt((document.getElementById('da-cal')||{}).textContent||'0'||'0'.replace(',',''))||0;
+  var steps = parseInt(((document.getElementById('da-steps')||{}).textContent||'0').replace(/[^0-9]/g,''))||0;
+  var cal   = parseInt(((document.getElementById('da-cal')||{}).textContent||'0').replace(/[^0-9]/g,''))||0;
   var hr    = parseInt((document.getElementById('da-hr')||{}).textContent||'0')||0;
   var sys   = vitalsState.sys  || 0;
   var dia   = vitalsState.dia  || 0;
@@ -11123,9 +11123,10 @@ function renderDailyScore(score, messages){
     var _scL=(typeof currentLang!=='undefined'&&currentLang)?currentLang:((typeof DH_LANG!=='undefined'&&DH_LANG)?DH_LANG:'sq');
     var _t=score>=75?'good':score>=50?'fair':'low';
     var _stat={good:{sq:'Mirë',mk:'Добро',en:'Good'},fair:{sq:'Mesatar',mk:'Средно',en:'Fair'},low:{sq:'I ulët',mk:'Низок',en:'Low'}};
+    var _stColor={good:'#6EE7B7',fair:'#FCD34D',low:'#FCA5A5'};   /* ngjyra të ndritshme që duken mbi kartën blu */
     var _msg={good:{sq:'Shëndeti yt duket mirë sot. Vazhdo kështu!',mk:'Здравјето ти изгледа добро денес. Продолжи така!',en:'Your health looks good today. Keep it up!'},fair:{sq:'Mirë — ka vend për përmirësim.',mk:'Добро — има простор за подобрување.',en:'Doing okay — room to improve.'},low:{sq:'Kujdesu më shumë për veten sot.',mk:'Грижи се повеќе за себе денес.',en:'Take extra care of yourself today.'}};
     var _hn=document.getElementById('home-sc-num'); if(_hn) animateCount(_hn, score);
-    var _ht=document.getElementById('home-sc-title'); if(_ht){ _ht.textContent=(_stat[_t][_scL]||_stat[_t].en); _ht.style.color=tier.bg; }
+    var _ht=document.getElementById('home-sc-title'); if(_ht){ _ht.textContent=(_stat[_t][_scL]||_stat[_t].en); _ht.style.color=_stColor[_t]; }
     var _hd=document.getElementById('home-sc-desc'); if(_hd) _hd.textContent=(_msg[_t][_scL]||_msg[_t].en);
   }catch(e){}
   if(badge){
@@ -12936,8 +12937,8 @@ async function runVitalIntelligence(){
 
   /* ── Collect ALL data ── */
   var v = vitalsState;
-  var steps = parseInt((document.getElementById('da-steps')||{}).textContent||'0')||0;
-  var cal   = parseInt((document.getElementById('da-cal')||{}).textContent||'0')||0;
+  var steps = parseInt(((document.getElementById('da-steps')||{}).textContent||'0').replace(/[^0-9]/g,''))||0;
+  var cal   = parseInt(((document.getElementById('da-cal')||{}).textContent||'0').replace(/[^0-9]/g,''))||0;
   var hr    = parseInt((document.getElementById('da-hr')||{}).textContent||'0')||0;
   var aqiEl = document.getElementById('aqiVal');
   var aqi   = aqiEl ? parseInt(aqiEl.textContent)||0 : 0;
@@ -13119,7 +13120,7 @@ async function runDeepProfileAnalysis(){
   var profAssess = _profileAssessmentText();
 
   var v = vitalsState;
-  var steps = parseInt((document.getElementById('da-steps')||{}).textContent||'0')||0;
+  var steps = parseInt(((document.getElementById('da-steps')||{}).textContent||'0').replace(/[^0-9]/g,''))||0;
   var aqi = parseInt((document.getElementById('aqiVal')||{}).textContent||'0')||0;
 
   /* Vitals history */
