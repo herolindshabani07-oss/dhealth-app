@@ -345,6 +345,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
         </div>
         <!-- Filtra sipas statusit -->
         <div id="aptFilters" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+          <button data-f="schedule" onclick="setAptFilter('schedule')" style="padding:7px 14px;border-radius:20px;border:none;background:linear-gradient(135deg,#8B6FE8,#3B7DD8);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">📅 Orari im</button>
           <button data-f="pending" onclick="setAptFilter('pending')" style="padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:#F97316;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">⏳ Pending <span id="cnt-pending">0</span></button>
           <button data-f="confirmed" onclick="setAptFilter('confirmed')" style="padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">✅ Confirmed <span id="cnt-confirmed">0</span></button>
           <button data-f="rejected" onclick="setAptFilter('rejected')" style="padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">❌ Rejected <span id="cnt-rejected">0</span></button>
@@ -736,9 +737,13 @@ function invitePatient() {
 var _aptFilter = 'pending';
 function setAptFilter(f){
   _aptFilter = f;
-  ['pending','confirmed','rejected','all'].forEach(function(k){
+  ['schedule','pending','confirmed','rejected','all'].forEach(function(k){
     var b=document.querySelector('#aptFilters button[data-f="'+k+'"]');
-    if(b){ b.style.background = k===f ? (k==='pending'?'#F97316':k==='confirmed'?'#22C55E':k==='rejected'?'#EF4444':'var(--primary)') : 'var(--white)'; b.style.color = k===f?'#fff':'var(--text)'; }
+    if(b){
+      var activeBg = k==='schedule'?'linear-gradient(135deg,#8B6FE8,#3B7DD8)':k==='pending'?'#F97316':k==='confirmed'?'#22C55E':k==='rejected'?'#EF4444':'var(--primary)';
+      b.style.background = k===f ? activeBg : 'var(--white)';
+      b.style.color = k===f?'#fff':'var(--text)';
+    }
   });
   loadAppointments();
 }
@@ -752,6 +757,8 @@ async function loadAppointments(){
   data.forEach(function(a){ if(counts[a.status]!=null) counts[a.status]++; });
   ['pending','confirmed','rejected','all'].forEach(function(k){ var e=document.getElementById('cnt-'+k); if(e) e.textContent=counts[k]; });
   var el = document.getElementById('aptCount'); if(el) el.textContent = counts.pending;
+  /* ORARI IM — agjenda e takimeve të ardhshme (sot e tutje), grupuar sipas ditës */
+  if(_aptFilter==='schedule'){ renderSchedule(data, list); return; }
   /* Filtro + rendit (datat e ardhshme/recente lart) */
   var rows = (_aptFilter==='all') ? data.slice() : data.filter(function(a){ return a.status===_aptFilter; });
   rows.sort(function(a,b){ return new Date(b.appointment_date+'T'+(b.appointment_time||'00:00')) - new Date(a.appointment_date+'T'+(a.appointment_time||'00:00')); });
@@ -777,6 +784,48 @@ async function loadAppointments(){
         :'<div style="font-size:11px;color:var(--tm);">'+sl+'</div>')
       +'</div>';
   }).join('');
+}
+
+/* Etiketa e ditës në shqip (Sot / Nesër / E Hënë, 15 Kor) */
+function _aptDayLabel(dt){
+  var t=new Date(); t.setHours(0,0,0,0);
+  var d=new Date(dt); d.setHours(0,0,0,0);
+  var diff=Math.round((d-t)/86400000);
+  if(diff===0) return '🟢 Sot';
+  if(diff===1) return 'Nesër';
+  var days=['E Diel','E Hënë','E Martë','E Mërkurë','E Enjte','E Premte','E Shtunë'];
+  var months=['Jan','Shk','Mar','Pri','Maj','Qer','Kor','Gus','Sht','Tet','Nën','Dhj'];
+  return days[dt.getDay()]+', '+dt.getDate()+' '+months[dt.getMonth()];
+}
+/* Agjenda — takimet e ardhshme (sot e tutje), grupuar sipas ditës, nga më e afërta */
+function renderSchedule(data, list){
+  if(!list) return;
+  var now=new Date(); now.setHours(0,0,0,0);
+  var up=(data||[]).filter(function(a){
+    if(a.status==='rejected') return false;
+    var dt=new Date(a.appointment_date+'T'+(a.appointment_time||'00:00'));
+    return !isNaN(dt.getTime()) && dt>=now;
+  });
+  up.sort(function(a,b){ return new Date(a.appointment_date+'T'+(a.appointment_time||'00:00')) - new Date(b.appointment_date+'T'+(b.appointment_time||'00:00')); });
+  if(!up.length){ list.innerHTML='<div class="empty"><div class="empty-ico">📅</div><div class="empty-txt">Asnjë termin i ardhshëm</div></div>'; return; }
+  var statusColors={pending:'#F97316',confirmed:'#22C55E'};
+  var statusLabels={pending:'⏳ Pa konfirmuar',confirmed:'✅ Konfirmuar'};
+  var html='', lastKey='';
+  up.forEach(function(a){
+    var dt=new Date(a.appointment_date+'T'+(a.appointment_time||'00:00'));
+    if(a.appointment_date!==lastKey){
+      lastKey=a.appointment_date;
+      html+='<div style="margin:18px 0 9px;font-size:13px;font-weight:800;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:6px;">'+_aptDayLabel(dt)+'</div>';
+    }
+    var sc=statusColors[a.status]||'#7B8BAD';
+    html+='<div style="display:flex;align-items:center;gap:12px;padding:11px 13px;background:var(--white);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;">'
+      +'<div style="min-width:52px;text-align:center;font-size:16px;font-weight:800;color:'+sc+';">'+(a.appointment_time||'--')+'</div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;">'+(a.patient_name||'Unknown')+'</div><div style="font-size:11px;color:var(--tm);">'+(a.reason||'—')+'</div></div>'
+      +'<span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;background:'+sc+'22;color:'+sc+';white-space:nowrap;">'+(statusLabels[a.status]||a.status)+'</span>'
+      +(a.status==='pending'?'<button onclick="aptAction(\''+a.id+'\',\'confirmed\')" title="Konfirmo" style="padding:6px 11px;border-radius:8px;border:none;background:#22C55E;color:#fff;font-size:12px;font-weight:700;cursor:pointer;">✓</button>':'')
+      +'</div>';
+  });
+  list.innerHTML=html;
 }
 
 async function aptAction(id, status){
