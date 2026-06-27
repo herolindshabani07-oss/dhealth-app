@@ -4316,12 +4316,18 @@ try{ window.addEventListener('load', function(){ setTimeout(function(){ try{dhA1
       }
     });
   }
-  document.addEventListener('focusin', function(e){ if(isTextField(e.target)) setNav(true); });
-  document.addEventListener('focusout', function(e){
-    if(!isTextField(e.target)) return;
-    /* prit pak: nëse fokusi shkon te një fushë tjetër teksti, mbaje të fshehur */
-    setTimeout(function(){ if(!isTextField(document.activeElement)) setNav(false); }, 120);
-  });
+  /* Vetë-korrigjues: gjendja e nav-it ndjek GJITHMONË nëse ka fushë teksti të fokusuar.
+     Kjo siguron që nav-i NUK mbetet kurrë i fshehur (p.sh. kur tastiera mbyllet pa 'focusout',
+     ose kur ndërrohet ekrani gjatë shkrimit). */
+  var _navHidden=null;
+  function syncNav(){
+    var typing=isTextField(document.activeElement);
+    if(typing!==_navHidden){ _navHidden=typing; setNav(typing); }
+  }
+  document.addEventListener('focusin', syncNav);
+  document.addEventListener('focusout', function(){ setTimeout(syncNav, 50); });
+  try{ document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='visible') syncNav(); }); }catch(e){}
+  setInterval(syncNav, 600);   /* siguri: rikthe nav-in brenda 0.6s sapo s'ka fushë të fokusuar */
 })();
 /* ════ Empty-state i njësuar: ikonë miqësore + tekst + (opsional) buton veprimi ════ */
 function dhEmpty(icon,title,sub,ctaLabel,ctaOnclick){
@@ -6646,7 +6652,7 @@ function obFinish(skipped){
       ['ds-diag-tags','prof-diag-tags'].forEach(function(lid){ var w=document.getElementById(lid); if(w&&!Array.from(w.querySelectorAll('.tag2')).some(function(t){return t.textContent.replace('×','').trim().toLowerCase()===d.toLowerCase();})){ var sp=document.createElement('span'); sp.className='tag2 t'; sp.innerHTML=d+' <span class="tx" onclick="this.parentElement.remove()">×</span>'; w.appendChild(sp); } });
     });
     Array.from(document.querySelectorAll('#ob-med-tags .ob-chip')).map(function(c){return c.getAttribute('data-v');}).forEach(function(m){
-      var w=document.getElementById('ds-therapy-tags'); if(w&&!Array.from(w.querySelectorAll('.tag2')).some(function(t){return t.textContent.replace('×','').split('·')[0].trim().toLowerCase()===m.toLowerCase();})){ var sp=document.createElement('span'); sp.className='tag2 t'; sp.innerHTML=m+' <span class="tx" onclick="this.parentElement.remove();renderTherapyList()">×</span>'; w.appendChild(sp); }
+      var w=document.getElementById('ds-therapy-tags'); if(w&&!Array.from(w.querySelectorAll('.tag2')).some(function(t){return t.textContent.replace('×','').split('·')[0].trim().toLowerCase()===m.toLowerCase();})){ var sp=document.createElement('span'); sp.className='tag2 t'; sp.innerHTML=m+' <span class="tx" onclick="rmTag(\'ds-therapy-tags\',this)">×</span>'; w.appendChild(sp); }
     });
     try{ syncMedicalProfile(); }catch(e){}
     try{ renderTherapyList(); }catch(e){}
@@ -9196,7 +9202,7 @@ function addTherapyMed(){
   if(el && !Array.from(el.querySelectorAll('.tag2')).some(function(t){ return t.textContent.replace('×','').split('·')[0].trim().toLowerCase()===med.toLowerCase(); })){
     var span=document.createElement('span');
     span.className='tag2 t';
-    span.innerHTML=med+' <span class="tx" onclick="this.parentElement.remove();renderTherapyList()">×</span>';
+    span.innerHTML=med+' <span class="tx" onclick="rmTag(\'ds-therapy-tags\',this)">×</span>';
     el.appendChild(span);
   }
   /* një alarm për çdo orë e zgjedhur */
