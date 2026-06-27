@@ -10959,6 +10959,7 @@ async function runCorrelationEngine(){
   if(btn){ btn.disabled=true; btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Analyzing...'; }
   if(_otherBtn){ _otherBtn.disabled=true; _otherBtn.style.opacity='0.5'; }
 
+  try{ await calcDailyScore(true); }catch(e){}   /* rifresko numrin KANONIK → Diagnosis = Home */
   var data = collectAllData();
   var d = data;
   var profAssess = _profileAssessmentText();
@@ -11047,7 +11048,8 @@ async function runCorrelationEngine(){
 
 function renderEngineResult(result, data){
   if(!result) return;
-  var score = result.score || 0;
+  /* Numri = KANONIK (calcDailyScore). AI jep alarmet/rekomandimet/korrelacionet, JO numrin. */
+  var score = (window._dhScore && window._dhScore.score!=null) ? window._dhScore.score : (result.score || 0);
   var alarms = result.alarms || [];
   var correlations = result.correlations || [];
   var recs = result.recommendations || [];
@@ -11357,6 +11359,12 @@ function renderDailyScore(score, messages){
     var _hn=document.getElementById('home-sc-num'); if(_hn) animateCount(_hn, score);
     var _ht=document.getElementById('home-sc-title'); if(_ht){ _ht.textContent=(_stat[_t][_scL]||_stat[_t].en); _ht.style.color=_stColor[_t]; }
     var _hd=document.getElementById('home-sc-desc'); if(_hd) _hd.textContent=(_msg[_t][_scL]||_msg[_t].en);
+    /* Burimi KANONIK i numrit kudo (Diagnosis header, restore, etj.) — vetëm calcDailyScore e shkruan */
+    localStorage.setItem('dh_last_score', String(score));
+    localStorage.setItem('dh_last_score_title', (_stat[_t][_scL]||_stat[_t].en));
+    localStorage.setItem('dh_last_score_desc', (_msg[_t][_scL]||_msg[_t].en));
+    localStorage.setItem('dh_last_score_color', _stColor[_t]);
+    try{ updateDiagHeader(); }catch(e){}
   }catch(e){}
   if(badge){
     badge.style.display='inline-block';
@@ -13151,6 +13159,7 @@ async function runVitalIntelligence(){
   var result = document.getElementById('vieResult');
   if(btn){ btn.disabled=true; btn.innerHTML='<div class="spin" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:6px;"></div> Analyzing all vitals...'; }
   if(result) result.style.display='block';
+  try{ await calcDailyScore(true); }catch(e){}   /* rifresko numrin KANONIK → Vitals = Home */
 
   /* ── Collect ALL data ── */
   var v = vitalsState;
@@ -13210,9 +13219,10 @@ async function runVitalIntelligence(){
     var res = JSON.parse(txt);
     renderVIE(res);
 
-    /* Update Daily Score on Home */
+    /* Numri kanonik mbahet nga calcDailyScore — mos e mbishkruaj me numrin e AI-së */
     try{
-      localStorage.setItem('dh_last_score', String(res.score||0));
+      var _cs=(window._dhScore && window._dhScore.score!=null)?window._dhScore.score:(res.score||0);
+      localStorage.setItem('dh_last_score', String(_cs));
       updateDiagHeader();
     }catch(e){}
 
@@ -13228,7 +13238,8 @@ async function runVitalIntelligence(){
 
 function renderVIE(res){
   if(!res) return;
-  var score = res.score || 0;
+  /* Numri = KANONIK (calcDailyScore) — i njëjti si Home & Diagnosis. AI jep tekstin/verdiktin. */
+  var score = (window._dhScore && window._dhScore.score!=null) ? window._dhScore.score : (res.score || 0);
   var color = score>=75 ? '#2DC8A0' : score>=50 ? '#F97316' : '#DC2626';
 
   /* Score circle */
