@@ -2212,9 +2212,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
           <input type="file" id="ecgFileInput" accept="image/*,.pdf" style="display:none;" onchange="handleECGUpload(event)"/>
         </label>
         <div id="ecgHistoryList" style="margin-top:10px;"></div>
-        <div id="ecgResultArea" style="display:none;margin-top:10px;background:linear-gradient(135deg,#1A0A2E,#2D1B69);border-radius:14px;padding:13px;">
-          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">🤖 D Health AI — ECG Analysis</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.9);line-height:1.7;" id="ecgResultText"></div>
+        <div id="ecgResultArea" style="display:none;margin-top:12px;background:linear-gradient(160deg,#0F1830 0%,#1A2547 55%,#0E1730 100%);border:1px solid rgba(120,160,235,0.26);border-radius:16px;padding:16px 15px;box-shadow:0 14px 34px rgba(8,16,44,0.5);position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#5CC8FF,#8B6FE8,#FF6B8A);"></div>
+          <div style="font-size:11px;font-weight:800;color:#9FC2FF;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;">🤖 D Health AI — ECG Analysis</div>
+          <div style="font-size:12.5px;color:#E8EFFF;line-height:1.78;font-weight:500;" id="ecgResultText"></div>
           <button onclick="shareECGWithDoctor()" style="width:100%;margin-top:10px;padding:9px;border-radius:11px;border:none;background:rgba(255,255,255,0.15);color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">📤 Send to Dr. Shabani</button>
         </div>
       </div>
@@ -3465,17 +3466,28 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div class="pf-sec-title" data-i18n="dx.pDocuments">📄 Documents</div>
         <div class="fl-list" id="ds-fl-list"></div>
         <div class="divr"></div>
-        <!-- ECG ANALYSIS -->
-        <div class="pf-sec-title" data-i18n="dx.pEcgAnalysis">🫀 ECG Analysis</div>
-        <div data-i18n="dx.ecgNote" style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px;">Upload ECG nga smartwatch ose ring — D Health AI analizon dhe krahason me historikun (1 ECG / 24h)</div>
-        <label for="ecgFileInputProfile" style="width:100%;padding:11px;border-radius:12px;background:linear-gradient(135deg,#FF6B8A,#8B6FE8);color:#fff;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15M17 8L12 3L7 8M12 3V15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span data-i18n="dx.ecgUpload">Upload Analyze &amp; ECG</span>
-          <input type="file" id="ecgFileInputProfile" accept="image/*,.pdf" style="display:none;" onchange="handleECGUpload(event)"/>
-        </label>
-        <div id="ecgResultAreaProfile" style="display:none;margin-top:10px;background:linear-gradient(135deg,#1A0A2E,#2D1B69);border-radius:12px;padding:13px;">
-          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;" data-i18n="dx.ecgResultHdr">🤖 D Health AI — ECG Analysis</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.9);line-height:1.7;" id="ecgResultTextProfile"></div>
+        <!-- NGARKO & ANALIZO — dy kutija: Analiza (vlera lab → chip-a) + ECG (ritmi). AI orientohet sipas butonit. -->
+        <div class="pf-sec-title" data-i18n="dx.uploadAnalyze">🔬 Ngarko &amp; Analizo</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+          <label for="ds-lab-file" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:14px 8px;border-radius:14px;background:linear-gradient(135deg,#0D9488,#2DC8A0);color:#fff;cursor:pointer;text-align:center;box-shadow:0 8px 20px rgba(13,148,136,0.32);">
+            <span style="font-size:23px;line-height:1;">📋</span>
+            <span style="font-size:12.5px;font-weight:800;" data-i18n="dx.labUpload">Analiza</span>
+            <span style="font-size:9px;opacity:0.92;" data-i18n="dx.labUploadSub">vlera laboratorike</span>
+            <input type="file" id="ds-lab-file" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handleDsFileUpload(event)"/>
+          </label>
+          <label for="ecgFileInputProfile" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:14px 8px;border-radius:14px;background:linear-gradient(135deg,#FF6B8A,#8B6FE8);color:#fff;cursor:pointer;text-align:center;box-shadow:0 8px 20px rgba(139,111,232,0.32);">
+            <span style="font-size:23px;line-height:1;">🫀</span>
+            <span style="font-size:12.5px;font-weight:800;">ECG</span>
+            <span style="font-size:9px;opacity:0.92;" data-i18n="dx.ecgSub">ritmi i zemrës</span>
+            <input type="file" id="ecgFileInputProfile" accept="image/*,.pdf" style="display:none;" onchange="handleECGUpload(event)"/>
+          </label>
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin:8px 2px 0;line-height:1.5;" data-i18n="dx.uploadHint">📋 Analiza → vlerat dalin si "+ADD" te Lab Values · 🫀 ECG → analizë e ritmit (1 / 24h)</div>
+        <!-- RAPORTI ECG — premium -->
+        <div id="ecgResultAreaProfile" style="display:none;margin-top:12px;background:linear-gradient(160deg,#0F1830 0%,#1A2547 55%,#0E1730 100%);border:1px solid rgba(120,160,235,0.26);border-radius:16px;padding:16px 15px;box-shadow:0 14px 34px rgba(8,16,44,0.5);position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#5CC8FF,#8B6FE8,#FF6B8A);"></div>
+          <div style="font-size:11px;font-weight:800;color:#9FC2FF;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;" data-i18n="dx.ecgResultHdr">🤖 D Health AI — ECG Analysis</div>
+          <div style="font-size:12.5px;color:#E8EFFF;line-height:1.78;font-weight:500;" id="ecgResultTextProfile"></div>
         </div>
         <div class="divr"></div>
         <!-- ECG HISTORY — seksion paralel me Diagnoses/Therapy -->
@@ -7073,6 +7085,11 @@ var DH_I18N = {
   'mr.neutral':    {sq:'NEUTRAL', mk:'НЕУТРАЛНО', en:'NEUTRAL'},
   'dx.ecgUpload':      {sq:'Ngarko & Analizo ECG', mk:'Прикачи и анализирај ЕКГ', en:'Upload & Analyze ECG'},
   'dx.ecgResultHdr':   {sq:'🤖 D Health AI — Analizë ECG', mk:'🤖 D Health AI — ЕКГ анализа', en:'🤖 D Health AI — ECG Analysis'},
+  'dx.uploadAnalyze':  {sq:'🔬 Ngarko & Analizo', mk:'🔬 Прикачи и анализирај', en:'🔬 Upload & Analyze'},
+  'dx.labUpload':      {sq:'Analiza', mk:'Анализи', en:'Lab results'},
+  'dx.labUploadSub':   {sq:'vlera laboratorike', mk:'лаб. вредности', en:'lab values'},
+  'dx.ecgSub':         {sq:'ritmi i zemrës', mk:'ритам на срце', en:'heart rhythm'},
+  'dx.uploadHint':     {sq:'📋 Analiza → vlerat dalin si "+ADD" te Lab Values · 🫀 ECG → analizë e ritmit (1 / 24h)', mk:'📋 Анализи → вредностите се појавуваат како "+ADD" · 🫀 ЕКГ → анализа на ритам (1 / 24ч)', en:'📋 Lab → values appear as "+ADD" in Lab Values · 🫀 ECG → rhythm analysis (1 / 24h)'},
   'dx.pEcgHistory':    {sq:'📋 Historiku i ECG', mk:'📋 Историја на ЕКГ', en:'📋 ECG History'},
   'dx.diagnostics':    {sq:'Diagnostikë', mk:'Дијагностика', en:'Diagnostics'},
   'dx.profileAssessment':{sq:'D Health AI — Vlerësim i profilit', mk:'D Health AI — Проценка на профил', en:'D Health AI — Profile Assessment'},
