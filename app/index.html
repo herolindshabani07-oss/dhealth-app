@@ -9783,7 +9783,13 @@ function addLabTag(txt){
 }
 
 async function extractLabsFromDocument(file, prefix){
-  if(!prefix){ var _dgn=document.getElementById('screen-diagnostic'); prefix = (_dgn && _dgn.classList.contains('active')) ? 'ds' : 'prof'; }
+  if(!prefix){
+    /* Zgjidh seksionin që është VËRTET i dukshëm (modali prof mund të jetë hapur mbi Diagnosis) */
+    var _p=document.getElementById('prof-lab-tags'), _d=document.getElementById('ds-lab-tags');
+    if(_p && _p.offsetParent!==null) prefix='prof';
+    else if(_d && _d.offsetParent!==null) prefix='ds';
+    else prefix='ds';
+  }
   if(!file) return;
   var type = file.type||'';
   var name = file.name||'';
@@ -9840,9 +9846,11 @@ var LAB_ROUTE = {
 function routeLab(name){
   var n = String(name||'').toLowerCase().replace(/[:.]/g,' ').replace(/\s+/g,' ').trim();
   if(!n) return null;
-  for(var k in LAB_ROUTE){
-    if(LAB_ROUTE[k].some(function(a){ return n===a || n.indexOf(a)>-1; })) return k;
-  }
+  /* HbA1c ka përparësi (që "hemoglobina e glikuar" të mos kapet nga asgjë tjetër) */
+  if(LAB_ROUTE.hba1c.some(function(a){ return n===a || n.indexOf(a)>-1; })) return 'hba1c';
+  /* Mos e ngatërro me sheqerin në gjak: G6PD = "glucose-6-phosphate dehydrogenase" përmban "glucose"! */
+  if(/phosphate|dehydrogenase|g6pd|galactos/.test(n)) return null;
+  if(LAB_ROUTE.glu.some(function(a){ return n===a || n.indexOf(a)>-1; })) return 'glu';
   return null;
 }
 /* Glukozë → mmol/L (fushat e Vitals janë mmol/L). Konverto nga mg/dL nëse duhet. */
@@ -9871,24 +9879,37 @@ function renderLabChips(labs, prefix){
   var anchor = document.getElementById(prefix+'-lab-tags');
   if(!anchor){ prefix = (prefix==='ds')?'prof':'ds'; anchor=document.getElementById(prefix+'-lab-tags'); }
   if(!anchor) return;
+  var esc=function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); };
   var stripId = prefix+'-lab-chips';
   var strip = document.getElementById(stripId);
-  if(!strip){ strip=document.createElement('div'); strip.id=stripId; anchor.parentNode.insertBefore(strip, anchor); }
-  var esc=function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); };
-  var html = '<div style="font-size:10px;font-weight:700;color:#5CC8FF;text-transform:uppercase;letter-spacing:0.4px;margin:2px 0 8px;display:flex;align-items:center;gap:7px;"><span>🔬 '+dhT('lab.detected')+'</span><span style="flex:1;height:1px;background:rgba(120,160,220,0.22);"></span></div>';
-  html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px;">';
+  if(!strip){
+    strip=document.createElement('div'); strip.id=stripId;
+    anchor.parentNode.insertBefore(strip, anchor);
+    strip.innerHTML = '<div style="font-size:10px;font-weight:700;color:#5CC8FF;text-transform:uppercase;letter-spacing:0.4px;margin:2px 0 8px;display:flex;align-items:center;gap:7px;"><span>🔬 '+dhT('lab.detected')+'</span><span style="flex:1;height:1px;background:rgba(120,160,220,0.22);"></span></div>'
+      + '<div class="lc-list" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px;"></div>'
+      + '<button type="button" onclick="addAllLabChips(\''+prefix+'\')" style="font-size:10.5px;font-weight:700;color:#5CC8FF;background:none;border:none;cursor:pointer;padding:0 0 6px;font-family:var(--font);">＋ '+dhT('lab.addAll')+'</button>';
+  }
+  var list = strip.querySelector('.lc-list'); if(!list) return;
+  /* Dedup: ndaj chip-ave ekzistuese (upload me shumë dokumente) DHE ndaj Lab Values të shtuara tashmë */
+  var have = {};
+  Array.prototype.slice.call(list.querySelectorAll('.lab-chip')).forEach(function(b){ have[(b.getAttribute('data-text')||'').toLowerCase()]=1; });
+  Array.prototype.slice.call(document.querySelectorAll('#'+prefix+'-lab-tags .tag2')).forEach(function(t){ have[t.textContent.replace('×','').trim().toLowerCase()]=1; });
   labs.forEach(function(p){
     if(!p||!p.name) return;
-    var rt = routeLab(p.name);
-    var txt = _labChipText(p);
+    var txt=_labChipText(p);
+    if(have[txt.toLowerCase()]) return;
+    have[txt.toLowerCase()]=1;
+    var rt=routeLab(p.name);
     var vb = rt ? '<span style="font-size:8px;font-weight:800;background:rgba(45,200,160,0.92);color:#06281f;border-radius:6px;padding:1px 5px;">→ VITALS</span>' : '';
-    html += '<button type="button" class="lab-chip" data-prefix="'+prefix+'" data-text="'+esc(txt)+'" data-value="'+esc(p.value)+'" data-unit="'+esc(p.unit)+'" data-route="'+(rt||'')+'" onclick="addLabChip(this)" '
-      + 'style="display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:12px;border:1px solid rgba(120,160,220,0.32);background:rgba(255,255,255,0.07);color:#EAF1FF;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);">'
-      + '<span class="lc-txt">'+esc(txt)+'</span>'+vb+'<span class="lc-plus" style="font-weight:800;color:#5CC8FF;font-size:14px;line-height:1;">+</span></button>';
+    var btn=document.createElement('button');
+    btn.type='button'; btn.className='lab-chip';
+    btn.setAttribute('data-prefix',prefix); btn.setAttribute('data-text',txt);
+    btn.setAttribute('data-value',(p.value==null?'':String(p.value))); btn.setAttribute('data-unit',(p.unit==null?'':String(p.unit)));
+    btn.setAttribute('data-route',rt||''); btn.setAttribute('onclick','addLabChip(this)');
+    btn.style.cssText='display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:12px;border:1px solid rgba(120,160,220,0.32);background:rgba(255,255,255,0.07);color:#EAF1FF;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);';
+    btn.innerHTML='<span class="lc-txt">'+esc(txt)+'</span>'+vb+'<span class="lc-plus" style="font-weight:800;color:#5CC8FF;font-size:14px;line-height:1;">+</span>';
+    list.appendChild(btn);
   });
-  html += '</div>';
-  html += '<button type="button" onclick="addAllLabChips(\''+prefix+'\')" style="font-size:10.5px;font-weight:700;color:#5CC8FF;background:none;border:none;cursor:pointer;padding:0 0 6px;font-family:var(--font);">＋ '+dhT('lab.addAll')+'</button>';
-  strip.innerHTML = html;
 }
 function addLabChip(btn){
   if(!btn || btn.getAttribute('data-done')==='1') return;
@@ -9900,7 +9921,10 @@ function addLabChip(btn){
   _addLabToSection(prefix, text);
   var routed='';
   if(route==='glu'){ var mv=_gluToMmol(value, unit); if(mv!=null && mv>0){ saveVitalDetail('glu', mv); routed='Glucose'; } }
-  else if(route==='hba1c'){ var hv=parseFloat(String(value).replace(',','.')); if(!isNaN(hv)&&hv>0){ saveVitalDetail('hba1c', Math.round(hv*10)/10); routed='HbA1c'; } }
+  else if(route==='hba1c'){ var hv=parseFloat(String(value).replace(',','.')); if(!isNaN(hv)&&hv>0){
+      /* IFCC (mmol/mol) → DCCT (%) — HbA1c në % është ~4–15; >18 ose njësi mol/mol = IFCC */
+      if(hv>18 || /mol\s*\/\s*mol/i.test(unit)) hv = (hv/10.929)+2.15;
+      saveVitalDetail('hba1c', Math.round(hv*10)/10); routed='HbA1c'; } }
   btn.setAttribute('data-done','1');
   btn.style.opacity='0.55'; btn.style.borderColor='rgba(45,200,160,0.6)'; btn.style.cursor='default';
   var plus=btn.querySelector('.lc-plus'); if(plus){ plus.textContent='✓'; plus.style.color='#2DC8A0'; }
