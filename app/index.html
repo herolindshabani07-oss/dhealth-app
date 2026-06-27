@@ -8889,7 +8889,7 @@ function ecgUploadedWithin24h(){
 }
 
 function triggerECGUpload(){
-  if(ACCESS && ACCESS.currentPlan && ACCESS.currentPlan !== 'clinic'){
+  if(!(ACCESS && ACCESS.can && ACCESS.can('ecg'))){
     showToast('🔒 ECG Analysis — Premium required ($3/muaj)');
     return;
   }
@@ -8904,7 +8904,7 @@ async function handleECGUpload(event){
   /* Cili input e nisi — Profile apo Vitals — që rezultati të shfaqet te ekrani i duhur */
   var fromProfile = event.target && event.target.id === 'ecgFileInputProfile';
 
-  if(ACCESS && ACCESS.currentPlan !== 'clinic'){
+  if(!(ACCESS && ACCESS.can && ACCESS.can('ecg'))){
     showToast('🔒 Premium required');
     return;
   }
