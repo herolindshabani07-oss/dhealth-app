@@ -4576,7 +4576,18 @@ function getProfile(){
         + '(Consider this when advising outdoor activity, especially for respiratory/cardiac conditions.)\n'
       : '• Not available yet\n')+'\n'+
     'LATEST ECG ANALYSIS:\n'+ecgStr+'\n\n'+
-    'NOTES: '+notes;
+    'NOTES: '+notes+'\n\n'+
+    _dhScoreBlock();
+}
+/* Blloku i score-it KANONIK të D Health AI — një burim i vetëm i së vërtetës për numrin. */
+function _dhScoreBlock(){
+  var d=null; try{ d=window._dhScore||JSON.parse(localStorage.getItem('dh_score_detail')||'null'); }catch(e){}
+  if(!d || d.score==null) return 'D HEALTH AI SCORE: not computed yet — encourage the patient to record vitals/activity.';
+  var br=(d.benefits||[]).concat(d.warnings||[]);
+  return 'D HEALTH AI SCORE (canonical, pre-computed by the deterministic engine): '+d.score+'/100\n'
+    + 'SCORE BREAKDOWN (the exact factors that produced it):\n'
+    + (br.length ? br.map(function(m){return '• '+m;}).join('\n') : '• Baseline — limited data today')+'\n'
+    + 'CRITICAL: This '+d.score+'/100 is the single source of truth shown to the patient on Home. In your verdict you MUST explain and justify THIS exact number using the breakdown above. Do NOT invent or output a different score.';
 }
 var BASE_SYS='You are D Health AI, an advanced medical AI with full access to the patient\'s medical profile.\n\n'+
   'INSTRUCTIONS:\n- Respond in the SAME language the user writes in (Albanian or English)\n- Reference actual values and diagnoses — be specific\n- Be empathetic, warm, and professional\n- Use **bold** for key values\n- For serious concerns, recommend Dr. Shabani\n- Keep responses focused (3-4 paragraphs max)\n\n';
@@ -4684,7 +4695,8 @@ async function runVerdictAI(){
   err.classList.remove('vis');resp.style.display='block';
   text.innerHTML='<div class="dh-skel-wrap"><div class="dh-skel" style="width:72%"></div><div class="dh-skel"></div><div class="dh-skel" style="width:90%"></div><div class="dh-skel" style="width:58%"></div></div>';
   try{
-    var _vprompt=(vitalsState.sys>0 ? 'Provide a COMPREHENSIVE, DETAILED health verdict — a full report, NOT a brief summary (ignore any brevity limit in the instructions). Use clear **bold** section headers and bullet points. Cover: 1) HEALTH SCORE /100 with the reasoning behind it; 2) Overall status; 3) Detailed analysis of EACH vital sign (what it means for me, the trend, and the risk); 4) How EACH of my diagnoses is affected by my vitals and nutrition today; 5) Therapy effectiveness review for EACH medication; 6) 5-7 prioritized recommendations, each with a short reason why.' : 'Patient has not recorded vitals yet. Provide: 1) Welcome message, 2) What vitals to track and why, 3) General health advice based on their diagnoses and therapy, 4) Encourage them to start tracking. Keep it warm and motivating.');
+    try{ await calcDailyScore(true); }catch(e){}   /* rifresko score-in KANONIK (deterministik, pa thirrje AI) → Home & Verdict japin TË NJËJTIN numër */
+    var _vprompt=(vitalsState.sys>0 ? 'Provide a COMPREHENSIVE, DETAILED health verdict — a full report, NOT a brief summary (ignore any brevity limit in the instructions). Use clear **bold** section headers and bullet points. Cover: 1) Start with the **D Health AI Score** /100 — use the EXACT canonical "D HEALTH AI SCORE" shown in the profile context and explain/justify it from its breakdown; do NOT compute or output a different number; 2) Overall status; 3) Detailed analysis of EACH vital sign (what it means for me, the trend, and the risk); 4) How EACH of my diagnoses is affected by my vitals, nutrition AND today\'s air quality (AQI); 5) Therapy effectiveness review for EACH medication, plus any drug–allergy or lab-value concern; 6) 5-7 prioritized recommendations, each with a short reason why.' : 'Patient has not recorded vitals yet. Provide: 1) Welcome message, 2) What vitals to track and why, 3) General health advice based on their diagnoses and therapy, 4) Encourage them to start tracking. Keep it warm and motivating.');
     var _vrnd=_streamRenderer(text);
     await streamClaudeText({model:'claude-sonnet-4-5',max_tokens:1100,system:BASE_SYS+getProfile(),messages:[{role:'user',content:_vprompt}]}, _vrnd.on);
     _vrnd.flush();
@@ -11250,9 +11262,22 @@ async function calcDailyScore(silent){
     if(stepsCompensation > 0) benefits.push('🚶 Walking compensated '+stepsCompensation+' pts of meal impact — well done!');
   }
 
+  /* ── AIR QUALITY (ndotja e ajrit) — faktor i motorit; ndikon më shumë te diagnoza respiratore/kardiake ── */
+  var aqi = (typeof airState!=='undefined' && airState.aqi) ? airState.aqi : 0;
+  if(aqi > 0){
+    var respCardiac = /hta|hypertension|tension|asthm|astm|copd|cardiac|zemr|heart|respirat|mushk|bronk/.test(diagLower);
+    if(aqi <= 50){ score += 3; benefits.push('🌿 Air quality good (AQI '+aqi+') — safe for outdoor activity'); }
+    else if(aqi <= 100){ if(respCardiac){ score -= 2; warnings.push('🌫️ Air AQI '+aqi+' moderate — limit prolonged outdoor effort'); } }
+    else if(aqi <= 150){ score -= (respCardiac ? 8 : 4); warnings.push('🌫️ Air AQI '+aqi+' unhealthy for sensitive groups'+(respCardiac?' — your condition needs extra caution':'')); }
+    else { score -= (respCardiac ? 12 : 7); warnings.push('🚨 Air AQI '+aqi+' unhealthy — avoid outdoor exertion'+(respCardiac?', high risk for your condition':'')); }
+  }
+
   /* Clamp score */
   score = Math.max(10, Math.min(100, score));
   var allMessages = benefits.concat(warnings);
+
+  /* ── MOTORI I VETËM "D Health AI": ruaj score-in KANONIK + zbërthimin që Verdict/Profile/Chat ta SHPJEGOJNË (jo të shpikin numër tjetër) ── */
+  try{ window._dhScore = {score:score, benefits:benefits.slice(), warnings:warnings.slice(), ts:Date.now()}; localStorage.setItem('dh_score_detail', JSON.stringify(window._dhScore)); }catch(e){}
 
   /* Render local score immediately */
   renderDailyScore(score, allMessages);
