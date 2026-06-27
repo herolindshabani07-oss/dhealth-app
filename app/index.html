@@ -10964,6 +10964,18 @@ async function runCorrelationEngine(){
   var d = data;
   var profAssess = _profileAssessmentText();
 
+  /* Score-i shfaqet MENJËHERË (deterministik); pastaj analiza rrjedh si tekst (si Profili) */
+  (function(){
+    var sc=(window._dhScore && window._dhScore.score!=null)?window._dhScore.score:0;
+    var col=sc>=75?'#2DC8A0':sc>=50?'#F97316':'#DC2626';
+    var n=document.getElementById('eng-score-num'); if(n) animateCount(n, sc);
+    var st=document.getElementById('eng-status-txt'); if(st){ st.textContent=sc>=75?'✅ Good Health Status':sc>=50?'⚠️ Fair Health Status':'🚨 Needs Attention'; }
+    var c=document.getElementById('eng-score-circle'); if(c){ c.style.background='linear-gradient(135deg,'+col+','+col+'aa)'; }
+    var dt=document.getElementById('ds-date'); if(dt){ var now=new Date(); dt.textContent=now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
+    ['eng-alarms','eng-vitals-summary','eng-correlations','eng-doctor-summary'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; });
+    var rc=document.getElementById('eng-rec-content'); if(rc) rc.innerHTML='<div class="dh-skel-wrap"><div class="dh-skel" style="width:72%"></div><div class="dh-skel"></div><div class="dh-skel" style="width:90%"></div><div class="dh-skel" style="width:58%"></div></div>';
+  })();
+
   /* Build prompt */
   var prompt =
     'You are the D Health Correlation Engine. Analyze ALL data below and find dangerous correlations.\n\n'
@@ -11007,39 +11019,15 @@ async function runCorrelationEngine(){
   + '"recommendations":["rec1","rec2","rec3","rec4","rec5"],'
   + '"doctor_summary":"Brief summary for Dr. Shabani"}';
 
+  var _rcEl = document.getElementById('eng-rec-content');
   try{
-    /* Streaming → s'e kap kurrë limitin 10s (që shkaktonte 504 → fallback lokal i shkurtër) */
-    var txt = await streamClaudeText({
-      model:'claude-sonnet-4-5',
-      max_tokens:1000,
-      system:'You are the D Health Correlation Engine. Respond ONLY with the requested JSON.',
-      messages:[{role:'user',content:prompt}]
-    });
-    txt = (txt||'{}').replace(/```json|```/g,'').trim();
-    var result = tryParseJSONLoose(txt);
-    if(!result){
-      /* AI nuk ktheu JSON të vlefshëm — fallback i pastër (KURRË JSON i papërpunuar te UI) */
-      var sm = txt.match(/"score"\s*:\s*(\d{1,3})/) || txt.match(/(\d{1,3})\s*\/\s*100/);
-      result = {
-        score: sm ? parseInt(sm[1]) : 50,
-        alarms: [],
-        correlations: [],
-        recommendations: ['Analiza AI nuk u kthye plotësisht. Shtyp "Re-Analyze" për ta provuar përsëri.'],
-        doctor_summary: ''
-      };
-    }
-    renderEngineResult(result, data);
+    /* Analiza rrjedh si TEKST i formatuar (si Profili) — numri tashmë u shfaq nga motori kanonik */
+    var _corrP = 'Provide a COMPREHENSIVE correlation analysis (full, not brief). Use **bold** section headers and bullet points. Cover: 1) **Today\'s verdict** — explain the D Health AI Score shown in my profile context (justify that EXACT number, do NOT invent another); 2) **Dangerous correlations** between my diagnoses, medications, vitals, activity, nutrition, lab values, ECG, 7-day trends and air quality (e.g. high sodium + HTA, high sugar + diabetes, high AQI + respiratory disease, low steps + HTA, drug-condition conflicts); 3) **Alarms** — anything needing attention now; 4) **5-7 prioritized recommendations**, each with a short reason; 5) one line **for Dr. Shabani** if there is a real concern.';
+    var _rnd=_streamRenderer(_rcEl);
+    await streamClaudeText({model:'claude-sonnet-4-5',max_tokens:1100,system:BASE_SYS+getProfile(),messages:[{role:'user',content:_corrP}]}, _rnd.on);
+    _rnd.flush();
   }catch(e){
-    /* Motori AI dështoi (timeout/rrjet) → llogaritje lokale që Home të marrë rezultat */
-    try{
-      var lf = computeLocalEngineScore(data);
-      renderEngineResult(lf, data);
-      var rc = document.getElementById('eng-rec-content');
-      if(rc) rc.innerHTML = lf.recommendations.map(function(r){return '• '+r;}).join('<br>');
-    }catch(e2){
-      var rc2 = document.getElementById('eng-rec-content');
-      if(rc2) rc2.innerHTML = '❌ Error: '+e.message;
-    }
+    if(_rcEl) _rcEl.innerHTML='❌ Connection error. Provo përsëri.';
   }
 
   if(btn){ btn.disabled=false; btn.innerHTML='Re-Analyze'; }
@@ -13161,6 +13149,19 @@ async function runVitalIntelligence(){
   if(result) result.style.display='block';
   try{ await calcDailyScore(true); }catch(e){}   /* rifresko numrin KANONIK → Vitals = Home */
 
+  /* Score-i shfaqet MENJËHERË (deterministik) — pa pritur AI-në; pastaj teksti rrjedh poshtë (si Profili) */
+  (function(){
+    var sc=(window._dhScore && window._dhScore.score!=null)?window._dhScore.score:0;
+    var col=sc>=75?'#2DC8A0':sc>=50?'#F97316':'#DC2626';
+    var n=document.getElementById('vieScoreNum'); if(n) animateCount(n, sc);
+    var st=document.getElementById('vieStatus'); if(st){ st.textContent=sc>=75?'✅ Good Health Status':sc>=50?'⚠️ Fair Health Status':'🚨 Needs Attention'; st.style.color=col; }
+    var c=document.getElementById('vieScoreCircle'); if(c){ c.style.borderColor=col; c.style.background='rgba('+(sc>=75?'45,200,160':sc>=50?'249,115,22':'220,38,38')+',0.2)'; }
+    var sb=document.getElementById('vieSubtitle'); if(sb) sb.textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+    ['vieDailyStyle','vieForecast','vieGoals'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; });
+    var nu=document.getElementById('vieNutrImpact'); if(nu) nu.remove();
+    var tx=document.getElementById('vieVerdictText'); if(tx) tx.innerHTML='<div class="dh-skel-wrap"><div class="dh-skel" style="width:72%"></div><div class="dh-skel"></div><div class="dh-skel" style="width:90%"></div><div class="dh-skel" style="width:58%"></div></div>';
+  })();
+
   /* ── Collect ALL data ── */
   var v = vitalsState;
   var steps = parseInt(((document.getElementById('da-steps')||{}).textContent||'0').replace(/[^0-9]/g,''))||0;
@@ -13208,30 +13209,16 @@ async function runVitalIntelligence(){
     + 'NUTRITION TODAY:\n'    + '- Total meal calories: '+totalMealCal+' kcal\n'    + '- Protein: '+totalProtein+'g, Carbs: '+totalCarbs+'g, Fat: '+(meals.reduce(function(s,m){return s+(m.fat||0);},0))+'g\n'    + '- Sugar: '+(meals.reduce(function(s,m){return s+(m.sugar||0);},0))+'g, Sodium: '+(meals.reduce(function(s,m){return s+(m.sodium||0);},0))+'mg\n'    + '- Meal risk impact on score: '+(window._mealScoreImpact||0)+' pts\n\n'    + 'ENVIRONMENT:\n'    + '- Air Quality Index: '+aqi+' ('+aqiSt+')\n\n'    + 'MEDICAL PROFILE:\n'    + '- Diagnoses: '+(diags.join(', ')||'None')+'\n'    + '- Therapy: '+(therapy.join(', ')||'None')+'\n'    + '- Lab values: '+(labs.join(', ')||'None')+'\n\n'    + 'INSTRUCTIONS: Provide a complete daily health intelligence report. Be specific to diagnoses AND nutrition impact.\n'    + 'If meal risk impact is negative, include exact activity compensation (minutes walking/cycling/running).\n'    + 'If patient has HTA and ate high-sodium, explain BP impact. If diabetic and high-sugar, explain glucose impact.\n'    + 'Respond ONLY in this exact JSON format (no markdown, no backticks):\n'    + '{'    + '"score":75,'    + '"status":"Good Health Status",'    + '"verdict":"2-3 sentence verdict about vitals, diagnoses and todays nutrition",'    + '"nutrition_impact":"1 sentence: how todays meals affected BP/glucose/weight for this patient",'    + '"compensation":"If risky meals: X min walking + Y min cycling to compensate. If balanced: positive note.",'    + '"daily_style":["🍽 Kalori max: 1,600 kcal","🚶 Target: 10,000 steps","💧 Drink 2.5L water","💊 Take therapy at 08:00","🧘 10 min meditation"],'    + '"forecast":"What improves in 7 days if recommendations followed",'    + '"goals":["✅ Goal 1 specific to data","⚠️ Goal 2","🎯 Goal 3"]'    + '}'
 ;
 
+  var textEl = document.getElementById('vieVerdictText');
   try{
-    var d = await claudeFetch({
-        model:'claude-sonnet-4-5',
-        max_tokens:1200,
-        messages:[{role:'user', content:prompt}]
-      });
-    var txt = d.content&&d.content[0] ? d.content[0].text : '{}';
-    txt = txt.replace(/```json|```/g,'').trim();
-    var res = JSON.parse(txt);
-    renderVIE(res);
-
-    /* Numri kanonik mbahet nga calcDailyScore — mos e mbishkruaj me numrin e AI-së */
-    try{
-      var _cs=(window._dhScore && window._dhScore.score!=null)?window._dhScore.score:(res.score||0);
-      localStorage.setItem('dh_last_score', String(_cs));
-      updateDiagHeader();
-    }catch(e){}
-
+    var _vieP = 'Provide a COMPREHENSIVE Vital Intelligence report (full, not brief). Use **bold** section headers and bullet points. Cover: 1) **Today\'s status** — explain the D Health AI Score shown in my profile context (justify that EXACT number, do NOT invent another); 2) **Each vital sign** — what it means for me and the risk; 3) **Nutrition impact today** — how my meals affected BP/glucose, and if risky, the exact activity compensation (minutes walking/cycling); 4) **Air quality (AQI)** impact for my conditions; 5) **Today\'s plan** — calorie target, steps, water, therapy timing; 6) **3 goals** for today; 7) **7-day forecast** if I follow the plan.';
+    var _rnd=_streamRenderer(textEl);
+    await streamClaudeText({model:'claude-sonnet-4-5',max_tokens:1200,system:BASE_SYS+getProfile(),messages:[{role:'user',content:_vieP}]}, _rnd.on);
+    _rnd.flush();
   }catch(e){
-    var scoreEl = document.getElementById('vieStatus');
-    var verdictEl = document.getElementById('vieVerdictText');
-    if(scoreEl) scoreEl.textContent = '❌ Error: '+e.message;
-    if(verdictEl) verdictEl.textContent = 'Please check your connection and try again.';
+    if(textEl) textEl.innerHTML='❌ Connection error. Provo përsëri.';
   }
+  try{ updateDiagHeader(); }catch(e){}   /* numri kanonik mbetet i shkruar nga calcDailyScore */
 
   if(btn){ btn.disabled=false; btn.innerHTML='Re-Run Vital'; }
 }
