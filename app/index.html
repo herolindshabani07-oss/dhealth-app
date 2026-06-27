@@ -537,6 +537,17 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 .actov-sub{font-size:9px;font-weight:700;margin-top:2px;letter-spacing:.2px;}
 .actov-bars{display:flex;align-items:flex-end;gap:2px;height:23px;margin-top:9px;}
 .actov-bars i{flex:1;border-radius:2px 2px 0 0;min-height:2px;opacity:.82;}
+/* Health Insights — Air Quality (IQAir) + Temperature + Humidity (si te dizajni) */
+.hins-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:18px;}
+.hins-card{position:relative;background:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.92);border-radius:16px;padding:12px 11px 0;box-shadow:0 8px 20px rgba(70,120,190,.08);cursor:pointer;overflow:hidden;display:flex;flex-direction:column;min-height:120px;}
+.hins-card.aq{background:linear-gradient(150deg,#E9F8EE,#F2FBF5 55%,#FFFFFF);padding-bottom:12px;}
+.hins-ico{font-size:18px;line-height:1;margin-bottom:6px;}
+.hins-lbl{font-size:10px;font-weight:600;color:#5d7290;margin-bottom:2px;}
+.hins-val{font-size:21px;font-weight:800;color:#1f2c44;line-height:1;}
+.hins-val span{font-size:11px;font-weight:700;color:#7387a4;}
+.hins-sub{font-size:10px;color:#8094b3;margin-top:3px;}
+.hins-wave{margin:auto -11px 0;height:32px;width:calc(100% + 22px);display:block;}
+.hins-leaf{position:absolute;right:-8px;bottom:-10px;width:66px;height:66px;pointer-events:none;}
 .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.6);}
 .dot:nth-child(1){animation:td 1.2s 0s infinite;}
 .dot:nth-child(2){animation:td 1.2s 0.2s infinite;}
@@ -1799,35 +1810,59 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       <div class="v7-wr"><span class="v7-wbadge wb-green">PM2.5 <span id="aqiPm">—</span></span></div>
     </div>
 
-    <!-- AIR QUALITY — premium card (IQAir-style, Open-Meteo data) -->
-    <div id="aqiCard" onclick="refreshAirQuality()" style="cursor:pointer;border-radius:20px;overflow:hidden;margin-bottom:12px;box-shadow:0 12px 30px rgba(70,120,190,.16);">
-      <div id="aqiTopBand" style="background:linear-gradient(135deg,#F87171,#DC2626);padding:15px 16px;">
-        <div style="display:flex;align-items:center;gap:13px;">
-          <div style="text-align:center;background:rgba(255,255,255,.18);border-radius:14px;padding:7px 11px;min-width:58px;">
-            <div id="aqiValBig" style="font-size:23px;font-weight:800;color:#fff;line-height:1;">—</div>
-            <div style="font-size:8.5px;font-weight:700;color:rgba(255,255,255,.85);margin-top:3px;letter-spacing:.3px;">US AQI</div>
-          </div>
-          <div style="flex:1;min-width:0;">
-            <div id="aqiStatusBig" style="font-size:17px;font-weight:800;color:#fff;line-height:1.15;">—</div>
-            <div style="font-size:11px;color:rgba(255,255,255,.82);margin-top:3px;"><span data-i18n="aq.title">Cilësia e ajrit</span> · <span id="aqiCityLbl2">—</span> <span style="opacity:.85;">🔄</span></div>
-          </div>
-          <div id="aqiFace" style="font-size:34px;line-height:1;flex-shrink:0;">😷</div>
+    <!-- HEALTH INSIGHTS — Air Quality (IQAir) + Temperature + Humidity (Open-Meteo) -->
+    <div class="v7-secrow" style="margin-bottom:9px;"><div class="v7-stitle" data-i18n="home.insightsTitle">HEALTH INSIGHTS</div></div>
+    <div class="hins-grid">
+
+      <!-- Air Quality (IQAir) -->
+      <div class="hins-card aq" onclick="refreshAirQuality()">
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:10px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;background:#E2231A;border-radius:3px;color:#fff;font-size:12px;font-weight:900;line-height:1;">✚</span>
+          <span style="font-size:13.5px;font-weight:800;color:#1f2c44;letter-spacing:-.4px;">IQAir</span>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.22);">
-          <div style="font-size:12px;color:rgba(255,255,255,.85);"><span data-i18n="aq.mainPollutant">Ndotësi kryesor</span> <strong id="aqiMainName" style="color:#fff;">PM2.5</strong></div>
-          <div style="font-size:14px;font-weight:800;color:#fff;"><span id="aqiPmBig">—</span> µg/m³</div>
+        <div class="hins-lbl" data-i18n="aq.title">Air Quality</div>
+        <div style="display:flex;align-items:center;gap:7px;margin:5px 0 8px;">
+          <span id="aqiTopBand" style="display:inline-block;background:linear-gradient(135deg,#34D399,#16A34A);color:#fff;font-size:15px;font-weight:800;border-radius:9px;padding:3px 11px;line-height:1.25;min-width:20px;text-align:center;"><span id="aqiValBig">—</span></span>
+          <span id="aqiStatusBig" style="font-size:12.5px;font-weight:700;color:#1f2c44;">—</span>
         </div>
+        <div id="aqiDesc" class="hins-sub" style="line-height:1.45;">—</div>
+        <svg class="hins-leaf" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M54 10C30 11 13 25 11 50c0 1 1 2 2 2 23-2 39-15 42-39 0-2-1-3-3-3Z" fill="#86CF73" opacity=".5"/>
+          <path d="M52 13C40 27 27 38 15 49" stroke="#4FA63E" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+          <path d="M40 17c4 4 5 9 4 14M30 24c4 3 6 8 5 13M21 33c4 3 5 7 5 12" stroke="#4FA63E" stroke-width="1.6" stroke-linecap="round" opacity=".4"/>
+        </svg>
+        <span id="aqiCityLbl2" style="display:none">—</span><span id="aqiFace" style="display:none">😷</span><span id="aqiMainName" style="display:none">PM2.5</span><span id="aqiPmBig" style="display:none">—</span><span id="aqiWind" style="display:none">—</span>
       </div>
-      <div style="background:#fff;padding:11px 16px;display:flex;align-items:center;justify-content:space-around;">
-        <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#1f2c44;">⛅ <span id="aqiTemp">—</span>°</div>
-        <div style="width:1px;height:18px;background:rgba(120,150,190,.2);"></div>
-        <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#1f2c44;">🧭 <span id="aqiWind">—</span> km/h</div>
-        <div style="width:1px;height:18px;background:rgba(120,150,190,.2);"></div>
-        <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#1f2c44;">💧 <span id="aqiHumidity">—</span>%</div>
+
+      <!-- Temperature -->
+      <div class="hins-card" onclick="refreshAirQuality()">
+        <div class="hins-ico">🌡️</div>
+        <div class="hins-lbl" data-i18n="ins.temperature">Temperature</div>
+        <div class="hins-val"><span id="aqiTemp">—</span><span>°C</span></div>
+        <div class="hins-sub"><span data-i18n="ins.feelsLike">Feels like</span> <span id="aqiFeels">—</span>°C</div>
+        <svg class="hins-wave" viewBox="0 0 120 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="hinsWvO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F97316" stop-opacity=".22"/><stop offset="1" stop-color="#F97316" stop-opacity="0"/></linearGradient></defs>
+          <path d="M0,20 C12,11 22,25 34,18 C46,11 58,23 70,17 C82,11 96,21 108,16 L120,18 L120,32 L0,32 Z" fill="url(#hinsWvO)"/>
+          <path d="M0,20 C12,11 22,25 34,18 C46,11 58,23 70,17 C82,11 96,21 108,16 L120,18" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+        </svg>
       </div>
+
+      <!-- Humidity -->
+      <div class="hins-card" onclick="refreshAirQuality()">
+        <div class="hins-ico">💧</div>
+        <div class="hins-lbl" data-i18n="ins.humidity">Humidity</div>
+        <div class="hins-val"><span id="aqiHumidity">—</span><span>%</span></div>
+        <div class="hins-sub" id="aqiHumLbl" data-i18n="ins.comfortable">Comfortable</div>
+        <svg class="hins-wave" viewBox="0 0 120 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="hinsWvB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B82F6" stop-opacity=".22"/><stop offset="1" stop-color="#3B82F6" stop-opacity="0"/></linearGradient></defs>
+          <path d="M0,18 C13,23 22,12 34,17 C46,22 56,13 70,18 C83,22 95,13 108,18 L120,16 L120,32 L0,32 Z" fill="url(#hinsWvB)"/>
+          <path d="M0,18 C13,23 22,12 34,17 C46,22 56,13 70,18 C83,22 95,13 108,18 L120,16" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+        </svg>
+      </div>
+
     </div>
     <div style="display:none">
-      <span id="aqiCircle"></span><span id="aqiDesc"></span><span id="dailyScoreCircle"></span><span id="dailyScoreMain"></span><span id="dailyScoreBadge"></span><span id="dailyScoreBarWrap"><span id="dailyScoreBar"></span></span><span id="dailyScoreBenefits"><span id="dailyScoreBenefitsList"></span></span><span id="homeIndicators"></span><span id="platformBanner"></span><span id="dataSourcesCount"></span>
+      <span id="aqiCircle"></span><span id="dailyScoreCircle"></span><span id="dailyScoreMain"></span><span id="dailyScoreBadge"></span><span id="dailyScoreBarWrap"><span id="dailyScoreBar"></span></span><span id="dailyScoreBenefits"><span id="dailyScoreBenefitsList"></span></span><span id="homeIndicators"></span><span id="platformBanner"></span><span id="dataSourcesCount"></span>
     </div>
 
     <div class="v7-secrow"><div class="v7-stitle" data-i18n="home.sourcesTitle">🔗 Burimet e të dhënave</div><button onclick="syncNow()" id="homeSyncBtn" class="v7-sync" data-i18n="home.sync">🔄 Sync</button></div>
@@ -6936,6 +6971,13 @@ var DH_I18N = {
   'home.scoreTitle':   {sq:'Health Score', mk:'Здравствен резултат', en:'Health Score'},
   'home.wellnessTitle':{sq:'Wellness', mk:'Добросостојба', en:'Wellness'},
   'home.activityTitle':{sq:'Aktiviteti', mk:'Активност', en:'Activity Overview'},
+  'home.insightsTitle':{sq:'NJOHURI SHËNDETËSORE', mk:'ЗДРАВСТВЕНИ УВИДИ', en:'HEALTH INSIGHTS'},
+  'ins.temperature': {sq:'Temperatura', mk:'Температура', en:'Temperature'},
+  'ins.humidity':    {sq:'Lagështia', mk:'Влажност', en:'Humidity'},
+  'ins.feelsLike':   {sq:'Ndihet si', mk:'Се чувствува како', en:'Feels like'},
+  'ins.comfortable': {sq:'Komode', mk:'Удобно', en:'Comfortable'},
+  'ins.dry':         {sq:'Ajër i thatë', mk:'Сув воздух', en:'Dry air'},
+  'ins.humid':       {sq:'Lagësht', mk:'Влажно', en:'Humid'},
   'home.summaryTitle': {sq:'Përmbledhje', mk:'Преглед', en:'Summary'},
   'actov.distance':    {sq:'Distanca', mk:'Растојание', en:'Distance'},
   'actov.activeTime':  {sq:'Koha aktive', mk:'Активно време', en:'Active Time'},
@@ -8755,13 +8797,16 @@ async function loadAirQuality(){
 async function _fetchAQIWeather(lat, lon){
   try{
     var url = 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon
-            + '&current=temperature_2m,relative_humidity_2m,wind_speed_10m&wind_speed_unit=kmh&timezone=auto';
+            + '&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m&wind_speed_unit=kmh&timezone=auto';
     var res = await fetch(url); var data = await res.json();
     if(data && data.current){
       var c = data.current;
       var t = document.getElementById('aqiTemp');     if(t && c.temperature_2m!=null)        t.textContent = Math.round(c.temperature_2m);
+      var fl= document.getElementById('aqiFeels');    if(fl && c.apparent_temperature!=null) fl.textContent = Math.round(c.apparent_temperature);
       var w = document.getElementById('aqiWind');     if(w && c.wind_speed_10m!=null)        w.textContent = Math.round(c.wind_speed_10m);
       var h = document.getElementById('aqiHumidity');  if(h && c.relative_humidity_2m!=null) h.textContent = Math.round(c.relative_humidity_2m);
+      var hl= document.getElementById('aqiHumLbl');
+      if(hl && c.relative_humidity_2m!=null){ var rh=c.relative_humidity_2m; hl.textContent = dhT(rh<35?'ins.dry':(rh>65?'ins.humid':'ins.comfortable')); }
     }
   }catch(e){ console.log('Weather error:', e.message); }
 }
