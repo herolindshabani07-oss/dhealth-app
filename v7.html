@@ -1793,12 +1793,6 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
     </div>
 
 
-    <div class="v7-secrow"><div class="v7-stitle" data-i18n="home.summaryTitle">Përmbledhje</div></div>
-    <div class="v7-wide" onclick="calcDailyScore(true);switchScreen('vitals')">
-      <div class="v7-wico ds"><svg viewBox="0 0 512 300" width="33" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M56 270 A200 200 0 0 1 94.2 152.4 L171.9 208.9 A104 104 0 0 0 152 270 Z" fill="#FF5A2E"/><path d="M94.2 152.4 A200 200 0 0 1 194.2 79.8 L223.9 171.1 A104 104 0 0 0 171.9 208.9 Z" fill="#FF9A33"/><path d="M194.2 79.8 A200 200 0 0 1 317.8 79.8 L288.1 171.1 A104 104 0 0 0 223.9 171.1 Z" fill="#FFD22E"/><path d="M317.8 79.8 A200 200 0 0 1 417.8 152.4 L340.1 208.9 A104 104 0 0 0 288.1 171.1 Z" fill="#8DC63F"/><path d="M417.8 152.4 A200 200 0 0 1 456 270 L360 270 A104 104 0 0 0 340.1 208.9 Z" fill="#14A07A"/><path d="M256 150 C232 205 216 235 216 262 A40 40 0 0 0 256 302 Z" fill="#FF6A2D"/><path d="M256 150 C280 205 296 235 296 262 A40 40 0 0 1 256 302 Z" fill="#E81E5C"/></svg><span id="dailyScoreEmoji" style="display:none"></span></div>
-      <div><div class="v7-wt1" style="color:#4db6e8;" data-i18n="home.dailyScore">Daily Health Score</div><div class="v7-wt2" id="dailyScoreDetails" data-i18n="home.scoreBasis">Bazuar te hapat, vitalet & diagnoza</div></div>
-      <div class="v7-wr"><span class="v7-wbadge wb-blue"><span id="dailyScoreNum">--</span>/100</span><div id="dailyScoreRefresh" style="font-size:9px;color:#9aa9c0;margin-top:3px;">Vitals ›</div></div>
-    </div>
     <div class="v7-wide" onclick="refreshAirQuality()" style="display:none;">
       <div class="v7-wico air"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path class="tube" d="M300 150 C360 150 378 220 360 300 C345 365 300 410 250 440" fill="none" stroke="#FFB23A" stroke-width="18" stroke-linecap="round"/><path d="M180 130 H300 a30 30 0 0 1 30 30 V452 a30 30 0 0 1 -30 30 H180 a30 30 0 0 1 -30 -30 V160 a30 30 0 0 1 30 -30 Z" fill="#D4EAF7"/><rect x="150" y="240" width="180" height="150" fill="#5FCB92"/><text x="240" y="345" font-family="Arial,Helvetica,sans-serif" font-size="90" font-weight="800" fill="#EAF8F0" text-anchor="middle">O2</text><rect x="212" y="96" width="56" height="40" rx="6" fill="#B8D8F0"/><rect x="228" y="56" width="24" height="46" rx="6" fill="#5A5A5A"/><rect x="196" y="44" width="88" height="20" rx="10" fill="#5A5A5A"/><circle cx="196" cy="54" r="16" fill="#5A5A5A"/><circle cx="284" cy="54" r="16" fill="#5A5A5A"/><circle cx="120" cy="92" r="30" fill="#5A5A5A"/><circle cx="120" cy="92" r="17" fill="#CDE7FA"/><rect x="138" y="84" width="44" height="16" rx="6" fill="#5A5A5A"/><path d="M395 175 C345 185 326 245 342 305 C353 352 392 380 416 372 C462 378 478 312 472 250 C466 190 440 175 395 175 Z" fill="#C2DEF7"/></svg><span id="aqiVal" style="display:none">—</span></div>
       <div><div class="v7-wt1" style="color:#4db6e8;"><span data-i18n="aq.title">Cilësia e ajrit</span> · <span id="aqiCityLbl">—</span> <span style="font-size:11px;">🔄</span></div><div class="v7-wt2" id="aqiStatus">Duke kontrolluar...</div></div>
@@ -11124,6 +11118,16 @@ function renderDailyScore(score, messages){
   if(circle){ circle.style.borderColor=tier.bg; circle.style.background='rgba('+(score>=75?'45,200,160':score>=60?'96,165,250':score>=45?'249,115,22':'220,38,38')+',0.2)'; }
   if(numEl)  animateCount(numEl, score);
   if(mainEl){ mainEl.textContent = tier.label; mainEl.style.color = tier.bg; }
+  /* Karta hero "D Health AI" (kartë e vetme, pa Summary) — i njëjti score ditor + status + përmbledhje miqësore */
+  try{
+    var _scL=(typeof currentLang!=='undefined'&&currentLang)?currentLang:((typeof DH_LANG!=='undefined'&&DH_LANG)?DH_LANG:'sq');
+    var _t=score>=75?'good':score>=50?'fair':'low';
+    var _stat={good:{sq:'Mirë',mk:'Добро',en:'Good'},fair:{sq:'Mesatar',mk:'Средно',en:'Fair'},low:{sq:'I ulët',mk:'Низок',en:'Low'}};
+    var _msg={good:{sq:'Shëndeti yt duket mirë sot. Vazhdo kështu!',mk:'Здравјето ти изгледа добро денес. Продолжи така!',en:'Your health looks good today. Keep it up!'},fair:{sq:'Mirë — ka vend për përmirësim.',mk:'Добро — има простор за подобрување.',en:'Doing okay — room to improve.'},low:{sq:'Kujdesu më shumë për veten sot.',mk:'Грижи се повеќе за себе денес.',en:'Take extra care of yourself today.'}};
+    var _hn=document.getElementById('home-sc-num'); if(_hn) animateCount(_hn, score);
+    var _ht=document.getElementById('home-sc-title'); if(_ht){ _ht.textContent=(_stat[_t][_scL]||_stat[_t].en); _ht.style.color=tier.bg; }
+    var _hd=document.getElementById('home-sc-desc'); if(_hd) _hd.textContent=(_msg[_t][_scL]||_msg[_t].en);
+  }catch(e){}
   if(badge){
     badge.style.display='inline-block';
     badge.textContent = tier.badge;
