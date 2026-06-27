@@ -6139,7 +6139,7 @@ var dmSearch='';
 function openDiagModal(){
   dmSelected=new Set();
   Array.from(document.getElementById('diag-tags').children).forEach(function(t){
-    var txt=t.textContent.replace('x','').replace('×','').trim();
+    var txt=t.textContent.replace('×','').trim();
     if(txt)dmSelected.add(txt);
   });
   document.getElementById('diagModalOverlay').style.display='block';
@@ -9111,7 +9111,7 @@ function renderTherapyList(){
   var tags = document.querySelectorAll('#ds-therapy-tags .tag2, #prof-therapy-tags .tag2, #therapy-tags .tag2');
   var seen = {}; var meds = [];
   Array.from(tags).forEach(function(t){
-    var name = t.textContent.replace('x','').replace('×','').split('·')[0].trim();   /* emër pa slot (heq legacy "· Slot") */
+    var name = t.textContent.replace('×','').split('·')[0].trim();   /* emër pa slot (heq legacy "· Slot") */
     if(name && !seen[name.toLowerCase()]){ seen[name.toLowerCase()]=1; meds.push(name); }
   });
   list.innerHTML = '';
@@ -10571,7 +10571,7 @@ function collectAllData(){
       var el=document.getElementById(id);
       if(!el) return;
       el.querySelectorAll('.tag2').forEach(function(t){
-        var v=t.textContent.replace('x','').replace('×','').trim();
+        var v=t.textContent.replace('×','').trim();
         if(v&&!seen[v]){seen[v]=1;arr.push(v);}
       });
     });
@@ -10909,7 +10909,7 @@ async function calcDailyScore(silent){
   var spo2  = vitalsState.spo2 || 0;
 
   /* Diagnozat */
-  var getT = function(ids){ var s={},a=[]; ids.forEach(function(id){var el=document.getElementById(id);if(el)el.querySelectorAll('.tag2').forEach(function(t){var v=t.textContent.replace('x','').replace('×','').trim();if(v&&!s[v]){s[v]=1;a.push(v);}});}); return a; };
+  var getT = function(ids){ var s={},a=[]; ids.forEach(function(id){var el=document.getElementById(id);if(el)el.querySelectorAll('.tag2').forEach(function(t){var v=t.textContent.replace('×','').trim();if(v&&!s[v]){s[v]=1;a.push(v);}});}); return a; };
   var diags   = getT(['diag-tags','prof-diag-tags','ds-diag-tags']);
   var therapy = getT(['therapy-tags','prof-therapy-tags','ds-therapy-tags']);
 
