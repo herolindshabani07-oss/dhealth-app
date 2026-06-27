@@ -2015,66 +2015,8 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
     </div>
   </div>
 
-  <!-- HEALTH BOT -->
-  <div class="panel" id="panel-bot">
-    <!-- DR SHABANI HEADER -->
-    <div style="background:linear-gradient(135deg,#0D1B4B,#1565C0);padding:14px 16px;flex-shrink:0;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid rgba(255,255,255,0.3);flex-shrink:0;">👨‍⚕️</div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">Dr. Herolind Shabani</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.7);">General Practitioner · D Health Clinic</div>
-          <div style="display:flex;align-items:center;gap:5px;margin-top:3px;">
-            <div id="drStatusDot" style="width:7px;height:7px;border-radius:50%;background:#2DC8A0;"></div>
-            <div id="drStatusTxt" style="font-size:10px;color:rgba(255,255,255,0.8);">Available today</div>
-          </div>
-        </div>
-        <div style="background:rgba(255,255,255,0.12);border-radius:10px;padding:5px 10px;text-align:center;border:1px solid rgba(255,255,255,0.2);">
-          <div style="font-size:8px;color:rgba(255,255,255,0.6);text-transform:uppercase;">Plan</div>
-          <div style="font-size:11px;font-weight:700;color:#fff;">🔒 Premium</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MESSAGES -->
-    <div class="sa" id="drMsgsWrap" style="flex:1;overflow-y:auto;padding:12px;">
-      <!-- Welcome message -->
-      <div style="display:flex;gap:8px;margin-bottom:12px;">
-        <div style="width:32px;height:32px;border-radius:50%;background:#EBF3FF;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">👨‍⚕️</div>
-        <div>
-          <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:4px 16px 16px 16px;padding:10px 13px;border:0.5px solid rgba(255,255,255,0.12);max-width:240px;">
-            <div style="font-size:12px;color:#F1F5FF;line-height:1.5;">Hello! I am Dr. Herolind Shabani. How can I help you today? 🩺</div>
-          </div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:4px;padding-left:4px;">Dr. Shabani · 9:00 AM</div>
-        </div>
-      </div>
-      <div id="drMsgsList"></div>
-      <div id="drTyping" style="display:none;margin-bottom:8px;">
-        <div style="display:flex;gap:8px;align-items:center;">
-          <div style="width:32px;height:32px;border-radius:50%;background:#EBF3FF;display:flex;align-items:center;justify-content:center;font-size:16px;">👨‍⚕️</div>
-          <div class="tybbl"><div class="td2"></div><div class="td2"></div><div class="td2"></div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- QUICK ACTIONS -->
-    <div style="padding:8px 12px;border-top:0.5px solid var(--border);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;">
-      <button onclick="drQuick('I want to book an appointment')" style="padding:6px 12px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.12);background:var(--white);font-size:11px;font-weight:600;color:#F1F5FF;cursor:pointer;white-space:nowrap;font-family:var(--font);">📅 Appointment</button>
-      <button onclick="drQuick('I want to send my ECG')" style="padding:6px 12px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.12);background:var(--white);font-size:11px;font-weight:600;color:#F1F5FF;cursor:pointer;white-space:nowrap;font-family:var(--font);">🫀 Send ECG</button>
-      <button onclick="drQuick('I have a question about my therapy')" style="padding:6px 12px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.12);background:var(--white);font-size:11px;font-weight:600;color:#F1F5FF;cursor:pointer;white-space:nowrap;font-family:var(--font);">💊 Therapy</button>
-      <button onclick="drQuick('My BP is high today')" style="padding:6px 12px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.12);background:var(--white);font-size:11px;font-weight:600;color:#F1F5FF;cursor:pointer;white-space:nowrap;font-family:var(--font);">🩸 High BP</button>
-    </div>
-
-    <!-- INPUT -->
-    <div class="bib" style="flex-shrink:0;">
-      <div class="btw">
-        <input class="binp" id="drInp" placeholder="Write a message to Dr. Shabani..." onkeydown="if(event.key==='Enter')drSend()"/>
-      </div>
-      <button class="bsb" onclick="drSend()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-    </div>
-  </div>
+  <!-- HEALTH BOT (panel-bot) u hoq: ishte chat inline i vjetër me ID të dyfishta (drInp/drTyping)
+       që përplaseshin me #screen-private. Chat-i privat me Dr. Shabani jeton vetëm te #screen-private. -->
 
   <div class="bn v7-nav">
     <button class="ni v7-ni" onclick="switchScreen('home')"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg><span data-i18n="nav.home">Home</span></button>
@@ -4060,7 +4002,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 
 </div><!-- end device -->
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+<script>
 
 /* ==== DR. SHABANI JS ==== */
 function drSendLegacy(){
@@ -4178,7 +4120,7 @@ function goBack(){
   closeDrop();
 }
 function switchTab(t){
-  ['ai','bot'].forEach(function(x){document.getElementById('tab-'+x).classList.toggle('active',x===t);document.getElementById('panel-'+x).classList.toggle('active',x===t);});
+  ['ai','bot'].forEach(function(x){var tb=document.getElementById('tab-'+x),pn=document.getElementById('panel-'+x);if(tb)tb.classList.toggle('active',x===t);if(pn)pn.classList.toggle('active',x===t);});
 }
 function switchBS(s){
   ['verdict','profile','report','connect'].forEach(function(x){
@@ -6827,7 +6769,7 @@ function applySupabaseSession(session){
     var isNew = !(pr && pr.data);
     if(isNew){
       /* Krijo profilin për përdoruesit e rinj (sidomos OAuth) */
-      try{ sb.from('profiles').upsert({ id:session.user.id, email:session.user.email, full_name:fallbackName, role:'patient' }, {onConflict:'id'}); }catch(e){}
+      try{ sb.from('profiles').upsert({ id:session.user.id, email:session.user.email, full_name:fallbackName, role:'patient' }, {onConflict:'id'}).then(function(r){ if(r&&r.error) console.warn('profile upsert:', r.error.message); }); }catch(e){}
       /* Email mirëseardhjeje vetëm për Google/OAuth — email/password marrin email konfirmimi nga Supabase */
       if(provider && provider !== 'email'){ try{ sendWelcomeEmail(session.user.email, fallbackName); }catch(e){} }
     }
@@ -9738,53 +9680,42 @@ function drRenderMsg(m, patientId){
   drMsgs.appendChild(row);
 }
 
+/* Rifreskim i njëhershëm i bisedës nga Supabase (pas dërgimit + nga intervali).
+   Rendit nga më i vjetri te më i riu dhe deduplikon me data-msg-id. */
+function drPollOnce(){
+  var sb = getSupa();
+  if(!sb || !LST.currentUser) return;
+  var patientId = LST.currentUser.id;
+  sb.from('messages').select('*')
+    .or('and(sender_id.eq.'+patientId+',receiver_id.eq.'+DOCTOR_ID+'),and(sender_id.eq.'+DOCTOR_ID+',receiver_id.eq.'+patientId+')')
+    .order('sent_at',{ascending:false}).limit(10)
+    .then(function(res){
+      if(!res.data) return;
+      var drMsgs = document.getElementById('drMsgs');
+      if(!drMsgs) return;
+      res.data.slice().reverse().forEach(function(m){
+        if(drMsgs.querySelector('[data-msg-id="'+m.id+'"]')) return;
+        drRenderMsg(m, patientId);
+      });
+      var scr = document.getElementById('drScroll')||document.querySelector('.dr-msgs');
+      if(scr) scr.scrollTop=99999;
+    });
+}
+
+/* Chat-i privat = MJEKU REAL. Dr. Shabani është person real; përgjigjet nga
+   dashboard-i dhe mesazhet vijnë me poll. PA AI këtu (AI rri te tab-i "AI Doctor"). */
 async function drSend(){
   var inp = document.getElementById('drInp');
   var txt = inp ? inp.value.trim() : '';
   if(!txt) return;
   inp.value = '';
 
-  /* Add user message */
-  drAddMsg('me', txt);
-  drHistory.push({role:'user', content: txt});
-  /* Save to Supabase */ try{sendMsgToDoctor(txt);}catch(e){}
+  var ok = false;
+  try{ ok = await sendMsgToDoctor(txt); }catch(e){ ok = false; }
+  if(!ok){ showToast('⚠️ Mesazhi nuk u dërgua. Kontrollo internetin dhe provo sërish.'); if(inp) inp.value = txt; return; }
 
-  /* Show typing */
-  var tp = document.getElementById('drTyping');
-  var wr = document.getElementById('drMsgsWrap');
-  if(tp) tp.style.display = 'block';
-  if(wr) wr.scrollTop = 99999;
-
-  /* Patient context */
-  var diags  = Array.from(document.querySelectorAll('#prof-diag-tags .tag2,#diag-tags .tag2,#ds-diag-tags .tag2')).map(function(t){return t.textContent.replace('×','').trim();}).filter(Boolean).join(', ') || 'None';
-  var vitals = 'BP:'+vitalsState.sys+'/'+vitalsState.dia+', HR:'+vitalsState.hr+', Glucose:'+vitalsState.glu+', SpO2:'+vitalsState.spo2;
-  var lang   = currentLang || 'en';
-  var sys    = (LANGS[lang]&&LANGS[lang].drSystem) || LANGS.en.drSystem;
-
-  try{
-    var res = await fetch('/.netlify/functions/claude',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json'
-      },
-      body: JSON.stringify({
-        model:'claude-sonnet-4-5',
-        max_tokens:400,
-        system: sys+' Patient diagnoses: '+diags+'. Vitals: '+vitals+'. Keep responses concise (2-4 sentences). Sign as Dr. Shabani.',
-        messages: drHistory
-      })
-    });
-    var d = await res.json();
-    if(tp) tp.style.display = 'none';
-    if(d.error){ drAddMsg('dr','❌ API Error: '+d.error.message); return; }
-    var tx = d.content && d.content[0] ? d.content[0].text : 'Please try again.';
-    drHistory.push({role:'assistant', content: tx});
-    drAddMsg('dr', tx);
-  }catch(e){
-    if(tp) tp.style.display = 'none';
-    drAddMsg('dr','⚠️ AI Chat is being configured. Will be available soon!');
-    console.error('drSend error:', e);
-  }
+  /* Rifresko menjëherë → shfaq mesazhin e sapodërguar (pa echo lokal, pa dyfishim) */
+  try{ drPollOnce(); }catch(e){}
 }
 
 function drAddMsg(type, text){
