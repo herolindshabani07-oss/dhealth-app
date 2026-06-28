@@ -6526,7 +6526,7 @@ function ldoLogin() {
           document.getElementById('lsuccnm').textContent=name;
           document.getElementById('lsuccpl').textContent=plan.charAt(0).toUpperCase()+plan.slice(1)+' Plan - Active';
           lsetBtn('lbtn-li',false,'Sign In to D Health');
-          lshow('lsucc');
+          llaunchApp();   /* login i useri ekzistues → direkt te Home (jo ekrani "Connect your device") */
         });
       }
     }).catch(function(){
@@ -6541,7 +6541,7 @@ function ldoLogin() {
         LST.currentUser={email:email.toLowerCase(),name:u.name,plan:u.plan};
         document.getElementById('lsuccnm').textContent=u.name;
         document.getElementById('lsuccpl').textContent=u.plan.charAt(0).toUpperCase()+u.plan.slice(1)+' Plan - Active';
-        lshow('lsucc');
+        llaunchApp();   /* login → direkt te Home */
       } else if(u){ lshowErr('Fjalëkalimi i gabuar.'); document.getElementById('lpw').classList.add('lerr');
       } else { lshowErr('Llogaria nuk u gjet. Krijo llogari të re.'); }
     },1200);
@@ -6618,7 +6618,7 @@ function ldoForgot() {
 function lsocialLogin() {
   document.getElementById('lsuccnm').textContent=name||'Welcome!';
   document.getElementById('lsuccpl').textContent='Free Plan - Active';
-  lshow('lsucc');
+  llaunchApp();   /* login social → direkt te Home */
 }
 function doSignOut() {
   if(!confirm('Are you sure you want to sign out?')) return;
