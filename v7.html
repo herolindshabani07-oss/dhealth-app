@@ -356,6 +356,12 @@ select option{background:#0A1628;color:#F1F5FF;}
 .trig-arr.open{transform:rotate(180deg);}
 .vi-panel{margin:0 16px;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:0 0 18px 18px;border:0.5px solid rgba(255,255,255,0.12);border-top:none;overflow:hidden;max-height:0;transition:max-height 0.4s cubic-bezier(0.4,0,0.2,1),opacity 0.3s;opacity:0;}
 .vi-panel.open{max-height:500px;opacity:1;}
+/* Seksione collapsible te Vitals (TA / Glucose / HRV-Breath-Temp) */
+.vsec-arr{font-size:12px;color:#7387a4;transition:transform .3s;display:inline-block;line-height:1;}
+.vsec-arr.open{transform:rotate(180deg);}
+.vsec-body{max-height:0;overflow:hidden;opacity:0;transition:opacity .25s ease;}
+.vsec-body.open{opacity:1;}
+.hrv-sec{background:linear-gradient(160deg,rgba(255,255,255,.9),rgba(255,255,255,.58));border:1px solid rgba(255,255,255,.92);border-radius:20px;box-shadow:0 10px 24px rgba(70,120,190,.12),inset 0 1px 1px rgba(255,255,255,.9);margin:12px 16px 0;padding:14px;}
 .vi-zone{padding:14px;}
 .fi-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
 .fw{display:flex;flex-direction:column;gap:3px;}
@@ -2182,27 +2188,36 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       </div>
     </div>
     <div class="hta-detail">
-      <div class="det-hdr"><div class="det-title">🩸 TA Detail</div><span id="ta-badge" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--ambl);color:#B45309;">--</span></div>
-      <div class="gauge-row">
-        <div class="gauge-box"><div class="gauge-val" style="color:var(--orange);" id="g-sys">--</div><div class="gauge-lbl">Systolic</div><div class="gauge-sub">Normal &lt;120</div></div>
-        <div class="gauge-box"><div class="gauge-val" style="color:var(--amber);" id="g-dia">--</div><div class="gauge-lbl">Diastolic</div><div class="gauge-sub">Normal &lt;80</div></div>
-        <div class="gauge-box"><div class="gauge-val" style="color:#60A5FA;" id="g-hr">--</div><div class="gauge-lbl">Pulse</div><div class="gauge-sub">bpm</div></div>
+      <div class="det-hdr" onclick="toggleVSec('sec-ta')" style="cursor:pointer;margin-bottom:0;"><div class="det-title">🩸 TA Detail</div><div style="display:flex;align-items:center;gap:9px;"><span id="ta-badge" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--ambl);color:#B45309;">--</span><span class="vsec-arr" id="arr-sec-ta">▼</span></div></div>
+      <div class="vsec-body" id="sec-ta">
+        <div class="gauge-row" style="margin-top:11px;">
+          <div class="gauge-box"><div class="gauge-val" style="color:var(--orange);" id="g-sys">--</div><div class="gauge-lbl">Systolic</div><div class="gauge-sub">Normal &lt;120</div></div>
+          <div class="gauge-box"><div class="gauge-val" style="color:var(--amber);" id="g-dia">--</div><div class="gauge-lbl">Diastolic</div><div class="gauge-sub">Normal &lt;80</div></div>
+          <div class="gauge-box"><div class="gauge-val" style="color:#60A5FA;" id="g-hr">--</div><div class="gauge-lbl">Pulse</div><div class="gauge-sub">bpm</div></div>
+        </div>
+        <div class="prog-wrap"><div class="prog-lbl"><span>Systolic risk</span><span style="color:var(--orange);" id="bp-prog-lbl">--/180 mmHg</span></div><div class="prog-bar"><div class="prog-fill" id="bp-prog-fill" style="width:0%;background:linear-gradient(90deg,#F97316,#FBBF24);"></div></div></div>
       </div>
-      <div class="prog-wrap"><div class="prog-lbl"><span>Systolic risk</span><span style="color:var(--orange);" id="bp-prog-lbl">--/180 mmHg</span></div><div class="prog-bar"><div class="prog-fill" id="bp-prog-fill" style="width:0%;background:linear-gradient(90deg,#F97316,#FBBF24);"></div></div></div>
     </div>
     <div class="glu-detail">
-      <div class="det-hdr"><div class="det-title"><span data-i18n="vit.glucoseDetail">🍬 Glucose Detail</span> <span style="opacity:0.55;font-weight:500;font-size:9px;">— trokit ✎</span></div><span id="glu-badge" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--al);color:#059669;">--</span></div>
-      <div class="gauge-row">
-        <div class="gauge-box" onclick="editVitalDetail('glu')" title="Fut glukozën esëll" style="cursor:pointer;"><div class="gauge-val" style="color:var(--teal);" id="g-glu">--</div><div class="gauge-lbl">Fasting ✎</div><div class="gauge-sub">mmol/L</div></div>
-        <div class="gauge-box" onclick="editVitalDetail('glupost')" title="Fut glukozën pas ngrënies" style="cursor:pointer;"><div class="gauge-val" style="color:var(--accent);" id="g-glu-post">--</div><div class="gauge-lbl">Post-meal ✎</div><div class="gauge-sub">mmol/L</div></div>
-        <div class="gauge-box" onclick="editVitalDetail('hba1c')" title="Fut HbA1c" style="cursor:pointer;"><div class="gauge-val" style="color:#60A5FA;" id="g-hba1c">--</div><div class="gauge-lbl">HbA1c ✎</div><div class="gauge-sub">3-mo avg</div></div>
+      <div class="det-hdr" onclick="toggleVSec('sec-glu')" style="cursor:pointer;margin-bottom:0;"><div class="det-title"><span data-i18n="vit.glucoseDetail">🍬 Glucose Detail</span></div><div style="display:flex;align-items:center;gap:9px;"><span id="glu-badge" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--al);color:#059669;">--</span><span class="vsec-arr" id="arr-sec-glu">▼</span></div></div>
+      <div class="vsec-body" id="sec-glu">
+        <div class="gauge-row" style="margin-top:11px;">
+          <div class="gauge-box" onclick="editVitalDetail('glu')" title="Fut glukozën esëll" style="cursor:pointer;"><div class="gauge-val" style="color:var(--teal);" id="g-glu">--</div><div class="gauge-lbl">Fasting ✎</div><div class="gauge-sub">mmol/L</div></div>
+          <div class="gauge-box" onclick="editVitalDetail('glupost')" title="Fut glukozën pas ngrënies" style="cursor:pointer;"><div class="gauge-val" style="color:var(--accent);" id="g-glu-post">--</div><div class="gauge-lbl">Post-meal ✎</div><div class="gauge-sub">mmol/L</div></div>
+          <div class="gauge-box" onclick="editVitalDetail('hba1c')" title="Fut HbA1c" style="cursor:pointer;"><div class="gauge-val" style="color:#60A5FA;" id="g-hba1c">--</div><div class="gauge-lbl">HbA1c ✎</div><div class="gauge-sub">3-mo avg</div></div>
+        </div>
+        <div class="prog-wrap"><div class="prog-lbl"><span>Fasting range</span><span style="color:var(--teal);" id="glu-prog-lbl">--/7.0</span></div><div class="prog-bar"><div class="prog-fill" id="glu-prog-fill" style="width:0%;background:linear-gradient(90deg,#0D9488,#2DC8A0);"></div></div></div>
       </div>
-      <div class="prog-wrap"><div class="prog-lbl"><span>Fasting range</span><span style="color:var(--teal);" id="glu-prog-lbl">--/7.0</span></div><div class="prog-bar"><div class="prog-fill" id="glu-prog-fill" style="width:0%;background:linear-gradient(90deg,#0D9488,#2DC8A0);"></div></div></div>
     </div>
-    <div class="hrv-row">
-      <div class="hrv-card" onclick="editVitalDetail('hrv')" title="Fut HRV" style="cursor:pointer;"><div class="hrv-val" style="color:var(--purple);" id="g-hrv">--</div><div class="hrv-lbl">HRV ✎</div></div>
-      <div class="hrv-card" onclick="editVitalDetail('rr')" title="Fut frymëmarrjet/min" style="cursor:pointer;"><div class="hrv-val" style="color:#60A5FA;" id="g-rr">--</div><div class="hrv-lbl">Breath/min ✎</div></div>
-      <div class="hrv-card" onclick="editVitalDetail('temp')" title="Fut temperaturën" style="cursor:pointer;"><div class="hrv-val" style="color:var(--accent);" id="g-temp">--</div><div class="hrv-lbl">Temp ✎</div></div>
+    <div class="hrv-sec">
+      <div class="det-hdr" onclick="toggleVSec('sec-more')" style="cursor:pointer;margin-bottom:0;"><div class="det-title">🫀 HRV · Breath · Temp</div><span class="vsec-arr" id="arr-sec-more">▼</span></div>
+      <div class="vsec-body" id="sec-more">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:11px;">
+          <div class="hrv-card" onclick="editVitalDetail('hrv')" title="Fut HRV" style="cursor:pointer;"><div class="hrv-val" style="color:var(--purple);" id="g-hrv">--</div><div class="hrv-lbl">HRV ✎</div></div>
+          <div class="hrv-card" onclick="editVitalDetail('rr')" title="Fut frymëmarrjet/min" style="cursor:pointer;"><div class="hrv-val" style="color:#60A5FA;" id="g-rr">--</div><div class="hrv-lbl">Breath/min ✎</div></div>
+          <div class="hrv-card" onclick="editVitalDetail('temp')" title="Fut temperaturën" style="cursor:pointer;"><div class="hrv-val" style="color:var(--accent);" id="g-temp">--</div><div class="hrv-lbl">Temp ✎</div></div>
+        </div>
+      </div>
     </div>
     <!-- ECG ANALYSIS CARD -->
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;margin:10px 16px 0;border:1px solid rgba(255,107,138,0.25);padding:14px;position:relative;overflow:hidden;">
@@ -5031,6 +5046,15 @@ function restoreDailyActivity(){
   if(dailyState.hr>0) vitalsState.hr = dailyState.hr;
 }
 
+function toggleVSec(id){
+  var body=document.getElementById(id), arr=document.getElementById('arr-'+id);
+  if(!body) return;
+  var open=body.classList.toggle('open');
+  if(arr) arr.classList.toggle('open', open);
+  /* JS-driven max-height (cak konkret = scrollHeight) — animacion i sigurt cross-browser */
+  if(open){ body.style.maxHeight=(body.scrollHeight+24)+'px'; }
+  else { body.style.maxHeight='0px'; }
+}
 function toggleVI(){
   panelOpen=!panelOpen;
   var panel=document.getElementById('viPanel'),arr=document.getElementById('trigArr'),btn=document.getElementById('vitTrig');
