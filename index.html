@@ -176,6 +176,10 @@ h2{font-size:2.25rem;font-weight:600;letter-spacing:-.02em;line-height:1.05;}
 .cap .bot p{margin-top:.5rem;max-width:26rem;font-size:.9rem;color:rgba(255,255,255,.6);line-height:1.55;}
 .cap .tags{margin-top:1.25rem;display:flex;flex-wrap:wrap;gap:.5rem;}
 .cap .tags span{display:inline-flex;border:1px solid rgba(255,255,255,.25);border-radius:9999px;padding:.45rem .9rem;font-size:.8rem;}
+/* What D Health does — karta-imazh (mockup-et e plota) */
+.capimg{position:relative;overflow:hidden;border-radius:1.5rem;background:#fff;box-shadow:0 18px 50px rgba(20,40,80,.12),inset 0 0 0 1px rgba(20,40,80,.06);transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s;}
+.capimg:hover{transform:translateY(-8px);box-shadow:0 28px 70px rgba(20,40,80,.18);}
+.capimg img{display:block;width:100%;height:auto;}
 
 /* services rows */
 .srv li{border-top:1px solid var(--line);}
@@ -486,10 +490,10 @@ footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
   <div class="k rv"><span class="dot"></span>The Platform</div>
   <h2 class="rv">What D Health does</h2>
   <ul class="cap-grid">
-    <li class="cap rv"><div class="meta"><span>AI · Diagnostics</span><span class="badge"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div><div class="wm"><img src="assets/logo.png" alt=""></div><div class="bot"><h3>AI Doctor</h3><p>Chat with your AI medical assistant about symptoms, results and next steps — in your language.</p><div class="tags"><span>Chat</span><span>Verdict</span><span>Guidance</span></div></div></li>
-    <li class="cap rv"><div class="meta"><span>Monitoring</span><span class="badge"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div><div class="wm"><img src="assets/logo.png" alt=""></div><div class="bot"><h3>Vital Intelligence</h3><p>BP, heart rate, SpO₂, glucose and temperature — each with an instant, plain-language AI verdict.</p><div class="tags"><span>BP</span><span>HR</span><span>SpO₂</span><span>Glucose</span></div></div></li>
-    <li class="cap rv"><div class="meta"><span>Cardiac</span><span class="badge"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div><div class="wm"><img src="assets/logo.png" alt=""></div><div class="bot"><h3>ECG Smart Analysis</h3><p>Upload an ECG and let AI interpret rhythm, anomalies and cardiac risk in seconds.</p><div class="tags"><span>ECG</span><span>Rhythm</span><span>Risk</span></div></div></li>
-    <li class="cap rv"><div class="meta"><span>Hardware</span><span class="badge"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div><div class="wm"><img src="assets/logo.png" alt=""></div><div class="bot"><h3>D Health Wearables</h3><p>A branded ring &amp; ECG band that stream your health straight into the app over Bluetooth.</p><div class="tags"><span>Ring</span><span>Band</span><span>24/7</span></div></div></li>
+    <li class="capimg rv"><img src="assets/cap_ai.jpg" alt="AI Doctor — chat with your AI medical assistant about symptoms, results and next steps, with a clear verdict and guidance in your language" loading="lazy"></li>
+    <li class="capimg rv"><img src="assets/cap_monitoring.jpg" alt="Monitoring · Vital Intelligence — blood pressure, heart rate, SpO₂, glucose and temperature, each with an instant plain-language AI verdict" loading="lazy"></li>
+    <li class="capimg rv"><img src="assets/cap_ecg.jpg" alt="Cardiac · ECG Smart Analysis — upload an ECG and AI interprets rhythm, anomalies and cardiac risk in seconds" loading="lazy"></li>
+    <li class="capimg rv"><img src="assets/cap_hardware.jpg" alt="Hardware · D Health Wearables — a branded ring and ECG band that stream your health into the app over Bluetooth" loading="lazy"></li>
   </ul>
 </div></section>
 
