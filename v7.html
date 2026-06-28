@@ -8008,9 +8008,8 @@ function dhSystemAvatar(){
 }
 /* Burimi i avatarit me PRIORITET: foto e ngarkuar (dh_avatar) > foto Google > fytyrë sistemi */
 function dhAvatarSrc(){
-  try{ var up=localStorage.getItem('dh_avatar'); if(up) return up; }catch(e){}
-  try{ if(typeof LST!=='undefined' && LST.currentUser && LST.currentUser.picture) return LST.currentUser.picture; }catch(e){}
-  return dhSystemAvatar();
+  try{ var up=localStorage.getItem('dh_avatar'); if(up) return up; }catch(e){}   /* foto e ngarkuar nga useri (Settings) */
+  return dhSystemAvatar();   /* default: fytyrë e ilustruar automatike sipas gjinisë (jo foto Google) */
 }
 /* Pikturon TË GJITHA sipërfaqet e avatarit. Nëse s'ka burim → s'prek (mbetet inicialja "H"). */
 function dhPaintAvatar(){
@@ -10666,11 +10665,8 @@ async function handleGoogleSignIn(response){
 }
 
 function updateUIAfterLogin(name, email, picture, userId){
-  /* Avatar */
-  var avBtn = document.getElementById('avBtn');
-  if(avBtn && picture){
-    avBtn.innerHTML = '<img src="'+picture+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;" onerror="this.parentElement.textContent=\'👤\'"/>';
-  }
+  /* Avatar — fytyrë e ilustruar automatike (jo foto Google); useri e ndryshon me ngarkim te Settings */
+  try{ dhPaintAvatar(); }catch(e){}
   /* Names */
   var firstName = name.split(' ')[0];
   var hname = document.querySelector('.hname');       if(hname)  hname.textContent = 'Hello, '+firstName;
