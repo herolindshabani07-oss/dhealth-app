@@ -4383,6 +4383,8 @@ function renderActBars(){
   }catch(e){}
 }
 try{ window.addEventListener('load', function(){ setTimeout(renderActBars, 500); }); }catch(e){}
+/* Rrjetë sigurie: pikturo avatarin e header-it edhe nëse rrjedha e init-it s'e bëri (gjithmonë fytyra, jo shkronja) */
+try{ window.addEventListener('load', function(){ setTimeout(function(){ try{ dhRenderHeaderAvatar(); }catch(e){} }, 700); }); }catch(e){}
 /* ════ Empty-state i njësuar: ikonë miqësore + tekst + (opsional) buton veprimi ════ */
 function dhEmpty(icon,title,sub,ctaLabel,ctaOnclick){
   return '<div class="dh-empty"><div class="ic">'+icon+'</div><div class="t">'+title+'</div>'
