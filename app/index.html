@@ -6620,21 +6620,40 @@ function lsocialLogin() {
   document.getElementById('lsuccpl').textContent='Free Plan - Active';
   llaunchApp();   /* login social → direkt te Home */
 }
+/* ════ PASTRIM I PLOTË I TË DHËNAVE PER-LLOGARI ════
+   Çelësat që MBAHEN (jo per-llogari ose per-user të izoluar): gjuha, sesioni Supabase (sb-*),
+   foto per-user (dh_avatar_<id>), consent per-user (dh_consent_<id>), cache per-user (dh_cache_*).
+   Çdo gjë tjetër (ecg_history, dh_meals, dh_notifications, dh_profile, gfit_*, da_*, ...) pastrohet,
+   që të dhënat e një llogarie të mos kalojnë te tjetra në të njëjtën pajisje. */
+function _dhKeepKey(k){
+  if(!k) return false;
+  if(k==='dh_lang') return true;
+  if(/^sb-/.test(k)) return true;                              /* sesioni Supabase — MOS prek */
+  if(/^dh_consent_/.test(k)) return true;
+  if(/^dh_cache_/.test(k)) return true;
+  if(/^dh_avatar_/.test(k) && k!=='dh_avatar_seed') return true;
+  return false;
+}
+function _dhWipeAccount(){
+  try{
+    var rm=[];
+    for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(!_dhKeepKey(k)) rm.push(k); }
+    rm.forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} });
+  }catch(e){}
+}
 function doSignOut() {
   if(!confirm('Are you sure you want to sign out?')) return;
   var sb = getSupa();
-  if(sb){ try{ sb.auth.signOut(); }catch(e){} }   /* pastro sesionin Supabase */
-  _appliedSessionUid = null;                        /* rivendos guard-in → login-i tjetër ringarkon të dhënat */
-  _userDataLoaded = false;
-  /* Pastro cache-in GLOBAL per-llogari → që të mos kalojë te llogaria tjetër në të njëjtën pajisje.
-     Ringarkohen nga Supabase në login. Çelësat per-user (dh_avatar_<id>, dh_consent_<id>, dh_cache_*) NUK preken. */
-  try{ ['dh_profile','dh_meals','dh_recent_alerts','dh_last_score','dh_last_score_title','dh_last_score_desc','dh_last_score_color','dh_bmi','dh_score_detail','dh_avatar','dh_avatar_seed']
-        .forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} }); }catch(e){}
-  LST.currentUser = null;
-  LST.rem = false;
-  document.getElementById('login-overlay').style.display = 'flex';
-  switchScreen('home');
-  showToast('✅ Signed out successfully');
+  var _finish = function(){
+    _appliedSessionUid = null; _userDataLoaded = false;
+    LST.currentUser = null; LST.rem = false;
+    try{ _dhWipeAccount(); }catch(e){}
+    try{ localStorage.removeItem('dh_active_uid'); }catch(e){}
+    /* reload → pastron memorie + DOM (asgjë e vjetër s'mbetet); del te ekrani i login-it */
+    location.reload();
+  };
+  if(sb){ try{ sb.auth.signOut().then(_finish).catch(_finish); }catch(e){ _finish(); } }
+  else { _finish(); }
 }
 
 function llaunchApp() {
@@ -10373,6 +10392,20 @@ function initPlatformDetection(){
 /* Serializim: shmang mbivendosjen e disa thirrjeve të initUserData që pastrojnë UI-në njëra pas tjetrës (UI bosh) */
 var _iudChain = Promise.resolve();
 function initUserData(userId, userName, userEmail, attempt){
+  /* Ndërrim llogarie në të njëjtën pajisje → pastrim total + reload (memorie+DOM të freskëta).
+     Sesioni Supabase (sb-*) ruhet → useri i ri mbetet i kyçur dhe ngarkon të dhënat e VETA. */
+  try{
+    if(userId && (typeof attempt==='undefined' || !attempt)){
+      var _prev = localStorage.getItem('dh_active_uid');
+      if(_prev && _prev !== userId){
+        _dhWipeAccount();
+        try{ localStorage.setItem('dh_active_uid', userId); }catch(e){}
+        location.reload();
+        return Promise.resolve();
+      }
+      try{ localStorage.setItem('dh_active_uid', userId); }catch(e){}
+    }
+  }catch(e){}
   _iudChain = _iudChain.then(function(){ return _initUserDataImpl(userId, userName, userEmail, attempt); }).catch(function(){});
   return _iudChain;
 }
