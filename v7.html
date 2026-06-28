@@ -8161,10 +8161,10 @@ function checkEmptyAlarms(){
   var arr = alarms[today] || [];
   if(arr.length === 0){
     list.innerHTML = '<div class="es-wrap" style="padding:24px 16px;">'
-      + '<div class="es-icon" style="background:var(--ambl);width:60px;height:60px;font-size:28px;">&#128267;</div>'
-      + '<div class="es-title" style="font-size:14px;">No alarms today</div>'
-      + '<div class="es-sub" style="font-size:12px;">Add your therapy schedule to get medication reminders.</div>'
-      + '<button class="es-btn" style="font-size:12px;padding:9px 20px;" onclick="openMod()">+ Add Alarm</button>'
+      + '<div class="es-icon" style="background:rgba(120,150,190,.14);width:60px;height:60px;font-size:28px;">&#9200;</div>'
+      + '<div class="es-title" style="font-size:14px;color:#1f2c44;">'+dhT('em.noAlarmsT')+'</div>'
+      + '<div class="es-sub" style="font-size:12px;color:#5d7290;">'+dhT('em.noAlarmsS')+'</div>'
+      + '<button class="es-btn" style="font-size:12px;padding:9px 20px;" onclick="openMod()" data-i18n="cal.addAlarm">+ Add therapy alarm</button>'
       + '</div>';
   }
 }
@@ -8252,7 +8252,7 @@ var _baseSwitchScreen = switchScreen;
 switchScreen = function(n){
   _baseSwitchScreen(n);
   setTimeout(function(){
-    if(n === 'calendar') checkEmptyAlarms();
+    if(n === 'calendar') { try{ renderAlarms(); }catch(e){ checkEmptyAlarms(); } }
     if(n === 'home'){
       try{ restoreHomeScore(); }catch(e){}        /* karta D Health AI nga score-i i fundit */
       try{ calcDailyScore(true); }catch(e){}        /* Daily Health Score lokalisht, pa AI */
