@@ -1193,6 +1193,27 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 <link rel="manifest" href="manifest.json">
 </head>
 <body>
+<script>
+/* ════ AUTO-UPDATE — pa "clear data" manual ════
+   Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
+   Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
+   Guard me sessionStorage → kurrë loop. Placeholder 20260628213015 injektohet në deploy. */
+(function(){
+  try{
+    var DH_BUILD='20260628213015';
+    if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
+    fetch('build.txt?t='+Date.now(),{cache:'no-store'})
+      .then(function(r){ return r.ok ? r.text() : ''; })
+      .then(function(s){
+        s=(s||'').trim();
+        if(!s || s===DH_BUILD) return;                 /* up-to-date */
+        var g='dh_upd_'+s;
+        try{ if(sessionStorage.getItem(g)) return; sessionStorage.setItem(g,'1'); }catch(e){}  /* anti-loop */
+        location.replace(location.pathname+'?v='+encodeURIComponent(s));   /* cache-bust → HTML i freskët */
+      }).catch(function(){});
+  }catch(e){}
+})();
+</script>
 
 <style>
 @keyframes dhBootSpin{to{transform:rotate(360deg)}}
@@ -9244,6 +9265,9 @@ async function uploadUserDocument(file){
   var safe = (file.name||'file').replace(/[^a-zA-Z0-9._-]/g,'_');
   var path = uid + '/' + Date.now() + '_' + safe;
   try{
+    /* USER I RI: sigurohu që profili ekziston PARA insert-it të dokumentit (documents.patient_id → profiles.id).
+       Pa këtë, ngarkimi i parë dështonte për një llogari të sapokrijuar (race profil/dokument). */
+    try{ await sb.from('profiles').upsert({ id:uid, email:(LST.currentUser.email||null), full_name:(LST.currentUser.name||null), role:'patient' }, {onConflict:'id'}); }catch(_pe){}
     var up = await sb.storage.from('documents').upload(path, file, {upsert:false, contentType:file.type||undefined});
     if(up.error) throw up.error;
     var meta = {patient_id: uid, name: file.name, path: path, size_bytes: file.size||0, created_at: new Date().toISOString()};
