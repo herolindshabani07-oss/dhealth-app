@@ -4167,7 +4167,7 @@ function _aptStartMs(a){
   }catch(e){ return NaN; }
 }
 function _fmtApt(a){
-  try{ var dd=new Date(_aptStartMs(a)); return dd.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' · '+(a.appointment_time||''); }catch(e){ return ''; }
+  try{ var loc=({sq:'sq',mk:'mk',en:'en-GB'})[(typeof DH_LANG!=='undefined'&&DH_LANG)||'en']||'en-GB'; var dd=new Date(_aptStartMs(a)); return dd.toLocaleDateString(loc,{day:'numeric',month:'short'})+' · '+(a.appointment_time||''); }catch(e){ return ''; }
 }
 async function getDocChatGate(){
   try{
@@ -4208,23 +4208,24 @@ function applyDocChatGate(gate){
   ov.style.display='flex';
   if(cdEl) cdEl.style.display='none';
   if(gate.code==='nobook'){
-    titleEl.textContent='Konsultë private';
-    msgEl.innerHTML='Bisedo me Dr. Shabani gjatë terminit tënd. Rezervo një takim për të nisur konsultimin.';
-    cta.style.display=''; cta.innerHTML='&#128197; Rezervo takim'; cta.setAttribute('onclick','openBkModal()');
+    titleEl.textContent=dhT('dr.lockPrivTitle');
+    msgEl.innerHTML=dhT('dr.lockPrivMsg');
+    cta.style.display=''; cta.innerHTML='&#128197; '+dhT('dr.lockBook'); cta.setAttribute('onclick','openBkModal()');
   } else if(gate.code==='pending'){
-    titleEl.textContent='Duke pritur konfirmimin';
-    msgEl.innerHTML='Takimi yt po pret konfirmimin nga Dr. Shabani.<br>Chat-i hapet gjatë terminit, pasi të konfirmohet.';
-    cta.style.display=''; cta.innerHTML='&#128197; Shiko / rezervo'; cta.setAttribute('onclick','openBkModal()');
+    titleEl.textContent=dhT('dr.lockPendTitle');
+    msgEl.innerHTML=dhT('dr.lockPendMsg');
+    cta.style.display=''; cta.innerHTML='&#128197; '+dhT('dr.lockView'); cta.setAttribute('onclick','openBkModal()');
   } else if(gate.code==='early'){
-    titleEl.textContent='Chat-i hapet gjatë terminit';
-    msgEl.innerHTML='Konsultimi yt me Dr. Shabani është më<br><strong style="color:#fff;">'+_fmtApt(gate.apt)+'</strong>.<br>Do të njoftohesh kur të hapet.';
+    titleEl.textContent=dhT('dr.lockEarlyTitle');
+    msgEl.innerHTML=dhT('dr.lockEarlyPre')+'<br><strong style="color:#fff;">'+_fmtApt(gate.apt)+'</strong>.<br>'+dhT('dr.lockEarlyPost');
     if(cdEl){ cdEl.style.display='block'; }
     cta.style.display='none';
     var tick=function(){
       var ms=_aptStartMs(gate.apt)-DOC_CHAT.graceBefore-Date.now();
-      if(ms<=0){ if(cdEl) cdEl.textContent='Po hapet...'; if(_drCountdownTimer){clearInterval(_drCountdownTimer);_drCountdownTimer=null;} setTimeout(function(){ openPriv(); }, 1500); return; }
+      if(ms<=0){ if(cdEl) cdEl.textContent=dhT('dr.opening'); if(_drCountdownTimer){clearInterval(_drCountdownTimer);_drCountdownTimer=null;} setTimeout(function(){ openPriv(); }, 1500); return; }
       var dys=Math.floor(ms/86400000), h=Math.floor((ms%86400000)/3600000), m=Math.floor((ms%3600000)/60000);
-      if(cdEl) cdEl.textContent = dys>0 ? ('Hapet pas '+dys+' ditë '+h+'h') : (h>0 ? ('Hapet pas '+h+'h '+m+'min') : ('Hapet pas '+(m+1)+' min'));
+      var pre=dhT('dr.opensIn');
+      if(cdEl) cdEl.textContent = dys>0 ? (pre+' '+dys+'d '+h+'h') : (h>0 ? (pre+' '+h+'h '+m+'min') : (pre+' '+(m+1)+'min'));
     };
     tick(); _drCountdownTimer=setInterval(tick, 30000);
   }
@@ -4235,6 +4236,7 @@ async function openPriv(){
   if(drPollInterval){ clearInterval(drPollInterval); drPollInterval=null; }
   /* shfaq menjëherë mbulesën (deri sa të vijë përgjigja) që chat-i të mos shfaqet kurrë i kyçur */
   var ov0=document.getElementById('drLockOverlay'); if(ov0) ov0.style.display='flex';
+  var _ctaEl=document.getElementById('drLockCta'); if(_ctaEl) _ctaEl.innerHTML='&#128197; '+dhT('dr.lockBook');  /* gjuha e saktë gjatë pritjes async */
   var gate = await getDocChatGate();
   applyDocChatGate(gate);
   if(gate.open){ setTimeout(initDrShabaniChat, 100); }
@@ -5022,6 +5024,20 @@ function restoreDailyActivity(){
   if(dailyState.hr>0) vitalsState.hr = dailyState.hr;
 }
 
+/* ════ Nav repaint nudge — pas mbylljes së file-picker-it (Diagnostic upload etj.),
+   Web-View-i mobile ndonjëherë e lë nav-in absolute jashtë pamjes derisa të rifreskohet
+   layout-i. Kur app-i rikthen fokusin, ridetyrojmë pozicionin + bëjmë një reflow. ════ */
+function _nudgeNavRepaint(){
+  try{
+    var s=document.querySelector('.screen.active'); if(!s) return;
+    var n=s.querySelector('.v7-nav'); if(!n) return;
+    n.style.bottom='18px'; void n.offsetHeight;            /* reflow → riparon pozicionin stale */
+    n.style.transform='translateX(-50%) translateZ(0)';    /* nudge i shtresës kompozite (repaint) */
+    requestAnimationFrame(function(){ try{ n.style.transform='translateX(-50%)'; }catch(e){} });
+  }catch(e){}
+}
+window.addEventListener('focus', _nudgeNavRepaint);
+document.addEventListener('visibilitychange', function(){ if(!document.hidden) setTimeout(_nudgeNavRepaint, 60); });
 function toggleVSec(id){
   var body=document.getElementById(id), arr=document.getElementById('arr-'+id);
   if(!body) return;
@@ -7362,6 +7378,18 @@ var DH_I18N = {
   'bk.bookBtn':    {sq:'📅 Rezervo →', mk:'📅 Закажи →', en:'📅 Book →'},
   'bk.title':      {sq:'📅 Rezervo takim', mk:'📅 Закажи термин', en:'📅 Book Appointment'},
   'bk.subHours':   {sq:'Dr. Herolind Shabani · E Hënë–E Premte · 08:00–19:00', mk:'Др. Херолинд Шабани · Пон–Пет · 08:00–19:00', en:'Dr. Herolind Shabani · Mon–Fri · 08:00–19:00'},
+  /* Dr. Shabani — lock screen (3 gjuhë) */
+  'dr.lockPrivTitle': {sq:'Konsultë private', mk:'Приватна консултација', en:'Private consultation'},
+  'dr.lockPrivMsg':   {sq:'Bisedo me Dr. Shabani gjatë terminit tënd. Rezervo një takim për të nisur konsultimin.', mk:'Разговарајте со Др. Шабани за време на вашиот термин. Закажете термин за да започнете консултација.', en:'Chat with Dr. Shabani during your appointment. Book an appointment to start the consultation.'},
+  'dr.lockPendTitle': {sq:'Duke pritur konfirmimin', mk:'Се чека потврда', en:'Awaiting confirmation'},
+  'dr.lockPendMsg':   {sq:'Takimi yt po pret konfirmimin nga Dr. Shabani.<br>Chat-i hapet gjatë terminit, pasi të konfirmohet.', mk:'Вашиот термин чека потврда од Др. Шабани.<br>Разговорот се отвора за време на терминот, откако ќе се потврди.', en:'Your appointment is awaiting confirmation from Dr. Shabani.<br>The chat opens during the appointment, once confirmed.'},
+  'dr.lockEarlyTitle':{sq:'Chat-i hapet gjatë terminit', mk:'Разговорот се отвора за време на терминот', en:'Chat opens during your appointment'},
+  'dr.lockEarlyPre':  {sq:'Konsultimi yt me Dr. Shabani është më', mk:'Вашата консултација со Др. Шабани е на', en:'Your consultation with Dr. Shabani is on'},
+  'dr.lockEarlyPost': {sq:'Do të njoftohesh kur të hapet.', mk:'Ќе бидете известени кога ќе се отвори.', en:"You'll be notified when it opens."},
+  'dr.lockBook':      {sq:'Rezervo takim', mk:'Закажи термин', en:'Book appointment'},
+  'dr.lockView':      {sq:'Shiko / rezervo', mk:'Погледни / закажи', en:'View / book'},
+  'dr.opening':       {sq:'Po hapet...', mk:'Се отвора...', en:'Opening...'},
+  'dr.opensIn':       {sq:'Hapet pas', mk:'Се отвора за', en:'Opens in'},
   'bk.pickTime':   {sq:'🕐 Zgjidhni orën', mk:'🕐 Изберете време', en:'🕐 Pick a time'},
   'bk.reason':     {sq:'📋 Arsyeja e vizitës (opsionale)', mk:'📋 Причина за посета (опционално)', en:'📋 Reason for visit (optional)'},
   'bk.reasonPh':   {sq:'p.sh. Kontroll BP, rinovim recete, rezultate laboratori...', mk:'пр. Контрола на притисок, обнова на рецепт, лаб. резултати...', en:'e.g. BP check, prescription renewal, lab results...'},
