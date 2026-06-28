@@ -3342,17 +3342,17 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
     </div>
     <!-- Tabs -->
     <div class="diag-tabs-row">
-      <button class="diag-tab-s active" id="dst-verdict" onclick="switchDiagS('verdict')">📊 <span data-i18n="diag.verdict">Verdict</span></button>
-      <button class="diag-tab-s" id="dst-profile" onclick="switchDiagS('profile')">📋 <span data-i18n="diag.profile">Profile</span></button>
-      <button class="diag-tab-s" id="dst-report" onclick="switchDiagS('report')">📄 <span data-i18n="diag.report">Report</span></button>
+      <button class="diag-tab-s active" id="dst-profile" onclick="switchDiagS('profile')">📋 <span data-i18n="diag.profile">Profile</span></button>
       <button class="diag-tab-s" id="dst-therapy" onclick="switchDiagS('therapy')">💊 <span data-i18n="diag.therapy">Therapy</span></button>
+      <button class="diag-tab-s" id="dst-verdict" onclick="switchDiagS('verdict')">📊 <span data-i18n="diag.verdict">Verdict</span></button>
+      <button class="diag-tab-s" id="dst-report" onclick="switchDiagS('report')">📄 <span data-i18n="diag.report">Report</span></button>
     </div>
   </div>
 
   <!-- Body -->
   <div class="diag-body-s">
     <!-- VERDICT -->
-    <div class="diag-section-s active" id="dss-verdict">
+    <div class="diag-section-s" id="dss-verdict">
       <!-- Engine Output -->
       <div id="engine-verdict-container">
         <!-- Score circle default -->
@@ -3435,7 +3435,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 
 
     <!-- PROFILE -->
-    <div class="diag-section-s" id="dss-profile">
+    <div class="diag-section-s active" id="dss-profile">
       <div style="padding:14px;">
         <!-- DIAGNOSES -->
         <div class="pf-sec-title" data-i18n="dx.pDiagnoses">🏥 Diagnoses</div>
