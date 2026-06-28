@@ -10516,6 +10516,10 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
       setInp('setEditGender', pr.data.gender);
       setInp('setHeight',     pr.data.height_cm);
       setInp('setWeight',     pr.data.weight_kg);
+      /* Persisto gjininë te dh_profile + ripikturo avatarin tani që gjinia u ngarkua
+         (avatari u pikturua para profilit → fytyra duhet të përputhet me gjininë e saktë). */
+      try{ var _pp=JSON.parse(localStorage.getItem('dh_profile')||'{}'); if(pr.data.gender) _pp.gender=pr.data.gender; localStorage.setItem('dh_profile',JSON.stringify(_pp)); }catch(e){}
+      try{ dhPaintAvatar(); }catch(e){}
     }
 
     }catch(e){ console.warn('load profile:', e.message); }
