@@ -1755,7 +1755,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       </div>
     </div>
 
-    <div class="v7-secrow"><div class="v7-stitle" data-i18n="home.vitalsTitle">Shenjat vitale</div><span class="v7-see" onclick="switchScreen('vitals')">Të gjitha ›</span></div>
+    <div class="v7-secrow"><div class="v7-stitle" data-i18n="home.vitalsTitle">Shenjat vitale</div><span class="v7-see" data-i18n="home.seeAll" onclick="switchScreen('vitals')">Të gjitha ›</span></div>
     <div class="v7-vgrid">
       <div class="v7-vc" onclick="switchScreen('vitals')">
         <div class="v7-vtop"><div class="v7-vico bp"><svg viewBox="0 0 24 24"><path d="M12 21S3 14.5 3 8.8C3 5.6 5.4 3.5 8 3.5c1.7 0 3.1 1 4 2.3.9-1.3 2.3-2.3 4-2.3 2.6 0 5 2.1 5 5.3C21 14.5 12 21 12 21Z" fill="#f76b7a" stroke="none"/></svg></div><span class="v7-vdot sw" id="home-bp-status"></span></div>
@@ -1779,7 +1779,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       </div>
     </div>
 
-    <div class="v7-secrow"><div class="v7-stitle" data-i18n="home.scoreTitle">Health Score</div><span class="v7-see" onclick="switchScreen('diagnostic')">Shiko ›</span></div>
+    <div class="v7-secrow"><div class="v7-stitle" data-i18n="home.scoreTitle">Health Score</div><span class="v7-see" data-i18n="home.see" onclick="switchScreen('diagnostic')">Shiko ›</span></div>
     <div class="v7-score" onclick="switchScreen('diagnostic')">
       <div class="v7-sctop">
         <div class="v7-sclogo"><svg viewBox="0 0 48 48" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 6C17 4 9 8 9 16 5 17 4 23 8 26 5 30 9 36 15 35 17 41 23 43 24 40Z" fill="#42A5F5"/><path d="M24 6C31 4 39 8 39 16 43 17 44 23 40 26 43 30 39 36 33 35 31 41 25 43 24 40Z" fill="#FFA726"/><rect x="15" y="16" width="18" height="17" rx="6" fill="#7E57C2"/><text x="24" y="29" font-family="Arial,sans-serif" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">AI</text></svg></div>
@@ -1844,7 +1844,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
     </div>
 
     <!-- HEALTH INSIGHTS — kartë e VETME (Air Quality + Temperature + Humidity, Open-Meteo/OpenWeather) -->
-    <div class="v7-secrow" style="margin-bottom:9px;"><div class="v7-stitle" data-i18n="home.insightsTitle">HEALTH INSIGHTS</div></div>
+    <div class="v7-secrow" style="margin-bottom:9px;"><div class="v7-stitle" data-i18n="home.insightsTitle">Health Insights</div></div>
     <div class="hins-single" onclick="refreshAirQuality()">
       <svg style="position:absolute;top:-4px;right:-6px;width:82px;height:82px;pointer-events:none;" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M54 10C30 11 13 25 11 50c0 1 1 2 2 2 23-2 39-15 42-39 0-2-1-3-3-3Z" fill="#86CF73" opacity=".5"/>
@@ -1891,7 +1891,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       <span id="aqiCircle"></span><span id="dailyScoreCircle"></span><span id="dailyScoreMain"></span><span id="dailyScoreBadge"></span><span id="dailyScoreBarWrap"><span id="dailyScoreBar"></span></span><span id="dailyScoreBenefits"><span id="dailyScoreBenefitsList"></span></span><span id="homeIndicators"></span><span id="platformBanner"></span><span id="dataSourcesCount"></span>
     </div>
 
-    <div class="v7-secrow"><div class="v7-stitle" data-i18n="home.sourcesTitle">DATA SOURCES</div></div>
+    <div class="v7-secrow"><div class="v7-stitle" data-i18n="home.sourcesTitle">Data Sources</div></div>
     <div class="dsrc-grid">
 
       <div class="dsrc-card" id="dsrc-gfit" onclick="connectGoogleFit()">
@@ -6973,7 +6973,7 @@ var DH_I18N = {
   'home.scoreTitle':   {sq:'Health Score', mk:'Здравствен резултат', en:'Health Score'},
   'home.wellnessTitle':{sq:'Wellness', mk:'Добросостојба', en:'Wellness'},
   'home.activityTitle':{sq:'Aktiviteti', mk:'Активност', en:'Activity Overview'},
-  'home.insightsTitle':{sq:'NJOHURI SHËNDETËSORE', mk:'ЗДРАВСТВЕНИ УВИДИ', en:'HEALTH INSIGHTS'},
+  'home.insightsTitle':{sq:'Njohuri shëndetësore', mk:'Здравствени увиди', en:'Health Insights'},
   'ins.temperature': {sq:'Temperatura', mk:'Температура', en:'Temperature'},
   'ins.humidity':    {sq:'Lagështia', mk:'Влажност', en:'Humidity'},
   'ins.feelsLike':   {sq:'Ndihet si', mk:'Се чувствува како', en:'Feels like'},
@@ -6993,6 +6993,7 @@ var DH_I18N = {
   'home.dailyScore':   {sq:'Rezultati ditor i shëndetit', mk:'Дневен здравствен резултат', en:'Daily Health Score'},
   'home.scoreBasis':   {sq:'Bazuar te hapat, vitalet & diagnoza', mk:'Врз основа на чекори, витални и дијагнози', en:'Based on steps, vitals & diagnoses'},
   'home.seeAll':       {sq:'Të gjitha ›', mk:'Сите ›', en:'See all ›'},
+  'home.see':          {sq:'Shiko ›', mk:'Види ›', en:'See ›'},
   /* Diagnosis */
   'diag.healthScoreLbl':{sq:'PIKËT E SHËNDETIT', mk:'ЗДРАВСТВЕН РЕЗУЛТАТ', en:'HEALTH SCORE'},
   'diag.therapyLbl':   {sq:'TERAPIA', mk:'ТЕРАПИЈА', en:'THERAPY'},
@@ -7410,7 +7411,7 @@ var DH_I18N = {
   'home.distance': {sq:'Distanca:', mk:'Растојание:', en:'Distance:'},
   'home.active':   {sq:'Aktiv:', mk:'Активен:', en:'Active:'},
   'home.sleepL':   {sq:'Gjumi:', mk:'Сон:', en:'Sleep:'},
-  'home.sourcesTitle': {sq:'BURIMET E TË DHËNAVE', mk:'ИЗВОРИ НА ПОДАТОЦИ', en:'DATA SOURCES'},
+  'home.sourcesTitle': {sq:'Burimet e të dhënave', mk:'Извори на податоци', en:'Data Sources'},
   'ds.synced':    {sq:'Sinkronizuar', mk:'Синхронизирано', en:'Synced'},
   'ds.notSynced': {sq:'Pa sinkronizim', mk:'Без синхро.', en:'Not synced'},
   'ds.connected': {sq:'I lidhur', mk:'Поврзано', en:'Connected'},
