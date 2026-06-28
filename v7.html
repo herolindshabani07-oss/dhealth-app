@@ -10483,8 +10483,18 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
     };
     try{ var _vtCache = JSON.parse(localStorage.getItem(VTKEY)||'null'); if(_vtCache) _renderVT(_vtCache); }catch(e){}
     try{
-    var vt = await sb.from('vitals').select('*').eq('patient_id', userId).order('recorded_at', {ascending:false}).limit(1).single();
-    if(vt.data){ try{ localStorage.setItem(VTKEY, JSON.stringify(vt.data)); }catch(e){} _renderVT(vt.data); }
+    /* Rikonstrukto vitalet nga rreshtat e fundit: vlera e fundit JO-null për ÇDO fushë.
+       (Më parë merrte vetëm rreshtin e fundit me limit(1) → nëse ai kishte vetëm hr,
+       BP/glukoza/SpO2/temp dukeshin "të humbura" megjithëse ishin në rreshta më të vjetër.) */
+    var vt = await sb.from('vitals').select('*').eq('patient_id', userId).order('recorded_at', {ascending:false}).limit(50);
+    if(vt.data && vt.data.length){
+      var merged = {};
+      ['systolic_bp','diastolic_bp','heart_rate','glucose','spo2','temperature','steps'].forEach(function(f){
+        for(var i=0;i<vt.data.length;i++){ var v=vt.data[i][f]; if(v!=null && v!==0){ merged[f]=v; break; } }
+      });
+      try{ localStorage.setItem(VTKEY, JSON.stringify(merged)); }catch(e){}
+      _renderVT(merged);
+    }
     }catch(e){ console.warn('load vitals:', e.message); }
 
     /* Daily Activity e sotme (steps/calories/puls) nga llogaria */
