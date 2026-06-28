@@ -2219,30 +2219,6 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         </div>
       </div>
     </div>
-    <!-- ECG ANALYSIS CARD -->
-    <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;margin:10px 16px 0;border:1px solid rgba(255,107,138,0.25);padding:14px;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF6B8A,#8B6FE8);"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div style="font-size:13px;font-weight:700;color:#F1F5FF;" data-i18n="vit.ecg">🫀 ECG Smart Analysis</div>
-        <span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(139,111,232,0.1);color:var(--purple);">Premium</span>
-      </div>
-      <div id="ecgVitalsArea">
-        <label for="ecgFileInput" style="border:2px dashed rgba(255,107,138,0.3);border-radius:14px;padding:14px;text-align:center;cursor:pointer;display:block;">
-          <div style="font-size:28px;margin-bottom:6px;">🫀</div>
-          <div style="font-size:12px;font-weight:600;color:#F1F5FF;margin-bottom:2px;">Upload ECG</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.5);">Apple Watch · Samsung · Smart Ring<br>JPG, PNG, PDF · Max 10MB</div>
-          <input type="file" id="ecgFileInput" accept="image/*,.pdf" style="display:none;" onchange="handleECGUpload(event)"/>
-        </label>
-        <div id="ecgHistoryList" style="margin-top:10px;"></div>
-        <div id="ecgResultArea" style="display:none;margin-top:12px;background:linear-gradient(160deg,#0F1830 0%,#1A2547 55%,#0E1730 100%);border:1px solid rgba(120,160,235,0.26);border-radius:16px;padding:16px 15px;box-shadow:0 14px 34px rgba(8,16,44,0.5);position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#5CC8FF,#8B6FE8,#FF6B8A);"></div>
-          <div style="font-size:11px;font-weight:800;color:#9FC2FF;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;">🤖 D Health AI — ECG Analysis</div>
-          <div style="font-size:12.5px;color:#E8EFFF;line-height:1.78;font-weight:500;" id="ecgResultText"></div>
-          <button onclick="shareECGWithDoctor()" style="width:100%;margin-top:10px;padding:9px;border-radius:11px;border:none;background:rgba(255,255,255,0.15);color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">📤 Send to Dr. Shabani</button>
-        </div>
-      </div>
-    </div>
-
     <!-- NUTRITION TRACKER -->
     <div style="margin:10px 16px 0;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;border:0.5px solid rgba(255,255,255,0.12);padding:13px 14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
