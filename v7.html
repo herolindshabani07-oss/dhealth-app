@@ -7804,6 +7804,7 @@ async function savePersonalInfo(){
   var stored = JSON.parse(localStorage.getItem('dh_profile')||'{}');
   stored.name=name; stored.email=email; stored.dob=dob; stored.phone=phone; stored.gender=gender;
   localStorage.setItem('dh_profile', JSON.stringify(stored));
+  try{ dhPaintAvatar(); }catch(e){}   /* rifresko fytyrën e avatarit sipas gjinisë së re */
   var pname = document.querySelector('.set-pname'); if(pname) pname.textContent=name;
   var pemail= document.querySelector('.set-pemail'); if(pemail) pemail.textContent=email;
   var hname = document.querySelector('.hname'); if(hname) hname.textContent='Hello, '+name.split(' ')[0];
@@ -7981,15 +7982,67 @@ function handleAvatarUpload(input){
   reader.readAsDataURL(file);
   input.value='';
 }
+/* ════ Avatarë sistemi (fytyra) — caktohen AUTOMATIK sipas gjinisë, konsistent për çdo user ════ */
+var DH_AVATARS = {
+  male:   ['/assets/face_m1.png','/assets/face_m2.png','/assets/face_m3.png','/assets/face_m4.png','/assets/face_m5.png'],
+  female: ['/assets/face_f1.png','/assets/face_f2.png','/assets/face_f3.png','/assets/face_f4.png']
+};
+function _dhHashStr(s){ var h=0; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h<<5)-h+s.charCodeAt(i))|0; } return Math.abs(h); }
+/* Fytyrë sistemi sipas gjinisë (female/male/other) — e njëjta fytyrë gjithmonë për të njëjtin user (hash i id-së) */
+function dhSystemAvatar(){
+  try{
+    if(typeof DH_AVATARS==='undefined') return null;
+    var g='';
+    try{ var p=JSON.parse(localStorage.getItem('dh_profile')||'{}'); g=(p.gender||'').toLowerCase(); }catch(e){}
+    if(!g){ var ge=document.getElementById('setEditGender'); if(ge) g=(ge.value||'').toLowerCase(); }
+    var pool;
+    if(g.charAt(0)==='f') pool=DH_AVATARS.female;          /* female */
+    else if(g.charAt(0)==='m') pool=DH_AVATARS.male;       /* male */
+    else pool=DH_AVATARS.male.concat(DH_AVATARS.female);   /* other / panjohur → çdo fytyrë */
+    if(!pool || !pool.length) return null;
+    var seed='';
+    try{ seed=(typeof LST!=='undefined' && LST.currentUser && (LST.currentUser.id||LST.currentUser.email))||''; }catch(e){}
+    if(!seed){ try{ seed=localStorage.getItem('dh_avatar_seed')||''; }catch(e){} if(!seed){ seed='u'+Date.now()+'-'+Math.floor(Math.random()*1e6); try{localStorage.setItem('dh_avatar_seed',seed);}catch(e){} } }
+    return pool[_dhHashStr(seed) % pool.length];
+  }catch(e){ return null; }
+}
+/* Burimi i avatarit me PRIORITET: foto e ngarkuar (dh_avatar) > foto Google > fytyrë sistemi */
+function dhAvatarSrc(){
+  try{ var up=localStorage.getItem('dh_avatar'); if(up) return up; }catch(e){}
+  try{ if(typeof LST!=='undefined' && LST.currentUser && LST.currentUser.picture) return LST.currentUser.picture; }catch(e){}
+  return dhSystemAvatar();
+}
+/* Pikturon TË GJITHA sipërfaqet e avatarit. Nëse s'ka burim → s'prek (mbetet inicialja "H"). */
+function dhPaintAvatar(){
+  try{
+    var src=dhAvatarSrc(); if(!src) return;
+    function paint(el){
+      if(!el) return;
+      var img=el.querySelector && el.querySelector('img'); if(img) img.remove();  /* heq <img> e mbetur (p.sh. foto Google e setter-it) */
+      /* setProperty me 'important' → mund inline edhe .v7-av background:...!important */
+      el.style.setProperty('background-image','url('+src+')','important');
+      el.style.setProperty('background-size','cover','important');
+      el.style.setProperty('background-position','center','important');
+      el.style.setProperty('background-color','#eaf1fb','important');   /* sfond neutral pas pjesëve transparente */
+      el.textContent='';
+    }
+    paint(document.getElementById('avBtn'));            /* katrori i header-it */
+    paint(document.querySelector('.av-drop-av'));        /* header i dropdown-it */
+    paint(document.getElementById('setEditAvatar'));     /* Settings */
+    paint(document.getElementById('moreProfileAv'));     /* More */
+    paint(document.querySelector('.profile-av'));        /* More profile */
+  }catch(e){}
+}
 function applyAvatar(){
   var data = localStorage.getItem('dh_avatar');
-  if(!data) return;
+  if(!data){ try{ dhPaintAvatar(); }catch(e){} return; }
   ['setEditAvatar','moreProfileAv'].forEach(function(id){
     var el=document.getElementById(id);
     if(el){ el.style.backgroundImage='url('+data+')'; el.textContent=''; }
   });
   var pAv = document.querySelector('.profile-av');
   if(pAv){ pAv.style.backgroundImage='url('+data+')'; pAv.style.backgroundSize='cover'; pAv.style.backgroundPosition='center'; pAv.textContent=''; }
+  try{ dhPaintAvatar(); }catch(e){}   /* pikturo edhe katrorin e header-it + dropdown */
 }
 async function uploadAvatarToSupabase(file){
   var sb = getSupa();
@@ -10340,6 +10393,7 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
   if(avName) avName.textContent = userName || firstName;
   var avBtn = document.getElementById('avBtn');
   if(avBtn) avBtn.textContent = firstName.charAt(0).toUpperCase();
+  try{ dhPaintAvatar(); }catch(e){}   /* avatar: ngarkuar > Google > fytyrë sistemi; ndryshe mbetet inicialja */
   var profName = document.getElementById('moreProfileName');
   if(profName) profName.textContent = userName || firstName;
   var v7hn = document.getElementById('v7HomeName');
