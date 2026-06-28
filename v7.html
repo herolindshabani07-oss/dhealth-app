@@ -2062,8 +2062,8 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 #screen-vitals .v7-vinp{width:100%;border:none;background:transparent;outline:none;font-size:24px;font-weight:700;color:#1f2c44;padding:0}
 #screen-vitals .v7-vinp::placeholder{color:#c2cdde}
 #screen-vitals .v7-vstat{font-size:10px;font-weight:700;color:#15a06a;background:#e2f7ec;padding:3px 9px;border-radius:20px;border:none}
-#screen-vitals .v7-vico.steps2{background:linear-gradient(135deg,#cfe2ff,#9cc3ff)}
-#screen-vitals .v7-vico.steps2 svg{stroke:#2f6cd4;width:21px;height:21px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#screen-vitals .v7-vico.tmp{background:linear-gradient(135deg,#ffd9c2,#ff9e7a)}
+#screen-vitals .v7-vico.tmp svg{stroke:#e0562b;width:21px;height:21px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #screen-vitals .v7-vlbl{color:#7387a4!important;font-weight:500!important;font-size:11px!important;margin-top:4px!important}
 #screen-vitals .v7-vgrid{gap:10px}
 #screen-vitals .v7-vc{padding:11px 13px!important}
@@ -2121,9 +2121,9 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div class="v7-vlbl" data-i18n="v.glucose">Glukoza · mmol/L</div>
       </div>
       <div class="v7-vc">
-        <div class="v7-vtop"><div class="v7-vico steps2"><svg viewBox="0 0 24 24"><path d="M9 5c1.4 0 2 1.8 2 4.5S10 16 8.5 16 6 13.5 6 11s1.6-6 3-6ZM7 18c1.8 0 2.7 1 2.7 2.6M16 7c1.2 0 1.8 1.4 1.8 3.4S17 16 15.8 16s-1.8-2-1.8-3.7S14.8 7 16 7ZM14.5 18.7c1.6 0 2.4.9 2.4 2.3"/></svg></div><span class="v7-vstat" id="v-steps-status">--</span></div>
-        <input class="v7-vinp" id="v-steps" type="number" placeholder="--" oninput="updateV('steps',this.value)"/>
-        <div class="v7-vlbl" data-i18n="v.stepsToday">Hapa sot</div>
+        <div class="v7-vtop"><div class="v7-vico tmp"><svg viewBox="0 0 24 24"><path d="M12 3.4a2.4 2.4 0 0 0-2.4 2.4v7.8a4 4 0 1 0 4.8 0V5.8A2.4 2.4 0 0 0 12 3.4Z"/><path d="M12 9.2v5.6"/><circle cx="12" cy="17" r="1.7" fill="#e0562b" stroke="none"/></svg></div><span class="v7-vstat" id="v-temp-status">--</span></div>
+        <input class="v7-vinp" id="v-temp" type="number" step="0.1" placeholder="--" oninput="updateV('temp',this.value)"/>
+        <div class="v7-vlbl" data-i18n="v.bodyTemp">Temperatura · °C</div>
       </div>
     </div>
 
@@ -4813,6 +4813,7 @@ function updateV(key,val){
   if(key==='dia'){document.getElementById('g-dia').textContent=val||'—';}
   if(key==='hr'){document.getElementById('g-hr').textContent=val||'—';}
   if(key==='glu'){document.getElementById('g-glu').textContent=val||'—';}
+  if(key==='temp'){var gt=document.getElementById('g-temp'); if(gt) gt.textContent=val||'—';}
   try{updateAllVitalsUI();}catch(e){}
   try{setTimeout(calcDailyScore,500);}catch(e){}
 }
@@ -7047,6 +7048,7 @@ var DH_I18N = {
   'v.systolic':  {sq:'Sistolik · mmHg', mk:'Систолен · mmHg', en:'Systolic · mmHg'},
   'v.diastolic': {sq:'Diastolik · mmHg', mk:'Дијастолен · mmHg', en:'Diastolic · mmHg'},
   'v.stepsToday':{sq:'Hapa sot', mk:'Чекори денес', en:'Steps today'},
+  'v.bodyTemp':  {sq:'Temperatura · °C', mk:'Температура · °C', en:'Body temp · °C'},
   'v.enterSigns':{sq:'Fut shenjat vitale', mk:'Внеси витални знаци', en:'Enter Vital Signs'},
   'v.saveSigns': {sq:'✓ Ruaj shenjat vitale', mk:'✓ Зачувај витални знаци', en:'✓ Save Vital Signs'},
   'v.writeValues':{sq:'📝 Shkruaj vlerat', mk:'📝 Внеси ги вредностите', en:'📝 Enter the values'},
