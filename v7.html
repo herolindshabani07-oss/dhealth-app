@@ -1197,10 +1197,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260628213934 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260628220022 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260628213934';
+    var DH_BUILD='20260628220022';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -1481,9 +1481,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
     </div>
     <div class="lcons-chk" onclick="lconsentToggle()">
       <span class="lcons-box" id="lconsentChk"></span>
-      <span class="lcons-chktxt">I have read, understood and accept the above, including the <a href="https://dhealth.app/terms.html" target="_blank" onclick="event.stopPropagation()">Terms of Service</a> and <a href="https://dhealth.app/privacy.html" target="_blank" onclick="event.stopPropagation()">Privacy Policy</a>.</span>
+      <span class="lcons-chktxt">I have read, understood and accept the above, including the Terms of Service and Privacy Policy.</span>
     </div>
-    <button class="lcons-btn" id="lconsentBtn" onclick="lconsentAccept()" disabled>Continue</button>
+    <div style="font-size:11px;text-align:center;margin:-6px 0 14px;color:#6a7f9c;"><a href="https://dhealth.app/terms.html" target="_blank" style="color:#2563EB;font-weight:600;text-decoration:none;">Terms of Service</a> &middot; <a href="https://dhealth.app/privacy.html" target="_blank" style="color:#2563EB;font-weight:600;text-decoration:none;">Privacy Policy</a></div>
+    <button class="lcons-btn" id="lconsentBtn" onclick="lconsentAccept()">Continue</button>
   </div>
 </div>
 
@@ -6731,11 +6732,16 @@ function lmaybeConsent(){
 }
 function lconsentToggle(){
   var c=document.getElementById('lconsentChk'); if(!c) return;
-  c.classList.toggle('lon');
-  document.getElementById('lconsentBtn').disabled=!c.classList.contains('lon');
+  c.classList.toggle('lon');   /* butoni mbetet gjithmonë i shtypshëm; kontrolli bëhet te Accept */
 }
 function lconsentAccept(){
-  var c=document.getElementById('lconsentChk'); if(!c||!c.classList.contains('lon')) return;
+  var c=document.getElementById('lconsentChk');
+  if(!c || !c.classList.contains('lon')){
+    /* checkbox-i s'është zgjedhur → theksoje + njoftim (s'lëmë buton "të vdekur") */
+    if(c){ c.style.boxShadow='0 0 0 3px rgba(239,68,68,.4)'; setTimeout(function(){ try{c.style.boxShadow='';}catch(e){} },1300); }
+    try{ showToast('⚠️ Trokit kutinë për të pranuar kushtet'); }catch(e){}
+    return;
+  }
   try{ localStorage.setItem(lconsentKey(),'1'); }catch(e){}
   document.getElementById('lconsent').style.display='none';
   try{ obMaybeStart(); }catch(e){}
@@ -9344,7 +9350,7 @@ async function handleProfFileUpload(event){
   showToast('✅ Dokumenti u ruajt në llogari!');
   event.target.value='';
   /* Lexo automatikisht parametrat laboratorikë nga dokumenti */
-  for(var j=0;j<arr.length;j++){ await extractLabsFromDocument(arr[j]); }
+  try{ await extractLabsFromFiles(arr); }catch(e){}   /* TË GJITHA dokumentet bashkë → asnjë i palexuar */
 }
 
 
@@ -9938,7 +9944,7 @@ async function handleDsFileUpload(event){
   showToast('✅ Dokumenti u ruajt në llogari!');
   event.target.value='';
   /* Lexo automatikisht parametrat laboratorikë nga dokumenti */
-  for(var j=0;j<arr.length;j++){ await extractLabsFromDocument(arr[j]); }
+  try{ await extractLabsFromFiles(arr); }catch(e){}   /* TË GJITHA dokumentet bashkë → asnjë i palexuar */
 }
 
 /* ════ Lexim AI i analizave laboratorike → Lab Values (sinkron me Diagnostic + Supabase) ════ */
@@ -9970,6 +9976,47 @@ function addLabTag(txt){
   return true;
 }
 
+/* Lexon TË GJITHA dokumentet e ngarkuara në NJË thirrje AI (që të mos mbetet asnjë i palexuar). */
+async function extractLabsFromFiles(files, prefix){
+  files = Array.prototype.slice.call(files||[]).filter(function(f){
+    var t=f.type||'', n=f.name||'';
+    return /pdf/i.test(t)||/\.pdf$/i.test(n)||/^image\//i.test(t)||/\.(jpe?g|png|webp|gif)$/i.test(n);
+  });
+  if(!files.length) return;
+  if(files.length===1) return extractLabsFromDocument(files[0], prefix);  /* një file → rruga ekzistuese */
+  if(!prefix){
+    var _p=document.getElementById('prof-lab-tags'), _d=document.getElementById('ds-lab-tags');
+    prefix = (_p && _p.offsetParent!==null) ? 'prof' : 'ds';
+  }
+  showToast('🔬 Duke lexuar '+files.length+' dokumente...');
+  try{
+    var content=[];
+    for(var i=0;i<files.length;i++){
+      var f=files[i], t=f.type||'', n=f.name||'';
+      var isPdf=/pdf/i.test(t)||/\.pdf$/i.test(n);
+      var b64=await fileToBase64(f); if(!b64) continue;
+      content.push(isPdf
+        ? {type:'document', source:{type:'base64', media_type:'application/pdf', data:b64}}
+        : {type:'image',    source:{type:'base64', media_type:(t||'image/jpeg'), data:b64}});
+    }
+    if(!content.length) throw new Error('s\'u lexuan skedarët');
+    content.push({type:'text', text:'These are '+files.length+' medical laboratory results documents/photos. Read ALL of them and extract EVERY lab parameter from EACH. '
+      + 'Respond ONLY with a JSON array (no markdown, no backticks): [{"name":"HbA1c","value":"5.9","unit":"%","flag":"normal"}]. '
+      + 'flag is one of: normal, high, low. Use exact parameter names, numeric values and units. If none, return [].'});
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1600,system:'You are a clinical laboratory data extractor. Output only valid JSON, nothing else.',messages:[{role:'user',content:content}]})});
+    var raw=await r.text();
+    if(!r.ok || raw.trim().charAt(0)==='<') throw new Error('AI s\'arriti t\'i lexojë dokumentet');
+    var d=JSON.parse(raw); if(d.error) throw new Error(d.error.message||'AI error');
+    var txt=(d.content&&d.content[0]&&d.content[0].text)||'[]'; txt=txt.replace(/```json|```/g,'').trim();
+    var labs=tryParseJSONLoose(txt); if(!Array.isArray(labs)){ labs=(labs&&Array.isArray(labs.labs))?labs.labs:[]; }
+    if(!labs.length){ showToast('ℹ️ S\'u gjetën vlera laboratorike në dokumentet'); return; }
+    renderLabChips(labs, prefix);
+    var nVital=labs.filter(function(p){return p&&p.name&&routeLab(p.name);}).length;
+    var abn=labs.filter(function(p){return p&&p.flag&&/high|low/i.test(p.flag);}).length;
+    showToast('🔬 '+labs.length+' parametra nga '+files.length+' dokumente — trokit "+"'+(nVital?(' · '+nVital+' → Vitals'):'')+(abn?(' · '+abn+' ⚠️'):''));
+  }catch(e){ console.warn('lab extract multi:', e); showToast('⚠️ Leximi i analizave dështoi: '+(e.message||e)); }
+}
 async function extractLabsFromDocument(file, prefix){
   if(!prefix){
     /* Zgjidh seksionin që është VËRTET i dukshëm (modali prof mund të jetë hapur mbi Diagnosis) */
