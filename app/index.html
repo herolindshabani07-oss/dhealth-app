@@ -1256,10 +1256,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260629230614 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260629232707 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260629230614';
+    var DH_BUILD='20260629232707';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -2303,13 +2303,13 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
     <!-- NUTRITION TRACKER (premium · temë e çelët) -->
     <div class="pcard">
       <div class="pcard-hd">
-        <div class="pcard-ico" style="background:#E8F1FE;">🍽️</div>
+        <div class="pcard-ico" style="background:transparent;"><img src="/assets/ic_nutrition.png" alt="" style="width:42px;height:42px;object-fit:contain;"></div>
         <div class="pcard-ti"><h4 data-i18n="vit.nutrTitle">Nutrition Today</h4><p data-i18n="vit.nutrSub">Stay fueled. Stay healthy.</p></div>
         <button class="pcard-btn" onclick="openNutritionModal()" style="background:linear-gradient(135deg,#F97316,#FB923C);box-shadow:0 6px 16px rgba(249,115,22,.32);" data-i18n="vit.addMeal">+ Add Meal</button>
       </div>
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
         <div class="dh-ring-wrap" style="width:108px;height:108px;">
-          <svg class="dh-ring" width="108" height="108" viewBox="0 0 108 108"><circle class="dh-ring-bg" cx="54" cy="54" r="46" stroke-width="10"/><circle class="dh-ring-fg" id="nutrRingFg" cx="54" cy="54" r="46" stroke-width="10" stroke="#3B7DD8" stroke-dasharray="289.03" stroke-dashoffset="289.03"/></svg>
+          <svg class="dh-ring" width="108" height="108" viewBox="0 0 108 108"><circle class="dh-ring-bg" cx="54" cy="54" r="46" stroke-width="10"/><circle class="dh-ring-fg" id="nutrRingFg" cx="54" cy="54" r="46" stroke-width="10" stroke="#60A5FA" stroke-dasharray="289.03" stroke-dashoffset="289.03"/></svg>
           <div class="dh-ring-ctr">
             <span style="font-size:15px;margin-bottom:1px;">🔥</span>
             <b id="nutrTotalCal" style="font-size:25px;">0</b>
@@ -2320,7 +2320,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div id="nutrMacros" style="flex:1;min-width:0;">
           <div class="macro-row">
             <div class="macro-ico" style="background:#E8F1FE;">🌾</div>
-            <div class="macro-bd"><div class="macro-top"><span class="ml" data-i18n="vit.carbs">Carbs</span><span class="mv"><b id="nutrCarbs" style="color:#3B7DD8;">0g</b> / 300g</span></div><div class="macro-bar"><i id="nutrCarbsBar" style="width:0%;background:#3B7DD8;"></i></div></div>
+            <div class="macro-bd"><div class="macro-top"><span class="ml" data-i18n="vit.carbs">Carbs</span><span class="mv"><b id="nutrCarbs" style="color:#60A5FA;">0g</b> / 300g</span></div><div class="macro-bar"><i id="nutrCarbsBar" style="width:0%;background:#60A5FA;"></i></div></div>
           </div>
           <div class="macro-row">
             <div class="macro-ico" style="background:#E3F6EC;">🥑</div>
@@ -2334,7 +2334,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         </div>
       </div>
       <div id="nutrMealsList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
-        <div class="dh-empty"><div class="ic">🍽️</div><div class="t" data-i18n="em.noMealsT">No meals logged today</div><div class="s" data-i18n="em.noMealsS">Tap "+ Add Meal" to start tracking</div></div>
+        <div class="dh-empty"><div class="t" data-i18n="em.noMealsT">No meals logged today</div><div class="s" data-i18n="em.noMealsS">Tap "+ Add Meal" to start tracking</div></div>
       </div>
       <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;border-top:.5px solid rgba(120,150,190,.16);padding-top:10px;font-size:11px;">
         <span style="font-size:13px;">📊</span><b id="nutrProgress" style="color:#22A06B;font-weight:800;">0%</b> <span style="color:#8295ad;" data-i18n="vit.ofGoal">of daily goal</span>
@@ -2349,9 +2349,9 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
     <!-- DAILY ACTIVITY (premium · temë e çelët) -->
     <div class="pcard">
       <div class="pcard-hd">
-        <div class="pcard-ico" style="background:#E3F6EC;">🏃</div>
+        <div class="pcard-ico" style="background:transparent;"><img src="/assets/ic_activity.png" alt="" style="width:42px;height:42px;object-fit:contain;"></div>
         <div class="pcard-ti"><h4 data-i18n="vit.actTitle">Today's Activity</h4><p data-i18n="vit.actSub">Keep moving. Every step counts.</p></div>
-        <button class="pcard-btn" onclick="openVitalsTrends()" style="background:#fff;color:#3B7DD8;border:.5px solid rgba(120,150,190,.3);box-shadow:0 4px 12px rgba(70,120,190,.1);">📈 <span data-i18n="vit.viewTrends">Trends</span></button>
+        <button class="pcard-btn" onclick="openVitalsTrends()" style="background:#fff;color:#60A5FA;border:.5px solid rgba(96,165,250,.4);box-shadow:0 4px 12px rgba(70,120,190,.1);">📈 <span data-i18n="vit.viewTrends">Trends</span></button>
       </div>
       <div style="display:flex;justify-content:center;margin-bottom:14px;">
         <div onclick="editDailyMetric('steps')" title="Fut hapat" style="cursor:pointer;">
@@ -2377,7 +2377,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       <div class="afoot">
         <div><div class="fi">🎯</div><div class="fl" data-i18n="vit.goalProgress">Goal Progress</div><div class="fv" id="actGoalPct" style="color:#22A06B;">0%</div></div>
         <div><div class="fi">🏆</div><div class="fl" data-i18n="vit.streak">Daily Streak</div><div class="fv" id="actStreak" style="color:#F97316;">0</div></div>
-        <div><div class="fi">⭐</div><div class="fl" data-i18n="vit.greatJob">Great Job!</div><div class="fv" id="actMsg" style="color:#3B7DD8;font-size:11px;">—</div></div>
+        <div><div class="fi">⭐</div><div class="fl" data-i18n="vit.greatJob">Great Job!</div><div class="fv" id="actMsg" style="color:#60A5FA;font-size:11px;">—</div></div>
       </div>
     </div>
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;margin:10px 16px 0;border:0.5px solid rgba(255,255,255,0.12);overflow:hidden;">
@@ -7985,13 +7985,20 @@ function setVHMetric(metric, btn) {
 
 function renderVHChart() {
   var cfg = VH_CONFIG[vhMetric];
-  var data = VH_DATA[vhMetric][vhPeriod];
+  var data = (VH_DATA[vhMetric] && VH_DATA[vhMetric][vhPeriod]) || null;   /* mund të mungojë → mos plas */
   var titleEl = document.getElementById('vhChartTitle');
   var badgeEl = document.getElementById('vhChartBadge');
   var insightEl = document.getElementById('vhAiInsight');
   if(titleEl) titleEl.textContent = cfg.title + ' — ' + vhPeriod + ' days';
   if(badgeEl){ badgeEl.textContent = cfg.badge; badgeEl.style.background = cfg.badgeBg; badgeEl.style.color = cfg.badgeColor; }
   if(insightEl) insightEl.textContent = VH_INSIGHTS[vhMetric];
+  /* Pa të dhëna (VH_DATA ende i palidhur me historikun real) → gjendje bosh, jo error */
+  if(!data){
+    if(vhChartInst){ try{ vhChartInst.destroy(); }catch(e){} vhChartInst=null; }
+    var c0=document.getElementById('vhChart'); if(c0){ try{ c0.getContext('2d').clearRect(0,0,c0.width,c0.height); }catch(e){} }
+    ['vhStatMin','vhStatAvg','vhStatMax'].forEach(function(id){ var e=document.getElementById(id); if(e) e.textContent='--'; });
+    return;
+  }
 
   var canvas = document.getElementById('vhChart');
   if(!canvas) return;
@@ -13643,10 +13650,10 @@ function renderNutritionUI(){
   var setText=function(id,t){ var e=document.getElementById(id); if(e) e.textContent=t; };
 
   if(meals.length===0){
-    listEl.innerHTML = '<div class="dh-empty"><div class="ic">🍽️</div><div class="t">'+dhT('em.noMealsT')+'</div><div class="s">'+dhT('em.noMealsS')+'</div></div>';
+    listEl.innerHTML = '<div class="dh-empty"><div class="t">'+dhT('em.noMealsT')+'</div><div class="s">'+dhT('em.noMealsS')+'</div></div>';
     setText('nutrTotalCal','0');
     setText('nutrProgress','0%'); var _p0=document.getElementById('nutrProgress'); if(_p0) _p0.style.color='#22A06B';
-    dhSetRing('nutrRingFg', 0, '#3B7DD8');
+    dhSetRing('nutrRingFg', 0, '#60A5FA');
     setMacro('nutrCarbs','nutrCarbsBar',0,300); setMacro('nutrProtein','nutrProteinBar',0,120); setMacro('nutrFat','nutrFatBar',0,70);
     var sugBox = document.getElementById('mealAiSuggestion'); if(sugBox) sugBox.style.display='none';
     return;
@@ -13673,7 +13680,7 @@ function renderNutritionUI(){
   setText('nutrTotalCal', totalCal.toLocaleString());
   var goal = parseInt((document.getElementById('nutrGoal').textContent||'2000').replace(/[^0-9]/g,''))||2000;
   var pct = Math.round((totalCal/goal)*100);
-  var ringCol = pct>110?'#EF4444':pct>90?'#F97316':'#3B7DD8';   /* blu → portokalli → kuqe sipas tepricës */
+  var ringCol = pct>110?'#EF4444':pct>90?'#F97316':'#60A5FA';   /* blu → portokalli → kuqe sipas tepricës */
   setText('nutrProgress', pct+'%'); var _pe=document.getElementById('nutrProgress'); if(_pe) _pe.style.color=ringCol;
   dhSetRing('nutrRingFg', pct, ringCol);
 
