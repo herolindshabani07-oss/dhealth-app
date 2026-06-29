@@ -1197,10 +1197,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260628221943 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260629135422 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260628221943';
+    var DH_BUILD='20260629135422';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -10537,6 +10537,10 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
 
   /* Render i profilit mjekësor — nga Supabase OSE nga cache lokal (që të mos zhduket pas Clear All) */
   var MPKEY = 'dh_cache_mp_'+userId;
+  /* PASTRO tag-et mjekësore PARA ngarkimit → user pa profil mjekësor të mos shohë diagnozat/terapinë e
+     një llogarie tjetër (dhe të mos i ruajë gabimisht te llogaria e vet). Mbrojtje edhe pa reload. */
+  ['diag-tags','prof-diag-tags','ds-diag-tags','therapy-tags','prof-therapy-tags','ds-therapy-tags','allergy-tags','prof-allergy-tags','ds-allergy-tags','lab-tags','prof-lab-tags','ds-lab-tags']
+    .forEach(function(id){ var w=document.getElementById(id); if(w) w.innerHTML=''; });
   var _renderMP = function(d){
     if(!d) return;
     var loadTags = function(tagIds, items, cls){
