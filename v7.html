@@ -239,6 +239,22 @@ select option{background:#0A1628;color:#F1F5FF;}
 .pf-ta{width:100%;border:0.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:8px 11px;font-size:12px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;resize:none;min-height:60px;margin-bottom:8px;}
 .divr{height:0.5px;background:var(--border);margin:10px 0;}
 .fl-list{display:flex;flex-direction:column;gap:5px;margin-bottom:8px;}
+/* Tregues "po analizohet" me animacion → shenjë jeshile kur mbaron */
+.anlz-box{display:none;align-items:center;gap:10px;padding:11px 13px;margin:4px 0 10px;border-radius:13px;background:rgba(45,200,160,0.10);border:1px solid rgba(45,200,160,0.28);opacity:0;transform:translateY(-4px);transition:opacity .3s,transform .3s;}
+.anlz-box.show{display:flex;opacity:1;transform:none;}
+.anlz-box .anlz-tx{font-size:12.5px;font-weight:700;color:#0f7a55;font-family:var(--font);flex:1;line-height:1.35;}
+.anlz-spin{width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(45,200,160,0.25);border-top-color:#0D9488;animation:anlzSpin .7s linear infinite;flex-shrink:0;}
+@keyframes anlzSpin{to{transform:rotate(360deg);}}
+.anlz-dots{display:flex;gap:3px;flex-shrink:0;}
+.anlz-dots i{width:5px;height:5px;border-radius:50%;background:#0D9488;animation:anlzBounce 1s infinite;}
+.anlz-dots i:nth-child(2){animation-delay:.15s;}
+.anlz-dots i:nth-child(3){animation-delay:.3s;}
+@keyframes anlzBounce{0%,80%,100%{transform:scale(.5);opacity:.4;}40%{transform:scale(1);opacity:1;}}
+.anlz-box.done{background:rgba(45,200,160,0.16);border-color:rgba(45,200,160,0.45);}
+.anlz-check{width:22px;height:22px;border-radius:50%;background:#2DC8A0;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:anlzPop .35s ease;}
+.anlz-check svg{width:13px;height:13px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;animation:anlzDraw .4s .12s forwards ease;}
+@keyframes anlzPop{0%{transform:scale(0);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+@keyframes anlzDraw{to{stroke-dashoffset:0;}}
 .fl-item{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:10px;padding:8px 11px;border:0.5px solid rgba(120,150,190,0.18);}
 .fl-nm{flex:1;font-size:11px;font-weight:600;color:#1f2c44;}
 .fl-sz{font-size:10px;color:#7387a4;}
@@ -1204,10 +1220,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260629215036 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260629215532 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260629215036';
+    var DH_BUILD='20260629215532';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -9538,17 +9554,40 @@ async function deleteUserDocument(el){
   else showToast('🗑️ Dokumenti u fshi');
 }
 
+/* ════ Tregues vizual "po analizohet" (spinner+pika → shenjë jeshile) ════
+   phase: 'upload' | 'analyze' | 'done' | 'hide'  ·  prefix: 'prof' | 'ds' */
+function _anlzEl(prefix){
+  var listId = prefix==='prof' ? 'prof-fl-list' : 'ds-fl-list';
+  var list = document.getElementById(listId); if(!list) return null;
+  var id = prefix+'-anlz', el = document.getElementById(id);
+  if(!el){ el=document.createElement('div'); el.id=id; el.className='anlz-box'; list.parentNode.insertBefore(el, list.nextSibling); }
+  return el;
+}
+function dhAnlz(prefix, phase, text){
+  var el=_anlzEl(prefix); if(!el) return;
+  if(phase==='hide'){ el.classList.remove('show'); setTimeout(function(){ if(el && !el.classList.contains('show')) el.innerHTML=''; }, 350); return; }
+  if(phase==='done'){
+    el.className='anlz-box show done';
+    el.innerHTML='<span class="anlz-check"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="anlz-tx">'+esc(text||'Dokumenti u analizua!')+'</span>';
+    setTimeout(function(){ dhAnlz(prefix,'hide'); }, 2600);
+    return;
+  }
+  el.className='anlz-box show';   /* upload / analyze → spinner + pika */
+  el.innerHTML='<span class="anlz-spin"></span><span class="anlz-tx">'+esc(text||'Po analizohet...')+'</span><span class="anlz-dots"><i></i><i></i><i></i></span>';
+}
+
 async function handleProfFileUpload(event){
   var files = event.target.files;
   if(!files||!files.length) return;
   var arr = Array.prototype.slice.call(files);
-  showToast('🔄 Duke ngarkuar...');
+  dhAnlz('prof','upload','📤 Po ngarkohet dokumenti...');
   for(var i=0;i<arr.length;i++){ await uploadUserDocument(arr[i]); }
   await refreshDocuments();
-  showToast('✅ Dokumenti u ruajt në llogari!');
   event.target.value='';
   /* Lexo automatikisht parametrat laboratorikë nga dokumenti */
-  try{ await extractLabsFromFiles(arr); }catch(e){}   /* TË GJITHA dokumentet bashkë → asnjë i palexuar */
+  dhAnlz('prof','analyze','🔬 Po analizohet me D Health AI...');
+  try{ await extractLabsFromFiles(arr, 'prof'); }catch(e){}   /* TË GJITHA dokumentet bashkë → asnjë i palexuar */
+  dhAnlz('prof','done','✅ Dokumenti u ruajt & u analizua!');
 }
 
 
@@ -10136,13 +10175,14 @@ async function handleDsFileUpload(event){
   var files = event.target.files;
   if(!files||!files.length) return;
   var arr = Array.prototype.slice.call(files);
-  showToast('🔄 Duke ngarkuar...');
+  dhAnlz('ds','upload','📤 Po ngarkohet dokumenti...');
   for(var i=0;i<arr.length;i++){ await uploadUserDocument(arr[i]); }
   await refreshDocuments();
-  showToast('✅ Dokumenti u ruajt në llogari!');
   event.target.value='';
   /* Lexo automatikisht parametrat laboratorikë nga dokumenti */
-  try{ await extractLabsFromFiles(arr); }catch(e){}   /* TË GJITHA dokumentet bashkë → asnjë i palexuar */
+  dhAnlz('ds','analyze','🔬 Po analizohet me D Health AI...');
+  try{ await extractLabsFromFiles(arr, 'ds'); }catch(e){}   /* TË GJITHA dokumentet bashkë → asnjë i palexuar */
+  dhAnlz('ds','done','✅ Dokumenti u ruajt & u analizua!');
 }
 
 /* ════ Lexim AI i analizave laboratorike → Lab Values (sinkron me Diagnostic + Supabase) ════ */
