@@ -1197,10 +1197,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260629143521 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260629144417 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260629143521';
+    var DH_BUILD='20260629144417';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -6726,6 +6726,7 @@ function llaunchApp() {
     try{updatePlanUI();}catch(e){}
     try{switchScreen('home');}catch(e){}
     try{initECGCards();}catch(e){}
+    try{loadEmergencyFromCloud(false);}catch(e){}
     try{lmaybeConsent();}catch(e){}
     setTimeout(function(){
       if(LST.currentUser) try{checkMyAppointment();}catch(e){}
@@ -6906,6 +6907,7 @@ function applySupabaseSession(session){
     try{updatePlanUI();}catch(e){}
     try{switchScreen('home');}catch(e){}
     try{initECGCards();}catch(e){}
+    try{loadEmergencyFromCloud(false);}catch(e){}
     try{lmaybeConsent();}catch(e){}
     try{initUserData(session.user.id, name, session.user.email);}catch(e){console.log('initUserData err:',e);}
     try{setTimeout(calcDailyScore,2000);}catch(e){}
@@ -9194,6 +9196,23 @@ async function handleECGUpload(event){
       }
     }catch(e){ console.log('ECG doc save skip:', e.message); }
 
+    /* Ruaj ANALIZËN në Supabase (ecg_results) → historiku i ECG-së ndjek user-in
+       mes pajisjeve, i izoluar me RLS (jo vetëm te localStorage i kësaj pajisjeje) */
+    try{
+      var sbE = getSupa();
+      if(sbE && LST && LST.currentUser && LST.currentUser.id){
+        var insE = await sbE.from('ecg_results').insert({
+          patient_id: LST.currentUser.id,
+          ecg_date:   ecgEntry.date,
+          ts:         ecgEntry.ts,
+          summary:    ecgEntry.summary,
+          status:     ecgEntry.status,
+          path:       ecgEntry.path || ''
+        });
+        if(insE && insE.error) console.warn('ECG result save:', insE.error.message);
+      }
+    }catch(e){ console.warn('ECG result save skip:', e.message); }
+
     /* Toast */
     if(status==='urgent') showToast('🚨 ECG kritike! Konsultohuni me Dr. Shabani!');
     else if(status==='warning') showToast('⚠️ ECG ka anomali — shikoni analizën!');
@@ -9236,7 +9255,29 @@ function renderECGHistory(){
   });
 }
 /* Renderon historikun e ECG-së në ngarkim (thirret nga login/init) */
-function initECGCards(){ try{ renderECGHistory(); }catch(e){} }
+function initECGCards(){ try{ renderECGHistory(); }catch(e){} try{ loadEcgResults(); }catch(e){} }
+
+/* Ngarko historikun e ECG-së nga Supabase (burimi i së vërtetës) → e zëvendëson
+   ecgHistory-n lokale me rreshtat e KËTIJ user-i (izolim: s'tregon ECG të të tjerëve). */
+async function loadEcgResults(){
+  var sb = getSupa();
+  if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return;
+  try{
+    var r = await sb.from('ecg_results').select('*')
+              .eq('patient_id', LST.currentUser.id)
+              .order('ts', {ascending:false}).limit(10);
+    if(r && !r.error && r.data){
+      /* kthe në rend rritës (i vjetri → i riu) që të përputhet me push()/slice(-5) */
+      ecgHistory = r.data.slice().reverse().map(function(row){
+        return { date: row.ecg_date||'', ts: Number(row.ts)||0,
+                 summary: row.summary||'', status: row.status||'normal',
+                 path: row.path||'', id: row.id };
+      });
+      localStorage.setItem('ecg_history', JSON.stringify(ecgHistory));
+      renderECGHistory();
+    }
+  }catch(e){ console.warn('ECG load:', e.message); }
+}
 
 /* Klikim mbi një ECG te History → hap skedarin e ngarkuar (signed URL nga Supabase) */
 async function openEcgFromHistory(path){
@@ -10947,16 +10988,49 @@ function updateDeviceStatuses(){
 /* ═══ EMERGENCY CONTACT ═══ */
 function openEmergencyModal(){ var m=document.getElementById('emergencyModal'); if(!m) return; try{relocateModals();}catch(e){} try{loadEmergency();}catch(e){} m.style.display='flex'; }
 function closeEmergencyModal(e){ if(e && e.target!==document.getElementById('emergencyModal')) return; var m=document.getElementById('emergencyModal'); if(m) m.style.display='none'; }
-function loadEmergency(){
-  var d={}; try{ d=JSON.parse(localStorage.getItem('dh_emergency')||'{}'); }catch(e){}
+function _emgFill(d){
   var set=function(id,v){ var el=document.getElementById(id); if(el) el.value=v||''; };
   set('emgName',d.name); set('emgPhone',d.phone); set('emgRelation',d.relation); set('emgBlood',d.blood);
+}
+function loadEmergency(){
+  var d={}; try{ d=JSON.parse(localStorage.getItem('dh_emergency')||'{}'); }catch(e){}
+  _emgFill(d);                       /* shfaq menjëherë nga cache-ja lokale */
+  loadEmergencyFromCloud(true);      /* pastaj rifresko nga Supabase (burimi i së vërtetës) */
+}
+/* Ngarko kontaktin emergjent nga Supabase → e sinkronizon te localStorage (izoluar per-user).
+   fillForm=true rimbush edhe fushat e modalit nëse është hapur. */
+async function loadEmergencyFromCloud(fillForm){
+  var sb = getSupa();
+  if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return;
+  try{
+    var r = await sb.from('emergency_contacts').select('name,phone,relation,blood')
+              .eq('patient_id', LST.currentUser.id).limit(1).maybeSingle();
+    if(r && !r.error && r.data){
+      var d={ name:r.data.name||'', phone:r.data.phone||'', relation:r.data.relation||'', blood:r.data.blood||'' };
+      localStorage.setItem('dh_emergency', JSON.stringify(d));
+      if(fillForm) _emgFill(d);
+      refreshEmergencySub();
+    }
+  }catch(e){ console.warn('Emergency load:', e.message); }
 }
 function saveEmergency(){
   var val=function(id){ var el=document.getElementById(id); return el?el.value.trim():''; };
   var d={ name:val('emgName'), phone:val('emgPhone'), relation:val('emgRelation'), blood:val('emgBlood') };
   localStorage.setItem('dh_emergency', JSON.stringify(d));
   refreshEmergencySub();
+  /* Ruaj (upsert) në Supabase → ndjek user-in mes pajisjeve, i izoluar me RLS */
+  try{
+    var sb = getSupa();
+    if(sb && LST && LST.currentUser && LST.currentUser.id){
+      sb.from('emergency_contacts').upsert({
+        patient_id: LST.currentUser.id,
+        name:d.name, phone:d.phone, relation:d.relation, blood:d.blood,
+        updated_at: new Date().toISOString()
+      }, {onConflict:'patient_id'}).then(function(res){
+        if(res && res.error) console.warn('Emergency save:', res.error.message);
+      });
+    }
+  }catch(e){ console.warn('Emergency save skip:', e.message); }
   showToast('✅ Kontakti i urgjencës u ruajt!');
   closeEmergencyModal(null);
 }
