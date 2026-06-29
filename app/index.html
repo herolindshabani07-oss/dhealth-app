@@ -222,8 +222,15 @@ select option{background:#0A1628;color:#F1F5FF;}
 .tag2.a{background:var(--hl);color:var(--heart);}
 .tag2.l{background:var(--al);color:var(--teal);}
 .tx{cursor:pointer;font-size:13px;opacity:0.6;}
-.tadd-row{display:flex;gap:5px;margin-bottom:12px;}
+.tadd-row{display:flex;gap:5px;margin-bottom:12px;position:relative;}
 .ti{flex:1;border:0.5px solid rgba(255,255,255,0.12);border-radius:9px;padding:7px 10px;font-size:12px;color:#F1F5FF;background:var(--bg);font-family:var(--font);outline:none;}
+/* Autocomplete diagnozash — popover i bardhë mbi çdo temë */
+.dx-ac{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid rgba(120,150,190,.28);border-radius:12px;box-shadow:0 10px 28px rgba(20,41,75,.16);z-index:90;max-height:212px;overflow-y:auto;display:none;}
+.dx-ac.open{display:block;}
+.dx-ac-item{padding:10px 13px;font-size:13px;color:#1f2c44;cursor:pointer;border-bottom:.5px solid rgba(120,150,190,.12);font-family:var(--font);}
+.dx-ac-item:last-child{border-bottom:none;}
+.dx-ac-item:hover,.dx-ac-item.sel{background:#eef4fc;}
+.dx-ac-item b{color:#1e5fba;}
 .tb{padding:7px 12px;border-radius:9px;color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);}
 .pf-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px;}
 .pf-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:4px;display:block;}
@@ -1197,10 +1204,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260629212855 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260629215036 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260629212855';
+    var DH_BUILD='20260629215036';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -3232,7 +3239,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       <div class="tag-wrap2" id="prof-diag-tags">
           </div>
       <div class="tadd-row">
-        <input class="ti" id="prof-diag-inp" placeholder="Add diagnosis..." onkeydown="if(event.key==='Enter')addTag('prof-diag-tags','prof-diag-inp','d')"/>
+        <input class="ti" id="prof-diag-inp" placeholder="Add diagnosis..." autocomplete="off" oninput="dxAC('prof-diag-inp','prof-diag-tags','d')" onkeydown="if(dxACKey(event,'prof-diag-inp','prof-diag-tags','d'))return; if(event.key==='Enter')addTag('prof-diag-tags','prof-diag-inp','d')"/>
         <button class="tb" style="background:var(--heart);" onclick="addTag('prof-diag-tags','prof-diag-inp','d')">+ Add</button>
       </div>
 
@@ -3464,7 +3471,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div class="tag-wrap2" id="ds-diag-tags">
           </div>
         <div class="tadd-row">
-          <input class="ti" id="ds-diag-inp" placeholder="Add diagnosis..." data-i18n-ph="dx.phDiag" onkeydown="if(event.key==='Enter')addTag('ds-diag-tags','ds-diag-inp','d')"/>
+          <input class="ti" id="ds-diag-inp" placeholder="Add diagnosis..." data-i18n-ph="dx.phDiag" autocomplete="off" oninput="dxAC('ds-diag-inp','ds-diag-tags','d')" onkeydown="if(dxACKey(event,'ds-diag-inp','ds-diag-tags','d'))return; if(event.key==='Enter')addTag('ds-diag-tags','ds-diag-inp','d')"/>
           <button class="tb" style="background:var(--heart);" onclick="addTag('ds-diag-tags','ds-diag-inp','d')" data-i18n="dx.add">+ Add</button>
         </div>
         <div class="divr"></div>
@@ -5284,8 +5291,130 @@ function _addTagToList(listId,txt,cls){ setTimeout(function(){try{updateDiagHead
   sp.innerHTML=txt+' <span class="tx" onclick="rmTag(\''+listId+'\',this)">×</span>';
   wrap.appendChild(sp);
 }
+/* ══════════ AUTOCOMPLETE DIAGNOZASH ══════════
+   l = etiketa që ruhet · a = aliase për kërkim (anglisht/sinonime/sq) */
+var DH_DX_LIST = [
+  {l:'Hipertension', a:'hypertension presion tension i larte gjak'},
+  {l:'Hipertension pulmonar', a:'pulmonary hypertension'},
+  {l:'Hipotension', a:'hypotension presion i ulet'},
+  {l:'Hipertiroidizëm', a:'hyperthyroidism tiroide e tepert'},
+  {l:'Hipotiroidizëm', a:'hypothyroidism tiroide e ulet'},
+  {l:'Tiroidit Hashimoto', a:'hashimoto thyroiditis tiroide'},
+  {l:'Sëmundja Graves', a:'graves disease tiroide'},
+  {l:'Hiperkolesterolemi', a:'hypercholesterolemia kolesterol i larte'},
+  {l:'Hiperlipidemi / Dislipidemi', a:'hyperlipidemia dyslipidemia lipide'},
+  {l:'Hiperglicemi', a:'hyperglycemia sheqer i larte'},
+  {l:'Hipoglicemi', a:'hypoglycemia sheqer i ulet'},
+  {l:'Hiperurikemi / Përdhes', a:'hyperuricemia gout uric acid acid urik'},
+  {l:'Diabet tip 1', a:'diabetes type 1 diabeti sheqer'},
+  {l:'Diabet tip 2', a:'diabetes type 2 diabeti sheqer'},
+  {l:'Diabet gestacional', a:'gestational diabetes shtatzani'},
+  {l:'Prediabet', a:'prediabetes'},
+  {l:'Obezitet', a:'obesity mbipeshe'},
+  {l:'Sindromi metabolik', a:'metabolic syndrome'},
+  {l:'Astëm', a:'asthma astma frymemarrje'},
+  {l:'SPOK (COPD)', a:'copd chronic obstructive pulmonary semundje pulmonare obstruktive kronike'},
+  {l:'Bronkit kronik', a:'chronic bronchitis bronk'},
+  {l:'Pneumoni', a:'pneumonia mushkeri'},
+  {l:'Apnea e gjumit', a:'sleep apnea gjume'},
+  {l:'Aritmi', a:'arrhythmia ritem zemra'},
+  {l:'Fibrilacion atrial', a:'atrial fibrillation afib zemra'},
+  {l:'Insuficiencë kardiake', a:'heart failure zemra dobesi'},
+  {l:'Sëmundje koronare', a:'coronary artery disease zemra'},
+  {l:'Infarkt miokardi', a:'myocardial infarction heart attack zemra'},
+  {l:'Angina pectoris', a:'angina dhimbje gjoksi zemra'},
+  {l:'Aterosklerozë', a:'atherosclerosis arterie'},
+  {l:'Trombozë venoze', a:'thrombosis tromb mpiksje'},
+  {l:'Insult / Stroke', a:'stroke ictus tru'},
+  {l:'Anemi', a:'anemia gjak'},
+  {l:'Anemi e mungesës së hekurit', a:'iron deficiency anemia hekur'},
+  {l:'Migrenë', a:'migraine dhimbje koke'},
+  {l:'Epilepsi', a:'epilepsy konvulsione'},
+  {l:'Sklerozë multiple', a:'multiple sclerosis ms'},
+  {l:'Sëmundja Parkinson', a:'parkinson tru dridhje'},
+  {l:'Sëmundja Alzheimer', a:'alzheimer demence kujtese'},
+  {l:'Demencë', a:'dementia kujtese'},
+  {l:'Depresion', a:'depression depresioni'},
+  {l:'Çrregullim ankthi', a:'anxiety disorder ankth'},
+  {l:'Çrregullim bipolar', a:'bipolar disorder'},
+  {l:'Skizofreni', a:'schizophrenia'},
+  {l:'ADHD', a:'attention deficit hiperaktivitet'},
+  {l:'Artrit reumatoid', a:'rheumatoid arthritis nyje'},
+  {l:'Osteoartrit', a:'osteoarthritis nyje kocke'},
+  {l:'Osteoporozë', a:'osteoporosis kocke'},
+  {l:'Fibromialgji', a:'fibromyalgia dhimbje muskuj'},
+  {l:'Lupus (SLE)', a:'lupus systemic erythematosus'},
+  {l:'Psoriazis', a:'psoriasis lekure'},
+  {l:'Ekzemë / Dermatit', a:'eczema dermatitis lekure'},
+  {l:'Sëmundje e veshkave kronike', a:'chronic kidney disease ckd veshke renale'},
+  {l:'Insuficiencë renale', a:'renal failure veshke'},
+  {l:'Gurë në veshkë', a:'kidney stones veshke calculi'},
+  {l:'Refluks gastroezofageal (GERD)', a:'gerd reflux stomak'},
+  {l:'Gastrit', a:'gastritis stomak'},
+  {l:'Ulçerë gastrike', a:'gastric ulcer stomak'},
+  {l:'Sindromi i zorrës së irrituar (IBS)', a:'irritable bowel syndrome zorra'},
+  {l:'Sëmundja e Crohn', a:'crohn disease zorra'},
+  {l:'Kolit ulçeroz', a:'ulcerative colitis zorra'},
+  {l:'Sëmundja celiake', a:'celiac disease gluten'},
+  {l:'Hepatit B', a:'hepatitis b melci'},
+  {l:'Hepatit C', a:'hepatitis c melci'},
+  {l:'Cirrozë e mëlçisë', a:'liver cirrhosis melci'},
+  {l:'Mëlçi yndyrore (NAFLD)', a:'fatty liver nafld melci'},
+  {l:'Sinusit', a:'sinusitis hunde'},
+  {l:'Alergji sezonale', a:'allergic rhinitis alergji polen'},
+  {l:'Glaukomë', a:'glaucoma sy'},
+  {l:'Katarakt', a:'cataract sy'},
+  {l:'Endometriozë', a:'endometriosis'},
+  {l:'Sindromi i vezores policistike (PCOS)', a:'pcos polycystic ovary'},
+  {l:'Tuberkuloz', a:'tuberculosis tbc mushkeri'},
+  {l:'COVID-19', a:'covid coronavirus'},
+  {l:'HIV', a:'hiv aids'}
+];
+var _dxSel = -1;   /* indeksi i theksuar për navigim me shigjeta */
+function _dxDrop(inp){
+  var row=inp.closest('.tadd-row')||inp.parentElement;
+  var dd=row.querySelector('.dx-ac');
+  if(!dd){ dd=document.createElement('div'); dd.className='dx-ac'; row.appendChild(dd); }
+  return dd;
+}
+function dxAC(inpId, listId, cls){
+  var inp=document.getElementById(inpId); if(!inp) return;
+  var q=inp.value.trim().toLowerCase();
+  var dd=_dxDrop(inp); _dxSel=-1;
+  if(q.length<2){ dd.classList.remove('open'); dd.innerHTML=''; return; }
+  var m=DH_DX_LIST.filter(function(d){ return (d.l+' '+(d.a||'')).toLowerCase().indexOf(q)>-1; }).slice(0,8);
+  if(!m.length){ dd.classList.remove('open'); dd.innerHTML=''; return; }
+  dd.innerHTML=m.map(function(d){
+    var lab=d.l, i=lab.toLowerCase().indexOf(q);
+    var html = i>=0 ? esc(lab.slice(0,i))+'<b>'+esc(lab.slice(i,i+q.length))+'</b>'+esc(lab.slice(i+q.length)) : esc(lab);
+    return '<div class="dx-ac-item" data-v="'+esc(lab)+'">'+html+'</div>';
+  }).join('');
+  dd.classList.add('open');
+  Array.from(dd.children).forEach(function(it){
+    it.onmousedown=function(e){ e.preventDefault(); inp.value=it.getAttribute('data-v'); dd.classList.remove('open'); dd.innerHTML=''; addTag(listId,inpId,cls); inp.focus(); };
+  });
+}
+/* Navigim me shigjeta ↑/↓ + Enter te dropdown-i (thirret nga onkeydown i input-it) */
+function dxACKey(ev, inpId, listId, cls){
+  var inp=document.getElementById(inpId); if(!inp) return false;
+  var dd=_dxDrop(inp); if(!dd.classList.contains('open')) return false;
+  var items=Array.from(dd.children); if(!items.length) return false;
+  if(ev.key==='ArrowDown'){ ev.preventDefault(); _dxSel=(_dxSel+1)%items.length; }
+  else if(ev.key==='ArrowUp'){ ev.preventDefault(); _dxSel=(_dxSel-1+items.length)%items.length; }
+  else if(ev.key==='Enter' && _dxSel>=0){ ev.preventDefault(); inp.value=items[_dxSel].getAttribute('data-v'); dd.classList.remove('open'); dd.innerHTML=''; addTag(listId,inpId,cls); return true; }
+  else if(ev.key==='Escape'){ dd.classList.remove('open'); return true; }
+  else return false;
+  items.forEach(function(it,i){ it.classList.toggle('sel', i===_dxSel); if(i===_dxSel) it.scrollIntoView({block:'nearest'}); });
+  return true;
+}
+/* Mbyll dropdown-in kur klikohet jashtë */
+document.addEventListener('click', function(e){
+  if(e.target.closest && e.target.closest('.tadd-row')) return;
+  document.querySelectorAll('.dx-ac.open').forEach(function(d){ d.classList.remove('open'); });
+});
 function addTag(listId,inpId,cls){
   var inp=document.getElementById(inpId);var txt=inp.value.trim();if(!txt)return;
+  try{ var _dd=inp.closest('.tadd-row'); if(_dd){ var _x=_dd.querySelector('.dx-ac'); if(_x){ _x.classList.remove('open'); _x.innerHTML=''; } } }catch(e){}
   _addTagToList(listId,txt,cls);
   (TAG_SYNC[listId]||[]).forEach(function(sid){
     var w=document.getElementById(sid);if(!w)return;
