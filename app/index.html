@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260629235149 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260630001214 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260629235149';
+    var DH_BUILD='20260630001214';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -2370,7 +2370,6 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
       <div class="pcard-hd">
         <div class="pcard-ico" style="background:transparent;"><img src="/assets/ic_activity.png" alt="" style="width:42px;height:42px;object-fit:contain;"></div>
         <div class="pcard-ti"><h4 data-i18n="vit.actTitle">Today's Activity</h4><p data-i18n="vit.actSub">Keep moving. Every step counts.</p></div>
-        <button class="pcard-btn" onclick="openVitalsTrends()" style="background:#fff;color:#60A5FA;border:.5px solid rgba(96,165,250,.4);box-shadow:0 4px 12px rgba(70,120,190,.1);">📈 <span data-i18n="vit.viewTrends">Trends</span></button>
       </div>
       <div style="display:flex;justify-content:center;margin-bottom:14px;">
         <div onclick="editDailyMetric('steps')" title="Fut hapat" style="cursor:pointer;">
@@ -4691,6 +4690,14 @@ function aiLangDirective(){
   return l==='sq' ? 'IMPORTANT: Respond ENTIRELY in Albanian (Shqip), regardless of the prompt language.\n\n'
        : l==='mk' ? 'IMPORTANT: Одговарајте ИСКЛУЧИВО на македонски јазик (кирилица), без оглед на јазикот на барањето.\n\n'
        : 'IMPORTANT: Respond ENTIRELY in English, regardless of the prompt language.\n\n';
+}
+/* Rresht eksplicit gjuhe për t'u SHTUAR te USER prompt — i fortë edhe për përgjigje JSON
+   (siguron që edhe VLERAT e tekstit në JSON të jenë në gjuhën e zgjedhur, jo në anglisht). */
+function aiLangValueLine(){
+  var l=(typeof currentLang!=='undefined'?currentLang:'en')||'en';
+  return l==='sq' ? '\n\nKRITIKE: Shkruaji TË GJITHA tekstet (çdo fjali dhe çdo vlerë teksti brenda JSON-it — meal_name, ingredients, summary, tips, warnings) NË SHQIP. Mos përdor anglisht.'
+       : l==='mk' ? '\n\nКРИТИЧНО: Напиши ГИ СИТЕ текстови (секоја реченица и секоја текстуална вредност во JSON — meal_name, ingredients, summary, tips, warnings) НА МАКЕДОНСКИ (кирилица). Не користи англиски.'
+       : '\n\nIMPORTANT: Write ALL text (every sentence and every JSON string value) in English.';
 }
 
 /* ════════════════════ CLAUDE API CALLS ════════════════════ */
@@ -13268,7 +13275,8 @@ async function handleMealPhoto(input){
         + '"warnings":["warning if applicable"],'
         + '"health_impact":{"level":"worsen|neutral|improve",'
         + '"summary":"2-3 sentences: how THIS meal affects my current state given my vitals, lab values, ECG, diagnoses AND medications — reference my REAL numbers and name the specific interaction (e.g. high sugar vs my Metformin/diabetes and glucose X, sodium vs my BP X, fat vs my cholesterol/ECG)",'
-        + '"tips":["CONCRETE quantified action e.g. walk 10,000 steps or 45 min","another concrete action e.g. drink 500ml water / take medication with food / skip carbs next meal"]}}';
+        + '"tips":["CONCRETE quantified action e.g. walk 10,000 steps or 45 min","another concrete action e.g. drink 500ml water / take medication with food / skip carbs next meal"]}}'
+        + aiLangValueLine();
 
       var r = await fetch('/.netlify/functions/claude',{
         method:'POST',
@@ -13453,7 +13461,8 @@ async function aiMealSuggestion(meal){
           + '1) Is this meal OK for me right now given my vitals, labs and conditions?\n'
           + '2) Any specific DRUG–FOOD or CONDITION–FOOD risk (e.g. high sugar vs my Metformin/diabetes, sodium vs my BP, fat vs cholesterol/ECG/heart, potassium vs kidney labs)? Name the interaction.\n'
           + '3) One CONCRETE quantified action (e.g. walk 10,000 steps / 45 min, drink 500ml water, take medication with food, skip carbs next meal).\n'
-          + 'Use max 3 short bullets •. Reference my REAL numbers. Be warm, practical, specific. Reply in the user\'s language (Albanian if profile is Albanian).'
+          + 'Use max 3 short bullets •. Reference my REAL numbers. Be warm, practical, specific.'
+          + aiLangValueLine()
         }]
       })});
     var rawT = await r.text(); if(rawT.trim().startsWith('<')) throw new Error('AI unavailable');
