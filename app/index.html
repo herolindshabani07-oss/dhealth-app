@@ -569,19 +569,42 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 .actov-sub{font-size:9px;font-weight:700;margin-top:2px;letter-spacing:.2px;}
 .actov-bars{display:flex;align-items:flex-end;gap:2px;height:23px;margin-top:9px;}
 .actov-bars i{flex:1;border-radius:2px 2px 0 0;min-height:2px;opacity:.82;}
-/* Unaza progresi premium (Nutrition + Activity te Vitals) */
+/* ══ Karta premium (Nutrition + Activity te Vitals) — temë e çelët ══ */
 .dh-ring-wrap{position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .dh-ring{transform:rotate(-90deg);display:block;}
-.dh-ring-bg{fill:none;stroke:rgba(255,255,255,.13);}
-.dh-ring-fg{fill:none;stroke-linecap:round;stroke-dasharray:163.36;stroke-dashoffset:163.36;transition:stroke-dashoffset 1s cubic-bezier(.22,1,.36,1),stroke .45s;filter:drop-shadow(0 0 5px currentColor);}
-.dh-ring-ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;}
-.dh-ring-ctr b{color:#F1F5FF;font-weight:800;}
-.dh-ring-ctr span{color:rgba(255,255,255,.55);font-weight:600;}
-.dh-act-pill{flex:1;display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:13px;background:rgba(255,255,255,.05);border:.5px solid rgba(255,255,255,.1);cursor:pointer;transition:background .2s;}
-.dh-act-pill:active{background:rgba(255,255,255,.1);}
-.dh-act-pill .ico{font-size:16px;flex-shrink:0;}
-.dh-act-pill .v{font-size:15px;font-weight:800;line-height:1.1;}
-.dh-act-pill .l{font-size:9px;color:rgba(255,255,255,.5);}
+.dh-ring-bg{fill:none;stroke:#e9eef6;}
+.dh-ring-fg{fill:none;stroke-linecap:round;transition:stroke-dashoffset 1.05s cubic-bezier(.22,1,.36,1),stroke .45s;filter:drop-shadow(0 1px 3px rgba(70,120,190,.28));}
+.dh-ring-ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;text-align:center;}
+.dh-ring-ctr b{color:#16233f;font-weight:800;}
+.dh-ring-ctr span{color:#8295ad;font-weight:600;}
+.pcard{background:#fff;border:.5px solid rgba(120,150,190,.16);border-radius:22px;box-shadow:0 12px 30px rgba(70,120,190,.12);padding:16px 15px;margin:12px 16px 0;}
+.pcard-hd{display:flex;align-items:center;gap:11px;margin-bottom:14px;}
+.pcard-ico{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.pcard-ti{flex:1;min-width:0;}
+.pcard-ti h4{margin:0;font-size:14.5px;font-weight:800;color:#16233f;letter-spacing:.2px;text-transform:uppercase;}
+.pcard-ti p{margin:2px 0 0;font-size:11px;color:#8295ad;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pcard-btn{padding:9px 14px;border-radius:20px;border:none;font-size:12px;font-weight:800;cursor:pointer;font-family:var(--font);flex-shrink:0;color:#fff;}
+.macro-row{display:flex;align-items:center;gap:11px;margin-bottom:13px;}
+.macro-row:last-child{margin-bottom:0;}
+.macro-ico{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.macro-bd{flex:1;min-width:0;}
+.macro-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+.macro-top .ml{font-size:13px;font-weight:700;color:#33415c;}
+.macro-top .mv{font-size:12px;color:#8295ad;font-weight:600;}
+.macro-top .mv b{font-weight:800;}
+.macro-bar{height:7px;border-radius:6px;background:#e9eef6;overflow:hidden;}
+.macro-bar i{display:block;height:100%;border-radius:6px;transition:width .9s cubic-bezier(.22,1,.36,1);}
+.atile{background:#fff;border:.5px solid rgba(120,150,190,.16);border-radius:15px;box-shadow:0 5px 14px rgba(70,120,190,.07);padding:10px 9px;display:flex;flex-direction:column;gap:2px;cursor:pointer;min-width:0;}
+.atile .ai{font-size:16px;line-height:1;}
+.atile .av{font-size:15px;font-weight:800;color:#16233f;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.atile .av small{font-size:10px;font-weight:600;color:#8295ad;}
+.atile .al{font-size:9px;color:#8295ad;font-weight:600;line-height:1.2;}
+.afoot{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:13px;padding-top:13px;border-top:.5px solid rgba(120,150,190,.16);text-align:center;}
+.afoot>div{min-width:0;padding:0 2px;}
+.afoot>div+div{border-left:.5px solid rgba(120,150,190,.16);}
+.afoot .fi{font-size:18px;line-height:1;}
+.afoot .fl{font-size:9px;color:#8295ad;font-weight:600;line-height:1.2;margin-top:3px;}
+.afoot .fv{font-size:13px;font-weight:800;line-height:1.15;margin-top:1px;}
 /* Health Insights — Air Quality (IQAir) + Temperature + Humidity (si te dizajni) */
 .hins-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:18px;}
 .hins-card{position:relative;background:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.92);border-radius:16px;padding:12px 11px 0;box-shadow:0 8px 20px rgba(70,120,190,.08);cursor:pointer;overflow:hidden;display:flex;flex-direction:column;min-height:120px;}
@@ -1233,10 +1256,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260629223303 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260629230614 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260629223303';
+    var DH_BUILD='20260629230614';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -2277,63 +2300,84 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         </div>
       </div>
     </div>
-    <!-- NUTRITION TRACKER -->
-    <div style="margin:10px 16px 0;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;border:0.5px solid rgba(255,255,255,0.12);padding:13px 14px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;" data-i18n="vit.nutrition">🍽 Nutrition Today</div>
-        <button onclick="openNutritionModal()" style="padding:6px 12px;border-radius:10px;border:none;background:linear-gradient(135deg,#F97316,#FB923C);color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);">+ Add Meal</button>
+    <!-- NUTRITION TRACKER (premium · temë e çelët) -->
+    <div class="pcard">
+      <div class="pcard-hd">
+        <div class="pcard-ico" style="background:#E8F1FE;">🍽️</div>
+        <div class="pcard-ti"><h4 data-i18n="vit.nutrTitle">Nutrition Today</h4><p data-i18n="vit.nutrSub">Stay fueled. Stay healthy.</p></div>
+        <button class="pcard-btn" onclick="openNutritionModal()" style="background:linear-gradient(135deg,#F97316,#FB923C);box-shadow:0 6px 16px rgba(249,115,22,.32);" data-i18n="vit.addMeal">+ Add Meal</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+        <div class="dh-ring-wrap" style="width:108px;height:108px;">
+          <svg class="dh-ring" width="108" height="108" viewBox="0 0 108 108"><circle class="dh-ring-bg" cx="54" cy="54" r="46" stroke-width="10"/><circle class="dh-ring-fg" id="nutrRingFg" cx="54" cy="54" r="46" stroke-width="10" stroke="#3B7DD8" stroke-dasharray="289.03" stroke-dashoffset="289.03"/></svg>
+          <div class="dh-ring-ctr">
+            <span style="font-size:15px;margin-bottom:1px;">🔥</span>
+            <b id="nutrTotalCal" style="font-size:25px;">0</b>
+            <span style="font-size:9px;">kcal</span>
+            <span style="font-size:8.5px;margin-top:1px;"><span data-i18n="vit.of">of</span> <span id="nutrGoal">2,000</span></span>
+          </div>
+        </div>
+        <div id="nutrMacros" style="flex:1;min-width:0;">
+          <div class="macro-row">
+            <div class="macro-ico" style="background:#E8F1FE;">🌾</div>
+            <div class="macro-bd"><div class="macro-top"><span class="ml" data-i18n="vit.carbs">Carbs</span><span class="mv"><b id="nutrCarbs" style="color:#3B7DD8;">0g</b> / 300g</span></div><div class="macro-bar"><i id="nutrCarbsBar" style="width:0%;background:#3B7DD8;"></i></div></div>
+          </div>
+          <div class="macro-row">
+            <div class="macro-ico" style="background:#E3F6EC;">🥑</div>
+            <div class="macro-bd"><div class="macro-top"><span class="ml" data-i18n="vit.protein">Protein</span><span class="mv"><b id="nutrProtein" style="color:#22A06B;">0g</b> / 120g</span></div><div class="macro-bar"><i id="nutrProteinBar" style="width:0%;background:#22A06B;"></i></div></div>
+          </div>
+          <div class="macro-row">
+            <div class="macro-ico" style="background:#FFF0E3;">🧈</div>
+            <div class="macro-bd"><div class="macro-top"><span class="ml" data-i18n="vit.fats">Fats</span><span class="mv"><b id="nutrFat" style="color:#F97316;">0g</b> / 70g</span></div><div class="macro-bar"><i id="nutrFatBar" style="width:0%;background:#F97316;"></i></div></div>
+          </div>
+          <span id="nutrSodium" style="display:none;">0mg</span>
+        </div>
       </div>
       <div id="nutrMealsList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
         <div class="dh-empty"><div class="ic">🍽️</div><div class="t" data-i18n="em.noMealsT">No meals logged today</div><div class="s" data-i18n="em.noMealsS">Tap "+ Add Meal" to start tracking</div></div>
       </div>
-      <div id="nutrSummary" style="display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:0.5px solid var(--border);padding-top:11px;">
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:11px;color:rgba(255,255,255,0.5);">Total: <strong id="nutrTotalCal" style="color:var(--orange);font-size:15px;">0</strong> kcal / <span id="nutrGoal">2,000</span> kcal</div>
-          <div id="nutrProgress" style="font-size:10px;color:var(--accent);font-weight:700;margin-top:3px;">📊 0%</div>
-        </div>
-        <div class="dh-ring-wrap" style="width:62px;height:62px;">
-          <svg class="dh-ring" width="62" height="62" viewBox="0 0 62 62"><circle class="dh-ring-bg" cx="31" cy="31" r="26" stroke-width="6"/><circle class="dh-ring-fg" id="nutrRingFg" cx="31" cy="31" r="26" stroke-width="6" stroke="#F97316"/></svg>
-          <div class="dh-ring-ctr"><b id="nutrRingPct" style="font-size:14px;">0%</b><span style="font-size:8px;">kcal</span></div>
-        </div>
-      </div>
-      <div id="nutrMacros" style="display:none;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--border);display:flex;justify-content:space-around;font-size:10px;">
-        <div style="text-align:center;"><div id="nutrProtein" style="font-size:13px;font-weight:700;color:#3B7DD8;">0g</div><div style="color:rgba(255,255,255,0.5);">Protein</div></div>
-        <div style="text-align:center;"><div id="nutrCarbs" style="font-size:13px;font-weight:700;color:#F97316;">0g</div><div style="color:rgba(255,255,255,0.5);">Carbs</div></div>
-        <div style="text-align:center;"><div id="nutrFat" style="font-size:13px;font-weight:700;color:#FBBF24;">0g</div><div style="color:rgba(255,255,255,0.5);">Fat</div></div>
-        <div style="text-align:center;"><div id="nutrSodium" style="font-size:13px;font-weight:700;color:#DC2626;">0mg</div><div style="color:rgba(255,255,255,0.5);">Sodium</div></div>
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;border-top:.5px solid rgba(120,150,190,.16);padding-top:10px;font-size:11px;">
+        <span style="font-size:13px;">📊</span><b id="nutrProgress" style="color:#22A06B;font-weight:800;">0%</b> <span style="color:#8295ad;" data-i18n="vit.ofGoal">of daily goal</span>
       </div>
       <!-- AI SUGGESTION — i lidhur me vitals + Diagnostic profile -->
-      <div id="mealAiSuggestion" style="display:none;margin-top:10px;padding:11px 12px;border-radius:14px;background:linear-gradient(135deg,rgba(13,59,142,0.25),rgba(139,111,232,0.15));border:0.5px solid rgba(139,111,232,0.3);">
-        <div style="font-size:10px;font-weight:700;color:#A5B4FC;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">🤖 AI Suggestion — sipas gjendjes suaj</div>
-        <div id="mealAiSuggestionText" style="font-size:12px;color:rgba(255,255,255,0.9);line-height:1.6;"></div>
+      <div id="mealAiSuggestion" style="display:none;margin-top:11px;padding:11px 12px;border-radius:14px;background:linear-gradient(135deg,rgba(13,59,142,0.92),rgba(139,111,232,0.86));border:0.5px solid rgba(139,111,232,0.3);">
+        <div style="font-size:10px;font-weight:700;color:#C7D2FE;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">🤖 AI Suggestion — sipas gjendjes suaj</div>
+        <div id="mealAiSuggestionText" style="font-size:12px;color:#fff;line-height:1.6;"></div>
       </div>
     </div>
 
-    <!-- DAILY ACTIVITY IN VITALS -->
-    <div style="margin:10px 16px 0;background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;border:0.5px solid rgba(255,255,255,0.12);padding:13px 14px;">
-      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;"><span data-i18n="vit.daTitle">🏃 Daily Activity</span> <span style="opacity:0.6;font-weight:500;text-transform:none;">— trokit për të shënuar ✎</span></div>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div onclick="editDailyMetric('steps')" title="Fut hapat" style="cursor:pointer;flex-shrink:0;">
-          <div class="dh-ring-wrap" style="width:80px;height:80px;">
-            <svg class="dh-ring" width="80" height="80" viewBox="0 0 80 80"><circle class="dh-ring-bg" cx="40" cy="40" r="26" stroke-width="6.5"/><circle class="dh-ring-fg" id="actStepRingFg" cx="40" cy="40" r="26" stroke-width="6.5" stroke="#60A5FA"/></svg>
-            <div class="dh-ring-ctr"><b id="vit-steps" style="font-size:13px;">--</b><span id="actStepRingSub" style="font-size:8px;margin-top:1px;">👟 hapa</span></div>
-          </div>
-        </div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;">
-          <div class="dh-act-pill" onclick="editDailyMetric('cal')" title="Fut kaloritë">
-            <span class="ico">🔥</span>
-            <div style="min-width:0;"><div class="v" style="color:var(--orange);"><span id="vit-cal">--</span></div><div class="l" data-i18n="vit.cal">🔥 Calories ✎</div></div>
-          </div>
-          <div class="dh-act-pill" onclick="editDailyMetric('hr')" title="Fut pulsin mesatar">
-            <span class="ico">❤️</span>
-            <div style="min-width:0;"><div class="v" style="color:var(--heart);"><span id="vit-hr-avg">--</span></div><div class="l" data-i18n="vit.pulsAvg">❤️ Puls avg ✎</div></div>
+    <!-- DAILY ACTIVITY (premium · temë e çelët) -->
+    <div class="pcard">
+      <div class="pcard-hd">
+        <div class="pcard-ico" style="background:#E3F6EC;">🏃</div>
+        <div class="pcard-ti"><h4 data-i18n="vit.actTitle">Today's Activity</h4><p data-i18n="vit.actSub">Keep moving. Every step counts.</p></div>
+        <button class="pcard-btn" onclick="openVitalsTrends()" style="background:#fff;color:#3B7DD8;border:.5px solid rgba(120,150,190,.3);box-shadow:0 4px 12px rgba(70,120,190,.1);">📈 <span data-i18n="vit.viewTrends">Trends</span></button>
+      </div>
+      <div style="display:flex;justify-content:center;margin-bottom:14px;">
+        <div onclick="editDailyMetric('steps')" title="Fut hapat" style="cursor:pointer;">
+          <div class="dh-ring-wrap" style="width:124px;height:124px;">
+            <svg class="dh-ring" width="124" height="124" viewBox="0 0 124 124"><circle class="dh-ring-bg" cx="62" cy="62" r="52" stroke-width="11"/><circle class="dh-ring-fg" id="actStepRingFg" cx="62" cy="62" r="52" stroke-width="11" stroke="#34C77B" stroke-dasharray="326.73" stroke-dashoffset="326.73"/></svg>
+            <div class="dh-ring-ctr">
+              <span style="font-size:17px;margin-bottom:1px;">👟</span>
+              <b id="vit-steps" style="font-size:26px;">--</b>
+              <span style="font-size:9.5px;" data-i18n="vit.stepsL">Steps</span>
+              <span style="font-size:9px;margin-top:1px;"><span data-i18n="vit.goal">Goal</span>: 10,000</span>
+            </div>
           </div>
         </div>
       </div>
-      <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);font-size:11px;color:rgba(255,255,255,0.5);text-align:center;">
-        <span data-i18n="home.distance">Distance:</span> <strong id="vit-dist" onclick="editDailyMetric('dist')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp;
-        <span data-i18n="home.active">Active:</span> <strong id="vit-active" onclick="editDailyMetric('active')" style="color:#F1F5FF;cursor:pointer;">--</strong> &nbsp;·&nbsp;
-        <span data-i18n="home.sleepL">Sleep:</span> <strong id="vit-sleep" onclick="editDailyMetric('sleep')" style="color:#F1F5FF;cursor:pointer;">--</strong> <span style="opacity:0.5;">✎</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div class="atile" onclick="editDailyMetric('cal')" title="Fut kaloritë"><div class="ai">🔥</div><div class="av"><span id="vit-cal">--</span> <small>kcal</small></div><div class="al" data-i18n="vit.calBurned">Calories Burned</div></div>
+        <div class="atile" onclick="editDailyMetric('hr')" title="Fut pulsin"><div class="ai">❤️</div><div class="av"><span id="vit-hr-avg">--</span> <small>bpm</small></div><div class="al" data-i18n="vit.avgPulse">Avg Pulse</div></div>
+        <div class="atile" onclick="editDailyMetric('dist')" title="Fut distancën"><div class="ai">📍</div><div class="av" id="vit-dist">--</div><div class="al" data-i18n="vit.distance">Distance</div></div>
+        <div class="atile" onclick="editDailyMetric('active')" title="Fut aktivitetin"><div class="ai">⚡</div><div class="av" id="vit-active">--</div><div class="al" data-i18n="vit.activeTime">Active Time</div></div>
+        <div class="atile" onclick="editDailyMetric('sleep')" title="Fut gjumin"><div class="ai">🌙</div><div class="av" id="vit-sleep">--</div><div class="al" data-i18n="vit.sleepL2">Sleep</div></div>
+        <div class="atile" style="cursor:default;"><div class="ai">🏢</div><div class="av" id="vit-floors">--</div><div class="al" data-i18n="vit.floors">Floors</div></div>
+      </div>
+      <div class="afoot">
+        <div><div class="fi">🎯</div><div class="fl" data-i18n="vit.goalProgress">Goal Progress</div><div class="fv" id="actGoalPct" style="color:#22A06B;">0%</div></div>
+        <div><div class="fi">🏆</div><div class="fl" data-i18n="vit.streak">Daily Streak</div><div class="fv" id="actStreak" style="color:#F97316;">0</div></div>
+        <div><div class="fi">⭐</div><div class="fl" data-i18n="vit.greatJob">Great Job!</div><div class="fv" id="actMsg" style="color:#3B7DD8;font-size:11px;">—</div></div>
       </div>
     </div>
     <div style="background:rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:18px;margin:10px 16px 0;border:0.5px solid rgba(255,255,255,0.12);overflow:hidden;">
@@ -7712,6 +7756,34 @@ var DH_I18N = {
   'vit.steps':   {sq:'👟 Hapa ✎', mk:'👟 Чекори ✎', en:'👟 Steps ✎'},
   'vit.cal':     {sq:'🔥 Kalori ✎', mk:'🔥 Калории ✎', en:'🔥 Calories ✎'},
   'vit.pulsAvg': {sq:'❤️ Puls avg ✎', mk:'❤️ Пулс просек ✎', en:'❤️ Avg pulse ✎'},
+  'vit.nutrTitle': {sq:'Ushqyerja sot', mk:'Исхрана денес', en:'Nutrition Today'},
+  'vit.nutrSub':   {sq:'Ushqehu mirë. Rri shëndoshë.', mk:'Хранете се добро. Бидете здрави.', en:'Stay fueled. Stay healthy.'},
+  'vit.addMeal':   {sq:'+ Shto vakt', mk:'+ Додај оброк', en:'+ Add Meal'},
+  'vit.of':        {sq:'nga', mk:'од', en:'of'},
+  'vit.carbs':     {sq:'Karbohidrate', mk:'Јаглехидрати', en:'Carbs'},
+  'vit.protein':   {sq:'Proteina', mk:'Протеини', en:'Protein'},
+  'vit.fats':      {sq:'Yndyrna', mk:'Масти', en:'Fats'},
+  'vit.ofGoal':    {sq:'e qëllimit ditor', mk:'од дневната цел', en:'of daily goal'},
+  'vit.actTitle':  {sq:'Aktiviteti sot', mk:'Активност денес', en:"Today's Activity"},
+  'vit.actSub':    {sq:'Vazhdo lëvizjen. Çdo hap ka rëndësi.', mk:'Продолжи да се движиш. Секој чекор е важен.', en:'Keep moving. Every step counts.'},
+  'vit.viewTrends':{sq:'Trendet', mk:'Трендови', en:'Trends'},
+  'vit.stepsL':    {sq:'Hapa', mk:'Чекори', en:'Steps'},
+  'vit.goal':      {sq:'Qëllimi', mk:'Цел', en:'Goal'},
+  'vit.calBurned': {sq:'Kalori të djegura', mk:'Изгорени калории', en:'Calories Burned'},
+  'vit.avgPulse':  {sq:'Pulsi mesatar', mk:'Просечен пулс', en:'Avg Pulse'},
+  'vit.distance':  {sq:'Distanca', mk:'Растојание', en:'Distance'},
+  'vit.activeTime':{sq:'Koha aktive', mk:'Активно време', en:'Active Time'},
+  'vit.sleepL2':   {sq:'Gjumi', mk:'Сон', en:'Sleep'},
+  'vit.floors':    {sq:'Kate', mk:'Катови', en:'Floors'},
+  'vit.goalProgress':{sq:'Progresi i qëllimit', mk:'Напредок кон целта', en:'Goal Progress'},
+  'vit.streak':    {sq:'Seri ditore', mk:'Дневна серија', en:'Daily Streak'},
+  'vit.greatJob':  {sq:'Të lumtë!', mk:'Браво!', en:'Great Job!'},
+  'act.day':       {sq:'ditë', mk:'ден', en:'day'},
+  'act.days':      {sq:'ditë', mk:'дена', en:'days'},
+  'act.msgAmazing':{sq:'Mrekulli!', mk:'Неверојатно!', en:'Amazing!'},
+  'act.msgGreat':  {sq:'Bravo!', mk:'Браво!', en:'Great!'},
+  'act.msgKeep':   {sq:'Vazhdo!', mk:'Продолжи!', en:'Keep going!'},
+  'act.msgMove':   {sq:'Lëviz pak!', mk:'Движи се!', en:"Let's move!"},
   /* Diagnosis / Vitals AI buttons */
   'dx.runVital':  {sq:'Analizo Vitalet', mk:'Анализирај витални', en:'Run Vital'},
   'dx.reAnalyze': {sq:'Ri-analizo', mk:'Повторно анализирај', en:'Re-Analyze'},
@@ -13514,22 +13586,46 @@ function hasImpactOnBP(alerts){
   return alerts.some(function(a){ return a.txt.indexOf('sodium')>-1 || a.txt.indexOf('fat')>-1; });
 }
 
-/* Vendos progresin e një unaze SVG (0–100%, kapet te 100 për mbushjen) */
+/* Vendos progresin e një unaze SVG — llogarit perimetrin sipas rrezes (r) */
 function dhSetRing(fgId, pct, color){
   var fg=document.getElementById(fgId); if(!fg) return;
-  var C=163.36, p=Math.max(0,Math.min(100,pct||0));
-  fg.style.stroke=color;
+  var r=parseFloat(fg.getAttribute('r'))||26, C=2*Math.PI*r;
+  var p=Math.max(0,Math.min(100,pct||0));
+  fg.style.strokeDasharray=String(C);
   fg.style.strokeDashoffset=String(C*(1-p/100));
+  if(color) fg.style.stroke=color;
 }
-/* Unaza e hapave te karta Activity (Vitals) — ngjyrë sipas progresit drejt 10k */
+/* Streak ditor (ditë rresht me aktivitet) — i ruajtur per-pajisje, real */
+function dhActivityStreak(active){
+  var today=new Date().toDateString();
+  var last=localStorage.getItem('dh_streak_date');
+  var n=parseInt(localStorage.getItem('dh_streak')||'0')||0;
+  if(!active) return n;                       /* pa aktivitet sot → mos prek */
+  if(last===today) return n;                  /* sot tashmë i numëruar */
+  var y=new Date(); y.setDate(y.getDate()-1);
+  n = (last===y.toDateString()) ? n+1 : 1;    /* dje → +1, ndryshe rinis */
+  localStorage.setItem('dh_streak', String(n));
+  localStorage.setItem('dh_streak_date', today);
+  return n;
+}
+/* Unaza e hapave + footer i Activity (Vitals) — ngjyrë sipas progresit drejt 10k */
 function dhPaintActivityRing(){
   var el=document.getElementById('vit-steps'); if(!el) return;
   var steps=parseInt((el.textContent||'0').replace(/[^0-9]/g,''))||0;
   var goal=10000, pct=steps/goal*100;
-  var col = pct>=100?'#34C77B' : pct>=60?'#60A5FA' : pct>=30?'#F9B23C' : '#F97316';
+  var col = pct>=100?'#22A06B' : pct>=60?'#34C77B' : pct>=30?'#F9B23C' : '#F97316';
   dhSetRing('actStepRingFg', pct, col);
-  var sub=document.getElementById('actStepRingSub');
-  if(sub) sub.textContent = steps>0 ? (Math.round(pct)+'% · 10k') : '👟 hapa';
+  /* Footer: progresi i qëllimit + streak + mesazh inkurajues */
+  var gp=document.getElementById('actGoalPct'); if(gp){ gp.textContent=Math.round(pct)+'%'; gp.style.color=col; }
+  var n=dhActivityStreak(steps>0);
+  var st=document.getElementById('actStreak'); if(st) st.textContent=n+' '+(n===1?dhT('act.day'):dhT('act.days'));
+  var msg=document.getElementById('actMsg');
+  if(msg){ msg.textContent = pct>=100?dhT('act.msgAmazing') : pct>=70?dhT('act.msgGreat') : pct>=40?dhT('act.msgKeep') : dhT('act.msgMove'); }
+}
+/* Butoni "Trendet" → hap ekranin e historikut të vitaleve (default: hapat) */
+function openVitalsTrends(){
+  try{ switchScreen('vitals-history'); }catch(e){}
+  try{ var b=document.querySelector('#screen-vitals-history .vhm[onclick*="steps"]'); if(b) setVHMetric('steps', b); }catch(e){}
 }
 
 function renderNutritionUI(){
@@ -13539,25 +13635,31 @@ function renderNutritionUI(){
   var listEl = document.getElementById('nutrMealsList');
   if(!listEl) return;
 
+  /* Helper: vendos vlerë + gjerësi shiriti makro (g / goal) — null-safe */
+  var setMacro=function(valId, barId, g, goal){
+    var v=document.getElementById(valId); if(v) v.textContent=g+'g';
+    var b=document.getElementById(barId); if(b) b.style.width=Math.max(0,Math.min(100,(g/goal)*100))+'%';
+  };
+  var setText=function(id,t){ var e=document.getElementById(id); if(e) e.textContent=t; };
+
   if(meals.length===0){
     listEl.innerHTML = '<div class="dh-empty"><div class="ic">🍽️</div><div class="t">'+dhT('em.noMealsT')+'</div><div class="s">'+dhT('em.noMealsS')+'</div></div>';
-    document.getElementById('nutrTotalCal').textContent = '0';
-    document.getElementById('nutrProgress').textContent = '📊 0%';
-    dhSetRing('nutrRingFg', 0, '#F97316');
-    var _rp0=document.getElementById('nutrRingPct'); if(_rp0){ _rp0.textContent='0%'; _rp0.style.color='#F1F5FF'; }
-    document.getElementById('nutrMacros').style.display = 'none';
+    setText('nutrTotalCal','0');
+    setText('nutrProgress','0%'); var _p0=document.getElementById('nutrProgress'); if(_p0) _p0.style.color='#22A06B';
+    dhSetRing('nutrRingFg', 0, '#3B7DD8');
+    setMacro('nutrCarbs','nutrCarbsBar',0,300); setMacro('nutrProtein','nutrProteinBar',0,120); setMacro('nutrFat','nutrFatBar',0,70);
     var sugBox = document.getElementById('mealAiSuggestion'); if(sugBox) sugBox.style.display='none';
     return;
   }
 
   listEl.innerHTML = meals.map(function(m){
-    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);">'
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(120,150,190,0.16);">'
       +'<div style="font-size:18px;flex-shrink:0;">🍽</div>'
       +'<div style="flex:1;min-width:0;">'
-      +'<div style="font-size:12px;font-weight:600;color:#F1F5FF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+m.name+'</div>'
-      +'<div style="font-size:10px;color:rgba(255,255,255,0.5);">'+m.time+' · '+m.protein+'g P · '+m.carbs+'g C · '+m.fat+'g F</div>'
+      +'<div style="font-size:12px;font-weight:700;color:#1f2c44;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+m.name+'</div>'
+      +'<div style="font-size:10px;color:#8295ad;">'+m.time+' · '+m.protein+'g P · '+m.carbs+'g C · '+m.fat+'g F</div>'
       +'</div>'
-      +'<div style="font-size:13px;font-weight:700;color:var(--orange);">'+m.cal+'</div>'
+      +'<div style="font-size:13px;font-weight:800;color:#F97316;">'+m.cal+'</div>'
       +'<button onclick="removeMeal(\''+m.id+'\')" style="width:22px;height:22px;border-radius:7px;border:none;background:rgba(239,68,68,0.1);color:#DC2626;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">×</button>'
       +'</div>';
   }).join('');
@@ -13568,21 +13670,17 @@ function renderNutritionUI(){
   var totalF = meals.reduce(function(s,m){return s+(m.fat||0);},0);
   var totalS = meals.reduce(function(s,m){return s+(m.sodium||0);},0);
 
-  document.getElementById('nutrTotalCal').textContent = totalCal.toLocaleString();
-  var goal = parseInt(document.getElementById('nutrGoal').textContent.replace(',',''))||2000;
+  setText('nutrTotalCal', totalCal.toLocaleString());
+  var goal = parseInt((document.getElementById('nutrGoal').textContent||'2000').replace(/[^0-9]/g,''))||2000;
   var pct = Math.round((totalCal/goal)*100);
-  var progressEl = document.getElementById('nutrProgress');
-  progressEl.textContent = '📊 '+pct+'%';
-  var ringCol = pct>110?'#EF4444':pct>90?'#F97316':'#34C77B';   /* jeshile → portokalli → kuqe sipas tepricës */
-  progressEl.style.color = ringCol;
+  var ringCol = pct>110?'#EF4444':pct>90?'#F97316':'#3B7DD8';   /* blu → portokalli → kuqe sipas tepricës */
+  setText('nutrProgress', pct+'%'); var _pe=document.getElementById('nutrProgress'); if(_pe) _pe.style.color=ringCol;
   dhSetRing('nutrRingFg', pct, ringCol);
-  var _rp=document.getElementById('nutrRingPct'); if(_rp){ _rp.textContent=pct+'%'; _rp.style.color=ringCol; }
 
-  document.getElementById('nutrProtein').textContent = totalP+'g';
-  document.getElementById('nutrCarbs').textContent = totalC+'g';
-  document.getElementById('nutrFat').textContent = totalF+'g';
-  document.getElementById('nutrSodium').textContent = totalS+'mg';
-  document.getElementById('nutrMacros').style.display = 'flex';
+  setMacro('nutrCarbs','nutrCarbsBar',totalC,300);
+  setMacro('nutrProtein','nutrProteinBar',totalP,120);
+  setMacro('nutrFat','nutrFatBar',totalF,70);
+  setText('nutrSodium', totalS+'mg');
 }
 
 function removeMeal(id){
