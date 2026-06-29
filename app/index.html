@@ -1197,10 +1197,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260629140518 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260629141415 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260629140518';
+    var DH_BUILD='20260629141415';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -10717,9 +10717,11 @@ async function _initUserDataImpl(userId, userName, userEmail, attempt){
         });
       });
       try{ renderCal(); renderNotifAlarms(); }catch(e){}
-      try{ rescheduleAllTherapyNotifs(); }catch(e){}   /* ri-planifiko zilet native */
       console.log('✅ Alarms loaded from Supabase:', dbAlarms.length);
     }
+    /* GJITHMONË (edhe nëse useri s'ka alarme): anulo TË GJITHA zilet native të mbetura (nga llogaria/terapia
+       e mëparshme) + ri-planifiko VETËM ato të user-it aktual. Kështu s'mbetet asnjë zile e huaj — automatik. */
+    try{ await rescheduleAllTherapyNotifs(); }catch(e){}
 
     }catch(e){ console.warn('load alarms:', e.message); }
 
