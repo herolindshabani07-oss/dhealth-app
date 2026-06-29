@@ -1220,10 +1220,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260629215532 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260629220429 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260629215532';
+    var DH_BUILD='20260629220429';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -7319,6 +7319,9 @@ var DH_I18N = {
   'dx.pAllergies':     {sq:'⚠️ Alergjitë', mk:'⚠️ Алергии', en:'⚠️ Allergies'},
   'dx.pLabValues':     {sq:'🧬 Vlerat laboratorike', mk:'🧬 Лаб. вредности', en:'🧬 Lab Values'},
   'dx.pDocuments':     {sq:'📄 Dokumentet', mk:'📄 Документи', en:'📄 Documents'},
+  'dx.anlzUpload':     {sq:'📤 Po ngarkohet dokumenti...', mk:'📤 Се прикачува документот...', en:'📤 Uploading document...'},
+  'dx.anlzAnalyze':    {sq:'🔬 Po analizohet me D Health AI...', mk:'🔬 Се анализира со D Health AI...', en:'🔬 Analyzing with D Health AI...'},
+  'dx.anlzDone':       {sq:'✅ Dokumenti u ruajt & u analizua!', mk:'✅ Документот е зачуван и анализиран!', en:'✅ Document saved & analyzed!'},
   'dx.pEcgAnalysis':   {sq:'🫀 Analizë ECG', mk:'🫀 ЕКГ анализа', en:'🫀 ECG Analysis'},
   'dx.ecgNote':        {sq:'Ngarko ECG nga smartwatch ose ring — D Health AI analizon dhe krahason me historikun (1 ECG / 24h)', mk:'Прикачи ЕКГ од паметен часовник или прстен — D Health AI анализира и споредува со историјата (1 ЕКГ / 24ч)', en:'Upload ECG from your smartwatch or ring — D Health AI analyzes and compares with your history (1 ECG / 24h)'},
   'dx.noEcgYet':       {sq:'Asnjë ECG i analizuar ende — ngarko një ECG më lart.', mk:'Сè уште нема анализирано ЕКГ — прикачи едно погоре.', en:'No ECG analyzed yet — upload one above.'},
@@ -9580,14 +9583,14 @@ async function handleProfFileUpload(event){
   var files = event.target.files;
   if(!files||!files.length) return;
   var arr = Array.prototype.slice.call(files);
-  dhAnlz('prof','upload','📤 Po ngarkohet dokumenti...');
+  dhAnlz('prof','upload',dhT('dx.anlzUpload'));
   for(var i=0;i<arr.length;i++){ await uploadUserDocument(arr[i]); }
   await refreshDocuments();
   event.target.value='';
   /* Lexo automatikisht parametrat laboratorikë nga dokumenti */
-  dhAnlz('prof','analyze','🔬 Po analizohet me D Health AI...');
+  dhAnlz('prof','analyze',dhT('dx.anlzAnalyze'));
   try{ await extractLabsFromFiles(arr, 'prof'); }catch(e){}   /* TË GJITHA dokumentet bashkë → asnjë i palexuar */
-  dhAnlz('prof','done','✅ Dokumenti u ruajt & u analizua!');
+  dhAnlz('prof','done',dhT('dx.anlzDone'));
 }
 
 
@@ -10175,14 +10178,14 @@ async function handleDsFileUpload(event){
   var files = event.target.files;
   if(!files||!files.length) return;
   var arr = Array.prototype.slice.call(files);
-  dhAnlz('ds','upload','📤 Po ngarkohet dokumenti...');
+  dhAnlz('ds','upload',dhT('dx.anlzUpload'));
   for(var i=0;i<arr.length;i++){ await uploadUserDocument(arr[i]); }
   await refreshDocuments();
   event.target.value='';
   /* Lexo automatikisht parametrat laboratorikë nga dokumenti */
-  dhAnlz('ds','analyze','🔬 Po analizohet me D Health AI...');
+  dhAnlz('ds','analyze',dhT('dx.anlzAnalyze'));
   try{ await extractLabsFromFiles(arr, 'ds'); }catch(e){}   /* TË GJITHA dokumentet bashkë → asnjë i palexuar */
-  dhAnlz('ds','done','✅ Dokumenti u ruajt & u analizua!');
+  dhAnlz('ds','done',dhT('dx.anlzDone'));
 }
 
 /* ════ Lexim AI i analizave laboratorike → Lab Values (sinkron me Diagnostic + Supabase) ════ */
