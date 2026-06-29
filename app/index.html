@@ -1197,10 +1197,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260629143044 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260629143521 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260629143044';
+    var DH_BUILD='20260629143521';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -9352,12 +9352,20 @@ async function deleteUserDocument(el){
   var docId = item.getAttribute('data-doc-id');
   var path  = item.getAttribute('data-doc-path');
   var sb = getSupa();
-  item.remove();
-  /* hiq edhe nga lista tjetër (sinkron) */
-  setTimeout(refreshDocuments, 300);
-  if(sb && path){  try{ await sb.storage.from('documents').remove([path]); }catch(e){} }
-  if(sb && docId){ try{ await sb.from('documents').delete().eq('id', docId); }catch(e){} }
-  showToast('🗑️ Dokumenti u fshi');
+  item.remove();   /* heqje optimiste nga ekrani */
+  var delErr = null;
+  if(sb){
+    /* Fshi nga tabela PARA refresh-it (që dokumenti të mos rikthehet); me id, ose me PATH si fallback nëse id mungon */
+    try{
+      var dr = docId ? await sb.from('documents').delete().eq('id', docId)
+             : (path ? await sb.from('documents').delete().eq('path', path) : null);
+      if(dr && dr.error){ delErr = dr.error.message; }
+    }catch(e){ delErr = e.message; }
+    if(path){ try{ await sb.storage.from('documents').remove([path]); }catch(e){} }
+  }
+  try{ await refreshDocuments(); }catch(e){}   /* refresh PASI mbarojnë fshirjet → s'rikthehet */
+  if(delErr){ showToast('⚠️ Fshirja dështoi: '+delErr); console.warn('doc delete:', delErr); }
+  else showToast('🗑️ Dokumenti u fshi');
 }
 
 async function handleProfFileUpload(event){
