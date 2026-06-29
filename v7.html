@@ -1197,10 +1197,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260629144417 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260629212855 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260629144417';
+    var DH_BUILD='20260629212855';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -11501,93 +11501,103 @@ async function calcDailyScore(silent){
   var diags   = getT(['diag-tags','prof-diag-tags','ds-diag-tags']);
   var therapy = getT(['therapy-tags','prof-therapy-tags','ds-therapy-tags']);
 
-  /* Pre-llogaritje lokale (evidence-based) */
-  var score = 50; /* base */
+  /* ════════════ D Health Score v2 — motor deterministik & i personalizuar ════════════
+     • Bazë 30 (sfiduese: maja 90+ fitohet vetëm me ditë të plotë & të mirë).
+     • AKTIVITETI = NJË shtyllë: kaloritë e djegura janë hapat të transformuar
+       (Health Connect s'jep active-calories → vlerësohen nga hapat×distanca), pra
+       NUK paguhen dyfish. Kalibruar te vlerat reale 200–900 kcal/ditë.
+     • Metrika kyçe e diagnozës sate peshon ×1.4 (plus DHE minus) → score per-profil.
+     • Ushqimi: cilësia (risk yndyrë/sheqer/kripë) + sasia (tepricë kalorish e ngrënë). */
+  var score = 30; /* base */
   var benefits = [];
   var warnings = [];
 
-  /* Steps scoring */
-  if(steps >= 10000){ score += 20; benefits.push('✅ Steps goal exceeded — cardiovascular risk -20%'); }
-  else if(steps >= 7500){ score += 15; benefits.push('✅ '+steps.toLocaleString()+' steps — HTA risk reduced ~11%'); }
-  else if(steps >= 5000){ score += 8;  benefits.push('⚠️ '+steps.toLocaleString()+' steps — moderate activity'); }
-  else if(steps > 0)    { score += 2;  warnings.push('🔴 Low activity today — walk more for BP control'); }
-
-  /* HR scoring */
-  if(hr>=60&&hr<=80){ score += 10; benefits.push('✅ Resting HR '+hr+' bpm — optimal cardiac efficiency'); }
-  else if(hr>80&&hr<=100){ score += 5; }
-  else if(hr>100){ score -= 5; warnings.push('⚠️ Elevated HR '+hr+' — monitor carefully'); }
-
-  /* BP scoring */
-  if(sys>0&&dia>0){
-    if(sys<120&&dia<80){ score += 15; benefits.push('✅ BP '+sys+'/'+dia+' — optimal, cardiovascular protection'); }
-    else if(sys<130&&dia<85){ score += 10; benefits.push('✅ BP '+sys+'/'+dia+' — normal range maintained'); }
-    else if(sys<140){ score += 3; warnings.push('⚠️ BP '+sys+'/'+dia+' — Stage 1 HTA, monitor today'); }
-    else { score -= 10; warnings.push('🔴 BP '+sys+'/'+dia+' — elevated, reduce activity & rest'); }
-  }
-
-  /* Glucose scoring */
-  if(glu>0){
-    if(glu<5.6){ score += 10; benefits.push('✅ Glucose '+glu+' — excellent metabolic control'); }
-    else if(glu<7.0){ score += 5; benefits.push('⚠️ Glucose '+glu+' — slightly elevated, watch diet'); }
-    else { score -= 5; warnings.push('🔴 Glucose '+glu+' — high, avoid carbs today'); }
-  }
-
-  /* SpO2 scoring */
-  if(spo2>0){
-    if(spo2>=97){ score += 5; benefits.push('✅ SpO2 '+spo2+'% — excellent oxygen saturation'); }
-    else if(spo2>=94){ score += 2; }
-    else { score -= 8; warnings.push('🚨 SpO2 '+spo2+'% — low! Rest and monitor breathing'); }
-  }
-
-  /* Diagnostics-specific benefits */
+  /* Profili → pesha e metrikës kyçe */
   var diagLower = diags.join(' ').toLowerCase();
-  if(diagLower.includes('hta')||diagLower.includes('hypertension')){
-    if(steps>=7500) benefits.push('🫀 Walking today reduces BP medication need over time');
-  }
-  if(diagLower.includes('diabet')){
-    if(steps>=5000) benefits.push('🍎 Activity increased insulin sensitivity by ~15% today');
-    if(glu>0&&glu<7) benefits.push('📊 Glucose control today lowers HbA1c risk long-term');
-  }
-  if(diagLower.includes('colesterol')||diagLower.includes('cholesterol')){
-    if(cal>800&&cal<2500) benefits.push('🔥 Calorie balance today supports LDL reduction');
-  }
-  if(diagLower.includes('asthm')||diagLower.includes('astm')||diagLower.includes('copd')){
-    if(spo2>=95) benefits.push('🫁 Good SpO2 — respiratory function stable today');
+  var hasDiab = /diabet/.test(diagLower);
+  var hasHTA  = /hta|hypertension|tension/.test(diagLower);
+  var hasResp = /asthm|astm|copd|bronk|mushk|respirat/.test(diagLower);
+  var hasChol = /colesterol|cholesterol|lipid|ldl/.test(diagLower);
+  var respCardiac = hasResp || hasHTA || /cardiac|zemr|heart/.test(diagLower);
+  var W = function(pts, on){ return Math.round(pts * (on ? 1.4 : 1)); };   /* peshë profili */
+
+  /* ── 1) AKTIVITETI (kaloritë e djegura = matësi; hapat janë burimi i tyre) ── */
+  var actCal = cal>0 ? cal : (steps>0 ? Math.round(steps*0.04) : 0);   /* fallback nga hapat */
+  if(actCal >= 700){      score += 20; benefits.push('✅ '+actCal+' kcal burned — excellent activity, cardiovascular protection'); }
+  else if(actCal >= 500){ score += 15; benefits.push('✅ '+actCal+' kcal burned — very good activity'); }
+  else if(actCal >= 350){ score += 11; benefits.push('✅ '+actCal+' kcal burned ('+steps.toLocaleString()+' steps) — good activity'); }
+  else if(actCal >= 200){ score += 6;  benefits.push('⚠️ '+actCal+' kcal burned — moderate activity'); }
+  else if(actCal >= 80){  score += 3;  warnings.push('🔴 Low activity today — move more'); }
+  else if(actCal > 0){    score += 1;  warnings.push('🔴 Very little movement today'); }
+
+  /* ── 2) RESTING HR ── */
+  if(hr>=60&&hr<=80){ score += 8; benefits.push('✅ Resting HR '+hr+' bpm — optimal cardiac efficiency'); }
+  else if(hr>80&&hr<=100){ score += 4; }
+  else if(hr>0&&hr<60){ score += 4; benefits.push('💙 Resting HR '+hr+' bpm — low (athletic or bradycardia)'); }
+  else if(hr>100){ score -= 5; warnings.push('⚠️ Elevated HR '+hr+' bpm — monitor carefully'); }
+
+  /* ── 3) BLOOD PRESSURE (×1.4 if HTA) ── */
+  if(sys>0&&dia>0){
+    if(sys<120&&dia<80){ score += W(12,hasHTA); benefits.push('✅ BP '+sys+'/'+dia+' — optimal'+(hasHTA?', excellent HTA control':'')); }
+    else if(sys<130&&dia<85){ score += W(8,hasHTA); benefits.push('✅ BP '+sys+'/'+dia+' — normal range maintained'); }
+    else if(sys<140&&dia<90){ score += W(3,hasHTA); warnings.push('⚠️ BP '+sys+'/'+dia+' — Stage 1 HTA, monitor today'); }
+    else if(sys<160&&dia<100){ score -= W(10,hasHTA); warnings.push('🔴 BP '+sys+'/'+dia+' — elevated, rest & reduce activity'); }
+    else { score -= W(16,hasHTA); warnings.push('🚨 BP '+sys+'/'+dia+' — very high'+(hasHTA?', high risk for you':'')); }
   }
 
-  /* Calories scoring */
-  if(cal>=1200&&cal<=2500){ score += 5; }
-  else if(cal>2500){ warnings.push('⚠️ High calorie burn — ensure adequate hydration'); }
+  /* ── 4) GLUCOSE (×1.4 if diabetic) ── */
+  if(glu>0){
+    if(glu<5.6){ score += W(10,hasDiab); benefits.push('✅ Glucose '+glu+' — excellent metabolic control'+(hasDiab?' of diabetes':'')); }
+    else if(glu<7.0){ score += W(5,hasDiab); benefits.push('⚠️ Glucose '+glu+' — slightly elevated, watch diet'); }
+    else if(glu<9.0){ score -= W(5,hasDiab); warnings.push('🔴 Glucose '+glu+' — high, avoid carbs today'); }
+    else { score -= W(10,hasDiab); warnings.push('🚨 Glucose '+glu+' — very high'+(hasDiab?', risk for you':'')); }
+  }
 
-  /* ── NUTRITION IMPACT — nga foodRiskCheck ── */
+  /* ── 5) SpO₂ (×1.4 if respiratory) ── */
+  if(spo2>0){
+    if(spo2>=97){ score += W(6,hasResp); benefits.push('✅ SpO2 '+spo2+'% — excellent oxygen saturation'); }
+    else if(spo2>=94){ score += W(2,hasResp); }
+    else if(spo2>=90){ score -= W(6,hasResp); warnings.push('🚨 SpO2 '+spo2+'% — low! Rest and monitor breathing'); }
+    else { score -= W(12,hasResp); warnings.push('🚨 SpO2 '+spo2+'% — critical!'+(hasResp?' Risk for your respiratory condition':'')); }
+  }
+
+  /* ── 6) NUTRITION: quality (foodRiskCheck) + quantity (intake surplus by gender) ── */
   var mealImpact = window._mealScoreImpact || 0;
-  if(mealImpact < 0){
-    score += mealImpact;
-    warnings.push('🍽️ Meal choices today: '+mealImpact+' pts (high fat/sugar/sodium detected)');
-  } else if(mealImpact === 0){
-    var todayMeals = JSON.parse(localStorage.getItem('dh_meals')||'[]').filter(function(m){
-      return m.date === new Date().toISOString().split('T')[0];
-    });
-    if(todayMeals.length > 0){
-      score += 3;
-      benefits.push('✅ Balanced nutrition today — no risk foods detected');
+  var todayKey = new Date().toISOString().split('T')[0];
+  var todayMeals = [];
+  try{ todayMeals = JSON.parse(localStorage.getItem('dh_meals')||'[]').filter(function(m){ return m.date===todayKey; }); }catch(e){}
+  var intakeCal = todayMeals.reduce(function(s,m){ return s + (parseInt(m.cal)||0); }, 0);
+
+  if(mealImpact < 0){ score += W(mealImpact, hasChol); warnings.push('🍽️ Food quality today: '+W(mealImpact,hasChol)+' pts (high fat/sugar/sodium)'); }
+  else if(todayMeals.length > 0){ score += 4; benefits.push('✅ Balanced nutrition today — no risk foods detected'); }
+
+  if(intakeCal > 0){
+    var gend = '';
+    try{ var _dp=JSON.parse(localStorage.getItem('dh_profile')||'{}'); gend=(_dp.gender||'').toString().toLowerCase().charAt(0); }catch(e){}
+    var upper = gend==='f' ? 2200 : gend==='m' ? 2800 : 2500;   /* daily need upper bound by gender */
+    var lower = gend==='f' ? 1400 : gend==='m' ? 1800 : 1500;
+    if(intakeCal > upper){
+      var over = Math.min(10, Math.round((intakeCal-upper)/150));   /* −1 pt / ~150 kcal surplus, max −10 */
+      score -= over;
+      if(over>0) warnings.push('🍔 '+intakeCal+' kcal eaten — '+over+' pts (surplus over daily need)');
+    } else if(intakeCal < lower){
+      score -= 3; warnings.push('🍽️ Only '+intakeCal+' kcal eaten — under-eating, fuel properly');
+    } else {
+      benefits.push('🍎 '+intakeCal+' kcal eaten — balanced intake for the day');
     }
   }
 
-  /* ── ACTIVITY COMPENSATION — nëse ka mealImpact ka ecur ── */
-  var stepsCompensation = 0;
-  if(mealImpact < 0 && steps > 5000){
-    stepsCompensation = Math.min(Math.abs(mealImpact), Math.round(steps / 1000));
-    score += stepsCompensation;
-    if(stepsCompensation > 0) benefits.push('🚶 Walking compensated '+stepsCompensation+' pts of meal impact — well done!');
-  }
+  /* ── 7) Diagnosis-specific notes (text only, no points) ── */
+  if(hasHTA && actCal>=350) benefits.push('🫀 Today\'s activity lowers BP medication need over time');
+  if(hasDiab){ if(actCal>=200) benefits.push('🍎 Activity increased insulin sensitivity ~15% today'); if(glu>0&&glu<7) benefits.push('📊 Glucose control today lowers long-term HbA1c risk'); }
+  if(hasChol && intakeCal>0 && intakeCal<2500) benefits.push('🔥 Calorie balance today supports LDL reduction');
+  if(hasResp && spo2>=95) benefits.push('🫁 Good SpO2 — respiratory function stable today');
 
-  /* ── AIR QUALITY (ndotja e ajrit) — faktor i motorit; ndikon më shumë te diagnoza respiratore/kardiake ── */
+  /* ── 8) AIR QUALITY (stronger for resp/cardiac) ── */
   var aqi = (typeof airState!=='undefined' && airState.aqi) ? airState.aqi : 0;
   if(aqi > 0){
-    var respCardiac = /hta|hypertension|tension|asthm|astm|copd|cardiac|zemr|heart|respirat|mushk|bronk/.test(diagLower);
     if(aqi <= 50){ score += 3; benefits.push('🌿 Air quality good (AQI '+aqi+') — safe for outdoor activity'); }
-    else if(aqi <= 100){ if(respCardiac){ score -= 2; warnings.push('🌫️ Air AQI '+aqi+' moderate — limit prolonged outdoor effort'); } }
+    else if(aqi <= 100){ if(respCardiac){ score -= 3; warnings.push('🌫️ Air AQI '+aqi+' moderate — limit prolonged outdoor effort'); } }
     else if(aqi <= 150){ score -= (respCardiac ? 8 : 4); warnings.push('🌫️ Air AQI '+aqi+' unhealthy for sensitive groups'+(respCardiac?' — your condition needs extra caution':'')); }
     else { score -= (respCardiac ? 12 : 7); warnings.push('🚨 Air AQI '+aqi+' unhealthy — avoid outdoor exertion'+(respCardiac?', high risk for your condition':'')); }
   }
