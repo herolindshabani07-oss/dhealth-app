@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260630154114 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260630155458 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260630154114';
+    var DH_BUILD='20260630155458';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -6877,14 +6877,17 @@ function showResetPassword(){
   var ov=document.createElement('div');
   ov.id='dhResetPw';
   ov.style.cssText='position:fixed;inset:0;z-index:99999;background:linear-gradient(165deg,#f2f7fd,#dde9f7);display:flex;align-items:center;justify-content:center;padding:28px;font-family:var(--font,Arial,sans-serif);';
-  ov.innerHTML='<div style="width:100%;max-width:360px;text-align:center;">'
+  ov.innerHTML='<style>#dhResetPw .rpw-in{width:100%!important;box-sizing:border-box!important;padding:15px 16px!important;border-radius:14px!important;border:1.6px solid #93a8c6!important;background:#fff!important;font-size:15px!important;font-weight:500!important;font-family:inherit!important;outline:none!important;color:#13294b!important;box-shadow:0 6px 16px rgba(70,120,190,.12)!important;transition:border-color .2s,box-shadow .2s!important;}'
+    +'#dhResetPw .rpw-in::placeholder{color:#7d8ca3!important;font-weight:400!important;opacity:1!important;}'
+    +'#dhResetPw .rpw-in:focus{border-color:#3B7DD8!important;box-shadow:0 0 0 3px rgba(59,125,216,.18)!important;}</style>'
+    +'<div style="width:100%;max-width:360px;text-align:center;">'
     +'<div style="width:80px;height:80px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 32px rgba(70,120,190,.2);margin:0 auto 20px;"><img src="/assets/logo.png" alt="" style="width:48px;height:48px;object-fit:contain;"></div>'
     +'<h2 style="font-size:22px;font-weight:800;color:#13294b;margin:0 0 8px;">Set New Password</h2>'
     +'<p style="font-size:13px;color:#5d7290;margin:0 0 22px;">Choose a new password for your D Health account.</p>'
-    +'<input id="dhRpw1" type="password" placeholder="New password (min 8)" style="width:100%;box-sizing:border-box;padding:14px;border-radius:14px;border:1.5px solid rgba(120,150,190,.3);font-size:14px;margin-bottom:10px;font-family:inherit;outline:none;color:#13294b;">'
-    +'<input id="dhRpw2" type="password" placeholder="Confirm new password" style="width:100%;box-sizing:border-box;padding:14px;border-radius:14px;border:1.5px solid rgba(120,150,190,.3);font-size:14px;margin-bottom:6px;font-family:inherit;outline:none;color:#13294b;">'
+    +'<input id="dhRpw1" class="rpw-in" type="password" placeholder="New password (min 8)" style="margin-bottom:11px;">'
+    +'<input id="dhRpw2" class="rpw-in" type="password" placeholder="Confirm new password" style="margin-bottom:6px;">'
     +'<div id="dhRpwErr" style="font-size:12px;color:#dc2626;min-height:16px;margin-bottom:8px;text-align:left;"></div>'
-    +'<button id="dhRpwBtn" onclick="doResetPassword()" style="width:100%;padding:14px;border-radius:16px;border:none;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Save New Password</button>'
+    +'<button id="dhRpwBtn" onclick="doResetPassword()" style="width:100%;padding:15px;border-radius:16px;border:none;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 8px 22px rgba(45,160,180,.28);">Save New Password</button>'
     +'</div>';
   document.body.appendChild(ov);
 }
