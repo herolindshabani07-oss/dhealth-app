@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260630144311 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260630145025 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260630144311';
+    var DH_BUILD='20260630145025';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -6668,6 +6668,10 @@ function getSupa(){
   }
   return window._sbc || null;
 }
+/* Shenjë e reset-it të fjalëkalimit — kapet SINKRON në ngarkim, PARA se detectSessionInUrl
+   ta pastrojë URL-në ose dëgjuesi i auth-it të lidhet. Linku i reset-it kthen ?reset=1&code=... */
+var DH_PW_RESET = false;
+try{ DH_PW_RESET = new URLSearchParams(window.location.search).get('reset')==='1'; }catch(e){}
 
 /* ════ SIGURI: shto automatikisht token-in e Supabase te çdo thirrje AI (/claude) ════
    Funksioni në server e refuzon kërkesën pa token të vlefshëm → vetëm user-at e kyçur përdorin AI-në. */
@@ -6845,7 +6849,7 @@ function ldoForgot() {
   };
   var sb=getSupa();
   if(sb && sb.auth && sb.auth.resetPasswordForEmail){
-    sb.auth.resetPasswordForEmail(em, {redirectTo:'https://dhealth.app/app/'})
+    sb.auth.resetPasswordForEmail(em, {redirectTo:'https://dhealth.app/app/?reset=1'})
       .then(function(res){ if(res&&res.error) console.warn('reset:', res.error.message); _done(); })
       .catch(function(e){ console.warn('reset:', e&&e.message); _done(); });
   } else {
@@ -7177,9 +7181,12 @@ function applySupabaseSession(session){
        applySupabaseSession e ngarkon një herë; initUserData është i serializuar kundër mbivendosjes. */
     try{
       sb.auth.onAuthStateChange(function(event, session){
-        /* Kthimi nga linku i reset-it → ekran "Set New Password" (jo hyrje direkt) */
+        /* Kthimi nga linku i reset-it → ekran "Set New Password" (jo hyrje direkt).
+           PASSWORD_RECOVERY mund të shkrepë para se dëgjuesi të lidhet (PKCE) → mbulojmë
+           edhe me shenjën DH_PW_RESET te INITIAL_SESSION/SIGNED_IN. */
         if(event==='PASSWORD_RECOVERY'){ try{ showResetPassword(); }catch(e){} return; }
         if((event==='SIGNED_IN' || event==='INITIAL_SESSION') && session && session.user){
+          if(DH_PW_RESET){ try{ showResetPassword(); }catch(e){} return; }
           /* Nëse jemi në mes të reset-it, mos hyr në app derisa të vendoset fjalëkalimi i ri */
           if(document.getElementById('dhResetPw')) return;
           applySupabaseSession(session);
