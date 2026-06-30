@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260630161350 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260630163443 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260630161350';
+    var DH_BUILD='20260630163443';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -6668,22 +6668,22 @@ function getSupa(){
   }
   return window._sbc || null;
 }
-/* Shenjë e reset-it të fjalëkalimit — kapet SINKRON në ngarkim, PARA se detectSessionInUrl
-   ta pastrojë URL-në ose dëgjuesi i auth-it të lidhet. Linku i reset-it kthen ?reset=1&code=... */
-var DH_PW_RESET = false, DH_PW_CODE = '';
-try{ var _qp=new URLSearchParams(window.location.search); DH_PW_RESET = _qp.get('reset')==='1'; DH_PW_CODE = _qp.get('code')||''; }catch(e){}
-/* Kur kthehemi nga një link me ?code= (email i reset-it), lidh dëgjuesin e recovery-t SA MË SHPEJT —
-   event-i PASSWORD_RECOVERY shkrep kur detectSessionInUrl shkëmben kodin, shpesh PARA setTimeout-it 500ms.
-   Pa këtë, ekrani 'Set New Password' humbej dhe useri futej direkt në app. */
+/* Reset i fjalëkalimit — kapet SINKRON në ngarkim, PARA se detectSessionInUrl ta pastrojë URL-në.
+   Linku mund të kthejë: ?reset=1&token_hash=...&type=recovery  (PUNON në çdo shfletues, verifyOtp)
+   ose ?reset=1&code=...  (PKCE, vetëm i njëjti shfletues). */
+var DH_PW_RESET = false, DH_PW_CODE = '', DH_PW_TH = '', DH_PW_TYPE = '';
+try{ var _qp=new URLSearchParams(window.location.search); DH_PW_RESET = _qp.get('reset')==='1'; DH_PW_CODE = _qp.get('code')||''; DH_PW_TH = _qp.get('token_hash')||''; DH_PW_TYPE = _qp.get('type')||''; }catch(e){}
+var _DH_IS_RECOVERY = DH_PW_RESET || !!DH_PW_TH || (DH_PW_CODE && DH_PW_TYPE==='recovery');
 try{
-  if(new URLSearchParams(window.location.search).get('code') && typeof getSupa==='function'){
+  if(_DH_IS_RECOVERY){
+    /* token_hash / marker → shfaq ekranin direkt (showResetPassword siguron sesionin me verifyOtp) */
+    var _sr=function(){ try{ showResetPassword(); }catch(e){} };
+    if(document.body) _sr(); else document.addEventListener('DOMContentLoaded', _sr);
+  } else if(DH_PW_CODE && typeof getSupa==='function'){
+    /* code pa marker → mund të jetë recovery; kap PASSWORD_RECOVERY herët (i njëjti shfletues) */
     var _earlySb = getSupa();
     if(_earlySb && _earlySb.auth && _earlySb.auth.onAuthStateChange){
-      _earlySb.auth.onAuthStateChange(function(ev){
-        if(ev==='PASSWORD_RECOVERY' || (DH_PW_RESET && (ev==='SIGNED_IN'||ev==='INITIAL_SESSION'))){
-          try{ showResetPassword(); }catch(e){}
-        }
-      });
+      _earlySb.auth.onAuthStateChange(function(ev){ if(ev==='PASSWORD_RECOVERY'){ try{ showResetPassword(); }catch(e){} } });
     }
   }
 }catch(e){}
@@ -6882,7 +6882,12 @@ function _dhTogglePw(id, el){
 async function _ensureRecoverySession(){
   var sb=getSupa(); if(!sb||!sb.auth) return false;
   try{ var s=await sb.auth.getSession(); if(s&&s.data&&s.data.session) return true; }catch(e){}
-  if(DH_PW_CODE){
+  /* token_hash → verifyOtp: vendos sesionin edhe në SHFLETUES TJETËR (s'kërkon PKCE verifier) */
+  if(DH_PW_TH && sb.auth.verifyOtp){
+    try{ var v=await sb.auth.verifyOtp({type:(DH_PW_TYPE||'recovery'), token_hash:DH_PW_TH}); if(v&&v.data&&v.data.session) return true; }catch(e){}
+  }
+  /* PKCE code → vetëm i njëjti shfletues (verifier-i lokal) */
+  if(DH_PW_CODE && sb.auth.exchangeCodeForSession){
     try{ var ex=await sb.auth.exchangeCodeForSession(DH_PW_CODE); if(ex&&ex.data&&ex.data.session) return true; }catch(e){}
     try{ var s2=await sb.auth.getSession(); if(s2&&s2.data&&s2.data.session) return true; }catch(e){}
   }
