@@ -69,6 +69,9 @@ header.hd.in{opacity:1;transform:none;transition:opacity .7s,transform .7s;}
 .menu-btn{border:1px solid var(--line);background:rgba(255,255,255,.5);backdrop-filter:blur(6px);border-radius:.875rem;padding:.55rem 1rem;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:.5rem;transition:.25s;}
 .menu-btn:hover{background:#fff;transform:scale(1.04);}
 .menu-btn svg{width:.95rem;height:.95rem;}
+.hd-signin{display:inline-flex;align-items:center;gap:.45rem;border-radius:.875rem;padding:.55rem 1.25rem;font-size:.78rem;font-weight:700;letter-spacing:.02em;color:#fff;background:linear-gradient(135deg,var(--accent-soft),var(--accent2));box-shadow:0 6px 18px rgba(37,99,235,.22);transition:transform .25s,box-shadow .25s;white-space:nowrap;}
+.hd-signin:hover{transform:scale(1.04);box-shadow:0 8px 22px rgba(37,99,235,.30);}
+.hd-signin svg{width:.95rem;height:.95rem;}
 
 /* ===== HERO ===== */
 .hero{position:relative;isolation:isolate;overflow:hidden;border-radius:0 0 2rem 2rem;
@@ -378,6 +381,7 @@ footer .shell{position:relative;z-index:10;padding:6rem 1.25rem 2.5rem;}
     </nav>
     <div class="hd-right">
       <div class="clock"><span class="lbl">Local time</span><span class="t" id="clkT">9:41am</span><span class="sep">•</span><span id="clkD">12 March, 2026</span></div>
+      <a href="https://dhealth.app/app/" class="hd-signin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>Sign In</a>
       <button class="menu-btn" id="menuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Menu</span></button>
     </div>
   </div>
