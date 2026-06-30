@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260630160611 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260630161350 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260630160611';
+    var DH_BUILD='20260630161350';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -6670,8 +6670,8 @@ function getSupa(){
 }
 /* Shenjë e reset-it të fjalëkalimit — kapet SINKRON në ngarkim, PARA se detectSessionInUrl
    ta pastrojë URL-në ose dëgjuesi i auth-it të lidhet. Linku i reset-it kthen ?reset=1&code=... */
-var DH_PW_RESET = false;
-try{ DH_PW_RESET = new URLSearchParams(window.location.search).get('reset')==='1'; }catch(e){}
+var DH_PW_RESET = false, DH_PW_CODE = '';
+try{ var _qp=new URLSearchParams(window.location.search); DH_PW_RESET = _qp.get('reset')==='1'; DH_PW_CODE = _qp.get('code')||''; }catch(e){}
 /* Kur kthehemi nga një link me ?code= (email i reset-it), lidh dëgjuesin e recovery-t SA MË SHPEJT —
    event-i PASSWORD_RECOVERY shkrep kur detectSessionInUrl shkëmben kodin, shpesh PARA setTimeout-it 500ms.
    Pa këtë, ekrani 'Set New Password' humbej dhe useri futej direkt në app. */
@@ -6871,25 +6871,46 @@ function ldoForgot() {
     setTimeout(_done, 1000);
   }
 }
+/* Sytë (show/hide password) */
+var DH_EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+var DH_EYE_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a3 3 0 004.2 4.2"/><path d="M9.9 4.2A10 10 0 0112 4c6.5 0 10 7 10 7a13 13 0 01-2.2 3.2M6.1 6.1A13 13 0 002 11s3.5 7 10 7c1 0 1.9-.1 2.7-.3"/></svg>';
+function _dhTogglePw(id, el){
+  var inp=document.getElementById(id); if(!inp||!el) return;
+  if(inp.type==='password'){ inp.type='text'; el.innerHTML=DH_EYE_OFF; } else { inp.type='password'; el.innerHTML=DH_EYE; }
+}
+/* Siguro një sesion recovery PARA se të ruash fjalëkalimin (shkëmben ?code= nëse s'është bërë ende) */
+async function _ensureRecoverySession(){
+  var sb=getSupa(); if(!sb||!sb.auth) return false;
+  try{ var s=await sb.auth.getSession(); if(s&&s.data&&s.data.session) return true; }catch(e){}
+  if(DH_PW_CODE){
+    try{ var ex=await sb.auth.exchangeCodeForSession(DH_PW_CODE); if(ex&&ex.data&&ex.data.session) return true; }catch(e){}
+    try{ var s2=await sb.auth.getSession(); if(s2&&s2.data&&s2.data.session) return true; }catch(e){}
+  }
+  return false;
+}
 /* Ekrani "Set New Password" — shfaqet kur user-i kthehet nga linku i reset-it (PASSWORD_RECOVERY) */
 function showResetPassword(){
   if(document.getElementById('dhResetPw')) return;
   var ov=document.createElement('div');
   ov.id='dhResetPw';
   ov.style.cssText='position:fixed;inset:0;z-index:99999;background:linear-gradient(165deg,#f2f7fd,#dde9f7);display:flex;align-items:center;justify-content:center;padding:28px;font-family:var(--font,Arial,sans-serif);';
-  ov.innerHTML='<style>#dhResetPw .rpw-in{width:100%!important;box-sizing:border-box!important;padding:15px 16px!important;border-radius:14px!important;border:1.6px solid #93a8c6!important;background:#fff!important;font-size:15px!important;font-weight:500!important;font-family:inherit!important;outline:none!important;color:#13294b!important;box-shadow:0 6px 16px rgba(70,120,190,.12)!important;transition:border-color .2s,box-shadow .2s!important;}'
+  ov.innerHTML='<style>#dhResetPw .rpw-wrap{position:relative;}'
+    +'#dhResetPw .rpw-in{width:100%!important;box-sizing:border-box!important;padding:15px 46px 15px 16px!important;border-radius:14px!important;border:1.6px solid #93a8c6!important;background:#fff!important;font-size:15px!important;font-weight:500!important;font-family:inherit!important;outline:none!important;color:#13294b!important;box-shadow:0 6px 16px rgba(70,120,190,.12)!important;transition:border-color .2s,box-shadow .2s!important;}'
     +'#dhResetPw .rpw-in::placeholder{color:#7d8ca3!important;font-weight:400!important;opacity:1!important;}'
-    +'#dhResetPw .rpw-in:focus{border-color:#3B7DD8!important;box-shadow:0 0 0 3px rgba(59,125,216,.18)!important;}</style>'
+    +'#dhResetPw .rpw-in:focus{border-color:#3B7DD8!important;box-shadow:0 0 0 3px rgba(59,125,216,.18)!important;}'
+    +'#dhResetPw .rpw-eye{position:absolute;right:13px;top:50%;transform:translateY(-50%);cursor:pointer;color:#8295ad;display:flex;line-height:0;}'
+    +'#dhResetPw .rpw-eye svg{width:20px;height:20px;}</style>'
     +'<div style="width:100%;max-width:360px;text-align:center;">'
     +'<div style="width:80px;height:80px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 32px rgba(70,120,190,.2);margin:0 auto 20px;"><img src="/assets/logo.png" alt="" style="width:48px;height:48px;object-fit:contain;"></div>'
     +'<h2 style="font-size:22px;font-weight:800;color:#13294b;margin:0 0 8px;">Set New Password</h2>'
     +'<p style="font-size:13px;color:#5d7290;margin:0 0 22px;">Choose a new password for your D Health account.</p>'
-    +'<input id="dhRpw1" class="rpw-in" type="password" placeholder="New password (min 8)" style="margin-bottom:11px;">'
-    +'<input id="dhRpw2" class="rpw-in" type="password" placeholder="Confirm new password" style="margin-bottom:6px;">'
+    +'<div class="rpw-wrap" style="margin-bottom:11px;"><input id="dhRpw1" class="rpw-in" type="password" placeholder="New password (min 8)"><span class="rpw-eye" onclick="_dhTogglePw(\'dhRpw1\',this)">'+DH_EYE+'</span></div>'
+    +'<div class="rpw-wrap" style="margin-bottom:6px;"><input id="dhRpw2" class="rpw-in" type="password" placeholder="Confirm new password"><span class="rpw-eye" onclick="_dhTogglePw(\'dhRpw2\',this)">'+DH_EYE+'</span></div>'
     +'<div id="dhRpwErr" style="font-size:12px;color:#dc2626;min-height:16px;margin-bottom:8px;text-align:left;"></div>'
     +'<button id="dhRpwBtn" onclick="doResetPassword()" style="width:100%;padding:15px;border-radius:16px;border:none;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 8px 22px rgba(45,160,180,.28);">Save New Password</button>'
     +'</div>';
   document.body.appendChild(ov);
+  try{ _ensureRecoverySession(); }catch(e){}   /* përgatit sesionin që ruajtja të mos dështojë */
 }
 async function doResetPassword(){
   var p1=(document.getElementById('dhRpw1')||{}).value||'', p2=(document.getElementById('dhRpw2')||{}).value||'';
@@ -6899,6 +6920,13 @@ async function doResetPassword(){
   if(err)err.textContent=''; if(btn){btn.disabled=true;btn.textContent='Saving…';}
   var sb=getSupa();
   if(!sb){ if(err)err.textContent='Connection error.'; if(btn){btn.disabled=false;btn.textContent='Save New Password';} return; }
+  /* Sigurohu që sesioni i recovery-t ekziston (përndryshe updateUser → "Auth session missing!") */
+  var hasSession=false; try{ hasSession=await _ensureRecoverySession(); }catch(e){}
+  if(!hasSession){
+    if(err)err.textContent='Reset link expired or opened in a different browser. Request a new reset link (same browser).';
+    if(btn){btn.disabled=false;btn.textContent='Save New Password';}
+    return;
+  }
   try{
     var res=await sb.auth.updateUser({password:p1});
     if(res&&res.error){ if(err)err.textContent=res.error.message; if(btn){btn.disabled=false;btn.textContent='Save New Password';} return; }
