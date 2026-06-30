@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260630155458 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260630160611 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260630155458';
+    var DH_BUILD='20260630160611';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -2390,7 +2390,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div class="atile" onclick="editDailyMetric('dist')" title="Fut distancën"><div class="ai">📍</div><div class="av" id="vit-dist">--</div><div class="al" data-i18n="vit.distance">Distance</div></div>
         <div class="atile" onclick="editDailyMetric('active')" title="Fut aktivitetin"><div class="ai">⚡</div><div class="av" id="vit-active">--</div><div class="al" data-i18n="vit.activeTime">Active Time</div></div>
         <div class="atile" onclick="editDailyMetric('sleep')" title="Fut gjumin"><div class="ai">🌙</div><div class="av" id="vit-sleep">--</div><div class="al" data-i18n="vit.sleepL2">Sleep</div></div>
-        <div class="atile" style="cursor:default;"><div class="ai">🏢</div><div class="av" id="vit-floors">--</div><div class="al" data-i18n="vit.floors">Floors</div></div>
+        <div class="atile" style="cursor:default;"><div class="ai"><img src="/assets/ic_floors.png" alt="" style="width:19px;height:19px;object-fit:contain;display:inline-block;vertical-align:middle;"></div><div class="av" id="vit-floors">--</div><div class="al" data-i18n="vit.floors">Floors</div></div>
       </div>
       <div class="afoot">
         <div><div class="fi">🎯</div><div class="fl" data-i18n="vit.goalProgress">Goal Progress</div><div class="fv" id="actGoalPct" style="color:#22A06B;">0%</div></div>
@@ -9574,7 +9574,7 @@ function renderECGHistory(){
     var cBorder = isLight ? 'rgba(120,150,190,0.18)' : 'var(--border)';
     if(ecgHistory.length===0){
       list.innerHTML = isLight
-        ? dhEmpty('💓', dhT('em.noEcgT'), dhT('em.noEcgS'))
+        ? dhEmpty('<img src="/assets/ic_ecg.png" alt="" style="width:30px;height:30px;object-fit:contain;">', dhT('em.noEcgT'), dhT('em.noEcgS'))
         : '';
       return;
     }
