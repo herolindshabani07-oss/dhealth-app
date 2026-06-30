@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260630135125 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260630144311 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260630135125';
+    var DH_BUILD='20260630144311';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -6835,12 +6835,55 @@ function ldoForgot() {
   document.getElementById('fgtem-e').classList.remove('lon');
   if(!em||!lisEmail(em)){document.getElementById('fgtem').classList.add('lerr');document.getElementById('fgtem-e').classList.add('lon');return;}
   lsetBtn('lbtn-fgt',true);
-  setTimeout(function(){
+  /* DËRGIM REAL i email-it të reset-it nga Supabase (më parë ishte fals — s'dërgonte gjë).
+     Për siguri, NUK zbulojmë nëse email-i ekziston → gjithmonë tregojmë sukses. */
+  var _done=function(){
     lsetBtn('lbtn-fgt',false,'Send Reset Link');
     document.getElementById('lfgt-ok').classList.add('lon');
     document.getElementById('fgtem').classList.add('lok');
     document.getElementById('fgtem').value='';
-  },1200);
+  };
+  var sb=getSupa();
+  if(sb && sb.auth && sb.auth.resetPasswordForEmail){
+    sb.auth.resetPasswordForEmail(em, {redirectTo:'https://dhealth.app/app/'})
+      .then(function(res){ if(res&&res.error) console.warn('reset:', res.error.message); _done(); })
+      .catch(function(e){ console.warn('reset:', e&&e.message); _done(); });
+  } else {
+    setTimeout(_done, 1000);
+  }
+}
+/* Ekrani "Set New Password" — shfaqet kur user-i kthehet nga linku i reset-it (PASSWORD_RECOVERY) */
+function showResetPassword(){
+  if(document.getElementById('dhResetPw')) return;
+  var ov=document.createElement('div');
+  ov.id='dhResetPw';
+  ov.style.cssText='position:fixed;inset:0;z-index:99999;background:linear-gradient(165deg,#f2f7fd,#dde9f7);display:flex;align-items:center;justify-content:center;padding:28px;font-family:var(--font,Arial,sans-serif);';
+  ov.innerHTML='<div style="width:100%;max-width:360px;text-align:center;">'
+    +'<div style="width:80px;height:80px;border-radius:24px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 32px rgba(70,120,190,.2);margin:0 auto 20px;"><img src="/assets/logo.png" alt="" style="width:48px;height:48px;object-fit:contain;"></div>'
+    +'<h2 style="font-size:22px;font-weight:800;color:#13294b;margin:0 0 8px;">Set New Password</h2>'
+    +'<p style="font-size:13px;color:#5d7290;margin:0 0 22px;">Choose a new password for your D Health account.</p>'
+    +'<input id="dhRpw1" type="password" placeholder="New password (min 8)" style="width:100%;box-sizing:border-box;padding:14px;border-radius:14px;border:1.5px solid rgba(120,150,190,.3);font-size:14px;margin-bottom:10px;font-family:inherit;outline:none;color:#13294b;">'
+    +'<input id="dhRpw2" type="password" placeholder="Confirm new password" style="width:100%;box-sizing:border-box;padding:14px;border-radius:14px;border:1.5px solid rgba(120,150,190,.3);font-size:14px;margin-bottom:6px;font-family:inherit;outline:none;color:#13294b;">'
+    +'<div id="dhRpwErr" style="font-size:12px;color:#dc2626;min-height:16px;margin-bottom:8px;text-align:left;"></div>'
+    +'<button id="dhRpwBtn" onclick="doResetPassword()" style="width:100%;padding:14px;border-radius:16px;border:none;background:linear-gradient(135deg,#2DC8A0,#3B7DD8);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Save New Password</button>'
+    +'</div>';
+  document.body.appendChild(ov);
+}
+async function doResetPassword(){
+  var p1=(document.getElementById('dhRpw1')||{}).value||'', p2=(document.getElementById('dhRpw2')||{}).value||'';
+  var err=document.getElementById('dhRpwErr'), btn=document.getElementById('dhRpwBtn');
+  if(p1.length<8){ if(err)err.textContent='Password must be at least 8 characters.'; return; }
+  if(p1!==p2){ if(err)err.textContent='Passwords do not match.'; return; }
+  if(err)err.textContent=''; if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  var sb=getSupa();
+  if(!sb){ if(err)err.textContent='Connection error.'; if(btn){btn.disabled=false;btn.textContent='Save New Password';} return; }
+  try{
+    var res=await sb.auth.updateUser({password:p1});
+    if(res&&res.error){ if(err)err.textContent=res.error.message; if(btn){btn.disabled=false;btn.textContent='Save New Password';} return; }
+    var ov=document.getElementById('dhResetPw'); if(ov) ov.remove();
+    try{ showToast('✅ Password updated! You are now signed in.'); }catch(e){}
+    setTimeout(function(){ try{ location.replace(location.pathname); }catch(e){ location.reload(); } }, 900);
+  }catch(e){ if(err)err.textContent='Connection error.'; if(btn){btn.disabled=false;btn.textContent='Save New Password';} }
 }
 function lsocialLogin() {
   document.getElementById('lsuccnm').textContent=name||'Welcome!';
@@ -7134,7 +7177,11 @@ function applySupabaseSession(session){
        applySupabaseSession e ngarkon një herë; initUserData është i serializuar kundër mbivendosjes. */
     try{
       sb.auth.onAuthStateChange(function(event, session){
+        /* Kthimi nga linku i reset-it → ekran "Set New Password" (jo hyrje direkt) */
+        if(event==='PASSWORD_RECOVERY'){ try{ showResetPassword(); }catch(e){} return; }
         if((event==='SIGNED_IN' || event==='INITIAL_SESSION') && session && session.user){
+          /* Nëse jemi në mes të reset-it, mos hyr në app derisa të vendoset fjalëkalimi i ri */
+          if(document.getElementById('dhResetPw')) return;
           applySupabaseSession(session);
         }
         if(event==='SIGNED_OUT'){ _appliedSessionUid = null; _userDataLoaded = false; }
