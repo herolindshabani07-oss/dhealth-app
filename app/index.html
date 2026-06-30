@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260630164542 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260630175518 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260630164542';
+    var DH_BUILD='20260630175518';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -6632,6 +6632,19 @@ function lclrErr() {
   document.querySelectorAll('.lfi').forEach(function(e){ e.classList.remove('lerr','lok'); });
 }
 function lshowErr(msg) { document.getElementById('letxt').textContent=msg; document.getElementById('lebanner').classList.add('lon'); }
+/* Deep-link nga webfaqja: /app/?login → hap DIREKT formën e Log In (jo ekranin e mirëseardhjes).
+   Për user-at e kyçur, restaurimi i sesionit e fsheh overlay-n dhe i çon te Home (kjo s'pengon). */
+try{
+  if(/[?&]login(?:=|&|$)/.test(location.search) || /[?&]register(?:=|&|$)/.test(location.search)){
+    var _dlTab = /[?&]register(?:=|&|$)/.test(location.search) ? 'register' : 'login';
+    var _dlGo = function(){ try{
+      var ov=document.getElementById('login-overlay');
+      if(ov && ov.style.display!=='none' && typeof lshow==='function'){ lshow('la', _dlTab); }
+    }catch(e){} };
+    if(document.readyState!=='loading'){ setTimeout(_dlGo,300); }
+    else document.addEventListener('DOMContentLoaded', function(){ setTimeout(_dlGo,300); });
+  }
+}catch(e){}
 function lisEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
 function lsetBtn(id,loading,txt) { var b=document.getElementById(id);if(!b)return;b.disabled=loading;b.innerHTML=loading?'<div class="lspin"></div> Please wait...':txt; }
 function ltpwd(id,btn) { var i=document.getElementById(id);var s=i.type==='password';i.type=s?'text':'password';btn.innerHTML=s?'&#128584;':'&#128065;'; }
