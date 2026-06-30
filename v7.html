@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260630133827 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260630135125 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260630133827';
+    var DH_BUILD='20260630135125';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -6786,7 +6786,7 @@ function ldoReg() {
   lsetBtn('lbtn-reg',true);
   var sb=getSupa();
   if(sb){
-    sb.auth.signUp({email:em,password:pw,options:{data:{full_name:name,role:'patient',plan:LST.plan}}}).then(function(res){
+    sb.auth.signUp({email:em,password:pw,options:{data:{full_name:name,role:'patient',plan:LST.plan}, emailRedirectTo:'https://dhealth.app/app/'}}).then(function(res){
       lsetBtn('lbtn-reg',false,'Create My Account');
       if(res.error){
         if(res.error.message.indexOf('already')!==-1){lshowErr('This email already exists. Please sign in!');document.getElementById('rem').classList.add('lerr');}
@@ -6812,10 +6812,10 @@ function showEmailConfirm(email){
   var lw=document.getElementById('lw');
   lw.classList.remove('lhide');
   lw.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:40px 28px;text-align:center;">'
-    +'<div style="font-size:72px;margin-bottom:24px;animation:lpop 0.5s both;">📧</div>'
-    +'<h2 style="font-size:24px;font-weight:700;color:#13294b;margin-bottom:12px;">Confirm Your Email!</h2>'
+    +'<div style="width:88px;height:88px;border-radius:26px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 32px rgba(70,120,190,.20);margin-bottom:22px;animation:lpop 0.5s both;"><img src="/assets/logo.png" alt="D Health" style="width:54px;height:54px;object-fit:contain;"></div>'
+    +'<h2 style="font-size:24px;font-weight:700;color:#13294b;margin-bottom:12px;">Confirm Your Email</h2>'
     +'<div style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.2);border-radius:14px;padding:12px 20px;font-size:14px;font-weight:700;color:#13294b;margin-bottom:16px;word-break:break-all;">'+email+'</div>'
-    +'<p style="font-size:13px;color:#5d7290;line-height:1.7;margin-bottom:28px;">U dërgua email konfirmimi.<br>Hap <strong style="color:#15a06a;">inbox-in tënd</strong> dhe kliko<br><strong style="color:#15a06a;">"Confirm Email"</strong>.</p>'
+    +'<p style="font-size:13px;color:#5d7290;line-height:1.7;margin-bottom:28px;">We sent you a confirmation email.<br>Open your <strong style="color:#15a06a;">inbox</strong> and click<br><strong style="color:#15a06a;">"Confirm Email"</strong> to activate your account.</p>'
     +'<div style="background:rgba(120,150,190,0.1);border:1px solid rgba(120,150,190,0.18);border-radius:16px;padding:16px;width:100%;margin-bottom:24px;text-align:left;">'
     +'<div style="font-size:13px;color:#1f2c44;line-height:2.2;">1️⃣ Open your inbox<br>2️⃣ Find the email from <strong>D Health</strong><br>3️⃣ Click <strong style="color:#15a06a;">Confirm Email</strong><br>4️⃣ Come back and Sign In</div>'
     +'</div>'
@@ -6826,7 +6826,7 @@ function showEmailConfirm(email){
 
 function resendConf(email){
   var sb=getSupa();
-  if(sb) sb.auth.resend({type:'signup',email:email}).then(function(){showToast('📧 Email u ridërgua!');});
+  if(sb) sb.auth.resend({type:'signup',email:email,options:{emailRedirectTo:'https://dhealth.app/app/'}}).then(function(){showToast('📧 Confirmation email resent!');});
 }
 function ldoForgot() {
   var em=document.getElementById('fgtem').value.trim();
