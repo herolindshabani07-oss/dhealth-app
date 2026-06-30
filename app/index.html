@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260630145025 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260630154114 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260630145025';
+    var DH_BUILD='20260630154114';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -6672,6 +6672,21 @@ function getSupa(){
    ta pastrojë URL-në ose dëgjuesi i auth-it të lidhet. Linku i reset-it kthen ?reset=1&code=... */
 var DH_PW_RESET = false;
 try{ DH_PW_RESET = new URLSearchParams(window.location.search).get('reset')==='1'; }catch(e){}
+/* Kur kthehemi nga një link me ?code= (email i reset-it), lidh dëgjuesin e recovery-t SA MË SHPEJT —
+   event-i PASSWORD_RECOVERY shkrep kur detectSessionInUrl shkëmben kodin, shpesh PARA setTimeout-it 500ms.
+   Pa këtë, ekrani 'Set New Password' humbej dhe useri futej direkt në app. */
+try{
+  if(new URLSearchParams(window.location.search).get('code') && typeof getSupa==='function'){
+    var _earlySb = getSupa();
+    if(_earlySb && _earlySb.auth && _earlySb.auth.onAuthStateChange){
+      _earlySb.auth.onAuthStateChange(function(ev){
+        if(ev==='PASSWORD_RECOVERY' || (DH_PW_RESET && (ev==='SIGNED_IN'||ev==='INITIAL_SESSION'))){
+          try{ showResetPassword(); }catch(e){}
+        }
+      });
+    }
+  }
+}catch(e){}
 
 /* ════ SIGURI: shto automatikisht token-in e Supabase te çdo thirrje AI (/claude) ════
    Funksioni në server e refuzon kërkesën pa token të vlefshëm → vetëm user-at e kyçur përdorin AI-në. */
@@ -7123,6 +7138,8 @@ var _appliedSessionUid = null;
 var _userDataLoaded = false;  /* a u ngarkuan të dhënat me sukses (për riprovë në cold-start) */
 function applySupabaseSession(session){
   if(!session || !session.user) return;
+  /* RESET FJALËKALIMI: mos hyr në app — shfaq ekranin "Set New Password" (kap çdo rrugë hyrjeje) */
+  if(DH_PW_RESET || document.getElementById('dhResetPw')){ try{ showResetPassword(); }catch(e){} return; }
   var sb = getSupa(); if(!sb) return;
   if(_appliedSessionUid === session.user.id) return; /* shmang dyfishimin */
   _appliedSessionUid = session.user.id;
