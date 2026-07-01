@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260701141104 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260701141732 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260701141104';
+    var DH_BUILD='20260701141732';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -3584,6 +3584,11 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div style="font-size:10px;color:rgba(255,255,255,0.5);margin:8px 2px 0;line-height:1.5;" data-i18n="dx.uploadHint">📋 Analiza → vlerat dalin këtu si "+ADD" · 🫀 ECG → analizë e ritmit (1 / 24h)</div>
         <!-- Chip-at e vlerave të nxjerra nga analiza (poshtë kutive) → "💾 Shto në profil" -->
         <div id="ds-lab-chips"></div>
+        <!-- RAPORTI MJEKËSOR — përmbledhje AI (e lidhur me profilin) -->
+        <div id="ds-report-result" style="display:none;margin-top:12px;background:linear-gradient(135deg,rgba(59,125,216,0.12),rgba(96,165,250,0.08));border:0.5px solid rgba(59,125,216,0.28);border-radius:14px;padding:14px;">
+          <div style="font-size:11px;font-weight:800;color:#3b7dd8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">📄 <span data-i18n="dx.reportAiHdr">D Health AI — Report Summary</span></div>
+          <div id="ds-report-text" style="font-size:12.5px;color:#33415c;line-height:1.65;"></div>
+        </div>
         <!-- RAPORTI ECG — premium -->
         <div id="ecgResultAreaProfile" style="display:none;margin-top:12px;background:linear-gradient(160deg,#0F1830 0%,#1A2547 55%,#0E1730 100%);border:1px solid rgba(120,160,235,0.26);border-radius:16px;padding:16px 15px;box-shadow:0 14px 34px rgba(8,16,44,0.5);position:relative;overflow:hidden;">
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#5CC8FF,#8B6FE8,#FF6B8A);"></div>
@@ -4675,6 +4680,12 @@ function getProfile(){
         + '(Consider this when advising outdoor activity, especially for respiratory/cardiac conditions.)\n'
       : '• Not available yet\n')+'\n'+
     'LATEST ECG ANALYSIS:\n'+ecgStr+'\n\n'+
+    'MEDICAL REPORTS (uploaded & AI-summarized):\n'+(function(){
+      var reps=[]; try{ reps=JSON.parse(localStorage.getItem('dh_reports')||'[]'); }catch(e){}
+      return (reps&&reps.length)
+        ? reps.slice(-3).map(function(r){ return '• '+(r.date||'?')+(r.name?(' — '+r.name):'')+':\n'+(r.summary||''); }).join('\n\n')
+        : 'No medical reports uploaded';
+    })()+'\n\n'+
     'NOTES: '+notes+'\n\n'+
     _dhScoreBlock();
 }
@@ -7542,6 +7553,8 @@ var DH_I18N = {
   'dx.reportUpload':   {sq:'Raporte', mk:'Извештаи', en:'Reports'},
   'dx.reportUploadSub':{sq:'raport mjekësor', mk:'медицински извештај', en:'medical report'},
   'dx.reportSaved':    {sq:'✅ Raporti u ruajt te Dokumentet!', mk:'✅ Извештајот е зачуван во Документи!', en:'✅ Report saved to Documents!'},
+  'dx.reportAnalyzed': {sq:'✅ Raporti u analizua & u lidh me profilin!', mk:'✅ Извештајот е анализиран и поврзан со профилот!', en:'✅ Report analyzed & linked to your profile!'},
+  'dx.reportAiHdr':    {sq:'D Health AI — Përmbledhje e Raportit', mk:'D Health AI — Резиме на извештајот', en:'D Health AI — Report Summary'},
   'dx.uploadHint':     {sq:'📋 Analiza → vlerat dalin si "+ADD" · 🫀 ECG → ritmi (1/24h) · 📄 Raporte → ruhen te Dokumentet', mk:'📋 Анализи → вредности · 🫀 ЕКГ → ритам (1/24ч) · 📄 Извештаи → во Документи', en:'📋 Lab → values as "+ADD" · 🫀 ECG → rhythm (1/24h) · 📄 Reports → saved to Documents'},
   'dx.pEcgHistory':    {sq:'📋 Historiku i ECG', mk:'📋 Историја на ЕКГ', en:'📋 ECG History'},
   'dx.diagnostics':    {sq:'Diagnostikë', mk:'Дијагностика', en:'Diagnostics'},
@@ -10454,7 +10467,52 @@ async function handleReportUpload(event){
   for(var i=0;i<arr.length;i++){ await uploadUserDocument(arr[i]); }
   await refreshDocuments();
   event.target.value='';
-  dhAnlz('ds','done',dhT('dx.reportSaved'));
+  /* Lexo & analizo raportin me AI → përmbledhja ruhet dhe hyn te profili (AI chat/verdikt) */
+  dhAnlz('ds','analyze',dhT('dx.anlzAnalyze'));
+  try{ await analyzeReportFiles(arr); }catch(e){ console.warn('report analyze:', e&&e.message); }
+  dhAnlz('ds','done',dhT('dx.reportAnalyzed'));
+}
+
+/* Lexon TË GJITHA raportet e ngarkuara në NJË thirrje AI → përmbledhje klinike e përshtatur
+   me profilin e pacientit; ruhet te dh_reports që getProfile ta fusë në kontekstin e AI-së. */
+async function analyzeReportFiles(files){
+  files = Array.prototype.slice.call(files||[]).filter(function(f){
+    var t=f.type||'', n=f.name||'';
+    return /pdf/i.test(t)||/\.pdf$/i.test(n)||/^image\//i.test(t)||/\.(jpe?g|png|webp|gif)$/i.test(n);
+  });
+  if(!files.length) return;
+  var area=document.getElementById('ds-report-result'), txtEl=document.getElementById('ds-report-text');
+  if(area) area.style.display='block';
+  if(txtEl) txtEl.innerHTML='<div class="dh-skel-wrap"><div class="dh-skel" style="width:72%"></div><div class="dh-skel"></div><div class="dh-skel" style="width:88%"></div><div class="dh-skel" style="width:55%"></div></div>';
+  try{
+    var content=[];
+    for(var i=0;i<files.length;i++){
+      var f=files[i], t=f.type||'', n=f.name||'';
+      var isPdf=/pdf/i.test(t)||/\.pdf$/i.test(n);
+      var b64=await fileToBase64(f); if(!b64) continue;
+      content.push(isPdf
+        ? {type:'document', source:{type:'base64', media_type:'application/pdf', data:b64}}
+        : {type:'image',    source:{type:'base64', media_type:(t||'image/jpeg'), data:b64}});
+    }
+    if(!content.length) throw new Error('s\'u lexuan skedarët');
+    content.push({type:'text', text:
+      'These are '+files.length+' medical report(s) for MY profile above. Read them and give a CONCISE clinical summary FOR ME, in the SAME language as this app:\n'
+      +'1) Report type + date (if shown)\n2) Key findings / results\n3) Diagnoses or conclusions stated\n4) Medications / recommendations given\n5) How this relates to MY diagnoses, therapy, lab values and vitals above — and any red flags to watch.\n'
+      +'Use short bullet points. Base it strictly on what the report(s) actually say.'});
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:BASE_SYS+getProfile(),messages:[{role:'user',content:content}]})});
+    var raw=await r.text();
+    if(!r.ok || raw.trim().charAt(0)==='<') throw new Error('AI s\'arriti t\'i lexojë raportet');
+    var d=JSON.parse(raw); if(d.error) throw new Error(d.error.message||'AI error');
+    var out=(d.content&&d.content[0]&&d.content[0].text)||'';
+    if(txtEl) txtEl.innerHTML=out.replace(/\n/g,'<br>');
+    /* Ruaj përmbledhjen (per-user; pastrohet në ndërrim llogarie) → getProfile e përfshin */
+    var reps=[]; try{ reps=JSON.parse(localStorage.getItem('dh_reports')||'[]'); }catch(e){}
+    reps.push({ date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),
+                name:(files[0].name||'report'), summary:out.replace(/\s+/g,' ').substring(0,700), ts:Date.now() });
+    if(reps.length>8) reps.shift();
+    try{ localStorage.setItem('dh_reports', JSON.stringify(reps)); }catch(e){}
+  }catch(e){ if(txtEl) txtEl.innerHTML='<span style="color:#dc2626;">⚠️ '+(e.message||e)+'</span>'; throw e; }
 }
 
 /* ════ Lexim AI i analizave laboratorike → Lab Values (sinkron me Diagnostic + Supabase) ════ */
