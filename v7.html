@@ -1288,10 +1288,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260701222213 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260701223705 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260701222213';
+    var DH_BUILD='20260701223705';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -4727,9 +4727,9 @@ var BASE_SYS='You are D Health AI, an advanced medical AI with full access to th
 /* Direktiva e gjuhës për verdiktet AI (Run Vital, Diagnostics, Health Report, Therapy) — ndjek gjuhën e zgjedhur */
 function aiLangDirective(){
   var l=(typeof currentLang!=='undefined'?currentLang:'en')||'en';
-  return l==='sq' ? 'IMPORTANT: Respond ENTIRELY in Albanian (Shqip), regardless of the prompt language.\n\n'
-       : l==='mk' ? 'IMPORTANT: Одговарајте ИСКЛУЧИВО на македонски јазик (кирилица), без оглед на јазикот на барањето.\n\n'
-       : 'IMPORTANT: Respond ENTIRELY in English, regardless of the prompt language.\n\n';
+  return l==='sq' ? 'IMPORTANT: Respond ENTIRELY in Albanian (Shqip), regardless of the language of the prompt OR of any data below (medication names, diagnoses, lab values or reports may be in Macedonian/English — you still MUST reply only in Albanian).\n\n'
+       : l==='mk' ? 'IMPORTANT: Одговарајте ИСКЛУЧИВО на македонски (кирилица), без оглед на јазикот на барањето ИЛИ на податоците подолу (имињата на лекови, дијагнози или извештаи може да се на албански/англиски — сепак одговарајте само на македонски).\n\n'
+       : 'IMPORTANT: Respond ENTIRELY in English, regardless of the language of the prompt OR of any data below (medication names, diagnoses or reports may be in another language — you still MUST reply only in English).\n\n';
 }
 /* Rresht eksplicit gjuhe për t'u SHTUAR te USER prompt — i fortë edhe për përgjigje JSON
    (siguron që edhe VLERAT e tekstit në JSON të jenë në gjuhën e zgjedhur, jo në anglisht). */
@@ -6805,7 +6805,8 @@ try{
             var _dir = aiLangDirective();
             if(_bo && typeof _bo === 'object' && _dir){
               var _sys = (typeof _bo.system === 'string') ? _bo.system : '';
-              if(_sys.indexOf(_dir) !== 0){ _bo.system = _dir + _sys; opts.body = JSON.stringify(_bo); }
+              /* Prepend + APPEND (recency) → gjuha ndiqet edhe kur të dhënat janë në gjuhë tjetër */
+              if(_sys.indexOf(_dir) !== 0){ _bo.system = _dir + _sys + '\n\n' + _dir.trim(); opts.body = JSON.stringify(_bo); }
             }
           }
         }catch(e){}
