@@ -1,0 +1,22 @@
+# Secrets — NEVER commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+
+# Dependencies
+node_modules/
+
+# Build / temp
+backups/
+*.zip
+files.zip
+*.log
+.DS_Store
+Thumbs.db
+
+# Local editor / scratch
+.vscode/
+ring_specsheet_built.html

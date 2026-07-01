@@ -1288,10 +1288,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260701183136 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260701215810 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260701183136';
+    var DH_BUILD='20260701215810';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -7224,13 +7224,16 @@ function dhSuccess(msg){
   }catch(e){}
 }
 
-/* Dërgo email mirëseardhjeje (përdoruesit e rinj OAuth) — pa bllokuar UI-në */
-function sendWelcomeEmail(email, name){
+/* Dërgo email mirëseardhjeje (përdoruesit e rinj OAuth) — pa bllokuar UI-në.
+   Kalon token-in JWT → serveri e dërgon VETËM te email-i i verifikuar (anti-abuzim). */
+async function sendWelcomeEmail(email, name){
   if(!email) return;
   try{
+    var h={'Content-Type':'application/json'};
+    try{ var sb=getSupa(); if(sb){ var s=await sb.auth.getSession(); var tok=s&&s.data&&s.data.session&&s.data.session.access_token; if(tok) h['Authorization']='Bearer '+tok; } }catch(e){}
     fetch('/.netlify/functions/welcome-email', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ email: email, name: name || '' })
+      method:'POST', headers:h,
+      body: JSON.stringify({ name: name || '' })
     }).catch(function(){});
   }catch(e){}
 }

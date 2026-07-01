@@ -5,13 +5,29 @@
 [functions]
   node_bundler = "esbuild"
 
-# App HTML duhet të jetë GJITHMONË i freskët (live-shell) — pa cache të vjetëruar te WebView
+# ════════════════════════════════════════════════════════════════════════
+#  Security headers (defense-in-depth) — applied to every response
+# ════════════════════════════════════════════════════════════════════════
 [[headers]]
-  for = "/app/*"
+  for = "/*"
   [headers.values]
-    Cache-Control = "no-cache, max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/v7.html"
-  [headers.values]
-    Cache-Control = "no-cache, max-age=0, must-revalidate"
+    # Force HTTPS for 2 years (incl. subdomains)
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    # Block MIME-type sniffing
+    X-Content-Type-Options = "nosniff"
+    # Anti-clickjacking (app must not be framed by other sites)
+    X-Frame-Options = "SAMEORIGIN"
+    # Don't leak full URLs to third parties
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Lock down powerful browser features (we only use geolocation)
+    Permissions-Policy = "geolocation=(self), camera=(), microphone=(), payment=(), usb=()"
+    # Isolate cross-origin windows
+    Cross-Origin-Opener-Policy = "same-origin"
+    # Content Security Policy — the app uses inline scripts/styles, so 'unsafe-inline'
+    # is required, but we lock down where scripts/data can be LOADED from and where the
+    # app can CONNECT (only our own backends). Blocks most injected-payload exfiltration.
+    # NOTE: kept in REPORT-ONLY mode first so it CANNOT break the live web/native (Capacitor)
+    # app — it only logs violations to the console. After verifying web + APK flows work
+    # (Google login, Fitbit, AQI, AI, BLE), rename this key to "Content-Security-Policy"
+    # to ENFORCE it.
+    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://ppcvzvvlnaxiljjmdihk.supabase.co wss://ppcvzvvlnaxiljjmdihk.supabase.co https://dhealth.app https://*.netlify.app https://*.open-meteo.com https://api.fitbit.com https://www.fitbit.com https://www.googleapis.com https://accounts.google.com; frame-src 'self' https://accounts.google.com; frame-ancestors 'self'; object-src 'none'; base-uri 'self'"

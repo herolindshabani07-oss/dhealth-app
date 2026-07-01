@@ -1,10 +1,15 @@
 /* Netlify function: dërgon email mirëseardhjeje përmes Resend.
-   Env vars: RESEND_API_KEY (kërkohet), WELCOME_FROM (opsional, p.sh. "D Health <noreply@dhealth.app>") */
+   SIGURI: kërkon JWT të vlefshëm Supabase DHE dërgon VETËM te email-i i verifikuar i user-it
+   → s'mund të abuzohet për të dërguar email te adresa arbitrare (spam nga domain-i).
+   Env vars: RESEND_API_KEY (kërkohet), WELCOME_FROM (opsional). */
+
+const SUPABASE_URL  = 'https://ppcvzvvlnaxiljjmdihk.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwY3Z6dnZsbmF4aWxqam1kaWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNjM1MjYsImV4cCI6MjA5MTkzOTUyNn0.iS1Fb80nxf6t5zsTk5loiNoPpg2kEj7_nCifWQZHJTo';
 
 exports.handler = async function(event){
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Origin': 'https://dhealth.app',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Content-Type': 'application/json'
   };
@@ -13,9 +18,17 @@ exports.handler = async function(event){
   if (event.httpMethod !== 'POST')    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
   try {
+    /* ════ SIGURI: vetëm user të kyçur; email-i shkon te adresa e VERIFIKUAR e tyre ════ */
+    const authHeader = event.headers['authorization'] || event.headers['Authorization'] || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+    if (!token) return { statusCode: 401, headers, body: JSON.stringify({ error: 'Authentication required' }) };
+    const verify = await fetch(SUPABASE_URL + '/auth/v1/user', { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + token } });
+    if (!verify.ok) return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid or expired session' }) };
+    const user = await verify.json().catch(() => ({}));
+    const email = (user && user.email || '').trim();   /* recipient = email i verifikuar, JO nga body */
+    if (!email) return { statusCode: 400, headers, body: JSON.stringify({ error: 'no verified email' }) };
+
     const body  = JSON.parse(event.body || '{}');
-    const email = (body.email || '').trim();
-    if (!email) return { statusCode: 400, headers, body: JSON.stringify({ error: 'email required' }) };
 
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) return { statusCode: 500, headers, body: JSON.stringify({ error: 'RESEND_API_KEY not configured' }) };
