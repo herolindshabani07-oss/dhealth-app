@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260701141732 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260701160335 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260701141732';
+    var DH_BUILD='20260701160335';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -7060,6 +7060,7 @@ function llaunchApp() {
     try{switchScreen('home');}catch(e){}
     try{initECGCards();}catch(e){}
     try{loadEmergencyFromCloud(false);}catch(e){}
+    try{loadReportsFromCloud();}catch(e){}
     try{lmaybeConsent();}catch(e){}
     setTimeout(function(){
       if(LST.currentUser) try{checkMyAppointment();}catch(e){}
@@ -7243,6 +7244,7 @@ function applySupabaseSession(session){
     try{switchScreen('home');}catch(e){}
     try{initECGCards();}catch(e){}
     try{loadEmergencyFromCloud(false);}catch(e){}
+    try{loadReportsFromCloud();}catch(e){}
     try{lmaybeConsent();}catch(e){}
     try{initUserData(session.user.id, name, session.user.email);}catch(e){console.log('initUserData err:',e);}
     try{setTimeout(calcDailyScore,2000);}catch(e){}
@@ -9696,6 +9698,26 @@ async function loadEcgResults(){
   }catch(e){ console.warn('ECG load:', e.message); }
 }
 
+/* Ngarko përmbledhjet e RAPORTEVE nga Supabase (report_summaries) → zëvendëson dh_reports
+   lokale me rreshtat e KËTIJ user-i, që AI-ja (getProfile) t'i ketë raportet ndër-pajisje
+   dhe të mbeten të izoluara (s'tregon raporte të të tjerëve). Rend rritës → getProfile slice(-3). */
+async function loadReportsFromCloud(){
+  var sb=getSupa();
+  if(!sb || !LST || !LST.currentUser || !LST.currentUser.id) return;
+  try{
+    var r=await sb.from('report_summaries').select('*')
+            .eq('patient_id', LST.currentUser.id)
+            .order('ts',{ascending:false}).limit(8);
+    if(r && !r.error && r.data){
+      var reps=r.data.slice().reverse().map(function(row){
+        return { date: row.report_date||'', name: row.name||'',
+                 summary: row.summary||'', ts: Number(row.ts)||0 };
+      });
+      try{ localStorage.setItem('dh_reports', JSON.stringify(reps)); }catch(e){}
+    }
+  }catch(e){ console.warn('reports load:', e&&e.message); }
+}
+
 /* Klikim mbi një ECG te History → hap skedarin e ngarkuar (signed URL nga Supabase) */
 async function openEcgFromHistory(path){
   if(!path){ showToast('ℹ️ Kjo ECG nuk u ruajt si dokument (e vjetër).'); return; }
@@ -10464,18 +10486,20 @@ async function handleReportUpload(event){
   if(!files||!files.length) return;
   var arr = Array.prototype.slice.call(files);
   dhAnlz('ds','upload',dhT('dx.anlzUpload'));
-  for(var i=0;i<arr.length;i++){ await uploadUserDocument(arr[i]); }
+  var paths=[];
+  for(var i=0;i<arr.length;i++){ var _m=await uploadUserDocument(arr[i]); if(_m&&_m.path) paths.push(_m.path); }
   await refreshDocuments();
   event.target.value='';
   /* Lexo & analizo raportin me AI → përmbledhja ruhet dhe hyn te profili (AI chat/verdikt) */
   dhAnlz('ds','analyze',dhT('dx.anlzAnalyze'));
-  try{ await analyzeReportFiles(arr); }catch(e){ console.warn('report analyze:', e&&e.message); }
+  try{ await analyzeReportFiles(arr, paths); }catch(e){ console.warn('report analyze:', e&&e.message); }
   dhAnlz('ds','done',dhT('dx.reportAnalyzed'));
 }
 
 /* Lexon TË GJITHA raportet e ngarkuara në NJË thirrje AI → përmbledhje klinike e përshtatur
    me profilin e pacientit; ruhet te dh_reports që getProfile ta fusë në kontekstin e AI-së. */
-async function analyzeReportFiles(files){
+async function analyzeReportFiles(files, paths){
+  paths = paths || [];
   files = Array.prototype.slice.call(files||[]).filter(function(f){
     var t=f.type||'', n=f.name||'';
     return /pdf/i.test(t)||/\.pdf$/i.test(n)||/^image\//i.test(t)||/\.(jpe?g|png|webp|gif)$/i.test(n);
@@ -10508,10 +10532,23 @@ async function analyzeReportFiles(files){
     if(txtEl) txtEl.innerHTML=out.replace(/\n/g,'<br>');
     /* Ruaj përmbledhjen (per-user; pastrohet në ndërrim llogarie) → getProfile e përfshin */
     var reps=[]; try{ reps=JSON.parse(localStorage.getItem('dh_reports')||'[]'); }catch(e){}
-    reps.push({ date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),
-                name:(files[0].name||'report'), summary:out.replace(/\s+/g,' ').substring(0,700), ts:Date.now() });
+    var _entry={ date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),
+                name:(files[0].name||'report'), summary:out.replace(/\s+/g,' ').substring(0,700), ts:Date.now() };
+    reps.push(_entry);
     if(reps.length>8) reps.shift();
     try{ localStorage.setItem('dh_reports', JSON.stringify(reps)); }catch(e){}
+    /* Ruaj përmbledhjen edhe në Supabase (report_summaries) → ndjek user-in ndër-pajisje,
+       e izoluar me RLS (jo vetëm te localStorage i kësaj pajisjeje). Await → shkrimi ekzekutohet. */
+    try{
+      var sbR=getSupa();
+      if(sbR && LST && LST.currentUser && LST.currentUser.id){
+        var insR=await sbR.from('report_summaries').insert({
+          patient_id: LST.currentUser.id, report_date: _entry.date, ts: _entry.ts,
+          name: _entry.name, summary: _entry.summary, path: (paths&&paths[0])||''
+        });
+        if(insR && insR.error) console.warn('report summary save:', insR.error.message);
+      }
+    }catch(_se){ console.warn('report cloud save skip:', _se&&_se.message); }
   }catch(e){ if(txtEl) txtEl.innerHTML='<span style="color:#dc2626;">⚠️ '+(e.message||e)+'</span>'; throw e; }
 }
 
