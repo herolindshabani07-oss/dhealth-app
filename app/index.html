@@ -270,6 +270,19 @@ select option{background:#0A1628;color:#F1F5FF;}
 .ar-av{width:30px;height:30px;border-radius:10px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:15px;}
 .ar-txt{font-size:12px;color:rgba(255,255,255,0.9);line-height:1.65;}
 .ar-txt strong{color:#fff;}
+/* ⚖️ LIGJ — disclaimer "vetëm informacion" del automatikisht poshtë ÇDO daljeje AI (3 gjuhë via <html lang>).
+   Mbron ligjërisht (defense-in-depth te pika e përdorimit, jo vetëm te consent-gate). Ngjyra ndjek tekstin (adaptohet dritë/errët). */
+.ar-txt:not(:empty)::after,#vieVerdictText:not(:empty)::after,#deepOverallVerdict:not(:empty)::after,#ds-report-text:not(:empty)::after,#ds-report-adapt-text:not(:empty)::after,#ecgResultTextProfile:not(:empty)::after,#ecgResultText:not(:empty)::after,#therapy-ai-text:not(:empty)::after{
+  display:block;margin-top:11px;padding-top:8px;border-top:1px dashed rgba(127,140,170,.32);
+  font-size:9.5px;line-height:1.45;font-weight:600;opacity:.7;
+  content:"ⓘ General information only — not a medical diagnosis or advice. Consult your doctor. In an emergency call 112.";
+}
+html[lang="sq"] .ar-txt:not(:empty)::after,html[lang="sq"] #vieVerdictText:not(:empty)::after,html[lang="sq"] #deepOverallVerdict:not(:empty)::after,html[lang="sq"] #ds-report-text:not(:empty)::after,html[lang="sq"] #ds-report-adapt-text:not(:empty)::after,html[lang="sq"] #ecgResultTextProfile:not(:empty)::after,html[lang="sq"] #ecgResultText:not(:empty)::after,html[lang="sq"] #therapy-ai-text:not(:empty)::after{
+  content:"ⓘ Vetëm informacion i përgjithshëm — jo diagnozë a këshillë mjekësore. Konsultohu me mjekun. Në emergjencë telefono 112.";
+}
+html[lang="mk"] .ar-txt:not(:empty)::after,html[lang="mk"] #vieVerdictText:not(:empty)::after,html[lang="mk"] #deepOverallVerdict:not(:empty)::after,html[lang="mk"] #ds-report-text:not(:empty)::after,html[lang="mk"] #ds-report-adapt-text:not(:empty)::after,html[lang="mk"] #ecgResultTextProfile:not(:empty)::after,html[lang="mk"] #ecgResultText:not(:empty)::after,html[lang="mk"] #therapy-ai-text:not(:empty)::after{
+  content:"ⓘ Само општа информација — не е дијагноза ниту медицински совет. Консултирајте се со лекар. Во итен случај јавете се на 112.";
+}
 .pf-ai-btn{width:100%;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,#F97316,#F5A623);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:8px;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 4px 14px rgba(249,115,22,0.25);}
 .pf-ai-btn:disabled{background:linear-gradient(135deg,#9CA3AF,#6B7280);box-shadow:none;cursor:not-allowed;}
 
@@ -1275,10 +1288,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260701181051 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260701183136 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260701181051';
+    var DH_BUILD='20260701183136';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -2106,7 +2119,7 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
   <div class="panel active" id="panel-ai">
     <div class="sa" id="aiMsgsWrap">
       <div class="cms" id="aiMsgsList">
-        <div class="mr"><div class="mav">🩺</div><div class="bb ai">Hello! I'm your <strong>AI Doctor</strong> — ask me any medical question or I can analyze your personal health profile. 🩺<br><br><span style="font-size:11px;color:rgba(255,255,255,0.5);">Powered by JH Group &amp; Anthropic</span></div></div>
+        <div class="mr"><div class="mav">🩺</div><div class="bb ai">Hello! I'm your <strong>AI Doctor</strong> — ask me any medical question or I can analyze your personal health profile. 🩺<br><br><span style="font-size:10.5px;color:rgba(255,255,255,0.55);line-height:1.5;display:block;border-top:1px solid rgba(255,255,255,0.14);padding-top:7px;" data-i18n="chat.disc">ⓘ General information only — not a medical diagnosis or advice. Consult your doctor. In an emergency call 112.</span><span style="font-size:11px;color:rgba(255,255,255,0.5);display:block;margin-top:5px;">Powered by JH Group &amp; Anthropic</span></div></div>
       </div>
       <div style="padding:8px 14px;">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" data-i18n="chat.quickQ">Quick Questions</div>
@@ -7572,6 +7585,7 @@ var DH_I18N = {
   'rep.tapAdd':        {sq:'Trokit ＋ për ta shtuar te Diagnoza / Terapia në profil', mk:'Допри ＋ за да го додадеш во Дијагноза / Терапија', en:'Tap ＋ to add it to Diagnoses / Therapy in your profile'},
   'rep.ampNote':       {sq:'Ampulat/i.v jepen në spital — s\'shtohen në terapinë e shtëpisë (vetëm tabletat)', mk:'Ампули/i.v се даваат во болница — не се додаваат во домашна терапија (само таблети)', en:'Ampoules/IV are given in hospital — not added to home therapy (tablets only)'},
   'rep.adaptHdr':      {sq:'Çfarë do të thotë për ty', mk:'Што значи ова за тебе', en:'What this means for you'},
+  'chat.disc':         {sq:'ⓘ Vetëm informacion i përgjithshëm — jo diagnozë a këshillë mjekësore. Konsultohu me mjekun. Në emergjencë telefono 112.', mk:'ⓘ Само општа информација — не е дијагноза ниту медицински совет. Консултирајте се со лекар. Во итен случај јавете се на 112.', en:'ⓘ General information only — not a medical diagnosis or advice. Consult your doctor. In an emergency call 112.'},
   'dx.uploadHint':     {sq:'📋 Analiza → vlerat dalin si "+ADD" · 🫀 ECG → ritmi (1/24h) · 📄 Raporte → ruhen te Dokumentet', mk:'📋 Анализи → вредности · 🫀 ЕКГ → ритам (1/24ч) · 📄 Извештаи → во Документи', en:'📋 Lab → values as "+ADD" · 🫀 ECG → rhythm (1/24h) · 📄 Reports → saved to Documents'},
   'dx.pEcgHistory':    {sq:'📋 Historiku i ECG', mk:'📋 Историја на ЕКГ', en:'📋 ECG History'},
   'dx.diagnostics':    {sq:'Diagnostikë', mk:'Дијагностика', en:'Diagnostics'},
@@ -7979,6 +7993,7 @@ function dhT(key){ if(typeof DH_I18N==='undefined'||!DH_I18N) return key; var L=
 function applyLang(lang){
   if(lang){ DH_LANG=lang; try{ localStorage.setItem('dh_lang',lang); }catch(e){} }
   try{ if(typeof currentLang!=='undefined') currentLang = DH_LANG; }catch(e){}  /* AI-ja ndjek të njëjtën gjuhë */
+  try{ document.documentElement.lang = DH_LANG; }catch(e){}   /* → disclaimer-i ligjor CSS ndjek gjuhën */
   try{
     document.querySelectorAll('[data-i18n]').forEach(function(el){
       var k=el.getAttribute('data-i18n'), o=DH_I18N[k];
