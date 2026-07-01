@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260701160335 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260701162740 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260701160335';
+    var DH_BUILD='20260701162740';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -3586,7 +3586,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div id="ds-lab-chips"></div>
         <!-- RAPORTI MJEKËSOR — përmbledhje AI (e lidhur me profilin) -->
         <div id="ds-report-result" style="display:none;margin-top:12px;background:linear-gradient(135deg,rgba(59,125,216,0.12),rgba(96,165,250,0.08));border:0.5px solid rgba(59,125,216,0.28);border-radius:14px;padding:14px;">
-          <div style="font-size:11px;font-weight:800;color:#3b7dd8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">📄 <span data-i18n="dx.reportAiHdr">D Health AI — Report Summary</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+            <div style="font-size:11px;font-weight:800;color:#3b7dd8;text-transform:uppercase;letter-spacing:0.5px;">📄 <span data-i18n="dx.reportAiHdr">D Health AI — Report Summary</span></div>
+            <span onclick="clearReportSummaries()" title="Pastro raportet" style="cursor:pointer;font-size:13px;opacity:0.55;padding:2px 4px;">🗑</span>
+          </div>
           <div id="ds-report-text" style="font-size:12.5px;color:#33415c;line-height:1.65;"></div>
         </div>
         <!-- RAPORTI ECG — premium -->
@@ -10496,8 +10499,9 @@ async function handleReportUpload(event){
   dhAnlz('ds','done',dhT('dx.reportAnalyzed'));
 }
 
-/* Lexon TË GJITHA raportet e ngarkuara në NJË thirrje AI → përmbledhje klinike e përshtatur
-   me profilin e pacientit; ruhet te dh_reports që getProfile ta fusë në kontekstin e AI-së. */
+/* Lexon TË GJITHA raportet e ngarkuara në NJË thirrje AI → përmbledhje BESNIKE vetëm nga
+   dokumenti (PA profil në kontekst → s'ka halucinacion/përsëritje të diagnozave të profilit).
+   Ruhet te dh_reports + Supabase; lidhja me profilin bëhet te Chat (aty AI ka të dyja). */
 async function analyzeReportFiles(files, paths){
   paths = paths || [];
   files = Array.prototype.slice.call(files||[]).filter(function(f){
@@ -10520,16 +10524,26 @@ async function analyzeReportFiles(files, paths){
     }
     if(!content.length) throw new Error('s\'u lexuan skedarët');
     content.push({type:'text', text:
-      'These are '+files.length+' medical report(s) for MY profile above. Read them and give a CONCISE clinical summary FOR ME, in the SAME language as this app:\n'
-      +'1) Report type + date (if shown)\n2) Key findings / results\n3) Diagnoses or conclusions stated\n4) Medications / recommendations given\n5) How this relates to MY diagnoses, therapy, lab values and vitals above — and any red flags to watch.\n'
-      +'Use short bullet points. Base it strictly on what the report(s) actually say.'});
+      'Read the attached medical document(s) and summarize ONLY what is literally written or shown in them, in the SAME language as this app.\n'
+      +'STRICT RULES (this is a medical app — accuracy is critical):\n'
+      +'- Report ONLY what actually appears in the document. NEVER infer, assume, or add anything from outside knowledge.\n'
+      +'- Do NOT mention any disease, test, date, value or medication unless it is literally printed in THIS document.\n'
+      +'- If a part is unreadable, write "e palexueshme" for it — never guess a value, date, organism or diagnosis.\n'
+      +'- If you truly cannot read the document at all, reply with EXACTLY this line and nothing else: "⚠️ Nuk munda ta lexoj këtë dokument qartë. Provo një foto më të qartë."\n\n'
+      +'Structure (skip any section the document does not contain):\n'
+      +'1) Lloji i dokumentit / testit (siç është shkruar)\n2) Data (vetëm nëse është shtypur)\n3) Rezultatet e sakta (mostra, parametra, vlera, organizmi/bakteri, etj.)\n4) Diagnoza/konkluzione të shkruara në dokument\n5) Terapi/rekomandime të shkruara në dokument\n'
+      +'Use short bullet points. Base EVERYTHING strictly on the document.'});
+    /* SISTEM: rol lexuesi i rreptë — PA getProfile → modeli s'mund të përsërisë diagnozat e profilit si përmbajtje raporti */
+    var _RSYS='You are a careful medical-document reader for D Health. You transcribe and summarize ONLY what is actually present in the attached document. You NEVER invent report types, dates, values, organisms, or diagnoses, and you never use any patient background or outside knowledge to fill gaps. If the document is unclear or unreadable, you say so plainly instead of guessing.';
     var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:BASE_SYS+getProfile(),messages:[{role:'user',content:content}]})});
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:_RSYS,messages:[{role:'user',content:content}]})});
     var raw=await r.text();
     if(!r.ok || raw.trim().charAt(0)==='<') throw new Error('AI s\'arriti t\'i lexojë raportet');
     var d=JSON.parse(raw); if(d.error) throw new Error(d.error.message||'AI error');
     var out=(d.content&&d.content[0]&&d.content[0].text)||'';
     if(txtEl) txtEl.innerHTML=out.replace(/\n/g,'<br>');
+    /* Lexim i dështuar → shfaqe por MOS e ruaj (të mos ndotë profilin/chat-in) */
+    if(/^\s*⚠️/.test(out) || /nuk munda ta lexoj këtë dokument/i.test(out)) return;
     /* Ruaj përmbledhjen (per-user; pastrohet në ndërrim llogarie) → getProfile e përfshin */
     var reps=[]; try{ reps=JSON.parse(localStorage.getItem('dh_reports')||'[]'); }catch(e){}
     var _entry={ date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),
@@ -10550,6 +10564,23 @@ async function analyzeReportFiles(files, paths){
       }
     }catch(_se){ console.warn('report cloud save skip:', _se&&_se.message); }
   }catch(e){ if(txtEl) txtEl.innerHTML='<span style="color:#dc2626;">⚠️ '+(e.message||e)+'</span>'; throw e; }
+}
+
+/* Pastron TË GJITHA përmbledhjet e raporteve (localStorage + Supabase report_summaries të këtij user-i)
+   → heq çdo lexim të vjetër/gabuar që të mos ndotë chat-in/verdiktin. */
+async function clearReportSummaries(){
+  if(!confirm('Të fshihen të gjitha përmbledhjet e raporteve? (Dokumentet e ngarkuara mbeten te "Documents".)')) return;
+  try{ localStorage.removeItem('dh_reports'); }catch(e){}
+  var area=document.getElementById('ds-report-result'), txtEl=document.getElementById('ds-report-text');
+  if(txtEl) txtEl.innerHTML=''; if(area) area.style.display='none';
+  try{
+    var sb=getSupa();
+    if(sb && LST && LST.currentUser && LST.currentUser.id){
+      var del=await sb.from('report_summaries').delete().eq('patient_id', LST.currentUser.id);
+      if(del && del.error) console.warn('report clear:', del.error.message);
+    }
+  }catch(e){ console.warn('report clear skip:', e&&e.message); }
+  showToast('🗑 Përmbledhjet e raporteve u pastruan');
 }
 
 /* ════ Lexim AI i analizave laboratorike → Lab Values (sinkron me Diagnostic + Supabase) ════ */
