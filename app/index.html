@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260701165914 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260701181051 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260701165914';
+    var DH_BUILD='20260701181051';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -10550,7 +10550,7 @@ async function analyzeReportFiles(files, paths){
     /* SISTEM: rol lexuesi i rreptë — PA getProfile → modeli s'mund të përsërisë diagnozat e profilit si përmbajtje raporti */
     var _RSYS='You are a careful medical-document reader for D Health. You transcribe and summarize ONLY what is actually present in the attached document. You NEVER invent report types, dates, values, organisms, or diagnoses, and you never use any patient background or outside knowledge to fill gaps. If the document is unclear or unreadable, you say so plainly instead of guessing.';
     /* Deri në 2 përpjekje — shmang dështimet kalimtare (timeout/rrjet) → "s'arriti t'i lexojë" */
-    var _body=JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:_RSYS,messages:[{role:'user',content:content}]});
+    var _body=JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1300,system:_RSYS,messages:[{role:'user',content:content}]});
     var raw='', ok=false;
     for(var _att=0; _att<2 && !ok; _att++){
       if(_att>0) await new Promise(function(res){ setTimeout(res, 1000); });
@@ -10599,8 +10599,8 @@ async function adaptReportToProfile(summaryText){
   el.innerHTML='<div class="dh-skel-wrap"><div class="dh-skel" style="width:80%"></div><div class="dh-skel" style="width:60%"></div></div>';
   try{
     var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,system:BASE_SYS+getProfile(),
-        messages:[{role:'user',content:'Below is a FAITHFUL summary of a medical report I just uploaded. Relate it to MY profile above (my diagnoses, therapy, lab values and vitals). In the SAME language as this app, briefly explain in short bullet points: what this report means for ME, any interaction/overlap with my current conditions or therapy, and what I should monitor or ask my doctor. IMPORTANT: do NOT introduce any finding, value or diagnosis that is not in the summary below — only interpret it in my context.\n\nREPORT SUMMARY:\n'+summaryText}]})});
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:BASE_SYS+getProfile(),
+        messages:[{role:'user',content:'Below is a FAITHFUL summary of a medical report I just uploaded. Relate it to MY profile above (my diagnoses, therapy, lab values and vitals). In the SAME language as this app, explain in SHORT bullet points (maximum ~7 bullets, no long headers): what this report means for ME, any interaction/overlap with my current conditions or therapy, and what I should monitor or ask my doctor. Keep it CONCISE and make sure your answer is COMPLETE (do not get cut off mid-sentence). IMPORTANT: do NOT introduce any finding, value or diagnosis that is not in the summary below — only interpret it in my context.\n\nREPORT SUMMARY:\n'+summaryText}]})});
     var raw=await r.text();
     if(!r.ok || raw.trim().charAt(0)==='<') throw new Error('adapt fail');
     var d=JSON.parse(raw); if(d.error) throw new Error(d.error.message||'adapt');
