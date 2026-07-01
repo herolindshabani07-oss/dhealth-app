@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260701162740 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260701164105 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260701162740';
+    var DH_BUILD='20260701164105';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -3591,6 +3591,8 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
             <span onclick="clearReportSummaries()" title="Pastro raportet" style="cursor:pointer;font-size:13px;opacity:0.55;padding:2px 4px;">🗑</span>
           </div>
           <div id="ds-report-text" style="font-size:12.5px;color:#33415c;line-height:1.65;"></div>
+          <!-- Chip-a sugjerues: diagnoza + terapi të nxjerra nga raporti → "+" i shton në profil (via addTag) -->
+          <div id="ds-report-dxrx"></div>
         </div>
         <!-- RAPORTI ECG — premium -->
         <div id="ecgResultAreaProfile" style="display:none;margin-top:12px;background:linear-gradient(160deg,#0F1830 0%,#1A2547 55%,#0E1730 100%);border:1px solid rgba(120,160,235,0.26);border-radius:16px;padding:16px 15px;box-shadow:0 14px 34px rgba(8,16,44,0.5);position:relative;overflow:hidden;">
@@ -7560,6 +7562,9 @@ var DH_I18N = {
   'dx.reportSaved':    {sq:'✅ Raporti u ruajt te Dokumentet!', mk:'✅ Извештајот е зачуван во Документи!', en:'✅ Report saved to Documents!'},
   'dx.reportAnalyzed': {sq:'✅ Raporti u analizua & u lidh me profilin!', mk:'✅ Извештајот е анализиран и поврзан со профилот!', en:'✅ Report analyzed & linked to your profile!'},
   'dx.reportAiHdr':    {sq:'D Health AI — Përmbledhje e Raportit', mk:'D Health AI — Резиме на извештајот', en:'D Health AI — Report Summary'},
+  'rep.dxFound':       {sq:'Diagnoza të gjetura në raport', mk:'Дијагнози најдени во извештајот', en:'Diagnoses found in the report'},
+  'rep.rxFound':       {sq:'Terapi të gjetura në raport', mk:'Терапии најдени во извештајот', en:'Therapy found in the report'},
+  'rep.tapAdd':        {sq:'Trokit ＋ për ta shtuar te Diagnoza / Terapia në profil', mk:'Допри ＋ за да го додадеш во Дијагноза / Терапија', en:'Tap ＋ to add it to Diagnoses / Therapy in your profile'},
   'dx.uploadHint':     {sq:'📋 Analiza → vlerat dalin si "+ADD" · 🫀 ECG → ritmi (1/24h) · 📄 Raporte → ruhen te Dokumentet', mk:'📋 Анализи → вредности · 🫀 ЕКГ → ритам (1/24ч) · 📄 Извештаи → во Документи', en:'📋 Lab → values as "+ADD" · 🫀 ECG → rhythm (1/24h) · 📄 Reports → saved to Documents'},
   'dx.pEcgHistory':    {sq:'📋 Historiku i ECG', mk:'📋 Историја на ЕКГ', en:'📋 ECG History'},
   'dx.diagnostics':    {sq:'Diagnostikë', mk:'Дијагностика', en:'Diagnostics'},
@@ -10496,6 +10501,8 @@ async function handleReportUpload(event){
   /* Lexo & analizo raportin me AI → përmbledhja ruhet dhe hyn te profili (AI chat/verdikt) */
   dhAnlz('ds','analyze',dhT('dx.anlzAnalyze'));
   try{ await analyzeReportFiles(arr, paths); }catch(e){ console.warn('report analyze:', e&&e.message); }
+  /* Nxjerr diagnoza+terapi nga raporti → chip-a "+" për t'i shtuar në profil (via addTag) */
+  try{ await extractReportDxRx(arr); }catch(e){ console.warn('report dx/rx:', e&&e.message); }
   dhAnlz('ds','done',dhT('dx.reportAnalyzed'));
 }
 
@@ -10581,6 +10588,92 @@ async function clearReportSummaries(){
     }
   }catch(e){ console.warn('report clear skip:', e&&e.message); }
   showToast('🗑 Përmbledhjet e raporteve u pastruan');
+}
+
+/* Nxjerr DIAGNOZA + TERAPI të shkruara LITERALISHT në raport → chip-a sugjerues me "+"
+   që i shtojnë në profil përmes addTag() (per-user, Supabase — s'ka çelës global localStorage). */
+async function extractReportDxRx(files){
+  files = Array.prototype.slice.call(files||[]).filter(function(f){
+    var t=f.type||'', n=f.name||'';
+    return /pdf/i.test(t)||/\.pdf$/i.test(n)||/^image\//i.test(t)||/\.(jpe?g|png|webp|gif)$/i.test(n);
+  });
+  if(!files.length) return;
+  try{
+    var content=[];
+    for(var i=0;i<files.length;i++){
+      var f=files[i], t=f.type||'', n=f.name||'';
+      var isPdf=/pdf/i.test(t)||/\.pdf$/i.test(n);
+      var b64=await fileToBase64(f); if(!b64) continue;
+      content.push(isPdf
+        ? {type:'document', source:{type:'base64', media_type:'application/pdf', data:b64}}
+        : {type:'image',    source:{type:'base64', media_type:(t||'image/jpeg'), data:b64}});
+    }
+    if(!content.length) return;
+    content.push({type:'text', text:
+      'From the attached medical document(s), extract ONLY the diagnoses and the medications/therapy that are LITERALLY written in them. '
+      +'Do NOT infer, assume, or add anything that is not printed in the document. '
+      +'Respond ONLY with JSON, no markdown, no backticks: {"diagnoses":["..."],"therapies":["Name dose"]}. '
+      +'diagnoses = conditions/diagnoses stated in the document. therapies = medications or treatments prescribed in the document (include the dose if written, e.g. "Amoksicilinë 500 mg"). '
+      +'Keep names exactly as written. If there are none of a kind, use an empty array.'});
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:700,system:'You are a clinical data extractor. Output only valid JSON. NEVER invent diagnoses or medications that are not literally present in the document.',messages:[{role:'user',content:content}]})});
+    var raw=await r.text();
+    if(!r.ok || raw.trim().charAt(0)==='<') return;
+    var d=JSON.parse(raw); if(d.error) return;
+    var txt=(d.content&&d.content[0]&&d.content[0].text)||'{}'; txt=txt.replace(/```json|```/g,'').trim();
+    var obj=tryParseJSONLoose(txt)||{};
+    var dx=Array.isArray(obj.diagnoses)?obj.diagnoses:[];
+    var rx=Array.isArray(obj.therapies)?obj.therapies:[];
+    renderReportDxRxChips(dx, rx);
+  }catch(e){ console.warn('report dx/rx extract:', e&&e.message); }
+}
+/* Chip strip: diagnoza (kuq) + terapi (vjollcë) me "+" → addReportDx / addReportRx */
+function renderReportDxRxChips(dx, rx){
+  var esc=function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); };
+  var box=document.getElementById('ds-report-dxrx'); if(!box) return;
+  dx=(dx||[]).filter(function(x){return x&&String(x).trim();});
+  rx=(rx||[]).filter(function(x){return x&&String(x).trim();});
+  if(!dx.length && !rx.length){ box.innerHTML=''; return; }
+  var chip=function(txt,color,fn){
+    return '<span onclick="'+fn+'(this)" data-v="'+esc(txt)+'" style="display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:20px;background:'+color+'1a;border:1px solid '+color+'55;color:'+color+';font-size:11.5px;font-weight:700;cursor:pointer;">'
+      +'<span style="font-size:14px;line-height:1;">＋</span>'+esc(txt)+'</span>';
+  };
+  var html='<div style="margin-top:12px;border-top:1px dashed rgba(59,125,216,0.28);padding-top:11px;">';
+  if(dx.length){
+    html+='<div style="font-size:10px;font-weight:800;color:#e0567a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">🩺 '+dhT('rep.dxFound')+'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">'
+      +dx.map(function(x){return chip(x,'#e0567a','addReportDx');}).join('')+'</div>';
+  }
+  if(rx.length){
+    html+='<div style="font-size:10px;font-weight:800;color:#8B6FE8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">💊 '+dhT('rep.rxFound')+'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:6px;">'
+      +rx.map(function(x){return chip(x,'#8B6FE8','addReportRx');}).join('')+'</div>';
+  }
+  html+='<div style="font-size:9.5px;color:#8ba0bd;margin-top:9px;">'+dhT('rep.tapAdd')+'</div></div>';
+  box.innerHTML=html;
+}
+function addReportDx(el){ var txt=el&&el.getAttribute('data-v'); if(!txt) return; if(_reportAddToProfile(txt,'diag','d')) _markChipAdded(el); else _markChipAdded(el); }
+function addReportRx(el){ var txt=el&&el.getAttribute('data-v'); if(!txt) return; _reportAddToProfile(txt,'therapy','t'); _markChipAdded(el); }
+/* Rrugë E VETME e ruajtjes = addTag ekzistues → sinkron Supabase per-user. Dedup ndaj tag-ave ekzistues. */
+function _reportAddToProfile(txt, kind, cls){
+  var sel='#ds-'+kind+'-tags .tag2, #prof-'+kind+'-tags .tag2, #'+kind+'-tags .tag2';
+  var exists=Array.prototype.slice.call(document.querySelectorAll(sel)).some(function(t){ return t.textContent.replace('×','').trim().toLowerCase()===String(txt).toLowerCase(); });
+  if(exists) return false;
+  var inp=document.getElementById('ds-'+kind+'-inp')||document.getElementById('prof-'+kind+'-inp');
+  if(inp){
+    var listId=(inp.id.indexOf('prof-')===0)?('prof-'+kind+'-tags'):('ds-'+kind+'-tags');
+    inp.value=txt; addTag(listId, inp.id, cls);
+  } else {
+    _addTagToList('ds-'+kind+'-tags', txt, cls);
+    (TAG_SYNC['ds-'+kind+'-tags']||[]).forEach(function(sid){ _addTagToList(sid, txt, cls); });
+    setTimeout(syncMedicalProfile, 500);
+  }
+  return true;
+}
+function _markChipAdded(el){
+  if(!el) return;
+  el.style.opacity='0.5'; el.style.pointerEvents='none';
+  el.innerHTML='<span style="font-size:13px;line-height:1;">✓</span>'+(el.getAttribute('data-v')||'');
 }
 
 /* ════ Lexim AI i analizave laboratorike → Lab Values (sinkron me Diagnostic + Supabase) ════ */
