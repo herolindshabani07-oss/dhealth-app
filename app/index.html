@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260701164105 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260701165914 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260701164105';
+    var DH_BUILD='20260701165914';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -3593,6 +3593,11 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
           <div id="ds-report-text" style="font-size:12.5px;color:#33415c;line-height:1.65;"></div>
           <!-- Chip-a sugjerues: diagnoza + terapi të nxjerra nga raporti → "+" i shton në profil (via addTag) -->
           <div id="ds-report-dxrx"></div>
+          <!-- Përshtatja: çfarë do të thotë raporti për gjendjen e pacientit (nga profili) -->
+          <div id="ds-report-adapt" style="display:none;margin-top:12px;border-top:1px dashed rgba(59,125,216,0.28);padding-top:11px;">
+            <div style="font-size:10px;font-weight:800;color:#0D9488;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">🔗 <span data-i18n="rep.adaptHdr">Çfarë do të thotë për ty</span></div>
+            <div id="ds-report-adapt-text" style="font-size:12px;color:#33415c;line-height:1.6;"></div>
+          </div>
         </div>
         <!-- RAPORTI ECG — premium -->
         <div id="ecgResultAreaProfile" style="display:none;margin-top:12px;background:linear-gradient(160deg,#0F1830 0%,#1A2547 55%,#0E1730 100%);border:1px solid rgba(120,160,235,0.26);border-radius:16px;padding:16px 15px;box-shadow:0 14px 34px rgba(8,16,44,0.5);position:relative;overflow:hidden;">
@@ -7565,6 +7570,8 @@ var DH_I18N = {
   'rep.dxFound':       {sq:'Diagnoza të gjetura në raport', mk:'Дијагнози најдени во извештајот', en:'Diagnoses found in the report'},
   'rep.rxFound':       {sq:'Terapi të gjetura në raport', mk:'Терапии најдени во извештајот', en:'Therapy found in the report'},
   'rep.tapAdd':        {sq:'Trokit ＋ për ta shtuar te Diagnoza / Terapia në profil', mk:'Допри ＋ за да го додадеш во Дијагноза / Терапија', en:'Tap ＋ to add it to Diagnoses / Therapy in your profile'},
+  'rep.ampNote':       {sq:'Ampulat/i.v jepen në spital — s\'shtohen në terapinë e shtëpisë (vetëm tabletat)', mk:'Ампули/i.v се даваат во болница — не се додаваат во домашна терапија (само таблети)', en:'Ampoules/IV are given in hospital — not added to home therapy (tablets only)'},
+  'rep.adaptHdr':      {sq:'Çfarë do të thotë për ty', mk:'Што значи ова за тебе', en:'What this means for you'},
   'dx.uploadHint':     {sq:'📋 Analiza → vlerat dalin si "+ADD" · 🫀 ECG → ritmi (1/24h) · 📄 Raporte → ruhen te Dokumentet', mk:'📋 Анализи → вредности · 🫀 ЕКГ → ритам (1/24ч) · 📄 Извештаи → во Документи', en:'📋 Lab → values as "+ADD" · 🫀 ECG → rhythm (1/24h) · 📄 Reports → saved to Documents'},
   'dx.pEcgHistory':    {sq:'📋 Historiku i ECG', mk:'📋 Историја на ЕКГ', en:'📋 ECG History'},
   'dx.diagnostics':    {sq:'Diagnostikë', mk:'Дијагностика', en:'Diagnostics'},
@@ -10542,10 +10549,18 @@ async function analyzeReportFiles(files, paths){
       +'Use short bullet points. Base EVERYTHING strictly on the document.'});
     /* SISTEM: rol lexuesi i rreptë — PA getProfile → modeli s'mund të përsërisë diagnozat e profilit si përmbajtje raporti */
     var _RSYS='You are a careful medical-document reader for D Health. You transcribe and summarize ONLY what is actually present in the attached document. You NEVER invent report types, dates, values, organisms, or diagnoses, and you never use any patient background or outside knowledge to fill gaps. If the document is unclear or unreadable, you say so plainly instead of guessing.';
-    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:_RSYS,messages:[{role:'user',content:content}]})});
-    var raw=await r.text();
-    if(!r.ok || raw.trim().charAt(0)==='<') throw new Error('AI s\'arriti t\'i lexojë raportet');
+    /* Deri në 2 përpjekje — shmang dështimet kalimtare (timeout/rrjet) → "s'arriti t'i lexojë" */
+    var _body=JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,system:_RSYS,messages:[{role:'user',content:content}]});
+    var raw='', ok=false;
+    for(var _att=0; _att<2 && !ok; _att++){
+      if(_att>0) await new Promise(function(res){ setTimeout(res, 1000); });
+      try{
+        var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:_body});
+        raw=await r.text();
+        if(r.ok && raw.trim().charAt(0)!=='<') ok=true;
+      }catch(_fe){ /* riprovo */ }
+    }
+    if(!ok) throw new Error('AI s\'arriti t\'i lexojë raportet');
     var d=JSON.parse(raw); if(d.error) throw new Error(d.error.message||'AI error');
     var out=(d.content&&d.content[0]&&d.content[0].text)||'';
     if(txtEl) txtEl.innerHTML=out.replace(/\n/g,'<br>');
@@ -10570,7 +10585,28 @@ async function analyzeReportFiles(files, paths){
         if(insR && insR.error) console.warn('report summary save:', insR.error.message);
       }
     }catch(_se){ console.warn('report cloud save skip:', _se&&_se.message); }
+    /* Përshtatja me profilin (punon nga teksti BESNIK i sapo-lexuar → s'shpik gjetje të reja) */
+    try{ adaptReportToProfile(out); }catch(_ae){}
   }catch(e){ if(txtEl) txtEl.innerHTML='<span style="color:#dc2626;">⚠️ '+(e.message||e)+'</span>'; throw e; }
+}
+
+/* Përshtat raportin me gjendjen e pacientit: merr përmbledhjen BESNIKE + profilin (getProfile)
+   → shpjegon çfarë do të thotë PËR TË, pa shtuar gjetje që s'janë në përmbledhje. */
+async function adaptReportToProfile(summaryText){
+  var wrap=document.getElementById('ds-report-adapt'), el=document.getElementById('ds-report-adapt-text');
+  if(!wrap||!el||!summaryText) return;
+  wrap.style.display='block';
+  el.innerHTML='<div class="dh-skel-wrap"><div class="dh-skel" style="width:80%"></div><div class="dh-skel" style="width:60%"></div></div>';
+  try{
+    var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,system:BASE_SYS+getProfile(),
+        messages:[{role:'user',content:'Below is a FAITHFUL summary of a medical report I just uploaded. Relate it to MY profile above (my diagnoses, therapy, lab values and vitals). In the SAME language as this app, briefly explain in short bullet points: what this report means for ME, any interaction/overlap with my current conditions or therapy, and what I should monitor or ask my doctor. IMPORTANT: do NOT introduce any finding, value or diagnosis that is not in the summary below — only interpret it in my context.\n\nREPORT SUMMARY:\n'+summaryText}]})});
+    var raw=await r.text();
+    if(!r.ok || raw.trim().charAt(0)==='<') throw new Error('adapt fail');
+    var d=JSON.parse(raw); if(d.error) throw new Error(d.error.message||'adapt');
+    var out=(d.content&&d.content[0]&&d.content[0].text)||'';
+    if(out) el.innerHTML=out.replace(/\n/g,'<br>'); else wrap.style.display='none';
+  }catch(e){ wrap.style.display='none'; console.warn('report adapt:', e&&e.message); }
 }
 
 /* Pastron TË GJITHA përmbledhjet e raporteve (localStorage + Supabase report_summaries të këtij user-i)
@@ -10645,12 +10681,29 @@ function renderReportDxRxChips(dx, rx){
       +dx.map(function(x){return chip(x,'#e0567a','addReportDx');}).join('')+'</div>';
   }
   if(rx.length){
+    /* Vetëm TABLETAT (orale, që i merr në shtëpi) aktivizohen me "+".
+       Ampulat/i.v/infuzionet jepen në spital → shfaqen gri, pa "+" (chip i çaktivizuar). */
+    var anyOral=false;
+    var rxChip=function(txt){
+      if(_rxIsInjectable(txt)){
+        return '<span title="'+esc(dhT('rep.ampNote'))+'" style="display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:20px;background:rgba(150,170,200,0.12);border:1px dashed rgba(150,170,200,0.55);color:#9aa8bd;font-size:11.5px;font-weight:600;cursor:default;">'
+          +'<span style="font-size:12px;line-height:1;">🏥</span>'+esc(txt)+'</span>';
+      }
+      anyOral=true;
+      return chip(txt,'#8B6FE8','addReportRx');
+    };
     html+='<div style="font-size:10px;font-weight:800;color:#8B6FE8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">💊 '+dhT('rep.rxFound')+'</div>'
       +'<div style="display:flex;flex-wrap:wrap;gap:6px;">'
-      +rx.map(function(x){return chip(x,'#8B6FE8','addReportRx');}).join('')+'</div>';
+      +rx.map(rxChip).join('')+'</div>'
+      +'<div style="font-size:9px;color:#9aa8bd;margin-top:6px;">🏥 '+dhT('rep.ampNote')+'</div>';
   }
   html+='<div style="font-size:9.5px;color:#8ba0bd;margin-top:9px;">'+dhT('rep.tapAdd')+'</div></div>';
   box.innerHTML=html;
+}
+/* Terapi injektabile/spitalore (ampulë, i.v, i.m, infuzion, tretësirë) → NUK shtohet në terapinë e shtëpisë. */
+function _rxIsInjectable(s){
+  s=' '+String(s||'').toLowerCase().replace(/[.,]/g,' ')+' ';
+  return /\bamp\b|ampul|\bi\s*v\b|\bi\s*m\b|inject|injek|\binj\b|infuz|perfuz|\bsol\b|soluc|tretësir|tretesir|\bfl\b|flakon|\bnacl\b|natrium\s*klorid|glukoz.*\bi\s*v\b/.test(s);
 }
 function addReportDx(el){ var txt=el&&el.getAttribute('data-v'); if(!txt) return; if(_reportAddToProfile(txt,'diag','d')) _markChipAdded(el); else _markChipAdded(el); }
 function addReportRx(el){ var txt=el&&el.getAttribute('data-v'); if(!txt) return; _reportAddToProfile(txt,'therapy','t'); _markChipAdded(el); }
