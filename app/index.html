@@ -1275,10 +1275,10 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
 /* ════ AUTO-UPDATE — pa "clear data" manual ════
    Krahason build-in e ngarkuar me build-in LIVE (build.txt, gjithmonë i freskët).
    Nëse pajisja ka version të vjetër (WebView cache), e rifreskon VETË një herë me cache-bust.
-   Guard me sessionStorage → kurrë loop. Placeholder 20260701140205 injektohet në deploy. */
+   Guard me sessionStorage → kurrë loop. Placeholder 20260701141104 injektohet në deploy. */
 (function(){
   try{
-    var DH_BUILD='20260701140205';
+    var DH_BUILD='20260701141104';
     if(DH_BUILD==='__'+'BUILD__') return;   /* lokal / s'u injektua → mos bëj asgjë */
     fetch('build.txt?t='+Date.now(),{cache:'no-store'})
       .then(function(r){ return r.ok ? r.text() : ''; })
@@ -3563,19 +3563,19 @@ button:not(.v7-ni):not(.ni):not(.set-tgl):active{transform:scale(.97);}
         <div class="pf-sec-title" data-i18n="dx.uploadAnalyze">🔬 Ngarko &amp; Analizo</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
           <label for="ds-lab-file" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:14px 6px;border-radius:14px;background:linear-gradient(135deg,#0D9488,#2DC8A0);color:#fff;cursor:pointer;text-align:center;box-shadow:0 8px 20px rgba(13,148,136,0.32);">
-            <span style="font-size:22px;line-height:1;">📋</span>
+            <span style="width:36px;height:36px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.12);"><img src="/assets/ic_lab.png" alt="" style="width:26px;height:26px;object-fit:contain;"></span>
             <span style="font-size:12px;font-weight:800;" data-i18n="dx.labUpload">Analiza</span>
             <span style="font-size:8.5px;opacity:0.92;" data-i18n="dx.labUploadSub">vlera laboratorike</span>
             <input type="file" id="ds-lab-file" accept=".pdf,.jpg,.jpeg,.png" multiple style="display:none;" onchange="handleDsFileUpload(event)"/>
           </label>
           <label for="ecgFileInputProfile" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:14px 6px;border-radius:14px;background:linear-gradient(135deg,#FF6B8A,#8B6FE8);color:#fff;cursor:pointer;text-align:center;box-shadow:0 8px 20px rgba(139,111,232,0.32);">
-            <span style="font-size:22px;line-height:1;">🫀</span>
+            <span style="width:36px;height:36px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.12);"><img src="/assets/ic_ecgdoc.png" alt="" style="width:26px;height:26px;object-fit:contain;"></span>
             <span style="font-size:12px;font-weight:800;">ECG</span>
             <span style="font-size:8.5px;opacity:0.92;" data-i18n="dx.ecgSub">ritmi i zemrës</span>
             <input type="file" id="ecgFileInputProfile" accept="image/*,.pdf" style="display:none;" onchange="handleECGUpload(event)"/>
           </label>
           <label for="ds-report-file" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:14px 6px;border-radius:14px;background:linear-gradient(135deg,#3B7DD8,#60A5FA);color:#fff;cursor:pointer;text-align:center;box-shadow:0 8px 20px rgba(59,125,216,0.32);">
-            <span style="font-size:22px;line-height:1;">📄</span>
+            <span style="width:36px;height:36px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.12);"><img src="/assets/ic_report.png" alt="" style="width:26px;height:26px;object-fit:contain;"></span>
             <span style="font-size:12px;font-weight:800;" data-i18n="dx.reportUpload">Raporte</span>
             <span style="font-size:8.5px;opacity:0.92;" data-i18n="dx.reportUploadSub">raport mjekësor</span>
             <input type="file" id="ds-report-file" accept=".pdf,.jpg,.jpeg,.png" multiple style="display:none;" onchange="handleReportUpload(event)"/>
